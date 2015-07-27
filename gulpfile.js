@@ -15,7 +15,8 @@ var styles = [
 ];
 
 var skrollr = [
-	'src/scss/skrollr.css'
+	'src/skrollr/skrollr.css',
+	'src/skrollr/skrollr-lg.css'
 ];
 
 var scripts = [
@@ -48,8 +49,6 @@ gulp.task('styles', function () {
 gulp.task('skrollr', function () {
 	'use strict';
 	return gulp.src(skrollr)
-		//.pipe(sass())
-		//.pipe(concat('skrollr.css'))
 		.pipe(rename({suffix: '.min'}))
 		.pipe(minifycss({restructuring: false, compatibility: '-properties.zeroUnits'}))
 		.pipe(gulp.dest('output/css'));
@@ -87,7 +86,7 @@ gulp.task('font', function () {
 });
 
 gulp.task('webserver', function () {
-	gulp.src('output')
+	return gulp.src('output')
 		.pipe(webserver({
 			host: '0.0.0.0',
 			port: 5000,
@@ -98,7 +97,7 @@ gulp.task('webserver', function () {
 });
 
 gulp.task('build', ['styles', 'skrollr', 'scripts', 'jades', 'font'], function () {
-	gulp.start('copy');
+	return gulp.start('copy');
 });
 
 gulp.task('git', function () {
@@ -116,7 +115,7 @@ gulp.task('publish', ['build'], function () {
 gulp.task('default', ['styles', 'skrollr', 'scripts', 'jades', 'copy', 'webserver'], function () {
 	'use strict';
 	gulp.watch('src/scss/**/*.scss', ['styles']);
-	gulp.watch('src/scss/skrollr.css', ['skrollr']);
+	gulp.watch('src/skrollr/*.css', ['skrollr']);
 	gulp.watch(scripts, ['scripts']);
 	gulp.watch('src/jade/**/*.jade', ['jades']);
 });

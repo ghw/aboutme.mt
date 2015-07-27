@@ -29,43 +29,43 @@ a {
 
 @mixin breakpoint($size) {
   @if $size == gt-xxlarge {
-    @media screen and (min-width: 1920px) {
+    @media all and (min-width: 1920px) {
       @content;
     }
   } @else if $size == lt-xxlarge {
-    @media screen and (max-width: 1920px) {
+    @media all and (max-width: 1920px) {
       @content;
     }
   } @else if $size == gt-xlarge {
-    @media screen and (min-width: 1400px) {
+    @media all and (min-width: 1400px) {
       @content;
     }
   } @else if $size == lt-xlarge {
-    @media screen and (max-width: 1400px) {
+    @media all and (max-width: 1400px) {
       @content;
     }
   } @else if $size == gt-large {
-    @media screen and (min-width: 1200px) {
+    @media all and (min-width: 1200px) {
       @content;
     }
   } @else if $size == lt-large {
-    @media screen and (max-width: 1200px) {
+    @media all and (max-width: 1200px) {
       @content;
     }
   } @else if $size == gt-medium {
-    @media screen and (min-width: 992px) {
+    @media all and (min-width: 992px) {
       @content;
     }
   } @else if $size == lt-medium {
-    @media screen and (max-width: 992px) {
+    @media all and (max-width: 992px) {
       @content;
     }
   } @else if $size == gt-small {
-    @media screen and (min-width: 768px) {
+    @media all and (min-width: 768px) {
       @content;
     }
   } @else if $size == lt-small {
-    @media screen and (max-width: 768px) {
+    @media all and (max-width: 768px) {
       @content;
     }
   }

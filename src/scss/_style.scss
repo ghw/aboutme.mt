@@ -326,3 +326,15 @@ $liq: #35EEFB;
 		left: 0;
 	}
 }
+
+@include breakpoint(lt-small) {
+	footer {
+		padding: 12px 10px;
+		font-size: 1rem;
+	}
+	.rocket {
+		right: 10px;
+		bottom: 10px;
+		transform: scale(.6);
+	}
+}

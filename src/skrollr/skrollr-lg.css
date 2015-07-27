@@ -1,0 +1,20 @@
+.hobby {
+	-skrollr-animation-name: hobby;
+}
+
+@-skrollr-keyframes hobby {
+	bottom-top {
+		transform: rotateY(180deg);
+		opacity: 0;
+	}
+
+-25-bottom {
+	   transform: rotateY(90deg);
+	   opacity: 0.5;
+   }
+-50-bottom {
+	   transform: rotateY(0deg);
+	   opacity: 1;
+	   transform: scale(1);
+   }
+}
