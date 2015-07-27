@@ -69,12 +69,12 @@
 @-skrollr-keyframes trip-circle {
 100-bottom {
 	opacity: 0;
-	transform: translateY(60px);
+	transform: translateY(100px);
 }
 
 20-bottom {
 	  opacity: 1;
-	  transform: translateY(200px);
+	  transform: translateY(30px);
   }
 
 -10-bottom {

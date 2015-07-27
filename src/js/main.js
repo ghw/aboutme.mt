@@ -24,11 +24,10 @@ Site.exitFullscreen = function () {
 //http://stackoverflow.com/questions/5680013/how-to-be-notified-once-a-web-font-has-loaded
 Site.waitForWebfonts = function (fonts, callback) {
 	var loadedFonts = 0;
-
 	function doNode(font) {
 		var node = document.createElement('span');
 		// Characters that vary significantly among different fonts
-		node.innerHTML = 'giItT1WQy@!-/#\e800';
+		node.innerHTML = 'BiKai\ue800';
 		// Visible - so we can measure it - but not on the screen
 		node.style.position = 'absolute';
 		node.style.left = '-10000px';
@@ -46,7 +45,6 @@ Site.waitForWebfonts = function (fonts, callback) {
 		var width = node.offsetWidth;
 		node.style.fontFamily = font;
 		var interval;
-
 		function checkFont() {
 			// Compare current width with original width
 			if (node && node.offsetWidth !== width) {
@@ -97,9 +95,13 @@ Site.init = function () {
 			document.title = '简历';
 		}
 	});
-	Site.waitForWebfonts(['resume-icon', 'FFF-Tusj'], function () {
+	Site.waitForWebfonts(['FFF-Tusj', 'resume-icon'], function () {
 		Site.show();
 	});
+	setTimeout(function () {
+		// 字体超时加载超时后,依然显示站点
+		Site.show();
+	}, 10000);
 };
 
 $(function () {

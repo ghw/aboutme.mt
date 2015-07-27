@@ -123,13 +123,9 @@
 		top: 10px;
 		@include font-size(20);
 	}
-	.trip-info {
-		opacity: 0;
-	}
 	.trip-time {
 		position: absolute;
 		left: -280px;
-		opacity: 0;
 	}
 	.trip-icon {
 		margin-right: 18px;

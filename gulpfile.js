@@ -51,7 +51,7 @@ gulp.task('skrollr', function () {
 		//.pipe(sass())
 		//.pipe(concat('skrollr.css'))
 		.pipe(rename({suffix: '.min'}))
-		//.pipe(minifycss({restructuring: false, compatibility: '-properties.zeroUnits'}))
+		.pipe(minifycss({restructuring: false, compatibility: '-properties.zeroUnits'}))
 		.pipe(gulp.dest('output/css'));
 });
 
@@ -60,7 +60,7 @@ gulp.task('scripts', function () {
 	return gulp.src(scripts)
 		.pipe(concat('main.js'))
 		.pipe(rename({suffix: '.min'}))
-		//.pipe(uglify())
+		.pipe(uglify())
 		.pipe(gulp.dest('output/js'));
 });
 
@@ -99,6 +99,20 @@ gulp.task('webserver', function () {
 
 gulp.task('build', ['styles', 'skrollr', 'scripts', 'jades', 'font'], function () {
 	gulp.start('copy');
+});
+
+gulp.task('git', function () {
+	// gulp git -m test
+	var commit = process.argv[4];
+	console.log('git add .; git commit -m "' + commit + '"; git push gitcafe master ; git push github master')
+	shelljs.exec('git add .; git commit -m "' + commit + '"; git push gitcafe master ; git push github master');
+});
+
+gulp.task('publish', ['build'], function () {
+	// gulp publish -m test
+	var commit = process.argv[4];
+	console.log('cd output; git add .; git commit -m "' + commit + '"; git push gitcafe gh-pages ; git push github gh-pages; cd ..')
+	shelljs.exec('cd output; git add .; git commit -m "' + commit + '"; git push gitcafe gh-pages ; git push github gh-pages; cd ..');
 });
 
 gulp.task('default', ['styles', 'skrollr', 'scripts', 'jades', 'copy', 'webserver'], function () {
