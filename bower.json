@@ -1,0 +1,30 @@
+{
+  "name": "resume",
+  "version": "1.0.0",
+  "authors": [
+    "ccbikai <ccbikai@qq.com>"
+  ],
+  "description": "resume",
+  "main": "gulpfile.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "resume"
+  ],
+  "license": "MIT",
+  "homepage": "http://resume.miantiao.me",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/vendor",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "skrollr": "~0.6.30",
+    "zeptojs": "~1.1.6",
+    "skrollr-stylesheets": "https://github.com/Prinzhorn/skrollr-stylesheets.git#~1.0.0"
+  }
+}

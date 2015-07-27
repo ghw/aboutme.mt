@@ -1,0 +1,146 @@
+// 时间轴相关
+.timeline {
+	color: #fff;
+	background-color: #25969f;
+	&:after {
+		background-color: #d34147;
+	}
+	.wrap:after {
+		border-color: #25969f transparent transparent transparent;
+	}
+}
+
+.trip {
+	position: relative;
+	margin-top: 50px;
+	margin-left: 20px;
+	border-left: 6px solid #000;
+	&:before {
+		content: '';
+		position: absolute;
+		left: -6px;
+		top: -28px;
+		width: 6px;
+		height: 40px;
+		background-image: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(37, 150, 159, 0));
+	}
+}
+
+.trip-item {
+	position: relative;
+	padding-left: 40px;
+	padding-bottom: 10px;
+	@include font-size(16);
+	color: #0f3c3f;
+	cursor: pointer;
+	&:last-child {
+		padding-bottom: 0;
+	}
+	.job {
+		min-width: 90%;
+		color: #fff;
+	}
+	.company {
+		@include font-size(14);
+		line-height: 2;
+	}
+	&:hover {
+		.trip-circle {
+			box-shadow: 0 0 25px #91cacd;
+		}
+	}
+}
+
+.trip-time {
+	position: absolute;
+	left: 80px;
+	line-height: 48px;
+	font-family: Courier, 'Courier New', monospace;
+}
+
+.trip-circle {
+	position: absolute;
+	left: -23px;
+	top: 4px;
+	width: 40px;
+	height: 40px;
+	background-color: #91cacd;
+	border-radius: 50%;
+	z-index: 1;
+	transition: box-shadow .4s linear;
+	&:before {
+		content: '';
+		position: absolute;
+		left: 5px;
+		top: 5px;
+		width: 30px;
+		height: 30px;
+		background-color: #2b949c;
+		border-radius: 50%;
+	}
+	&:after {
+		content: '';
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		width: 20px;
+		height: 20px;
+		background-color: #000;
+		border-radius: 50%;
+	}
+}
+
+.trip-icon {
+	margin-right: 180px;
+	width: 48px;
+	height: 48px;
+	@include font-size(24);
+	line-height: 2;
+	color: #0d3538;
+	transition: transform .5s ease;
+	cursor: pointer;
+	&:hover {
+		transform: scale(1.5);
+	}
+}
+
+.born {
+	margin-left: 20px;
+	border-left: 6px dotted #000;
+	.trip-item {
+		margin-bottom: 60px;
+		top: 60px;
+	}
+}
+
+@include breakpoint(gt-small) {
+	.trip {
+		margin-left: 280px;
+	}
+	.trip-item {
+		padding-left: 60px;
+		padding-bottom: 30px;
+		top: 10px;
+		@include font-size(20);
+	}
+	.trip-info {
+		opacity: 0;
+	}
+	.trip-time {
+		position: absolute;
+		left: -280px;
+		opacity: 0;
+	}
+	.trip-icon {
+		margin-right: 18px;
+	}
+	.born {
+		margin-left: 280px;
+	}
+}
+
+@include breakpoint(gt-medium) {
+	.trip-item {
+		padding-left: 80px;
+	}
+}

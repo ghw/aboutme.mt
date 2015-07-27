@@ -1,0 +1,83 @@
+// 技能
+.skills {
+  color: #fff;
+  background-color: #e8525b;
+  &:after {
+    background-color: #a5b785;
+  }
+  .wrap:after {
+    border-color: #e8525b transparent transparent transparent;
+  }
+}
+
+.skill-item {
+  &:hover {
+    .skill-icon {
+      animation-name: pulse;
+    }
+  }
+}
+
+.skill-title {
+  margin-top: 20px;
+  @include font-size(24);
+  text-transform: capitalize;
+}
+
+.skill-icon {
+  display: inline-block;
+  width: 50px;
+  @include font-size(30);
+  line-height: (50/30);
+}
+
+.skill-bar {
+  display: inline-block;
+  position: relative;
+  top: -5px;
+  padding: 0 .5em;
+  width: 130px;
+  color: #d9666c;
+  background-color: #6a2427;
+  @include font-size(14);
+  line-height: (28/14);
+  transition: width 1s;
+  &:after {
+    content: attr(data-width);
+    position: absolute;
+    right: 10px;
+    top: 0;
+    @include font-size(12);
+    line-height: (28/12);
+    color: #fff;
+  }
+}
+
+.skill-more-item {
+  padding-left: 50px;
+  @include font-size(18);
+  line-height: (50/18);
+  color: #550f12;
+  transition: color 1s;
+  &:hover {
+    color: #fff;
+  }
+}
+
+@include breakpoint(gt-small) {
+   .skill-title {
+     padding-left: 50px;
+   }
+   .skill-item {
+     width: 400px;
+   }
+   .skill-more {
+     text-align: right;
+   }
+ }
+
+@include breakpoint(gt-medium) {
+  .skill-item {
+    width: 500px;
+  }
+}

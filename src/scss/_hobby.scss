@@ -1,0 +1,45 @@
+// 兴趣相关
+.hobbies {
+  color: #2e391b;
+  background-color: #bdce9e;
+  &:after {
+    background-color: #502742;
+  }
+  .wrap:after {
+    border-color: #bdce9e transparent transparent transparent;
+  }
+}
+
+.hobby-item {
+  padding: 10px 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.hobby-icon {
+  @include font-size(80);
+  &:hover {
+    animation-name: bounce;
+    transform-origin: center bottom;
+  }
+}
+
+.hobby-name {
+  @include font-size(20);
+  font-weight: bold;
+  line-height: 2;
+}
+
+.hobby-desc {
+  @include font-size(14);
+  text-align: left;
+  line-height: 1.5;
+}
+
+@include breakpoint(gt-small) {
+  .hobby-item {
+    display: inline-block;
+    vertical-align: top;
+    width: percentage(1/3);
+  }
+}

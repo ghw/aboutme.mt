@@ -1,0 +1,40 @@
+extends _include/layout
+
+block head
+    title 简历
+
+block body
+    include part/intro
+    include part/timeline
+    include part/skill
+    include part/hobby
+    include part/connect
+    footer
+        .site-info
+            span.design Designed By &nbsp;
+                a(href="https://www.behance.net/gallery/My-Resume/6217587", title="Navdeep Raj", target="_blank") Navdeep Raj
+            | &nbsp; , &nbsp;
+            span.code Coded By  &nbsp;
+                a(href="http://miantiao.me/", title="ccbikai", target="_blank") Myself
+    .rocket
+        .header
+        .body
+            .window
+            .wing.wing-left
+            .wing.wing-right
+            .lader
+        .footer.animated.infinite
+    .mask.qrcode.animated
+        img(src="images/wechat-qrcode.png", alt="Wechat")
+    .mask.animated
+        .loading
+            .mouth
+            .neck
+            .base
+                .liquid
+                .wave
+                .wave
+                .bubble
+                .bubble
+            .bubble
+            .bubble

@@ -1,0 +1,97 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
+}
+
+a {
+  text-decoration: none;
+}
+
+.clear {
+  clear: both;
+  &:before {
+    content: '';
+    display: table-cell;
+  }
+}
+
+@mixin font-size($n) {
+  font-size: #{$n}px;
+  font-size: #{($n/10)}rem;
+}
+
+@mixin breakpoint($size) {
+  @if $size == gt-xxlarge {
+    @media screen and (min-width: 1920px) {
+      @content;
+    }
+  } @else if $size == lt-xxlarge {
+    @media screen and (max-width: 1920px) {
+      @content;
+    }
+  } @else if $size == gt-xlarge {
+    @media screen and (min-width: 1400px) {
+      @content;
+    }
+  } @else if $size == lt-xlarge {
+    @media screen and (max-width: 1400px) {
+      @content;
+    }
+  } @else if $size == gt-large {
+    @media screen and (min-width: 1200px) {
+      @content;
+    }
+  } @else if $size == lt-large {
+    @media screen and (max-width: 1200px) {
+      @content;
+    }
+  } @else if $size == gt-medium {
+    @media screen and (min-width: 992px) {
+      @content;
+    }
+  } @else if $size == lt-medium {
+    @media screen and (max-width: 992px) {
+      @content;
+    }
+  } @else if $size == gt-small {
+    @media screen and (min-width: 768px) {
+      @content;
+    }
+  } @else if $size == lt-small {
+    @media screen and (max-width: 768px) {
+      @content;
+    }
+  }
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+@include breakpoint(gt-small) {
+  .pull-left-md {
+    float: left;
+  }
+
+  .pull-right-md {
+    float: right;
+  }
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
