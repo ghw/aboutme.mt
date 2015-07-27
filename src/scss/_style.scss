@@ -29,6 +29,7 @@ body {
 
 #skrollr-body {
 	background-image: inherit;
+	-webkit-overflow-scrolling: touch;
 }
 
 .wrap {
