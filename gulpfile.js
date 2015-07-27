@@ -104,14 +104,12 @@ gulp.task('build', ['styles', 'skrollr', 'scripts', 'jades', 'font'], function (
 gulp.task('git', function () {
 	// gulp git -m test
 	var commit = process.argv[4];
-	console.log('git add .; git commit -m "' + commit + '"; git push gitcafe master ; git push github master')
 	shelljs.exec('git add .; git commit -m "' + commit + '"; git push gitcafe master ; git push github master');
 });
 
 gulp.task('publish', ['build'], function () {
 	// gulp publish -m test
 	var commit = process.argv[4];
-	console.log('cd output; git add .; git commit -m "' + commit + '"; git push gitcafe gh-pages ; git push github gh-pages; cd ..')
 	shelljs.exec('cd output; git add .; git commit -m "' + commit + '"; git push gitcafe gh-pages ; git push github gh-pages; cd ..');
 });
 
