@@ -1,4 +1,5 @@
 body {
+	background-color: #3d1f34;
 	background-image: url("../images/bg.png");
 	transition: all 1s;
 	section {
@@ -24,6 +25,10 @@ body {
 			background-image: inherit;
 		}
 	}
+}
+
+#skrollr-body {
+	background-image: inherit;
 }
 
 .wrap {
