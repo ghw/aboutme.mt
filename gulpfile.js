@@ -97,15 +97,12 @@ gulp.task('webserver', function () {
 		}));
 });
 
-gulp.task('build', ['styles', 'skrollr', 'scripts', 'jades', 'copy']);
+gulp.task('build', ['styles', 'skrollr', 'scripts', 'jades', 'font'], function () {
+	gulp.start('copy');
+});
 
 gulp.task('default', ['styles', 'skrollr', 'scripts', 'jades', 'copy', 'webserver'], function () {
 	'use strict';
-	//shelljs.exec('lsof -i tcp:5000', {silent: true}, function (code) {
-	//	if (code) {
-	//		gulp.start('webserver');
-	//	}
-	//});
 	gulp.watch('src/scss/**/*.scss', ['styles']);
 	gulp.watch('src/scss/skrollr.css', ['skrollr']);
 	gulp.watch(scripts, ['scripts']);
