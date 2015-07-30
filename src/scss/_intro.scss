@@ -1,114 +1,111 @@
 // 简介
 .intro {
-  padding-top: 40px;
-  color: #fff;
-  background-color: #3b3b3b;
-  .info {
-    @include font-size(24);
-    font-weight: lighter;
-    letter-spacing: 2px;
-    color: #e1e1e1;
-    text-align: center;
-  }
-  .hi {
-    display: none;
-  }
-  .name {
-    @include font-size(36);
-    line-height: 2;
-  }
-  .job {
-    margin-bottom: 20px;
-    @include font-size(24);
-  }
-  .and {
-    display: none;
-  }
-  .motto {
-    line-height: 1.5;
-    text-align: center;
-  }
-  .write {
-    @include font-size(24);
-    letter-spacing: 4px;
-  }
-  .looking {
-    @include font-size(24);
-    font-weight: bold;
-  }
-  .usable {
-    @include font-size(48);
-    font-weight: bold;
-    color: #25969f;
-  }
-  .websites {
-    @include font-size(32);
-    letter-spacing: 3px;
-  }
-  .icon-love {
-    padding-left: .2em;
-    padding-right: .4em;
-    color: #de3843;
-    font-weight: bold;
-    transition: transform .5s ease;
-    cursor: pointer;
-    &:hover {
-      transform: scale(1.5);
-    }
-  }
-  &:after {
-    background-color: #1d7d86;
-  }
-  .wrap:after {
-    border-color: #3b3b3b transparent transparent transparent;
-  }
+	padding-top: 40px;
+	color: #fff;
+	background-color: #3b3b3b;
+	.info {
+		@include font-size(24);
+		font-weight: lighter;
+		color: #e1e1e1;
+		text-align: center;
+	}
+	.hi {
+		display: none;
+	}
+	.name {
+		@include font-size(36);
+		line-height: 2;
+		letter-spacing: 2px;
+	}
+	.job {
+		margin-bottom: 20px;
+		@include font-size(24);
+	}
+	.and {
+		display: none;
+	}
+	.motto {
+		line-height: 1.5;
+		text-align: center;
+	}
+	.write {
+		@include font-size(24);
+		letter-spacing: 1px;
+	}
+	.looking {
+		@include font-size(24);
+		font-weight: bold;
+	}
+	.usable {
+		@include font-size(48);
+		font-weight: bold;
+		color: #25969f;
+	}
+	.websites {
+		@include font-size(32);
+		letter-spacing: 1px;
+	}
+	.icon-love {
+		padding-left: .2em;
+		padding-right: .4em;
+		color: #de3843;
+		font-weight: bold;
+		transition: transform .5s ease;
+		cursor: pointer;
+		&:hover {
+			transform: scale(1.5);
+		}
+	}
+	&:after {
+		background-color: #1d7d86;
+	}
+	.wrap:after {
+		border-color: #3b3b3b transparent transparent transparent;
+	}
 }
 
 @include breakpoint(gt-small) {
-  .intro {
-    padding-top: 100px;
-    .wrap {
-      padding-top: 0;
-    }
-    .info {
-      text-align: left;
-    }
-    .hi {
-      display: block;
-    }
-    .name {
-      @include font-size(76);
-      line-height: 1.4;
-      font-family: "FFF-Tusj";
-    }
-    .job {
-      margin-bottom: 0;
-      @include font-size(30);
-      letter-spacing: 4px;
-    }
-    .and {
-      display: block;
-      margin-top: 50px;
-      padding-left: 80px;
-      padding-right: 50px;
-      @include font-size(72);
-      line-height: 1;
-      font-weight: bold;
-      color: #727272;
-    }
-    .motto {
-      width: 240px;
-    }
-  }
+	.intro {
+		padding-top: 100px;
+		.wrap {
+			padding-top: 0;
+		}
+		.info {
+			text-align: left;
+		}
+		.hi {
+			display: block;
+		}
+		.name {
+			@include font-size(76);
+			line-height: 1.4;
+			font-family: "FFF-Tusj";
+		}
+		.job {
+			margin-bottom: 0;
+			@include font-size(30);
+		}
+		.and {
+			display: block;
+			margin-top: 50px;
+			padding-left: 115px;
+			padding-right: 50px;
+			@include font-size(72);
+			line-height: 1;
+			font-weight: bold;
+			color: #727272;
+			font-family: "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
+		}
+		.motto {
+			width: 240px;
+		}
+	}
 }
 
 @include breakpoint(gt-medium) {
-  .intro {
-    .job {
-      line-height: 1.6;
-    }
-    .and {
-      padding-left: 60px;
-    }
-  }
+	.intro {
+		.job {
+			line-height: 1.6;
+		}
+	}
 }

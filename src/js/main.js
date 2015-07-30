@@ -24,6 +24,7 @@ Site.exitFullscreen = function () {
 //http://stackoverflow.com/questions/5680013/how-to-be-notified-once-a-web-font-has-loaded
 Site.waitForWebfonts = function (fonts, callback) {
 	var loadedFonts = 0;
+
 	function doNode(font) {
 		var node = document.createElement('span');
 		// Characters that vary significantly among different fonts
@@ -45,6 +46,7 @@ Site.waitForWebfonts = function (fonts, callback) {
 		var width = node.offsetWidth;
 		node.style.fontFamily = font;
 		var interval;
+
 		function checkFont() {
 			// Compare current width with original width
 			if (node && node.offsetWidth !== width) {
@@ -95,7 +97,7 @@ Site.init = function () {
 			document.title = '简历';
 		}
 	});
-	Site.waitForWebfonts(['FFF-Tusj', 'resume-icon'], function () {
+	Site.waitForWebfonts(['Nexa', 'FFF-Tusj', 'resume-icon'], function () {
 		Site.show();
 	});
 	setTimeout(function () {
@@ -150,7 +152,7 @@ $(function () {
 
 	$qrcode.on('click', function () {
 		$qrcode.css('display', 'none');
-		_hmt.push(['_trackEvent', 'wechat', 'close', 'gotwechatoTop', '0']);
+		_hmt.push(['_trackEvent', 'wechat', 'close', 'wechat', '0']);
 	});
 
 	$('.connect-item').on('click', function () {

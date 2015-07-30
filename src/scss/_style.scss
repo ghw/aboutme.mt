@@ -8,7 +8,7 @@ body {
 		.title {
 			@include font-size(40);
 			text-transform: capitalize;
-			font-family: "FFF-Tusj";
+			font-family: "FFF-Tusj", "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
 			letter-spacing: 4px;
 		}
 		.desc {
@@ -116,6 +116,7 @@ footer {
 	bottom: 50px;
 	cursor: pointer;
 	transition: transform .6s;
+	transform: scale(.8);
 	.header {
 		width: 26px;
 		height: 16px;
@@ -214,7 +215,6 @@ footer {
 	background: rgb(0, 0, 0);
 	z-index: 999;
 }
-
 
 .qrcode {
 	display: none;

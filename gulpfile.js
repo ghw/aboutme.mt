@@ -77,8 +77,29 @@ gulp.task('copy', function () {
 		.pipe(gulp.dest('output'));
 });
 
+function minifyFont(text) {
+	gulp
+		.src('src/fonts/Nexa*.ttf')
+		.pipe(fontmin({
+			text: text
+		}))
+		.pipe(gulp.dest('src/static/font'));
+}
+
 gulp.task('font', function () {
-	return gulp.src('src/fonts/*.ttf')
+	var buffers = [];
+
+	gulp.src('src/jade/*.jade')
+		.on('data', function(file) {
+			buffers.push(file.contents);
+		})
+		.on('end', function() {
+			var text = Buffer.concat(buffers).toString('utf-8');
+			minifyFont(text);
+		});
+
+	// FFF-Tusj
+	gulp.src('src/fonts/FFF-Tusj.ttf')
 		.pipe(fontmin({
 			text: 'BiKaiTimelineSkillsHobbiesConnectProjects'
 		}))
@@ -107,9 +128,8 @@ gulp.task('git', function () {
 });
 
 gulp.task('publish', ['build'], function () {
-	// gulp publish -m test
-	var commit = process.argv[4];
-	shelljs.exec('cd output; git add .; git commit -m "' + commit + '"; git push gitcafe gh-pages ; git push github gh-pages; cd ..');
+	// gulp publish
+	shelljs.exec('cd output; git add .; git commit -m "auto publish"; git push gitcafe gh-pages ; git push github gh-pages; cd ..');
 });
 
 gulp.task('default', ['styles', 'skrollr', 'scripts', 'jades', 'copy', 'webserver'], function () {

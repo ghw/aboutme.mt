@@ -8,13 +8,12 @@
 		opacity: 0;
 	}
 
--25-bottom {
-	   transform: rotateY(90deg);
+	bottom-center {
+	   transform: rotateY(30deg);
 	   opacity: 0.5;
    }
--50-bottom {
+	bottom-bottom {
 	   transform: rotateY(0deg);
 	   opacity: 1;
-	   transform: scale(1);
    }
 }
