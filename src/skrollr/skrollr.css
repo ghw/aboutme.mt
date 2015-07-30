@@ -17,57 +17,20 @@
 	}
 }
 
-.trip-info {
-	-skrollr-animation-name: trip-info;
-	transition: transform .6s;
+.trip-item {
+	-skrollr-animation-name: trip-item;
 }
 
-@-skrollr-keyframes trip-info {
+@-skrollr-keyframes trip-item {
 
-20-bottom {
+100-bottom {
 	  opacity: 0;
-	  transform: translate3d(3000px, 0px, 0px);;
+	  transform: rotate3d(1, 0, 0, 180deg);;
   }
 
--10-bottom {
+30-bottom {
 	   opacity: 1;
-	   transform: translate3d(0px, 0px, 0px);;
-   }
-}
-
-.trip-time {
-	-skrollr-animation-name: trip-time;
-	transition: transform .6s;
-}
-
-@-skrollr-keyframes trip-time {
-
-20-bottom {
-	  opacity: 0;
-	  transform: translate3d(-3000px, 0px, 0px);
-  }
-
--10-bottom {
-	   opacity: 1;
-	   transform: translate3d(0px, 0px, 0px);
-   }
-}
-
-.trip-circle {
-	-skrollr-animation-name: trip-circle;
-	transition: transform .6s;
-}
-
-@-skrollr-keyframes trip-circle {
-
-20-bottom {
-	  opacity: 1;
-	  transform: translate3d(0px, 60px, 0px);
-  }
-
--10-bottom {
-	   opacity: 1;
-	   transform: translate3d(0px, 0px, 0px);
+	   transform: rotate3d(1, 0, 0, 0deg);;
    }
 }
 
