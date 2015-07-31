@@ -16,6 +16,7 @@
 		@include font-size(36);
 		line-height: 2;
 		letter-spacing: 2px;
+		font-family: "FFF-Tusj", "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
 	}
 	.job {
 		margin-bottom: 20px;
@@ -79,7 +80,6 @@
 		.name {
 			@include font-size(76);
 			line-height: 1.4;
-			font-family: "FFF-Tusj";
 		}
 		.job {
 			margin-bottom: 0;

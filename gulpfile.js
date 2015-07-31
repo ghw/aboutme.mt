@@ -77,27 +77,11 @@ gulp.task('copy', function () {
 		.pipe(gulp.dest('output'));
 });
 
-function minifyFont(text) {
-	gulp
-		.src('src/fonts/Nexa*.ttf')
-		.pipe(fontmin({
-			text: text
-		}))
-		.pipe(gulp.dest('src/static/font'));
-}
-
 gulp.task('font', function () {
-	var buffers = [];
-
-	gulp.src('src/jade/*.jade')
-		.on('data', function(file) {
-			buffers.push(file.contents);
-		})
-		.on('end', function() {
-			var text = Buffer.concat(buffers).toString('utf-8');
-			minifyFont(text);
-		});
-
+	// Nexa
+	gulp.src('src/fonts/Nexa*.ttf')
+		.pipe(fontmin())
+		.pipe(gulp.dest('src/static/font'));
 	// FFF-Tusj
 	gulp.src('src/fonts/FFF-Tusj.ttf')
 		.pipe(fontmin({
