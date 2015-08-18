@@ -107,7 +107,6 @@ Site.init = function () {
 };
 
 $(function () {
-	// TODO: 经历点击 全屏介绍
 	// TODO: 增加项目
 	var $email = $('.email'),
 		$qrcode = $('.qrcode'),
@@ -132,6 +131,15 @@ $(function () {
 	$('.skill-bar').forEach(function (bar) {
 		bar = $(bar);
 		bar.css('width', bar.data('width'));
+	});
+
+	$('.trip-item').on('click', function () {
+		$(this).next('.trip-item-detail').addClass('zoomIn').show();
+		_hmt.push(['_trackEvent', 'trip-item', 'click', $(this).find('.job').text(), '1']);
+	});
+
+	$('.trip-item-close').on('click', function () {
+		$(this).parent('.trip-item-detail').removeClass('zoomIn').hide();
 	});
 
 	$('.rocket').on('click', function () {
