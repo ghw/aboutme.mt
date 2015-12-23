@@ -109,7 +109,7 @@
 	border-left: 6px dotted #000;
 	.trip-item {
 		margin-bottom: 60px;
-		top: 60px;
+		top: 70px;
 	}
 }
 
@@ -127,12 +127,13 @@
 
 .trip-item-content {
 	position: relative;
-	top: 100px;
+	top: 0;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 12px;
-	width: 640px;
-	height: 80%;
+    width: 100%;
+    max-width: 640px;
+	height: 100%;
 	overflow: auto;
 	h3 {
 		@include font-size(24);
@@ -189,6 +190,10 @@
 	.trip-icon {
 		margin-right: 18px;
 	}
+    .trip-item-content {
+        top: 100px;
+        height: 80%;
+    }
 	.born {
 		margin-left: 280px;
 	}
