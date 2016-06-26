@@ -1,12 +1,10 @@
 @font-face {
-    font-family: "Fredericka-the-Great";
+    font-family: "Fredericka the Great";
     src: url("Fredericka-the-Great.eot"); /* IE9 */
     src: url("Fredericka-the-Great.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
-    
     url("Fredericka-the-Great.woff") format("woff"), /* chrome, firefox */
     url("Fredericka-the-Great.ttf") format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
-    
-    url("Fredericka-the-Great.svg#Fredericka-the-Great") format("svg"); /* iOS 4.1- */
+    url("Fredericka-the-Great.svg#Fredericka the Great") format("svg"); /* iOS 4.1- */
     font-style: normal;
     font-weight: normal;
 }
