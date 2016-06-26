@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "Nexa-Free-Light";
+    src: url("Nexa-Free-Light.eot"); /* IE9 */
+    src: url("Nexa-Free-Light.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    
+    url("Nexa-Free-Light.woff") format("woff"), /* chrome, firefox */
+    url("Nexa-Free-Light.ttf") format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    
+    url("Nexa-Free-Light.svg#Nexa-Free-Light") format("svg"); /* iOS 4.1- */
+    font-style: normal;
+    font-weight: normal;
+}
+
+
