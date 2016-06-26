@@ -33,7 +33,7 @@ Site.waitForWebfonts = function(fonts, callback) {
         var interval;
 
         // Characters that vary significantly among different fonts
-        node.innerHTML = 'BiKai\ue800';
+        node.innerHTML = 'Haowu Ge\ue800';
 
         // Visible - so we can measure it - but not on the screen
         node.style.position = 'absolute';
@@ -105,9 +105,9 @@ Site.init = function() {
     }
     document.addEventListener("visibilitychange", function() {
         if (document.hidden) {
-            document.title = '别忘了回来再看看简历';
+            document.title = '别忘了回来再看看我的简历哦 | 葛豪武的个人简历';
         } else {
-            document.title = '简历';
+            document.title = '葛豪武的个人简历';
         }
     });
     Site.waitForWebfonts(['Muli-Light', 'Fredericka-the-Great', 'resume-icon'], function() {
