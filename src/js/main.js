@@ -110,7 +110,7 @@ Site.init = function() {
             document.title = '葛豪武的个人简历';
         }
     });
-    Site.waitForWebfonts(['Muli-Light', 'Fredericka-the-Great', 'resume-icon'], function() {
+    Site.waitForWebfonts(['Alibaba PuHuiTi', 'Fredericka-the-Great', 'resume-icon'], function() {
         Site.show();
     });
     setTimeout(function() {

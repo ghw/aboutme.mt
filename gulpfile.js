@@ -98,9 +98,10 @@ gulp.task('font', function() {
     .pipe(gulp.dest('src/static/font'));
 
     // Fredericka-the-Great
-    gulp.src('src/fonts/Fredericka-the-Great.ttf')
+    gulp.src('src/fonts/Alibaba-PuHuiTi-Regular.ttf')
+    //gulp.src('src/fonts/Fredericka-the-Great.ttf')
         .pipe(fontmin({
-            text: '1234590Haowu Ge Timeline Skills Hobbies Connect Projects'
+            text: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890,.;，。；-&葛豪武 浙备号比特萌·信息✬公网安备©嗨，我是葛豪武致力商务智能&时光荏苒联合创始人/分析师深圳比特萌信息技术有限公司成本会计（工业）浙江??电器有限公司主办会计（工业）浙江??机械股份有限公司主办会计（商业）杭州??医学仪器有限公司税务会计/财务助理浙江??药业有限公司会计学浙江财经学院出生你好，世界！薄技在身日常账务处理财务会计电算化企政报表编制报送企业经营状况预测金蝶KIS实施部署操作系统运行维护中间件部署实施图形图像处理发票,审核,凭证,报表金蝶,用友,SAP,Excel国地税,工商,统计,外管财务状况分析建账,ERP实施部署公诸同好信息技术安全互联数据分析不解之缘B'
         }))
         .pipe(gulp.dest('src/static/font'));
 });

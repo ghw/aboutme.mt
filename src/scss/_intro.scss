@@ -16,7 +16,7 @@
 		@include font-size(36);
 		line-height: 2;
 		letter-spacing: 2px;
-		font-family: "阿里巴巴普惠体", "Fredericka-the-Great", "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
+		font-family: "Alibaba PuHuiTi", "Fredericka-the-Great";
 	}
 	.job {
 		margin-bottom: 20px;
@@ -40,8 +40,8 @@
 	.usable {
 		@include font-size(48);
 		font-weight: bold;
-		font-family: "Fredericka-the-Great", "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
-		color: #25969f;
+		font-family: "Fredericka-the-Great", "Alibaba PuHuiTi";
+		color: #005BAC;
 	}
 	.websites {
 		@include font-size(32);
@@ -95,7 +95,6 @@
 			line-height: 1;
 			font-weight: bold;
 			color: #727272;
-			font-family: "PingFang SC", "Lantinghei SC", "Microsoft Yahei", "Hiragino Sans GB", "Microsoft Sans Serif", "WenQuanYi Micro Hei", sans;
 		}
 		.motto {
 			width: 240px;
