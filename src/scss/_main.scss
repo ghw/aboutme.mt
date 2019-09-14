@@ -8,7 +8,7 @@ body {
 		.title {
 			@include font-size(40);
 			text-transform: capitalize;
-			font-family: "Alibaba PuHuiTi", "FFF-Tusj", "Fredericka-the-Great";
+			font-family: "Fredericka-the-Great", "Alibaba PuHuiTi", Georgia, "Nimbus Roman No9 L", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Source Han Serif CN", STSong, "AR PL New Sung", "AR PL SungtiL GB", NSimSun, SimSun, "TW\-Sung", "WenQuanYi Bitmap Song", "AR PL UMing CN", "AR PL UMing HK", "AR PL UMing TW", "AR PL UMing TW MBE", PMingLiU, MingLiU, serif;
 			letter-spacing: 4px;
 		}
 		.desc {
@@ -61,7 +61,7 @@ body {
 	top: 15px;
 	padding: 4px 14px 4px 6px;
 	color: #fff;
-	background-color: #c33437;
+	background-color: #E60012;
 	@include font-size(14);
 	line-height: 2;
 	font-weight: bold;

@@ -16,7 +16,7 @@
 		@include font-size(36);
 		line-height: 2;
 		letter-spacing: 2px;
-		font-family: "Alibaba PuHuiTi", "Fredericka-the-Great";
+		font-family: "Alibaba PuHuiTi", "Fredericka-the-Great", Georgia, "Nimbus Roman No9 L", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Source Han Serif CN", STSong, "AR PL New Sung", "AR PL SungtiL GB", NSimSun, SimSun, "TW\-Sung", "WenQuanYi Bitmap Song", "AR PL UMing CN", "AR PL UMing HK", "AR PL UMing TW", "AR PL UMing TW MBE", PMingLiU, MingLiU, serif;
 	}
 	.job {
 		margin-bottom: 20px;
@@ -40,8 +40,8 @@
 	.usable {
 		@include font-size(48);
 		font-weight: bold;
-		font-family: "Fredericka-the-Great", "Alibaba PuHuiTi";
-		color: #005BAC;
+		font-family: "Fredericka-the-Great", "Alibaba PuHuiTi", Georgia, "Nimbus Roman No9 L", "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "Source Han Serif CN", STSong, "AR PL New Sung", "AR PL SungtiL GB", NSimSun, SimSun, "TW\-Sung", "WenQuanYi Bitmap Song", "AR PL UMing CN", "AR PL UMing HK", "AR PL UMing TW", "AR PL UMing TW MBE", PMingLiU, MingLiU, serif;;
+		color: #E60012;
 	}
 	.websites {
 		@include font-size(32);
@@ -50,7 +50,7 @@
 	.icon-love {
 		padding-left: .2em;
 		padding-right: .4em;
-		color: #de3843;
+		color: #E60012;
 		font-weight: bold;
 		transition: transform .5s ease;
 		cursor: pointer;

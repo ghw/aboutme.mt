@@ -105,9 +105,9 @@ Site.init = function() {
     }
     document.addEventListener("visibilitychange", function() {
         if (document.hidden) {
-            document.title = '别忘了回来再看看我的简历哦 | 葛豪武的个人简历';
+            document.title = '别忘了常回来看看哦 | 葛豪武的个人网站';
         } else {
-            document.title = '葛豪武的个人简历';
+            document.title = '葛豪武的个人网站';
         }
     });
     Site.waitForWebfonts(['Alibaba PuHuiTi', 'Fredericka-the-Great', 'resume-icon'], function() {
