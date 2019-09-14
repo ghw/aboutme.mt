@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.9. 拨号连接时使用邮件传送</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="outgoing-only.html" title="27.8. 只发送邮件的配置" /><link rel="next" href="SMTP-Auth.html" title="27.10. SMTP 验证" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.9. 拨号连接时使用邮件传送</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="outgoing-only.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="SMTP-Auth.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="SMTP-dialup"></a>27.9. 拨号连接时使用邮件传送</h2></div></div></div><p>如果您有静态的 IP 地址， 就应该不用修改任何默认的配置。
+      将主机名设置为分配给您的 Internet 名称，其他的事情
+      <span class="application">sendmail</span> 都会替您做好。</p><p>如果您的 IP 地址是动态分配的， 并使用 PPP 连接拨入
+      Internet， 则您可能会从 ISP 的邮件服务器上得到一个信箱。
+      这里我们假设您的 ISP 的域名是
+      <code class="systemitem">example.net</code>， 您的用户名是
+      <code class="systemitem">user</code>， 您把自己的机器称作
+      <code class="systemitem">bsd.home</code>， 而您的 ISP 告诉您可以使用
+      <code class="systemitem">relay.example.net</code> 来转发邮件。</p><p>为了从邮箱收取邮件， 需要安装一个收信代理。
+      <span class="application">fetchmail</span> 是一个能够支持许多种不同协议的不错的选择。
+      这个程序可以通过 package 或 Ports Collection (<span class="package">mail/fetchmail</span>) 来安装。
+      通常， 您的 <acronym class="acronym">ISP</acronym> 会提供 <acronym class="acronym">POP</acronym>。
+      如果您使用用户 <acronym class="acronym">PPP</acronym>，您还可以在 Internet 连接建立时自动地抓取邮件，
+      这可以通过在
+      <code class="filename">/etc/ppp/ppp.linkup</code> 中增加如下的项来实现：</p><pre class="programlisting">MYADDR:
+!bg su user -c fetchmail</pre><p>如果您正使用 <span class="application">sendmail</span> (如下所示)
+      来为非本地用户传送邮件，
+      则可能需要让 <span class="application">sendmail</span> 在您的
+      Internet 连接建立时立即传送邮件队列。
+      要完成这项工作， 应该把下面的命令放到
+      <code class="filename">/etc/ppp/ppp.linkup</code> 中的
+      <code class="command">fetchmail</code> 之后</p><pre class="programlisting">  !bg su user -c "sendmail -q"</pre><p>假设您在 <code class="systemitem">bsd.home</code> 上有一个
+      <code class="systemitem">user</code> 用户。 在 <code class="systemitem">bsd.home</code> 上的
+      <code class="systemitem">user</code> 主目录中创建一个
+      <code class="filename">.fetchmailrc</code> 文件：</p><pre class="programlisting">poll example.net protocol pop3 fetchall pass MySecret</pre><p>因为包含了密码 <code class="literal">MySecret</code>， 这个文件应该只有
+      <code class="systemitem">user</code> 可读。</p><p>要使用正确的
+      <code class="literal">from:</code> 头来发送文件， 您必须告诉
+      <span class="application">sendmail</span> 使用
+      <code class="email">&lt;<a xmlns="" class="email" href="mailto:user@example.net">user@example.net</a>&gt;</code> 而不是i
+      <code class="email">&lt;user@bsd.home&gt;</code>。
+      另外， 您可能也需要要求
+      <span class="application">sendmail</span> 通过 <code class="systemitem">relay.example.net</code> 来发送邮件，
+      以便更快地传送它们。</p><p>以下的 <code class="filename">.mc</code> 文件应该可以满足您的需求：</p><pre class="programlisting">VERSIONID(`bsd.home.mc version 1.0')
+OSTYPE(bsd4.4)dnl
+FEATURE(nouucp)dnl
+MAILER(local)dnl
+MAILER(smtp)dnl
+Cwlocalhost
+Cwbsd.home
+MASQUERADE_AS(`example.net')dnl
+FEATURE(allmasquerade)dnl
+FEATURE(masquerade_envelope)dnl
+FEATURE(nocanonify)dnl
+FEATURE(nodns)dnl
+define(`SMART_HOST', `relay.example.net')
+Dmbsd.home
+define(`confDOMAIN_NAME',`bsd.home')dnl
+define(`confDELIVERY_MODE',`deferred')dnl</pre><p>如何转换这个 <code class="filename">.mc</code> 文件到
+	  <code class="filename">sendmail.cf</code> 文件的细节，请参考前面的章节。
+	  另外，在更新 <code class="filename">sendmail.cf</code> 文件后，
+	  不要忘记重启 <span class="application">sendmail</span>。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="outgoing-only.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="SMTP-Auth.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.8. 只发送邮件的配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.10. SMTP 验证</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

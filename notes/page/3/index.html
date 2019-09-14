@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>等一个晴天</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="等一个晴天">
+<meta property="og:url" content="https://www.gehaowu.com/page/3/index.html">
+<meta property="og:site_name" content="等一个晴天">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="等一个晴天">
+<link rel="alternative" href="/notes/atom.xml" title="等一个晴天" type="application/atom+xml">
+<link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/notes/css/style.css">
+<script type="text/javascript" src="/js/google-analytics.js" async="async" defer="defer"></script>
+<script type="text/javascript" src="/js/baidu-analytics.js" async="async" defer="defer"></script>
+</head>
+<body>
+<div id="container">
+<div id="wrap">
+<header id="header">
+	<div id="banner"></div>
+		<div id="header-outer" class="outer">
+			<div id="header-title" class="inner">
+				<h1 id="logo-wrap"><a href="/notes/" id="logo">等一个晴天</a></h1>
+				<h2 id="subtitle-wrap"><a href="/notes/" id="subtitle">记录 &amp; 监督</a></h2>
+			</div>
+		<div id="header-inner" class="inner">
+			<nav id="main-nav"><a id="main-nav-toggle" class="nav-icon"></a><a class="main-nav-link" href="/notes/notes/">主页</a><a class="main-nav-link" href="/notes/notes/archives">归档</a><a class="main-nav-link" href="/notes/">关于</a></nav>
+			<nav id="sub-nav"><a id="nav-rss-link" class="nav-icon" href="/notes/atom.xml" title="RSS Feed"></a><a id="nav-search-btn" class="nav-icon" title="Search"></a></nav>
+		<div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.gehaowu.com"></form>
+      </div>
+	</div>
+</div>
+<script>var d = new Date();var m = d.getMinutes();var num = Math.ceil((m + 1) / (60 / 6));document.getElementById("banner").style.backgroundImage = "url(/notes/images/banner" + num + ".jpg)";</script>
+</header>
+<div class="outer">
+<section id="main">
+  
+    <article id="post-Building-VPN-network" class="article article-type-post" itemscope itemprop="blogPost">
+	<div class="article-meta">
+		<a href="/notes/2015/09/Building-VPN-network/" class="article-date">
+  <time datetime="2015-09-20T02:14:50.000Z" itemprop="datePublished">2015-09-20</time>
+</a>
+		
+  <div class="article-category">
+    <a class="article-category-link" href="/notes/categories/信息技术/">信息技术</a>
+  </div>
+
+	</div>
+	<div class="article-inner">
+		
+		
+			<header class="article-header">
+				
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/notes/2015/09/Building-VPN-network/">构建 VPN 网络服务</a>
+    </h1>
+  
+
+			</header>
+	<div class="article-entry" itemprop="articleBody">
+		
+			<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p><strong>朋友公司希望启用远程办公，所以稍微考虑考虑，就准备搞个 VPN 来实现登陆内部网络</strong></p>
+<p>关于更多远程办公相关信息请 Google <a href="https://www.google.com/?gws_rd=cr,ssl#safe=strict&amp;q=VPN+%E8%BF%9C%E7%A8%8B%E5%8A%9E%E5%85%AC">VPN 远程办公</a></p>
+<h2 id="在-FreeBSD-上用-mpd5-构建-PPTP-VPN"><a href="#在-FreeBSD-上用-mpd5-构建-PPTP-VPN" class="headerlink" title="在 FreeBSD 上用 mpd5 构建 PPTP VPN"></a>在 FreeBSD 上用 mpd5 构建 PPTP VPN</h2><h3 id="安装-PPTP-服务："><a href="#安装-PPTP-服务：" class="headerlink" title="安装 PPTP 服务："></a>安装 PPTP 服务：</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Star</span></div><div class="line">portsnap fetch update					<span class="comment">#更新ports</span></div><div class="line"><span class="built_in">cd</span> /usr/ports/net/mpd5					<span class="comment">#or pkg install -y mpd5</span></div><div class="line">make install clean</div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+		
+			<p class="article-more-link"><a href="/notes/2015/09/Building-VPN-network/#more">阅读全文 »</a></p>
+		
+	</div>
+	<footer class="article-footer"><a data-url="https://www.gehaowu.com/notes/2015/09/Building-VPN-network/" data-id="civyxij8f001w9hns0va5hcwz" class="article-share-link">分享</a>
+		
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/FreeBSD/">FreeBSD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/PPTP/">PPTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/VPN/">VPN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/信息技术/">信息技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/开源/">开源</a></li></ul>
+
+	</footer>
+</div>
+</article>
+
+
+  
+    <article id="post-Upgrade-VPS-FreeBSD-DigitalOcean" class="article article-type-post" itemscope itemprop="blogPost">
+	<div class="article-meta">
+		<a href="/notes/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/" class="article-date">
+  <time datetime="2015-09-13T07:49:26.000Z" itemprop="datePublished">2015-09-13</time>
+</a>
+		
+  <div class="article-category">
+    <a class="article-category-link" href="/notes/categories/信息技术/">信息技术</a>
+  </div>
+
+	</div>
+	<div class="article-inner">
+		
+		
+			<header class="article-header">
+				
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/notes/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/">升级 DigitalOcean VPS 里的 FreeBSD</a>
+    </h1>
+  
+
+			</header>
+	<div class="article-entry" itemprop="articleBody">
+		
+			<p>猜猜怎么升级的。。哈哈哈。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/09/freebsdr.png" alt="FreeBSD"></p>
+		
+			<p class="article-more-link"><a href="/notes/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/#more">阅读全文 »</a></p>
+		
+	</div>
+	<footer class="article-footer"><a data-url="https://www.gehaowu.com/notes/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/" data-id="civyxij7z001t9hns2ag5kggc" class="article-share-link">分享</a>
+		
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/DigitalOcean/">DigitalOcean</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/FreeBSD/">FreeBSD</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/信息技术/">信息技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/开源/">开源</a></li></ul>
+
+	</footer>
+</div>
+</article>
+
+
+  
+    <article id="post-Hostker-forced-HTTPS" class="article article-type-post" itemscope itemprop="blogPost">
+	<div class="article-meta">
+		<a href="/notes/2015/09/Hostker-forced-HTTPS/" class="article-date">
+  <time datetime="2015-09-12T02:20:05.000Z" itemprop="datePublished">2015-09-12</time>
+</a>
+		
+  <div class="article-category">
+    <a class="article-category-link" href="/notes/categories/信息技术/">信息技术</a>
+  </div>
+
+	</div>
+	<div class="article-inner">
+		
+		
+			<header class="article-header">
+				
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/notes/2015/09/Hostker-forced-HTTPS/">Hostker 主机的优化配置</a>
+    </h1>
+  
+
+			</header>
+	<div class="article-entry" itemprop="articleBody">
+		
+		<!-- Table of Contents -->
+		
+		<p>有点贝壳，捣腾了几天 Hostker 玩，，，哈哈哈</p>
+<p>写个 .htaccess 来强制 HTTPS 跳转了</p>
+<h2 id="没有-HTTPS-如何装逼。。。"><a href="#没有-HTTPS-如何装逼。。。" class="headerlink" title="没有 HTTPS 如何装逼。。。"></a>没有 HTTPS 如何<em>装逼</em>。。。<img src="https://static.gehaowu.com/notes/2015/09/HTTPS.png" alt="HTTPS"></h2><h2 id="htaccess-配置文件："><a href="#htaccess-配置文件：" class="headerlink" title=".htaccess 配置文件："></a>.htaccess 配置文件：</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">### 我的 Hostker 主机 .htaccess 配置</span></div><div class="line"><span class="comment">## 启用地址重写模块</span></div><div class="line">RewriteEngine On</div><div class="line"><span class="comment"># 针对 Hostker 主机的 SSL 监听方案</span></div><div class="line">RewriteCond %&#123;HTTP:KERSSL&#125; !on</div><div class="line"><span class="comment"># 全局 HTTPS 并强制跳转带 www. 域名模式</span></div><div class="line">RewriteRule .* https://www.gehaowu.com/<span class="variable">$1</span> [R=301,L]</div><div class="line"><span class="comment">## 设置出错页面</span></div><div class="line"><span class="comment"># 设置404 页</span></div><div class="line">ErrorDocument 404 /404.html</div><div class="line"><span class="comment">## 设置缓存策略</span></div><div class="line"><span class="comment"># 启用缓存功能</span></div><div class="line">ExpiresActive On</div><div class="line"><span class="comment"># 默认全局缓存时间为3天</span></div><div class="line">ExpiresDefault <span class="string">"access plus 3 days"</span></div><div class="line"><span class="comment"># 指定文件缓存5天</span></div><div class="line">&lt;FilesMatch <span class="string">"\.(css|gif|jpeg|jpg|js|png|ico|bmp|svg|doc|pdf|mp3|ogg|mp4|mpeg|webm|eot|ttf|woff)$"</span>&gt;</div><div class="line">ExpiresDefault <span class="string">"access plus 5 days"</span></div><div class="line">&lt;/FilesMatch&gt;</div><div class="line"><span class="comment"># 指定文本文件缓存1天</span></div><div class="line">&lt;FilesMatch <span class="string">"\.(htm|html|xhtml|shtml|xml|rss|atom|txt)$"</span>&gt;</div><div class="line">ExpiresDefault <span class="string">"access plus 1 days"</span></div><div class="line">&lt;/FilesMatch</div></pre></td></tr></table></figure>
+<p>参考：<a href="https://www.keinx.com/2015/ssl.html" target="_blank" rel="external">博客启用SSL访问数据更安全</a></p>
+
+	</div>
+	<footer class="article-footer"><a data-url="https://www.gehaowu.com/notes/2015/09/Hostker-forced-HTTPS/" data-id="civyxij7v001r9hnstkakfq36" class="article-share-link">分享</a>
+		
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/HTTPS/">HTTPS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/Hostker/">Hostker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/SSL/">SSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/信息技术/">信息技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/开源/">开源</a></li></ul>
+
+	</footer>
+</div>
+</article>
+
+
+  
+    <article id="post-NGINXHTTP2" class="article article-type-post" itemscope itemprop="blogPost">
+	<div class="article-meta">
+		<a href="/notes/2015/08/NGINXHTTP2/" class="article-date">
+  <time datetime="2015-08-31T12:44:45.000Z" itemprop="datePublished">2015-08-31</time>
+</a>
+		
+  <div class="article-category">
+    <a class="article-category-link" href="/notes/categories/信息技术/">信息技术</a>
+  </div>
+
+	</div>
+	<div class="article-inner">
+		
+		
+			<header class="article-header">
+				
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/notes/2015/08/NGINXHTTP2/">为 NGINX 开启 HTTP2 功能</a>
+    </h1>
+  
+
+			</header>
+	<div class="article-entry" itemprop="articleBody">
+		
+			<p><img src="https://static.gehaowu.com/notes/2015/08/FIREFOXHTTP2.png" alt="FireFox HTTP/2"></p>
+<h2 id="安装-NGINX-时启用-HTTP-2-支持"><a href="#安装-NGINX-时启用-HTTP-2-支持" class="headerlink" title="安装 NGINX 时启用 HTTP/2 支持"></a>安装 NGINX 时启用 HTTP/2 支持</h2><p>意外从 <a href="https://www.fifiblog.com">LittleGreyGrey 君</a>那了解到，NGINX-1.9 已经支持 HTTP/2 ，</p>
+<p>如果您使用的是 FreeBSD 操作系统，那么您只需使用 Ports 里的 /usr/ports/www/nginx-devel 包就可以完美支持HTTP2了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">portsnap fetch update </div><div class="line"><span class="built_in">cd</span> /usr/ports/www/nginx-devel &amp;&amp;make config</div></pre></td></tr></table></figure>
+<p>选中 HTTPV2就OK了，记得关闭 SDPY 协议，然后安装就可以了<br>
+		
+			<p class="article-more-link"><a href="/notes/2015/08/NGINXHTTP2/#more">阅读全文 »</a></p>
+		
+	</div>
+	<footer class="article-footer"><a data-url="https://www.gehaowu.com/notes/2015/08/NGINXHTTP2/" data-id="civyxij7r001o9hnsrcq1puvj" class="article-share-link">分享</a>
+		
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/HTTP2/">HTTP2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/HTTPS/">HTTPS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/NGINX/">NGINX</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/SSL/">SSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/信息技术/">信息技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/开源/">开源</a></li></ul>
+
+	</footer>
+</div>
+</article>
+
+
+  
+    <article id="post-Implement-HTTPS-feature-through-VeryCloud-personal-website" class="article article-type-post" itemscope itemprop="blogPost">
+	<div class="article-meta">
+		<a href="/notes/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/" class="article-date">
+  <time datetime="2015-08-02T08:36:34.000Z" itemprop="datePublished">2015-08-02</time>
+</a>
+		
+  <div class="article-category">
+    <a class="article-category-link" href="/notes/categories/信息技术/">信息技术</a>
+  </div>
+
+	</div>
+	<div class="article-inner">
+		
+		
+			<header class="article-header">
+				
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/notes/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/">通过 VeryCloud 为个人网站实现 HTTPS 功能</a>
+    </h1>
+  
+
+			</header>
+	<div class="article-entry" itemprop="articleBody">
+		
+			<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>提高国内用户的访问体验，并实现 HTTPS 功能。</p>
+<h2 id="必备条件"><a href="#必备条件" class="headerlink" title="必备条件"></a>必备条件</h2><p>1，你要有个域名<br>2，你要有备案号<br>3，你要有备案号<br>4，你要有备案号</p>
+<p>重要的事情说三遍 →_→<br>
+		
+			<p class="article-more-link"><a href="/notes/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/#more">阅读全文 »</a></p>
+		
+	</div>
+	<footer class="article-footer"><a data-url="https://www.gehaowu.com/notes/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/" data-id="civyxij7n001l9hnswhn8zf3c" class="article-share-link">分享</a>
+		
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/Github/">Github</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/HTTPS/">HTTPS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/SSL/">SSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/VeryCloud/">VeryCloud</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/信息技术/">信息技术</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/notes/tags/开源/">开源</a></li></ul>
+
+	</footer>
+</div>
+</article>
+
+
+  
+  
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/notes/page/2/">&laquo; 上一页</a><a class="page-number" href="/notes/">1</a><a class="page-number" href="/notes/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/notes/page/4/">4</a><a class="page-number" href="/notes/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/notes/page/7/">7</a><a class="extend next" rel="next" href="/notes/page/4/">下一页 &raquo;</a>
+    </nav>
+  
+</section>
+<aside id="sidebar">
+<div class="widget-wrap">
+  <!--<h3 class="widget-title">关于</h3>-->
+  <br><br>
+  <div class="widget">
+  <ul class="entry">
+  <h3>访客，您好！！！<br><br>
+  欢迎来到我的互联网记事本，<br>这是我的个人主页笔记模块，<br>关注工作，记录生活。</h3>
+  <br>
+  <h4>我是学院派，您需要我的协助？<br>
+  请联系我：<br>
+  &nbsp;&nbsp;C3D0 BF84 791E D455 F01C<br>
+  &nbsp;&nbsp;BA36 4A11 BB72 B7C9 977A</h4>
+  </ul>
+  </div>
+</div>
+
+<div class="widget-wrap">
+  <h3 class="widget-title">服务架构</h3>
+  <div class="widget">
+  <ul class="entry">
+  <h3>
+  主机服务 <a href="/go/aliyun" target="_blank" rel="nofollow">阿里云</a><br>
+  域名服务 <a href="/go/namesilo" target="_blank" rel="nofollow">NameSilo</a><br>
+  内容分发 <a href="/go/upyun" target="_blank" rel="nofollow">又拍云</a><br>
+  静态加速 <a href="/go/qiniu" target="_blank" rel="nofollow">七牛云存储</a><br>
+  提供技术支持：<br>
+  <a href="https://www.bitmoe.com" target="_blank">深圳比特萌信息技术有限公司</a>
+  </h3>
+  </ul>
+  </div>
+</div>
+
+
+  <div class="widget-wrap">
+    <h3 class="widget-title">文章分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/notes/categories/Excel/">Excel</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/notes/categories/信息技术/">信息技术</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/notes/categories/碎碎念/">碎碎念</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/notes/categories/财务会计/">财务会计</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/notes/tags/301/" style="font-size: 10px;">301</a> <a href="/notes/tags/CDN/" style="font-size: 10px;">CDN</a> <a href="/notes/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/notes/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/notes/tags/DNSSEC/" style="font-size: 10px;">DNSSEC</a> <a href="/notes/tags/DigitalOcean/" style="font-size: 10px;">DigitalOcean</a> <a href="/notes/tags/Excel/" style="font-size: 10px;">Excel</a> <a href="/notes/tags/FreeBSD/" style="font-size: 17.5px;">FreeBSD</a> <a href="/notes/tags/Github/" style="font-size: 16.25px;">Github</a> <a href="/notes/tags/HEXO/" style="font-size: 10px;">HEXO</a> <a href="/notes/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/notes/tags/HTTPS/" style="font-size: 13.75px;">HTTPS</a> <a href="/notes/tags/Hostker/" style="font-size: 10px;">Hostker</a> <a href="/notes/tags/IE/" style="font-size: 10px;">IE</a> <a href="/notes/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/notes/tags/MINGW64/" style="font-size: 10px;">MINGW64</a> <a href="/notes/tags/NGINX/" style="font-size: 15px;">NGINX</a> <a href="/notes/tags/PPTP/" style="font-size: 10px;">PPTP</a> <a href="/notes/tags/Reaver/" style="font-size: 10px;">Reaver</a> <a href="/notes/tags/SSL/" style="font-size: 17.5px;">SSL</a> <a href="/notes/tags/TTY/" style="font-size: 10px;">TTY</a> <a href="/notes/tags/VPN/" style="font-size: 10px;">VPN</a> <a href="/notes/tags/VeryCloud/" style="font-size: 10px;">VeryCloud</a> <a href="/notes/tags/WPS/" style="font-size: 10px;">WPS</a> <a href="/notes/tags/netcraft/" style="font-size: 10px;">netcraft</a> <a href="/notes/tags/个人主页/" style="font-size: 10px;">个人主页</a> <a href="/notes/tags/主办会计/" style="font-size: 10px;">主办会计</a> <a href="/notes/tags/信息技术/" style="font-size: 20px;">信息技术</a> <a href="/notes/tags/其它/" style="font-size: 11.25px;">其它</a> <a href="/notes/tags/利率/" style="font-size: 10px;">利率</a> <a href="/notes/tags/加速乐/" style="font-size: 10px;">加速乐</a> <a href="/notes/tags/商业/" style="font-size: 10px;">商业</a> <a href="/notes/tags/地方教育费附加/" style="font-size: 10px;">地方教育费附加</a> <a href="/notes/tags/增值税/" style="font-size: 10px;">增值税</a> <a href="/notes/tags/安全/" style="font-size: 11.25px;">安全</a> <a href="/notes/tags/完美世界/" style="font-size: 10px;">完美世界</a> <a href="/notes/tags/工业/" style="font-size: 10px;">工业</a> <a href="/notes/tags/开源/" style="font-size: 18.75px;">开源</a> <a href="/notes/tags/投资/" style="font-size: 10px;">投资</a> <a href="/notes/tags/收益/" style="font-size: 10px;">收益</a> <a href="/notes/tags/教育费附加/" style="font-size: 10px;">教育费附加</a> <a href="/notes/tags/温州碧桂园/" style="font-size: 10px;">温州碧桂园</a> <a href="/notes/tags/照片/" style="font-size: 10px;">照片</a> <a href="/notes/tags/碎碎念/" style="font-size: 17.5px;">碎碎念</a> <a href="/notes/tags/网络/" style="font-size: 13.75px;">网络</a> <a href="/notes/tags/财务会计/" style="font-size: 12.5px;">财务会计</a> <a href="/notes/tags/贷款/" style="font-size: 10px;">贷款</a> <a href="/notes/tags/附加税/" style="font-size: 10px;">附加税</a> <a href="/notes/tags/音乐/" style="font-size: 10px;">音乐</a>
+    </div>
+  </div>
+
+
+  <div class="widget-wrap">
+    <h3 class="widget-title">文章归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2016/11/">十一月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2016/05/">五月 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2016/03/">三月 2016</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/12/">十二月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/11/">十一月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/09/">九月 2015</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/08/">八月 2015</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/07/">七月 2015</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/06/">六月 2015</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/notes/archives/2015/05/">五月 2015</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/notes/2016/11/daemon-xin/">抽空把 Daemon.xin 新版上线</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2016/05/To-reduce-the-VAT-accounting-treatment/">税收减免账务处理</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2016/05/VLOOKUPPivotTable/">VLOOKUP 与 透视表</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2016/03/another-year/">似乎，又一年，你好 2016 ！</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/12/Add-DNSSEC-for-Domain/">为域名添加 DNSSEC 记录</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/11/freebsd-upgrade/">【流氓方案】 FreeBSD 系统的强行跨版本更新</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/nginx-https-config/">更新我的 NGINX 配置文件</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/forcibly-pull-github-repository/">强制拉取 Github 仓库内容</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/CDN-to-accelerate-static-resources/">静态资源临时重定向到CDN实现网站加速</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/MINGW64-HEXO-TTY-ERROR/">MINGW64环境更新HEXO到Github提示TTY错误</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/Building-VPN-network/">构建 VPN 网络服务</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/">升级 DigitalOcean VPS 里的 FreeBSD</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/09/Hostker-forced-HTTPS/">Hostker 主机的优化配置</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/08/NGINXHTTP2/">为 NGINX 开启 HTTP2 功能</a>
+          </li>
+        
+          <li>
+            <a href="/notes/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/">通过 VeryCloud 为个人网站实现 HTTPS 功能</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+<div class="widget-wrap">
+  <h3 class="widget-title">友情链接</h3>
+  <div class="widget">
+  <ul class="entry">
+  <h4><a href="/notes/addlinks/">→ → → 申请友情链接？？？</a></h4>
+  <li>- - - - - - - - - - - - - - - - - - - - - - </li>
+  <li><a href="https://www.bitmoe.com" target="_blank">深圳比特萌信息技术有限公司</a></li>
+  <li><a href="https://qistchan.com" target="_blank">老&nbsp;&nbsp;&nbsp;陈</a> | BITMOE，qistchan.com</li>
+  <li><a href="https://ioliu.cn" target="_blank">老&nbsp;&nbsp;&nbsp;刘</a> | BITMOE，ioliu.cn</li>
+  <li><a href="https://www.gehaowu.com" target="_blank">老&nbsp;&nbsp;&nbsp;葛</a> | BITMOE，daemon.xin</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">老&nbsp;&nbsp;&nbsp;蔡</a> | BITMOE，whelamc.me</li>
+  <li><a href="https://www.haomwei.com" target="_blank">老&nbsp;&nbsp;&nbsp;魏</a> | BITMOE，haomwei.com</li>
+  <li><a href="https://dcryan.com/" target="_blank">老&nbsp;&nbsp;&nbsp;林</a> | BITMOE，napolin.cn</li>
+  <li><a href="https://www.lmintlcx.com" target="_blank">老&nbsp;&nbsp;&nbsp;罗</a> | BITMOE，lmintlcx.com</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">老&nbsp;&nbsp;&nbsp;安</a> | BITMOE，miracle.moe</li>
+  <li><a href="https://blog.delphij.net" target="_blank">李&nbsp;&nbsp;&nbsp;鑫</a> | FreeBSD，delphij's Chaos</li>
+  <li><a href="https://bsdelf.github.io" target="_blank">沈琰辉</a> | FreeBSD，bsdelf's Blog</li>
+  <li><a href="https://www.liurongxing.com" target="_blank">刘荣星</a> | FreeBSD，记录自己成长点滴</li>
+  <li><a href="http://www.7rack.info" target="_blank">轨&nbsp;&nbsp;&nbsp;迹</a> | FreeBSD，7rack</li>
+  <li><a href="http://lwhsu.org" target="_blank">許立文</a> | FreeBSD，Li-Wen's</li>
+  <li><a href="http://easun.org" target="_blank">路&nbsp;&nbsp;&nbsp;杨</a> | Perl，Easun.org</li>
+  <li><a href="http://eleveni386.7axu.com" target="_blank">Eleven</a> | Linux，Eleven.I386’s</li>
+  <li><a href="http://lilydjwg.is-programmer.com" target="_blank">依&nbsp;&nbsp;&nbsp;云</a> | Linux，Lilydjwg</li>
+  <li><a href="http://supercat-lab.org/" target="_blank">老&nbsp;&nbsp;&nbsp;猫</a> | Linux，SuperCat's</li>
+  <li><a href="https://blog.phoenixlzx.com" target="_blank">凤凰君</a> | Linux，Phoenix's island</li>
+  <li><a href="http://t.tiany.me" target="_blank">逸&nbsp;&nbsp;&nbsp;空</a> | Linux，天逸的技术随笔</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">绿&nbsp;&nbsp;&nbsp;葱</a> | Hexo，绿葱's Personal Notes</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">梦&nbsp;&nbsp;&nbsp;路</a> | Hexo，YumeMichi's</li>
+  <li><a href="http://qiancheng.me" target="_blank">千橙说</a> | Hexo，qiancheng.me</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">紫&nbsp;&nbsp;&nbsp;妖</a> | Hexo，web前端小屋</li>
+  <li><a href="http://ro2en.org" target="_blank">月&nbsp;&nbsp;&nbsp;寺</a> | Hexo，Rozen‘s Blog</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">drayy&nbsp;</a> | Hexo，drayy 的点点滴滴</li>
+  <li><a href="http://mingmings.org" target="_blank">宋明明</a> | Hexo，Operation Engineer</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">谭夏宁</a> | Hexo，Xianing Tan</li>
+  <li><a href="http://www.chengfeilong.com" target="_blank">成&nbsp;&nbsp;&nbsp;启</a> | Jekyll，一生想做优雅前端</li>
+  <li><a href="https://www.bitmoe.com/" target="_blank">老陈志</a> | WordPress，ichens.com</li>
+  <!--<li><a href="https://www.leavesongs.com" target="_blank">离别歌</a> | 安全，leavesongs.com</li>
+  <li><a href="http://xtian.me" target="_blank">郭晓湉</a> | 程序媛，X.Tian</li>
+  <li><a href="http://xiaohudie.net" target="_blank">小蝴蝶</a> | 程序媛，xiaohudie.net</li>
+  <li><a href="http://yexiqingxi.com" target="_blank">叶夕青</a> | 程序媛，浮华犹裳，倾尽锦年</li>
+  <li><a href="https://yu.gg" target="_blank">语の国</a> | 程序媛，yu.gg</li>-->
+  <li><a href="http://redraiment.com" target="_blank">张泽鹏</a> | 老乡，iKnowledge</li>
+  </ul>
+  <!--
+  <li><a href="http://kuangqi.me" target="_blank">锦瑟华年</a>：The Bloom of Youth | 锦瑟华年</li>
+  <li><a href="http://gengbiao.me" target="_blank">coney</a>：有些事情,再不去做就忘了.有些人,再不去找就没了</li>
+  <li><a href="http://www.arao.me" target="_blank">ARao Lin</a>：我们的征途是星辰大海</li>
+  <li><a href="http://x-forwarded-for.com" target="_blank">lumia_Prime's blog</a>：猫吃鱼，狗吃肉，奥特曼打小怪兽</li>
+  <li><a href="http://xiaomonster.xyz" target="_blank">Monster's blog</a>：Just So So ...</li>
+  <li><a href="http://www.wuwenliang.net" target="_blank">知行合一</a>：Do Not Go Gentle Into That Good Night</li>
+  <li><a href="https://diary.moe" target="_blank">Dsus4's Diary</a>：</li>
+  <li><a href="https://www.freejishu.com" target="_blank">freejishu的美丽世界</a>：一个全新的境界</li>
+  -->
+  </div>
+</div>
+
+<div class="widget-wrap">
+  <h3 class="widget-title">功能</h3>
+  <div class="widget">
+  <ul class="entry">
+  <h4><a href="/403.html">注册</a><br>
+    <a href="/403.html">登录</a><br>
+    <a href="/notes/atom.xml">日志 RSS</a><br>
+    <a href="/notes/atom.xml">评论 RSS</a><br>
+    <a href="https://hexo.io/" target="_blank">WordPress.com</a></h4>
+  </ul>
+  </div>
+</div></aside></div>
+<footer id="footer">
+<div class="outer">
+	<div id="footer-info" class="inner">
+		<!--Powered by <a href="https://www.freebsd.org/" target="_blank">FreeBSD</a> · <a href="http://nginx.org/" target="_blank">NGINX</a> · <a href="https://hexo.io/" target="_blank">Hexo</a>-->
+        <a href="https://www.bitmoe.com" target="_blank"><img src="/notes/images/bitmoe.png" height="55" /></a>&nbsp;&nbsp;
+		<a href="https://www.freebsd.org" target="_blank" rel="nofollow"><img src="/notes/images/powerani.gif" height="55" /></a>&nbsp;&nbsp;
+        <a href="https://www.apache.org" target="_blank" rel="nofollow"><img src="/notes/images/asf_logo.png" height="55" /></a>&nbsp;&nbsp;
+		<a href="/go/aliyun" target="_blank" rel="nofollow"><img src="/notes/images/aliyun.png" height="35" style="margin-bottom: 8px;" /></a><br>
+		Copyright &copy; 2011 - 2016 Haowu Ge. All rights reserved.
+	</div>
+</div>
+</footer>
+</div>
+<nav id="mobile-nav"><a href="/notes/notes/" class="mobile-nav-link">主页</a><a href="/notes/notes/archives" class="mobile-nav-link">归档</a><a href="/notes/" class="mobile-nav-link">关于</a></nav>
+
+<script src="https://static.bitmoe.com/jquery/2.2.4/jquery.min.js"></script>
+<link rel="stylesheet" href="/notes/fancybox/jquery.fancybox.css">
+<script src="/notes/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/notes/js/script.js"></script>
+
+</div>
+</body>
+</html>

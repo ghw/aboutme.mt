@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.4. DES、 Blowfish、 MD5， 以及 Crypt</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="securing-freebsd.html" title="14.3. 确保 FreeBSD 的安全" /><link rel="next" href="one-time-passwords.html" title="14.5. 一次性口令" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.4. DES、 Blowfish、 MD5， 以及 Crypt</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="securing-freebsd.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="one-time-passwords.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="crypt"></a>14.4. DES、 Blowfish、 MD5， 以及 Crypt</h2></div><div><span class="authorgroup">部分重写、更新来自 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Bill</span> <span class="surname">Swingle</span></span>. </span></div></div></div><a id="idp77247952" class="indexterm"></a><a id="idp77249104" class="indexterm"></a><a id="idp77249616" class="indexterm"></a><a id="idp77250128" class="indexterm"></a><a id="idp77250640" class="indexterm"></a><p><span class="trademark">UNIX</span>® 系统上的每个用户都有一个与其帐户关联的口令。
+      很显然， 密码只需要被这个用户和操作系统知道。
+      为了保证口令的私密性， 采用了一种称为 <span class="quote">“<span class="quote">单向散列</span>”</span>
+      的方法来处理口令， 简单地说， 很容易从口令推算出散列值，
+      反之却很难。 其实， 刚才那句话可能并不十分确切：
+      因为操作系统本身并不 <span class="emphasis"><em>真的</em></span> 知道您的口令。
+      它只知道口令 <span class="emphasis"><em>经过加密的形式</em></span>。 获取口令对应
+      <span class="quote">“<span class="quote">明文</span>”</span> 的唯一办法是采用暴力在口令可能的区间内穷举。</p><p>不幸的是，当 <span class="trademark">UNIX</span>® 刚刚出现时，安全地加密口令的唯一方法基于DES，
+      数据加密标准 ( the Data Encryption Standard )。
+      于是这给那些非美国居民带来了问题，
+      因为 DES 的源代码在当时不能被出口到美国以外的地方，
+      FreeBSD 必须找到符合美国法律，但又要与其他那些使用 DES
+      的 <span class="trademark">UNIX</span>® 版本兼容的办法。</p><p>解决方案是把加密函数库分割为两个，
+      于是美国的用户可以安装并使用 DES 函数库，
+      而国际用户则使用另外一套库提供的一种可以出口的加密算法。
+      这就是 FreeBSD 为什么使用 MD5 作为它的默认加密算法的原因。
+      MD5 据信要比 DES 更安全，因此，安装 DES 更多地是出于兼容目的。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77255376"></a>14.4.1. 识别您采用的加密算法</h3></div></div></div><p>现在这个库支持 DES、 MD5 和 Blowfish 散列函数。默认情况下， FreeBSD
+	使用 MD5 来加密口令。</p><p>可以很容易地识别 FreeBSD 使用哪种加密方法。
+	检查 <code class="filename">/etc/master.passwd</code> 文件中的加密密码是一种方法。
+	用 MD5 散列加密的密码通常要比用
+	DES 散列得到的长一些， 并且以
+	<code class="literal">$1$</code> 字符开始。 以
+	<code class="literal">$2a$</code> 开始的口令是通过
+	Blowfish 散列函数加密的。 DES 密码字符没有任何可以用于鉴别的特征，
+	但他们要比 MD5 短， 并且以不包括 <code class="literal">$</code> 在内的
+	64 个可显示字符来表示，
+	因此相对比较短的、没有以美元符号开头的字符串很可能是一个 DES 口令。</p><p>新口令所使用的密码格式是由 <code class="filename">/etc/login.conf</code>
+	中的 <code class="literal">passwd_format</code> 来控制的， 可供选择的算法包括
+	<code class="literal">des</code>, <code class="literal">md5</code> 和
+	<code class="literal">blf</code>。 请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=login.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">login.conf</span>(5)</span></a> 联机帮助以获得更进一步的详情。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="securing-freebsd.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="one-time-passwords.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.3. 确保 FreeBSD 的安全 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.5. 一次性口令</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

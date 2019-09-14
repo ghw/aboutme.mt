@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.2. 初步配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="next" href="configtuning-core-configuration.html" title="12.3. 核心配置" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.2. 初步配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="config-tuning.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-core-configuration.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-initial"></a>12.2. 初步配置</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75491152"></a>12.2.1. 分区规划</h3></div></div></div><a id="idp75491792" class="indexterm"></a><a id="idp75492304" class="indexterm"></a><a id="idp75493200" class="indexterm"></a><a id="idp75494096" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75494992"></a>12.2.1.1. 基本分区</h4></div></div></div><p>当使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a> 或者 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysinstall&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysinstall</span>(8)</span></a>
+	  来分割您的文件系统的时候，
+	  要记住硬盘驱动器外磁道传输数据要比从内磁道传输数据快。
+	  因此应该将小的和经常访问的文件系统放在驱动器靠外的位置，
+	  一些大的分区比如 <code class="filename">/usr</code>
+	  应该放在磁盘比较靠里的位置。
+	  以类似这样的顺序建立分区是一个不错的主意：root，swap，
+	  <code class="filename">/var</code>，
+          <code class="filename">/usr</code>。</p><p><code class="filename">/var</code> 分区的大小能反映您的机器使用情况。
+	  <code class="filename">/var</code> 文件系统用来存储邮件，
+          日志文件和打印队列缓存，
+	  特别是邮箱和日志文件可能会达到无法预料的大小，
+	  这主要取决于在您的系统上有多少用户和您的日志文件可以保存多长时间。
+	  大多数用户很少需要 <code class="filename">/var</code>
+          有 1GB 以上的闲置空间。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">有时候 <code class="filename">/var/tmp</code> 需要很多的磁盘空间。
+            在使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_add</span>(1)</span></a> 安装新的软件时，包管理工具会在
+            <code class="filename">/var/tmp</code> 中解压出一份临时拷贝。
+            大的软件包，像 <span class="application">Firefox</span>，
+            <span class="application">OpenOffice</span> 或者
+            <span class="application">LibreOffice</span>
+            在安装时如果 <code class="filename">/var/tmp</code>
+            中没有足够的空间就可能需要一些技巧了。</p></div><p><code class="filename">/usr</code>
+          分区存储很多用来系统运行所需要的文件例如
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ports&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">ports</span>(7)</span></a> (建议这样做) 和源代码 (可选的)。
+          ports 和基本系统的源代码在安装时都是可选的，
+	  但我们建议给这个分区至少保留 2GB 的可用空间。</p><p>当选择分区大小的时候，记住保留一些空间。
+	  用完了一个分区的空间而在另一个分区上还有很多，
+	  可能会导致出现一些错误。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">一些用户会发现 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysinstall&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysinstall</span>(8)</span></a> 的
+	  <code class="literal">Auto-defaults</code> 自动分区有时会分配给
+	  <code class="filename">/var</code> 和
+          <code class="filename">/</code> 较小的分区空间。
+	  分区应该精确一些并且大一些。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="swap-design"></a>12.2.1.2. 交换分区</h4></div></div></div><a id="idp75530064" class="indexterm"></a><a id="idp75530576" class="indexterm"></a><p>一般来讲，交换分区应该大约是系统内存 (RAM) 的两倍。
+	  例如，如果机器有 128M 内存，交换文件应该是 256M。
+	  较小内存的系统可以通过多一点地交换分区来提升性能。
+	  不建议小于 256 兆的交换分区，并且扩充您的内存应该被考虑一下。
+	  当交换分区最少是主内存的两倍的时候，内核的 VM (虚拟内存)
+	  页面调度算法可以将性能调整到最好。如果您给机器添加更多内存，
+	  配置太小的交换分区会导致 VM 页面扫描的代码效率低下。</p><p>在使用多块SCSI磁盘(或者不同控制器上的IDE磁盘)的大系统上，
+	  建议在每个驱动器上建立交换分区(直到四个驱动器)。
+	  交换分区应该大约一样大小。内核可以使用任意大小，
+	  但内部数据结构则是最大交换分区的 4 倍。保持交换分区同样的大小，
+	  可以允许内核最佳地调度交换空间来访问磁盘。
+	  即使不太使用，分配大的交换分区也是好的，
+	  在被迫重启之前它可以让您更容易的从一个失败的程序中恢复过来。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75531984"></a>12.2.1.3. 为什么要分区？</h4></div></div></div><p>一些用户认为一个单独的大分区将会很好，
+	  但是有很多原因会证明为什么这是个坏主意。首先，
+	  每个分区有不同的分区特性，因此分开可以让文件系统调整它们。
+	  例如，根系统和 <code class="filename">/usr</code> 一般只是读取，写入很少。
+	  很多读写频繁的被放在 <code class="filename">/var</code> 和
+	  <code class="filename">/var/tmp</code>中。</p><p>适当的划分一个系统， 在其中使用较小的分区， 这样，
+	  那些以写为主的分区将不会比以读为主的分区付出更高的代价。
+	  将以写为主的分区放在靠近磁盘的边缘，
+	  例如放在实际的大硬盘的前面代替放在分区表的后面，将会提高您需要的分区的
+	  I/O 性能。现在可能也需要在比较大的分区上有很好的 I/O 性能，
+	  把他们移动到磁盘外围不会带来多大的性能提升，反而把
+	  <code class="filename">/var</code> 移到外面会有很好的效果。最后涉及到安全问题。
+	  一个主要是只读的小的、整洁的根分区可以提高从一个严重的系统崩溃中恢复过来的机会。
+        </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="config-tuning.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-core-configuration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 12. 设置和调整 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.3. 核心配置</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

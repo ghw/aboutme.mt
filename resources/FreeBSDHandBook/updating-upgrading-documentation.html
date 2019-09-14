@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>23.4. 更新系统附带的文档</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="prev" href="updating-upgrading-portsnap.html" title="23.3. Portsnap： 一个 Ports Collection 更新工具" /><link rel="next" href="current-stable.html" title="23.5. 追踪开发分支" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.4. 更新系统附带的文档</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="updating-upgrading-portsnap.html">Prev</a> </td><th width="60%" align="center">Chapter 23. 更新与升级 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="current-stable.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="updating-upgrading-documentation"></a>23.4. 更新系统附带的文档</h2></div></div></div><a id="idp82622544" class="indexterm"></a><a id="idp82623056" class="indexterm"></a><p>文档是 FreeBSD 操作系统的组成部分。 最新的 FreeBSD 文档总是可以通过访问
+        <a class="link" href="http://www.freebsd.org/doc/" target="_top">FreeBSD 网站</a> 获得，
+        有些用户的网络可能很慢， 甚至完全没有网络。 则可以通过很多方法可以更新
+        FreeBSD 文档的本地副本。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="dsvn-doc"></a>23.4.1. 使用 <span class="application">Subversion</span> 来更新文档</h3></div></div></div><p>FreeBSD 文档的源代码可以使用 <span class="application">svn</span> 工具获得。
+            本节将介绍如何：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>安装文档工具链， 用于编译 FreeBSD 文档源代码所需的工具。</p></li><li class="listitem"><p>使用 <span class="application">svn</span> 工具下载文档源码到
+            <code class="filename">/usr/doc</code> 目录中。</p></li><li class="listitem"><p>从源代码编译 FreeBSD 文档， 并安装到
+            <code class="filename">/usr/share/doc</code> 目录。</p></li><li class="listitem"><p>认识一些由文档生成系统所提供的编译选项，
+            比如选择生成指定语言的部分文档， 或者输出指定格式。</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="installing-documentation-toolchain"></a>23.4.2. 安装 <span class="application">svn</span> 工具和文档工具链</h3></div></div></div><p>从源代码编译 FreeBSD 文档需要的工具， 并不是 FreeBSD 基本系统的组成部分，
+          因为这些工具需要大量的磁盘空间， 并且并不是对所有 FreeBSD 用户都需要，
+          它们只对那些活跃撰写 FreeBSD 新文档或经常从源代码更新文档的用户有用。</p><p>所需要的工具， 包括 <span class="application">svn</span> 工具，
+          都可以在 FreeBSD 文档计划维护的 <span class="package">textproc/docproj</span>
+          主 port 处安装。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果没有输出 <span class="trademark">PostScript</span>® 或 PDF 文档的需求， 可以考虑安装
+              <span class="package">textproc/docproj-nojadetex</span> 这个 port 。
+              这套文档工具链包含了除 <span class="application">teTeX</span>
+              排版引擎外的所有工具。 <span class="application">teTeX</span>
+              是一个很庞大的工具集， 因此如果没有 PDF 输出需求的话，
+              忽略它将是一个很明智的选择。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="updating-documentation-sources"></a>23.4.3. 更新文档源代码</h3></div></div></div><p>以下示例， 使用 <span class="application">svn</span> 工具通过 HTTPS 协议，
+          从美国西部镜像获取文档源代码的原始副本：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>svn checkout https://svn0.us-west.FreeBSD.org/doc/head /usr/doc</code></strong></pre><p>从现有的镜像站里就近选择
+          <a class="link" href="svn-mirrors.html" title="A.6. Subversion 镜像站">Subversion 镜像站</a> 。</p><p>初始下载文档源代码可能需要一些时间， 请您耐心等待直到它完成。</p><p>文档后续更新可以通过运行以下命令完成：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>svn update /usr/doc</code></strong></pre><p>初始签出源代码后， 提供了另一种由 <code class="filename">/usr/doc/Makefile</code>
+          提供的更新方法， 通过运行以下命令更新：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/doc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make update</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="updating-documentation-options"></a>23.4.4. 文档源代码中可调整的选项</h3></div></div></div><p>FreeBSD 文档的更新和编译系统支持一些方便只更新一部分文档，
+          或只编译特定格式及译文的选项。 这些选项可以在
+          <code class="filename">/etc/make.conf</code> 文件中配置， 也可以通过使用
+          <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">make</span>(1)</span></a> 命令行参数指定。</p><p>这些选项包括：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="varname">DOC_LANG</code></span></dt><dd><p>准备编译和安装的语言列表。 例如， 指定
+              <code class="literal">en_US.ISO8859-1</code> 时， 表示仅编译英文版的文档。</p></dd><dt><span class="term"><code class="varname">FORMATS</code></span></dt><dd><p>准备输出的格式列表。 目前， 系统支持
+              <code class="literal">html</code> 、 <code class="literal">html-split</code> 、
+              <code class="literal">txt</code> 、 <code class="literal">ps</code> 、
+              <code class="literal">pdf</code> 和 <code class="literal">rtf</code> 格式。</p></dd><dt><span class="term"><code class="varname">DOCDIR</code></span></dt><dd><p>准备安装文档的目录。 默认为
+              <code class="filename">/usr/share/doc</code> 目录。</p></dd></dl></div><p>了解 FreeBSD 其他可供配置的全局 <code class="command">make</code> 变量，
+          请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">make.conf</span>(5)</span></a> 。</p><p>有关 FreeBSD 文档构建系统更多支持的变量，
+          请参阅 <a class="link" href="../../../../doc/en_US.ISO8859-1/books/fdp-primer" target="_top">FreeBSD
+              文档计划入门之新手必读</a> 。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="updating-installed-documentation"></a>23.4.5. 从源代码安装 FreeBSD 文档</h3></div></div></div><p>在 <code class="filename">/usr/doc</code> 目录中下载好最新的文档快照后，
+          就可以开始编译文档了。</p><p>要更新 <code class="varname">DOC_LANG</code> 中指定的所有语言文档，
+          可以执行以下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/doc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install clean</code></strong></pre><p>如果只有某个特定语言的文档需要更新， 则可以切换到
+          <code class="filename">/usr/doc</code> 目录中的对应子目录执行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">make</span>(1)</span></a> 更新：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/doc/en_US.ISO8859-1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make update install clean</code></strong></pre><p>如果需要指定输出格式， 则可以添加 <code class="varname">FORMATS</code> 参数：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/doc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make FORMATS='html html-split' install clean</code></strong></pre><p>有关编辑和提交更正文档的信息， 请参阅
+          <a class="link" href="../../../../doc/en_US.ISO8859-1/books/fdp-primer" target="_top">FreeBSD
+              文档计划入门之新手必读</a> 。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="doc-ports"></a>23.4.6. 使用 Ports 更新文档</h3></div><div><span class="authorgroup">Based on the work of <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp82688720" class="indexterm"></a><a id="idp82689232" class="indexterm"></a><p>上一节介绍从源代码更新 FreeBSD 文档的方法。
+          基于源代码的更新的方法可能并不是对于所有的 FreeBSD 系统都可行有效。
+          从源代码构建， 需要建立<span class="emphasis"><em>文档工具链</em></span> ，
+          熟悉 <span class="application">svn</span> 工具和会从仓库检出源代码，
+          还有一些编译已检出代码的手工步骤。
+          本节介绍另一种使用 Ports Collection 来更新已安装文档的方法。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>下载并安装预编译文档快照， 这将无需在本地编译任何部份，
+            或安装文档工具链。</p></li><li class="listitem"><p>下载文档源代码， 并通过 ports 框架构建它们，
+            这将使得检出和编译的步骤更简易。</p></li></ul></div><p>以上两种更新 FreeBSD 文档的方法都是由 文档工程组 <code class="email">&lt;<a xmlns="" class="email" href="mailto:doceng@FreeBSD.org">doceng@FreeBSD.org</a>&gt;</code> 每月更新维护的
+          <span class="emphasis"><em>文档 ports</em></span> 所提供支持的。
+          它们都位于 FreeBSD Ports Collection 的
+          <a class="link" href="http://www.freshports.org/docs/" target="_top">docs</a> 目录下。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="doc-ports-install-make"></a>23.4.6.1. 编译和安装文档 Ports</h4></div></div></div><p>文档 ports 使用 ports 的构建框架使得文档的编译变得更加容易。
+        它能自动获取文档源代码， 并配合适当的环境设置和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">make</span>(1)</span></a> 命令行选项，
+        它使得安装和卸载文档变得像 FreeBSD 其他 port 或预编译包一样容易。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当在本地编译文档 ports 时， <span class="emphasis"><em>文档工具链</em></span> ports
+            会被列为依赖关系， 而被自动安装。</p></div><p>文档 ports 组织形式如下：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>第一种是 <span class="quote">“<span class="quote">主 port</span>”</span> ，
+              位于 <span class="package">misc/freebsd-doc-en</span> 下，
+              即安装所有英文文档的 ports 。</p></li><li class="listitem"><p>另外一种是 <span class="quote">“<span class="quote">文档 port 合集</span>”</span> ，
+              位于 <span class="package">misc/freebsd-doc-all</span> 下，
+              这将会构建并安装所有可用语言的文档。</p></li><li class="listitem"><p>最后一种是各种翻译版本的 <span class="quote">“<span class="quote">从 port</span>”</span> ，
+              比如： <span class="package">misc/freebsd-doc-hu</span> 就是匈牙利文版的文档。</p></li></ul></div><p>以下示例将会安装与
+        <code class="uri"><a class="uri" href="http://www.FreeBSD.org" target="_top">http://www.FreeBSD.org</a></code>
+        格式相同的， 使用的分章节的 <acronym class="acronym">HTML</acronym> 英文文档到
+        <code class="filename">/usr/local/share/doc/freebsd</code> 目录中，
+        通过 port 安装使用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/misc/freebsd-doc-en</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install clean</code></strong></pre><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="doc-ports-options"></a>23.4.6.1.1. 常见的调整选项</h5></div></div></div><p>有许多选项可以用来调整文档 ports 默认行为， 它们包括：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="varname">WITH_HTML</code></span></dt><dd><p>用于构建单一文件的 HTML 格式文档。 文档名视情况而定通常会保存为
+                  <code class="filename">article.html</code> 或
+                  <code class="filename">book.html</code> ， 另外会附带一些图片文件。</p></dd><dt><span class="term"><code class="varname">WITH_PDF</code></span></dt><dd><p>用于构建 <span class="trademark">Adobe</span>® 可移植文档格式 （ PDF ）文档。
+                  该格式的文档文件名视情况而定通常为
+                  <code class="filename">article.pdf</code> 或
+                  <code class="filename">book.pdf</code> 。</p></dd><dt><span class="term"><code class="varname">DOCBASE</code></span></dt><dd><p>用于指定文档安装目录。 默认为
+                  <code class="filename">/usr/local/share/doc/freebsd</code> 目录。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">默认安装目录与 <span class="application">svn</span> 方式的默认安装目录不同。
+                这是因为通常 ports 应用会被安装到 <code class="filename">/usr/local</code>
+                目录中。 这可以通过 <code class="varname">PREFIX</code>
+                环境变量来覆盖默认值。</p></div></dd></dl></div><p>以下使用此变量来安装匈牙利文版文档的 PDF 格式：</p><pre class="screen"><code class="prompt">#</code> cd /usr/ports/misc/freebsd-doc-hu
+<code class="prompt">#</code> make -DWITH_PDF DOCBASE=share/doc/freebsd/hu install clean</pre></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="doc-ports-install-package"></a>23.4.6.2. 使用文档预编译包</h4></div></div></div><p>正如前文所述， 通过 ports 从源代码编译生成文档，
+        需要在本地安装文档工具链并需要一些编译所需的磁盘空闲空间。
+        当资源不足以安装文档工具链或从源代码编译需要磁盘空闲空间时，
+        我们仍可以通过 ports 预先编译的文档快照版本安装。</p><p>文档工程组 <code class="email">&lt;<a xmlns="" class="email" href="mailto:doceng@FreeBSD.org">doceng@FreeBSD.org</a>&gt;</code> 每个月都会制作 FreeBSD 文档的快照版本的预编译包。
+        这些预编译包可以通过包管理工具进行管理， 比如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_add</span>(1)</span></a> ，
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_delete&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_delete</span>(1)</span></a> 等等。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当使用预编译包时， 将会安装指定语言相关的
+            <span class="emphasis"><em>所有</em></span> 可用的 FreeBSD 文档。</p></div><p>例如， 以下命令将安装匈牙利文最新版预编译文档包：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pkg_add -r hu-freebsd-doc</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">预编译包使用与对于 ports 不同的命名规则：
+            <code class="literal">lang-freebsd-doc</code> 。
+            这里的 <em class="replaceable"><code>lang</code></em> 是语言代码的简短形式，
+            比如 <code class="literal">hu</code> 表示匈牙利文，
+            <code class="literal">zh_cn</code> 表示简体中文。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="doc-ports-update"></a>23.4.6.3. 更新文档 Ports</h4></div></div></div><p>文档 ports 可以通过任何可以更新 port 的工具更新。
+        例如， 使用 <span class="package">ports-mgmt/portmaster</span>
+        工具通过预编译包方式更新匈牙利文预编译包：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -PP hu-freebsd-doc</code></strong></pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="updating-upgrading-portsnap.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="updating-upgrading.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="current-stable.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.3. Portsnap： 一个 Ports Collection 更新工具 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 23.5. 追踪开发分支</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

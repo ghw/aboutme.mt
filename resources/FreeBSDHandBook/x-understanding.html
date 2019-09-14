@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>6.2. X Window 术语</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="x11.html" title="Chapter 6. X Window 系统" /><link rel="prev" href="x11.html" title="Chapter 6. X Window 系统" /><link rel="next" href="x-install.html" title="6.3. 安装 Xorg" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.2. X Window 术语</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="x11.html">Prev</a> </td><th width="60%" align="center">Chapter 6. X Window 系统</th><td width="20%" align="right"> <a accesskey="n" href="x-install.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="x-understanding"></a>6.2. X Window 术语</h2></div></div></div><p>虽然您并不需要深入了解各种 X Window 组件的作用以及它们之间的相互影响，
+        但了解一些关于它们的基本知识还是很有必要的：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">X 服务器</span></dt><dd><p>X 一开始就是针对网络而设计的， 并采用了 <span class="quote">“<span class="quote">客户端-服务器</span>”</span> 架构模型。
+            在这个模型中， <span class="quote">“<span class="quote">X 服务器</span>”</span> 运行在有键盘， 显示器， 鼠标的计算机上。
+            服务器负责像是显示部分的管理， 处理来自键盘和鼠标的输入信息， 并与其他输入输出设备交互
+            (比如作为输入设备的触控板， 或者作为输出设备的投影仪)。
+            这点可能会让人产生困惑， 因为 X 术语与他们原本预想的不同。
+            他们原本以为 <span class="quote">“<span class="quote">X 服务器</span>”</span> 是运行在性能强劲的计算机上的， 而 <span class="quote">“<span class="quote">X 客户端</span>”</span> 则是
+            运行在他们桌面上的计算机上。</p></dd><dt><span class="term">X 客户端</span></dt><dd><p>每个 X 应用程序, 比如 <span class="application">XTerm</span> ， 或者 <span class="application">Firefox</span> ，
+            都是 <span class="quote">“<span class="quote">客户端程序</span>”</span> 。 客户端程序给服务器发消息， 如 <span class="quote">“<span class="quote">请在这些坐标上画一个窗口</span>”</span> ，
+        而服务器则返回处理消息， 如 <span class="quote">“<span class="quote">用户刚刚点击了确定按钮</span>”</span> 。</p><p>在家庭或小型办公环境中， X 服务器和 X 客户端通常在同一台计算机上运行。
+        另外也可以在一台性能不是很强劲的计算机上运行 X 服务器， 并在另外一台性能强劲的计算机上运行 X 客户端程序。
+        这种情况下， X 客户端和服务器之间的通信通过网络来完成。</p></dd><dt><span class="term">窗口管理器</span></dt><dd><p>X 没有规定窗口在屏幕上该如何显示、 如何移动光标、 使用快捷键切换窗口、
+        各个窗口标题栏的长相， 以及是否该有关闭按钮等等。
+        实际上， X 把这部分交给所谓 <span class="quote">“<span class="quote">窗口管理器</span>”</span> 的应用程序来管理。
+        有很多这样的 <a class="link" href="http://xwinman.org/" target="_top">窗口管理器</a> 程序可用。
+        每种窗口管理器， 都提供不同的界面和外观： 有一些支持 “虚拟桌面”、 有一些允许自定义按键来管理您的桌面、
+        一些有 <span class="quote">“<span class="quote">开始</span>”</span> 按钮、 一些支持自定义主题， 通过安装新的主题， 可以完全改变外观。
+        这些以及很多其他的窗口管理器， 都可以在 Ports Collection 的 <code class="filename">x11-wm</code> 分类目录里找到。</p><p>每种窗口管理器也有不同的配置机制； 有些需要手工来写配置文件，
+        而其它大部分都是可以通过 GUI 工具来完成的配置任务。</p></dd><dt><span class="term">桌面环境</span></dt><dd><p><span class="application">KDE</span> 和 <span class="application">GNOME</span> 都被认为是一个完整的桌面环境，
+          因为它们都包含了日常工作所需的整套软件。 比如有 Offcie 套件、 网页浏览器和游戏。</p></dd><dt><span class="term">焦点策略</span></dt><dd><p>窗口管理器负责鼠标的焦点策略（focus policy）。 它规定了哪个窗口正在积极接受按键输入，并显示哪个窗口处于活动状态。</p><p>您通常比较熟悉的是一个叫做 <span class="quote">“<span class="quote">点击对焦</span>”</span>（click-to-focus）的焦点策略。
+            也就是您在一个窗口上点击一下鼠标， 这个窗口就处于当前激活状态。
+            常见的焦点策略：
+            
+            <span class="quote">“<span class="quote">focus-follows-mouse</span>”</span> 策略， 即鼠标光标所在窗口获得焦点，如果移动到其它窗口则其它窗口获得焦点。
+            如果移动到根窗口（root window），那么跟窗口获得焦点。
+            <span class="quote">“<span class="quote">sloppy-focus</span>”</span> 策略，与 <span class="quote">“<span class="quote">focus-follows-mouse</span>”</span> 类似， 但它在鼠标移入根窗口的时候最近使用的窗口依旧具有焦点，
+            只有当光标进入新窗口后才改变。
+            <span class="quote">“<span class="quote">点击对焦</span>”</span> （click-to-focus） 焦点策略， 即当前窗口焦点由鼠标点击来获得。
+            窗口被“突出显示” ， 出现在所有其他窗口的前面。即使指针被移向了另一个窗口，所有的键盘输入 仍会被这个窗口接收。 
+            窗口被“突出显示” ， 出现在所有其他窗口的前面。即使指针被移向了另一个窗口，所有的键盘输入 仍会被这个窗口接收。</p><p>不同的窗口管理器支持不同的焦点策略。 所有窗口管理器都支持点击聚焦， 他们中的绝大多数也支持其他焦点政策。
+            它们具体支持哪些焦点策略，您可以查看它们的文档。咨询窗口管理器的文档，以确定哪些重点型号可供选择。</p></dd><dt><span class="term">窗口小部件</span></dt><dd><p>窗口小部件 （Widget） 只是针对用户接口中所有列举项目的一个术语， 它可以用某种方法来点击或操作； 如按钮、 复选框、 单选按钮、
+            图标，列表框等等。 有几个流行的小部件开发工具包，包括 <span class="application">KDE</span> 使用的Qt ， 和 <span class="application">GNOME</span> 使用的GTK+ 。
+            因此， 应用程序不同的外观， 取决与采用哪些小部件开发包。</p></dd></dl></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="x11.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="x11.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="x-install.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. X Window 系统 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 6.3. 安装 <span class="application">Xorg</span></td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

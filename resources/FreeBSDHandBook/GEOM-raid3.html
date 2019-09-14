@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.5. RAID3 - 使用专用校验设备的字节级条带</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="GEOM-mirror.html" title="19.4. RAID1 - 镜像" /><link rel="next" href="geom-ggate.html" title="19.6. GEOM Gate 网络设备" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.5. <acronym class="acronym">RAID</acronym>3 - 使用专用校验设备的字节级条带</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="GEOM-mirror.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="geom-ggate.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="GEOM-raid3"></a>19.5. <acronym class="acronym">RAID</acronym>3 - 使用专用校验设备的字节级条带</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Mark</span> <span class="surname">Gladman</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Daniel</span> <span class="surname">Gerzo</span></span>. </span></div><div><span class="authorgroup">Based on documentation by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp81276880" class="indexterm"></a><a id="idp81277776" class="indexterm"></a><p><acronym class="acronym">RAID</acronym>3 是一种将多个磁盘组成一个卷的技术，
+      在这个配置中包含一个专用于校验的盘。
+      在 <acronym class="acronym">RAID</acronym>3 系统中，
+      数据会以字节为单位拆分并写入除校验盘之外的全部驱动器中。 这意味着从
+      <acronym class="acronym">RAID</acronym>3 中读取数据时将会访问所有的驱动器。
+      采用多个磁盘控制器可以进一步改善性能。 <acronym class="acronym">RAID</acronym>3
+      阵列最多可以容忍其中的 1 个驱动器出现故障，
+      它可以提供全部驱动器总容量的 1 - 1/n，
+      此处 n 是阵列中的磁盘数量。 这类配置比较适合保存大容量的数据，
+      例如多媒体文件。</p><p>在建立
+      <acronym class="acronym">RAID</acronym>3 阵列时， 至少需要 3 块磁盘。
+      所有的盘的尺寸必须一致， 因为 I/O 请求会并发分派到不同的盘上。
+      另外， 由于
+      <acronym class="acronym">RAID</acronym>3 本身的设计，
+      盘的数量必须恰好是 3, 5, 9, 17, 等等 (2^n + 1)。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81281488"></a>19.5.1. 建立专用的 <acronym class="acronym">RAID</acronym>3 阵列</h3></div></div></div><p>在 FreeBSD 中， <acronym class="acronym">RAID</acronym>3
+	是通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=graid3&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">graid3</span>(8)</span></a> <acronym class="acronym">GEOM</acronym>
+	class 实现的。 在 FreeBSD 中建立专用的
+	<acronym class="acronym">RAID</acronym>3 阵列需要下述步骤。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">虽然理论上从
+	  <acronym class="acronym">RAID</acronym>3 阵列启动 FreeBSD 是可行的，
+	  但这并不常见， 也不推荐您这样做。</p></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>首先， 在引导加载器中用下面的命令加载 <code class="filename">geom_raid3.ko</code>
+	    内核模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>graid3 load</code></strong></pre><p>此外， 也可以通过命令行手工加载
+	    <code class="filename">geom_raid3.ko</code> 模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload geom_raid3.ko</code></strong></pre></li><li class="step"><p>创建用于挂载卷的挂点目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /multimedia/</code></strong></pre></li><li class="step"><p>确定将要加入阵列的磁盘设备名， 并创建新的
+	    <acronym class="acronym">RAID</acronym>3 设备。 最终， 这个设备将代表整个阵列。
+	    下面的例子使用三个未经分区的
+	    <acronym class="acronym">ATA</acronym> 磁盘：
+	    <code class="filename">ada1</code>
+	    和 <code class="filename">ada2</code>
+	    保存数据， 而
+	    <code class="filename">ada3</code>
+	    用于校验。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>graid3 label -v gr0 /dev/ada1 /dev/ada2 /dev/ada3</code></strong>
+Metadata value stored on /dev/ada1.
+Metadata value stored on /dev/ada2.
+Metadata value stored on /dev/ada3.
+Done.</pre></li><li class="step"><p>为新建的
+	    <code class="filename">gr0</code> 设备分区，
+	    并在其上创建 UFS 文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gpart create -s GPT /dev/raid3/gr0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>gpart add -t freebsd-ufs /dev/raid3/gr0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>newfs -j /dev/raid3/gr0p1</code></strong></pre><p>屏幕上会滚过许多数字， 这个过程需要一段时间才能完成。
+	    此后， 您就完成了创建卷的全部操作，
+	    可以挂载它了。</p></li><li class="step"><p>最后一步是挂载文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/raid3/gr0p1 /multimedia/</code></strong></pre><p>现在可以使用 <acronym class="acronym">RAID</acronym>3 阵列了。</p></li></ol></div><p>为了让上述配置在系统重启后继续可用， 还需要进行一些额外的配置操作。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>在挂载卷之前必须首先加载 <code class="filename">geom_raid3.ko</code> 模块。
+	    将下面的配置添加到
+	    <code class="filename">/boot/loader.conf</code> 文件中，
+	    可以让系统在引导过程中自动加载这个模块：</p><pre class="programlisting">geom_raid3_load="YES"</pre></li><li class="step"><p>您需要在
+	    <code class="filename">/etc/fstab</code> 文件中加入下列配置，
+	    以便让系统引导时自动挂载阵列上的文件系统：</p><pre class="programlisting">/dev/raid3/gr0p1	/multimedia	ufs	rw	2	2</pre></li></ol></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="GEOM-mirror.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="geom-ggate.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.4. RAID1 - 镜像 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 19.6. GEOM Gate 网络设备</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

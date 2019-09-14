@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.6. 配置 cron</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-starting-services.html" title="12.5. 启动服务" /><link rel="next" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.6. 配置 <code class="command">cron</code></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-starting-services.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-rcd.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-cron"></a>12.6. 配置 <code class="command">cron</code></h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp75602256" class="indexterm"></a><p>FreeBSD 最有用的软件包(utilities)中的一个是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a>。
+      <code class="command">cron</code> 软件在后台运行并且经常检查
+      <code class="filename">/etc/crontab</code> 文件。<code class="command">cron</code>
+      软件也检查 <code class="filename">/var/cron/tabs</code> 目录，搜索新的
+      <code class="filename">crontab</code> 文件。这些 <code class="filename">crontab</code>
+      文件存储一些 <code class="command">cron</code> 在特定时间执行任务的信息。</p><p><code class="command">cron</code> 程序使用两种不同类型的配置文件，
+      即系统 crontab 和用户 crontabs。 两种格式的唯一区别是第六个字段。
+      在系统 crontab 中，第六个字段是用于执行命令的用户名。
+      这给予了系统 crontab 以任意用户身份执行命令的能力。
+      在用户 crontab 中， 第六个字段是要执行的命令，
+      所有的命令都会以这个用户自己的身份执行；
+      这是一项重要的安全功能。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">同其他用户一样， <code class="systemitem">root</code> 用户也可以有自己的
+        crontab。 它不同于
+        <code class="filename">/etc/crontab</code> (也就是系统 crontab)。
+        由于有系统 crontab 的存在， 通常并不需要给
+        <code class="systemitem">root</code> 建立单独的用户 crontab。</p></div><p>让我们来看一下 <code class="filename">/etc/crontab</code> 文件：</p><pre class="programlisting"># /etc/crontab - root's crontab for FreeBSD
+#
+# $FreeBSD: src/etc/crontab,v 1.32 2002/11/22 16:13:39 tom Exp $
+# <a id="co-comments"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+#
+SHELL=/bin/sh
+PATH=/etc:/bin:/sbin:/usr/bin:/usr/sbin <a id="co-env"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+HOME=/var/log
+#
+#
+#minute	hour	mday	month	wday	who	command <a id="co-field-descr"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+#
+#
+*/5	*	*	*	*	root	/usr/libexec/atrun <a id="co-main"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-comments"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>像大多数 FreeBSD 配置文件一样，<code class="literal">#</code> 字符是注释。
+	  这样， 就可以编写注释来说明要执行什么操作， 以及这样做的原因。
+	  需要注意的是， 注释应该另起一行， 而不能跟命令放在同一行上，
+	  否则它们会被看成命令的一部分。 这个文件中的空行会被忽略。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-env"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>首先应该定义环境变量。等号
+	  (<code class="literal">=</code>) 字符用来定义任何环境变量，像这个例子用到了
+	  <code class="envar">SHELL</code>，<code class="envar">PATH</code> 和 <code class="envar">HOME</code>
+	  变量。如果 shell 行被忽略掉，<code class="command">cron</code> 将会用默认值
+	  <code class="command">sh</code>。如果 <code class="option">PATH</code> 变量被忽略，
+	  那么就没有默认值并且需要指定文件绝对位置。如果 <code class="option">HOME</code>
+	  被忽略，<code class="command">cron</code> 将用用执行者的 home 目录。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-field-descr"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这一行定义了七个字段。它们是 <code class="literal">minute</code>、
+	  <code class="literal">hour</code>、<code class="literal">mday</code>、
+	  <code class="literal">month</code>、<code class="literal">wday</code>、
+	  <code class="literal">who</code> 和 <code class="literal">command</code>。
+	  它们差不多已经说明了各自的用处。Minute 是命令要运行时的分钟，Hour
+	  跟 minute 差不多，只是用小时来表示。Mday 是每个月的天。Month 跟 hour
+	  还有 minute 都差不多，用月份来表示。wday 字段表示星期几。
+	  所有这些字段的值必须是数字并且用24小时制来表示。<span class="quote">“<span class="quote">who</span>”</span>
+	  字段是特别的，并且只在 <code class="filename">/etc/crontab</code> 文件中存在。
+	  这个字段指定了命令应该以哪个用户的身份来运行。当一个用户添加了他(她)的
+	  <code class="filename">crontab</code> 文件的时候，他们就会没有这个字段选项。最后，是
+	  <code class="literal">command</code> 字段。这是最后的一个字段，
+	  所以自然就是它指定要运行的程序。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-main"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p>最后一行定义了上面所说的值。注意这里我们有一个
+	  <code class="literal">*/5</code> 列表，紧跟着是一些 <code class="literal">*</code>
+	  字符。<code class="literal">*</code> 字符代表<span class="quote">“<span class="quote">开始到最后</span>”</span>，
+	  也可以被解释成 <span class="emphasis"><em>每次</em></span>。所以，根据这行，
+	  显然表明了无论在何时每隔 5 分钟以 <code class="systemitem">root</code>
+	  身份来运行 <code class="command">atrun</code> 命令。查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atrun&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">atrun</span>(8)</span></a>
+	  手册页以获得 <code class="command">atrun</code> 的更多信息。</p><p>命令可以有任意多个传递给它们的标志。无论怎样，
+	  扩展到多行的命令应该用反斜线(<span class="quote">“<span class="quote">\</span>”</span>)来续行。</p></td></tr></table></div><p>这是每个 <code class="filename">crontab</code> 文件的基本设置，
+      虽然它们有一个不同。第六行我们指定的用户名只存在于系统
+      <code class="filename">/etc/crontab</code> 文件。这个字段在普通用户的
+      <code class="filename">crontab</code> 文件中应该被忽略。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="configtuning-installcrontab"></a>12.6.1. 安装 Crontab</h3></div></div></div><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">绝对不要用这种方法来编辑/安装系统 crontab。
+	您需要做的只是使用自己喜欢的编辑器：
+	<code class="command">cron</code> 程序会注意到文件发生了变化，
+	并立即开始使用新的版本。参见
+	<a class="link" href="../../../../doc/en_US.ISO8859-1/books/faq/admin.html#ROOT-NOT-FOUND-CRON-ERRORS" target="_top">
+	这个 FAQ 项目 </a> 以了解进一步的情况。</p></div><p>要安装刚写好的用户
+	<code class="filename">crontab</code>，
+	首先使用最习惯的编辑器来创建一个符合要求格式的文件，然后用
+	<code class="command">crontab</code> 程序来完成。最常见的用法是：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>crontab crontab-file</code></strong></pre><p>在前面的例子中， <code class="filename">crontab-file</code> 是一个事先写好的
+    <code class="filename">crontab</code>。</p><p>还有一个选项用来列出安装的 <code class="filename">crontab</code> 文件：
+	只要传递 <code class="option">-l</code> 选项给 <code class="command">crontab</code>
+	然后看一下输出。</p><p>用户想不用模板(已经存在的文件)而直接安装他的 crontab 文件，用
+	<code class="command">crontab -e</code> 选项也是可以的。
+	它将会启动一个编辑器并且创建一个新文件，当这个文件被保存的时候，
+	它会自动的用 <code class="command">crontab</code> 来安装这个文件。
+      </p><p>如果您稍后想要彻底删除自己的用户 <code class="filename">crontab</code>
+	可以使用 <code class="command">crontab</code> 的 <code class="option">-r</code>
+	选项。
+      </p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-starting-services.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-rcd.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.5. 启动服务 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.7. 在 FreeBSD 中使用 rc</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

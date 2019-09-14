@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>1.3. 关于 FreeBSD 项目</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="introduction.html" title="Chapter 1. 引言" /><link rel="prev" href="nutshell.html" title="1.2. 欢迎来到 FreeBSD 的世界！" /><link rel="next" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">1.3. 关于 FreeBSD 项目</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="nutshell.html">Prev</a> </td><th width="60%" align="center">Chapter 1. 引言</th><td width="20%" align="right"> <a accesskey="n" href="bsdinstall.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="history"></a>1.3. 关于 FreeBSD 项目</h2></div></div></div><p>以下部分提供了有关项目的一些背景信息， 包括简史、 项目目标和项目开发模式。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="intro-history"></a>1.3.1. FreeBSD 简史</h3></div></div></div><a id="idp64619728" class="indexterm"></a><a id="idp64621008" class="indexterm"></a><a id="idp64622416" class="indexterm"></a><a id="idp64623440" class="indexterm"></a><a id="idp64624848" class="indexterm"></a><p>FreeBSD 项目于 1993 年初形成， 源自 Nate Williams 、 Rod Grimes 和 Jordan Hubbard
+          所维护的非官方 386BSD 补丁工具包。</p><a id="idp64652240" class="indexterm"></a><p>最初的目标是制作一份 386BSD 的修正快照版， 以解决一些补丁工具包机制不能够解决的的问题。
+          也许还有人记得， 最初的项目名称叫做 386BSD 0.5 或 386BSD Interim
+          其实就是这个原因。</p><a id="idp64654544" class="indexterm"></a><p>386BSD 是 Bill Jolitz 的操作系统，
+          这在当时已经大约有一年的分裂讨论。 由于补丁工具包在过去的每一天里都在急剧的膨胀，
+          我们一致同意决定提供一个临时的 <span class="quote">“<span class="quote">纯净（ cleanup ）</span>”</span> 版本来帮助 Bill 。
+          然而， Bill Jolitz 却在没指定如何将项目继续下去的情况， 突然退出了这个项目，
+          最终这个项目只能被迫停止了。</p><a id="idp64657744" class="indexterm"></a><a id="idp64658896" class="indexterm"></a><p>不久之后， 我们认为即便没有 Bill 的支持， 项目仍然有继续下去的价值，
+          因此我们采用了 David Greenman 的意见， 取名为 “FreeBSD” 。
+          在与最初的用户协调后， 我们确定了项目目标， 当项目开始实施后，
+          一切都变得清晰了。 Jordan 联系了光盘商 Walnut Creek CDROM ， 拓展 FreeBSD
+          的发行渠道， 以便那些不方便上网的用户可以以一种简单的方式获得。
+          Walnut Creek CDROM 不仅支持 FreeBSD 光盘计划， 还为此提供所需的计算机和高速网络接入。
+          那时， 如果没有 Walnut Creek CD-ROM 对一个完全无法预测为开前景的项目的空前信任，
+          FreeBSD 可能不能像它今天这样， 有如此深远的影响和如此迅速的发展速度。</p><a id="idp64665296" class="indexterm"></a><a id="idp64666320" class="indexterm"></a><a id="idp64667344" class="indexterm"></a><a id="idp64668624" class="indexterm"></a><a id="idp64669904" class="indexterm"></a><p>第一个以 CD-ROM （及网络） 发行的是 FreeBSD 1.0 ， 发行于 1993 年 10 月。
+          这个版本是基于 U.C. Berkeley 的 4.3BSD-Lite (<span class="quote">“<span class="quote">Net/2</span>”</span>) 磁带，
+          其中也有许多组件是由 386BSD 和自由软件基金会提供的。
+          对于第一次发行， 这算是相当成功的， 接着我们于 1994 年五月更为成功的发行了 FreeBSD 1.1 。</p><a id="idp64673360" class="indexterm"></a><a id="idp64674640" class="indexterm"></a><a id="idp64676048" class="indexterm"></a><a id="idp64677328" class="indexterm"></a><p>然而此后不久， 一个意外在 Novell 和 U.C. Berkeley 关于 Berkeley Net/2
+          磁带知识产权的诉讼确定之后形成。 U.C. Berkeley 接受了大部分 Net/2
+          程序源代码是 <span class="quote">“<span class="quote">侵占</span>”</span> 了属于 Novell 的资产， 事实上是当时不久之前从
+          AT&amp;T 那获得的； 作为回报， Berkeley 得到 Novell 的 <span class="quote">“<span class="quote">许诺</span>”</span>
+          在 4.4BSD-Lite 正式发行时， 将不再是侵占行为。
+          而所有现有的 Net/2 用户都被强烈建议转移到新版本上， 这包括了 FreeBSD ，
+          于是， 我们被要求于 1994 年六月前停止散布基于 Net/2 的产品。
+          在这个前提下， 项目在被允许的最后期限之前做了最后一次发行，
+          也就是 FreeBSD 1.1.5.1 。</p><p>接下来， FreeBSD 便开始了艰苦的从全新的和不太完整的 4.4BSD-Lite
+          的基础上重建自己。 <span class="quote">“<span class="quote">Lite</span>”</span> 版中， 由于 Berkeley 的 CSRG
+          删除了用于系统引导的绝大部分代码 （由于各种法律要求），
+          事实上， 当时的 4.4 版本的 Intel 平台的移植尚未完成。
+          直到 1994年十一月， 我们才完成本项目的移植工作，
+          并于同年十二月发布了 FreeBSD 2.0 。 尽管系统还比较粗糙，
+          但这个版本还是取得巨大的成功， 并于 1995年六月发布了更强大更易于安装的
+          FreeBSD 2.0.5 。</p><p>自此以后， FreeBSD 的每一次发行都相比前个版本提升一些稳定性， 速度和功能。</p><p>目前， 项目的长期开发版在 10.X-CURRENT (trunk) 分支中进行，
+          10.X 的快照版本的工作进度可以在
+          <a class="link" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/snapshots/" target="_top">快照服务器</a> 上获得。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="goals"></a>1.3.2. FreeBSD 项目的目标</h3></div><div><span class="authorgroup">撰写者： <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Jordan</span> <span class="surname">Hubbard</span></span>. </span></div></div></div><a id="idp64704208" class="indexterm"></a><p>FreeBSD 项目的目标是无附加条件的提供用于任何目的的软件。
+          我们之中的许多人对程序源代码投入了非常多的精力，
+          因此当然不会介意偶尔提供的资金补偿， 但我们并没打算要强行要求此类的资助。
+          我们相信， 我们的首要 <span class="quote">“<span class="quote">使命</span>”</span> 是为所有人提供源代码，
+          不管他们打算将这些代码用于什么目的， 因为只有这样， 才能使源代码最大范围的使用，
+          从而最大限量发挥它们的价值。 我们认为自由软件是最基本的，
+          同时也是我们所倡导的一个目标。</p><a id="idp64709200" class="indexterm"></a><a id="idp64711120" class="indexterm"></a><a id="idp64712912" class="indexterm"></a><p>我们的源代码树中属于 GNU 通用公共许可证（ GPL ） 或库通用公共许可证 （ LGPL ）
+          授权的带有少许的附加限制， 但还好只是强制要求开放源代码而不是其他的。
+          由于 GPL 的软件在商业用途上会增加一定的复杂性， 因此，
+          如果可以选择的话， 我们跟倾向于使用相对宽松的 BSD 许可证来发布软件。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="development"></a>1.3.3. FreeBSD 开发模式</h3></div><div><span class="authorgroup">撰写者： <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Satoshi</span> <span class="surname">Asami</span></span>. </span></div></div></div><a id="idp64720464" class="indexterm"></a><p>FreeBSD 的开发是一个非常开放和灵活的过程，
+          从 <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/contributors/article.html" target="_top">贡献者名单</a>
+          可以看出它是由世界各地成千上万贡献者构建的。
+          FreeBSD 的开发架构允许数以千计通过互联网展开协同工作。
+          我们也时常关注那些对我们项目感兴趣的新开发者和创意，
+          那些有兴趣进一步参与我们项目的用户只需要简单的通过
+          <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-hackers" target="_top">FreeBSD 技术讨论邮件列表</a> 联系我们。
+          <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-announce" target="_top">FreeBSD 公告邮件列表</a> 也为希望了解我们工作进度的 FreeBSD 用户提供相当有用的信息。</p><p>无论是独立开发者或是封闭式的团队合作，
+          多了解 FreeBSD 项目和它的开发过程都是不错的选择：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">SVN 仓库<a id="development-cvs-repository"></a></span></dt><dd><p>
+	      <a id="idp64733136" class="indexterm"></a>
+
+	      <a id="idp64743632" class="indexterm"></a>
+
+	      <a id="idp64745296" class="indexterm"></a>
+
+	      <a id="idp64748368" class="indexterm"></a>
+
+	      <a id="idp64750160" class="indexterm"></a>
+
+	      <a id="idp64751568" class="indexterm"></a>
+          过去几年以来 FreeBSD 中央源代码树都是由
+          <a class="link" href="http://www.nongnu.org/cvs/" target="_top">CVS</a> （并行版本控制系统），
+          一个免费的源代码控制工具维护的。
+          自 2008 年 6 月起， 项目切换到了
+          <a class="link" href="http://subversion.tigris.org" target="_top">SVN</a>
+          （ Subversion ）。 此次转换被视为必须，
+          因为 <span class="application">CVS</span> 的先天性技术限制，
+          使得快速发展的源代码树和历史记录的限制越趋明显。
+          文档项目和 Ports Collection 仓库也于 2012 年 5 月和 2012 年 7 月从
+          <span class="application">CVS</span> 迁移到 <span class="application">SVN</span> 。
+          请参阅 <a class="link" href="synching.html" title="23.6. 同步源代码">同步你的源代码树</a> 章节，
+          以获取更多关于 FreeBSD <code class="literal">src/</code> 的信息，
+          参阅 <a class="link" href="ports-using.html" title="5.5. 使用Ports Collection">使用Ports Collection</a>
+          以获得有关 FreeBSD Ports Collection 的更多信息。</p></dd><dt><span class="term">提交者（ committer ） 用户名单<a id="development-committers"></a></span></dt><dd><p><em class="firstterm">提交者</em><a id="idp64767056" class="indexterm"></a>
+    是指那些拥有对 Subversion 源代码树具有 <span class="emphasis"><em>写入</em></span> 权限的开发者， 并被授权修改
+    FreeBSD 源代码的权利 （术语 <span class="quote">“<span class="quote">提交者 （ committer） </span>”</span>  来自源码控制的
+    <code class="command">commit</code> 参数， 它用来将新的修改提交到版本库）。
+    提交修正最好的方式是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=send-pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">send-pr</span>(1)</span></a> 命令， 如果提交 PR 流程出现问题，
+    也可改为电子邮件方式， 将修正寄到 FreeBSD committer 的邮件列表 即可。</p></dd><dt><span class="term">FreeBSD 核心团队<a id="development-core"></a></span></dt><dd><p>如果将 FreeBSD 项目比作一家公司， 那么 <em class="firstterm">FreeBSD 核心团队</em><a id="idp64787280" class="indexterm"></a> 相当于董事会。 核心团队的首要任务是确保项目的整体发展计划， 保持良好的状态，
+    并朝着正确的方向发展。 邀请敬业且负责任的软件开发者加入提交者队伍中也是核心团队的一样重要工作，
+    因为新的核心团队成员将会与原核心团队成员合作继续前进。
+    当前的核心团队于 2012 年 7 月从提交者中选举产生的。 选举每两年一次。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">与绝大多数开发着一样， 核心团队的大部分成员也都是志愿者，
+                从 FreeBSD 项目的开发过程中不能获取任何报酬，
+                所以 <span class="quote">“<span class="quote">承诺</span>”</span> 不应被理解为
+                <span class="quote">“<span class="quote">支持保证</span>”</span> 。 前面所述的 <span class="quote">“<span class="quote">董事会</span>”</span>
+                使用类似规则推测也并不是十分恰当的， 或许我们应该这样理解：
+                他们为了 FreeBSD ， 而放弃了更好的生活的人。</p></div></dd><dt><span class="term">外围贡献者</span></dt><dd><p>最后一点， 但这绝非最不重要的， 最大的开发团队就是持续为我们提供反馈和 bug 修补的用户自己。
+              与 FreeBSD 非核心开发者保持互动最主要的方式就是通过订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-hackers" target="_top">FreeBSD 技术讨论邮件列表</a> 来进行沟通交流。
+              更多 FreeBSD 邮件列表请参阅 <a class="xref" href="eresources.html" title="Appendix C. 互联网上的资源">Appendix C, <em>互联网上的资源</em></a> 。</p><p><em class="citetitle"><a class="link" href="../../../../doc/en_US.ISO8859-1/articles/contributors/article.html" target="_top">
+		FreeBSD 贡献者名单</a></em><a id="idp64797136" class="indexterm"></a> 很长并且在不断增长中，
+          只要有贡献就会被列入其中， 现在是否考虑考虑立即向 FreeBSD 贡献反馈呢？</p><p>提交源代码并不是为本项目贡献的唯一方式； 完整的贡献工作列表， 请参阅
+          <a class="link" href="../../../../index.html" target="_top">FreeBSD 项目官方网站。</a> 。</p></dd></dl></div><p>总的来说， 我们的开发模式是一组松散的同心圆。
+          FreeBSD 这种集中的开发模式主要是为 <span class="emphasis"><em>用户</em></span> 提供方便，
+          使他们可以轻松的跟踪一个中央代码库的， 而不会将潜在的贡献者排除在外！
+          我们致力于提供一个包含大量标准性 <a class="link" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">应用程序</a>
+          的操作系统， 以便于用户轻松安装和使用 ── 这一开发模式相当适合这一目标。</p><p>我们对于希望加入 FreeBSD 开发的用户的期待是： 如当前其他开发者那样的投入，
+          以确保继续保持成功！</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="relnotes"></a>1.3.4. 第三方软件</h3></div></div></div><p>除了基本系统里的软件， FreeBSD 提供了一个广受欢迎包含成千上万软件的 Ports Collection 。
+          截至写这篇文章时， 已有超过 24,000 个 ports 包， 它们涵盖了
+          HTTP 服务器、 游戏、 语言、 编辑器以及您所能想到的几乎所有的东西。
+          整个 Ports Collection 大概需要 500 MB MB 的存储空间。
+          需要编译某个 port 时， 您只需要切换到对应目录执行
+          <code class="command">make install</code> 命令， 之后只需要静候系统执行完成。
+          完整的软件源代码是通过 port 动态获取的， 因此您需要有足够的磁盘空间用以构建您需要的 port 。
+          对于不希望通过源代码编译安装的用户， 几乎所有的 port 都提供一个预编译的
+          <span class="quote">“<span class="quote">软件包</span>”</span> 可供选择， 它们可以通过一个简单的
+          (<code class="command">pkg_add</code>) 命令来安装。
+          有关 ports 和 预编译包更多相关信息请参照 <a class="xref" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">Chapter 5, <em>安装应用程序: Packages 和 Ports</em></a> 。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67179984"></a>1.3.5. 附加文档</h3></div></div></div><p>所有最近的 FreeBSD 版本所提供了安装流程 （ 无论是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysinstall&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysinstall</span>(8)</span></a>
+          还是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdinstall&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdinstall</span>(8)</span></a> ） ， 其附加文档默认安装目录都是在
+          <code class="filename">/usr/local/share/doc/freebsd</code> 目录中。
+          文档也可以在系统安装完毕后或其它任何时段通过使用
+          <a class="xref" href="updating-upgrading-documentation.html#doc-ports-install-package" title="23.4.6.2. 使用文档预编译包">Section 23.4.6.2, “使用文档预编译包”</a>
+          中介绍的方式安装。
+          您可以使用以下 URL 通过任何一个 HTML 浏览器来查阅本地安装的手册。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">FreeBSD 使用手册</span></dt><dd><p><a class="link" href="file://localhost/usr/local/share/doc/freebsd/handbook/index.html" target="_top"><code class="filename">/usr/local/share/doc/freebsd/handbook/index.html</code></a></p></dd><dt><span class="term">FreeBSD 常见问题</span></dt><dd><p><a class="link" href="file://localhost/usr/local/share/doc/freebsd/faq/index.html" target="_top"><code class="filename">/usr/local/share/doc/freebsd/faq/index.html</code></a></p></dd></dl></div><p>此外， 您也可以从主站
+          <code class="uri"><a class="uri" href="http://www.FreeBSD.org/" target="_top">http://www.FreeBSD.org/</a></code>
+          上获得最新文档的副本 （这也是更新最及时的版本）。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="nutshell.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="introduction.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="bsdinstall.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">1.2. 欢迎来到 FreeBSD 的世界！ </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

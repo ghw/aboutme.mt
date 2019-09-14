@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>15.4. 建立和控制 jail</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="jails.html" title="Chapter 15. Jails" /><link rel="prev" href="jails-intro.html" title="15.3. 介绍" /><link rel="next" href="jails-tuning.html" title="15.5. 微调和管理" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">15.4. 建立和控制 jail</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jails-intro.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Jails</th><td width="20%" align="right"> <a accesskey="n" href="jails-tuning.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="jails-build"></a>15.4. 建立和控制 jail</h2></div></div></div><p>一些系统管理员喜欢将 jail 分为两类：
+      <span class="quote">“<span class="quote">完整的</span>”</span> jail， 通常包含真正的 FreeBSD 系统，
+      以及 <span class="quote">“<span class="quote">服务</span>”</span> jail， 专用于执行一个可能使用特权的应用或服务。
+      这只是一种概念上的区分， 并不影响如何建立 jail 的过程。
+      在联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a> 中对如何创建 jail 进行了清晰的阐述：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setenv D /here/is/the/jail</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir -p $D</code></strong> <a id="jailpath"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make buildworld</code></strong> <a id="jailbuildworld"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+<code class="prompt">#</code> <strong class="userinput"><code>make installworld DESTDIR=$D</code></strong> <a id="jailinstallworld"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+<code class="prompt">#</code> <strong class="userinput"><code>make distribution DESTDIR=$D</code></strong> <a id="jaildistrib"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+<code class="prompt">#</code> <strong class="userinput"><code>mount -t devfs devfs $D/dev</code></strong> <a id="jaildevfs"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#jailpath"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>第一步就是为 jail 选择一个位置。 这个路径是在宿主系统中 jail
+	  的物理位置。 一种常用的选择是 <code class="filename">/usr/jail/jailname</code>，
+	  此处 <em class="replaceable"><code>jailname</code></em> 是 jail 的主机名。 <code class="filename">/usr/</code> 文件系统通常会有足够的空间来保存 jail
+	  文件系统， 对于 <span class="quote">“<span class="quote">完整</span>”</span> 的 jail 而言，
+	  它通常包含了 FreeBSD 默认安装的基本系统中每个文件的副本。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#jailbuildworld"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>如果你已经通过使用 <code class="command">make world</code>
+          或者 <code class="command">make buildworld</code> 重新编译过了你的 userland，
+          则可以跳过这一步骤并把现有的 userland 安装进新的 jail。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#jailinstallworld"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个命令将在 jail 目录中安装所需的可执行文件、
+          函数库以及联机手册等。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#jaildistrib"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="buildtarget">distribution</code> 这个
+	  <span class="application">make</span> target 将安装全部配置文件，
+	  或者换句话说， 就是将
+	  <code class="filename">/usr/src/etc/</code> 复制到 jail 环境中的
+	  <code class="filename">/etc</code>：
+	  <code class="filename">$D/etc/</code>。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#jaildevfs"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p>在 jail 中不是必须要挂接 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devfs</span>(8)</span></a> 文件系统。
+	  而另一方面， 几乎所有的应用程序都会需要访问至少一个设备，
+	  这主要取决于应用程序的性质和目的。 控制 jail 中能够访问的设备非常重要，
+	  因为不正确的配置， 很可能允许攻击者在
+	  jail 中进行一些恶意的操作。 通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devfs</span>(8)</span></a> 实施的控制，
+	  可以通过由联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devfs</span>(8)</span></a> 和
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs.conf</span>(5)</span></a> 介绍的规则集配置来实现。</p></td></tr></table></div><p>一旦装好了 jail， 就可以使用
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a> 工具来安装它了。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a> 工具需要四个必填参数，
+      这些参数在 <a class="xref" href="jails-intro.html#jails-what" title="15.3.1. Jail 是什么">Section 15.3.1, “Jail 是什么”</a> 中进行了介绍。 除了这四个参数之外，
+      您还可以指定一些其他参数， 例如， 以特定用户身份来在 jail 中运行程序等等。
+      这里，  <code class="option"><em class="replaceable"><code>command</code></em></code> 参数取决于您希望建立的 jail
+      的类型； 对于 <span class="emphasis"><em>虚拟系统</em></span>， 可以选择
+      <code class="filename">/etc/rc</code>， 因为它会完成真正的 FreeBSD 系统启动所需的操作。 对于
+      <span class="emphasis"><em>服务</em></span> jail， 执行的命令取决于将在 jail
+      中运行的应用程序。</p><p>Jail 通常应在系统启动时启动， 因此， FreeBSD
+      <code class="filename">rc</code> 机制提供了一些很方便的机制来简化这些工作。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>在引导时需要启动的 jail 列表应写入 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 文件：</p><pre class="programlisting">jail_enable="YES"   # 如果设为 NO 则表示不自动启动 jail
+jail_list="<em class="replaceable"><code>www</code></em>"     # 以空格分隔的 jail 名字列表</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 <code class="varname">jail_list</code> 中的名字中，
+	    可以使用字母和数字， 而不应使用其他字符。</p></div></li><li class="step"><p>对于 <code class="varname">jail_list</code> 中列出的 jail，
+	  还应指定一系列对应的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 设置， 用以描述具体的 jail：</p><pre class="programlisting">jail_<em class="replaceable"><code>www</code></em>_rootdir="/usr/jail/www"     # jail 的根目录
+jail_<em class="replaceable"><code>www</code></em>_hostname="<em class="replaceable"><code>www</code></em>.example.org"   # jail 的主机名
+jail_<em class="replaceable"><code>www</code></em>_ip="192.168.0.10"          # jail 的 IP 地址
+jail_<em class="replaceable"><code>www</code></em>_devfs_enable="YES"          # 在 jail 中挂接 devfs
+jail_<em class="replaceable"><code>www</code></em>_devfs_ruleset="<em class="replaceable"><code>www_ruleset</code></em>" # 在 jail 中应用的devfs 规则集</pre><p>默认情况下， 在
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 中配置启动的 jail 会执行其中的 <code class="filename">/etc/rc</code>
+	  脚本， 也就是说， 默认情况下将 jail 作为虚拟系统方式来启动。
+	  对于服务 jail， 您应另外指定启动命令， 方法是设置对应的
+	  <code class="varname">jail_<em class="replaceable"><code>jailname</code></em>_exec_start</code>
+	  配置。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如欲了解全部可用的选项， 请参阅联机手册
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a>。</p></div></li></ol></div><p><code class="filename">/etc/rc.d/jail</code> 脚本也可以用于手工启动或停止
+      <code class="filename">rc.conf</code> 中配置的 jail：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/jail start www</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/jail stop www</code></strong></pre><p>目前， 尚没有一种方法来很干净地关闭 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a>。
+      这是因为通常用于正常关闭系统的命令， 目前尚不能在 jail 中使用。
+      目前， 关闭 jail 最好的方式， 是在 jail 外通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jexec&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jexec</span>(8)</span></a> 工具，
+      在 jail 中执行下列命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sh /etc/rc.shutdown</code></strong></pre><p>更进一步的详细说明， 请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a>。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jails-intro.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="jails.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="jails-tuning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">15.3. 介绍 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 15.5. 微调和管理</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

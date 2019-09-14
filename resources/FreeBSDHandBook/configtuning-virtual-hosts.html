@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.9. 虚拟主机</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="config-network-setup.html" title="12.8. 设置网卡" /><link rel="next" href="configtuning-configfiles.html" title="12.10. 配置文件" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.9. 虚拟主机</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="config-network-setup.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-configfiles.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-virtual-hosts"></a>12.9. 虚拟主机</h2></div></div></div><a id="idp75861968" class="indexterm"></a><a id="idp75866704" class="indexterm"></a><p> FreeBSD  的一个很普通的用途是虚拟主机站点，
+      一个服务器虚拟成很多服务器一样提供网络服务。
+      这通过在一个接口上绑定多个网络地址来实现。</p><p>一个特定的网络接口有一个<span class="quote">“<span class="quote">真实</span>”</span>的地址，
+      也可能有一些<span class="quote">“<span class="quote">别名</span>”</span>地址。这些别名通常用
+      <code class="filename">/etc/rc.conf</code> 中的记录来添加。</p><p>一个 <code class="filename">fxp0</code> 的别名记录类似于：</p><pre class="programlisting">ifconfig_fxp0_alias0="inet xxx.xxx.xxx.xxx netmask xxx.xxx.xxx.xxx"</pre><p>
+      记住别名记录必须从 <code class="literal">alias0</code>
+      开始并且按顺序递增(例如 <code class="literal">_alias1</code>、
+      <code class="literal">_alias2</code>)。
+      配置程序将会停止在第一个缺少的数字的地方。</p><p>
+      计算别名的子网掩码是很重要的，幸运的是它很简单。
+      对于一个接口来说，必须有一个描述子网掩码的地址。
+      任何在这个网段下的地址必须有一个全是 <code class="literal">1</code>
+      的子网掩码(通常表示为
+      <code class="systemitem">255.255.255.255</code> 或
+      <code class="systemitem">0xffffffff</code>。</p><p>举例来说， 假设使用
+      <code class="filename">fxp0</code> 连接到两个网络，
+      分别是 <code class="systemitem">10.1.1.0</code>，
+      其子网掩码为 <code class="systemitem">255.255.255.0</code>，
+      以及 <code class="systemitem">202.0.75.16</code>，
+      其子网掩码为 <code class="systemitem">255.255.255.240</code>。
+      我们希望从 <code class="systemitem">10.1.1.1</code>
+      到 <code class="systemitem">10.1.1.5</code> 以及从
+      <code class="systemitem">202.0.75.17</code> 到
+      <code class="systemitem">202.0.75.20</code> 的地址能够互相访问。
+      如前所述， 只有两个网段中的第一个地址 (本例中，
+      <code class="systemitem">10.0.1.1</code> 和
+      <code class="systemitem">202.0.75.17</code>) 应使用真实的子网掩码；
+      其余的 (<code class="systemitem">10.1.1.2</code>
+      到 <code class="systemitem">10.1.1.5</code> 以及
+      <code class="systemitem">202.0.75.18</code> 到
+      <code class="systemitem">202.0.75.20</code>) 则必须配置为使用
+      <code class="systemitem">255.255.255.255</code> 作为子网掩码。</p><p>下面是根据上述描述所进行的 <code class="filename">/etc/rc.conf</code>
+      配置：</p><pre class="programlisting">ifconfig_fxp0="inet 10.1.1.1 netmask 255.255.255.0"
+ifconfig_fxp0_alias0="inet 10.1.1.2 netmask 255.255.255.255"
+ifconfig_fxp0_alias1="inet 10.1.1.3 netmask 255.255.255.255"
+ifconfig_fxp0_alias2="inet 10.1.1.4 netmask 255.255.255.255"
+ifconfig_fxp0_alias3="inet 10.1.1.5 netmask 255.255.255.255"
+ifconfig_fxp0_alias4="inet 202.0.75.17 netmask 255.255.255.240"
+ifconfig_fxp0_alias5="inet 202.0.75.18 netmask 255.255.255.255"
+ifconfig_fxp0_alias6="inet 202.0.75.19 netmask 255.255.255.255"
+ifconfig_fxp0_alias7="inet 202.0.75.20 netmask 255.255.255.255"</pre></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="config-network-setup.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-configfiles.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.8. 设置网卡 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.10. 配置文件</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

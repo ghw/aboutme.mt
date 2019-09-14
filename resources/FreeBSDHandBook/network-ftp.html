@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.8. 文件传输协议 (FTP)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-apache.html" title="28.7. Apache HTTP 服务器" /><link rel="next" href="network-samba.html" title="28.9. 为 Microsoft® Windows® 客户机提供文件和打印服务 (Samba)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.8. 文件传输协议 (FTP)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-apache.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-samba.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-ftp"></a>28.8. 文件传输协议 (FTP)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp87480784" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87481296"></a>28.8.1. 纵览</h3></div></div></div><p>文件传输协议 (FTP) 为用户提供了一个简单的， 与 <acronym class="acronym">FTP</acronym> 服务器交换文件的方法。 FreeBSD
+	系统中包含了 <acronym class="acronym">FTP</acronym>
+	服务软件， <span class="application">ftpd</span>。 这使得在 FreeBSD
+	上建立和管理 <acronym class="acronym">FTP</acronym> 服务器变得非常简单。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87484624"></a>28.8.2. 配置</h3></div></div></div><p>最重要的配置步骤是决定允许哪些帐号访问 FTP 服务器。
+	一般的 FreeBSD 系统包含了一系列系统帐号分别用于执行不同的服务程序，
+	但未知的用户不应被允许登录并使用这些帐号。
+	<code class="filename">/etc/ftpusers</code> 文件中， 列出了不允许通过
+	FTP 访问的用户。 默认情况下， 这包含了前述的系统帐号，
+	但也可以在这里加入其它不应通过 FTP 访问的用户。</p><p>您可能会希望限制通过 FTP 登录的某些用户，
+	而不是完全阻止他们使用 FTP。 这可以通过 <code class="filename">/etc/ftpchroot</code>
+	文件来完成。 这一文件列出了希望对 FTP 访问进行限制的用户和组的表。
+	而在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ftpchroot&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ftpchroot</span>(5)</span></a> 联机手册中， 已经对此进行了详尽的介绍，
+	故而不再赘述。</p><a id="idp87487696" class="indexterm"></a><p>如果您想要在服务器上启用匿名的 FTP 访问， 则必须建立一个名为
+	<code class="systemitem">ftp</code> 的 FreeBSD 用户。 这样， 用户就可以使用
+	<code class="systemitem">ftp</code> 或 <code class="systemitem">anonymous</code>
+	和任意的口令 (习惯上， 应该是以那个用户的邮件地址作为口令)
+	来登录和访问您的 FTP 服务器。 FTP 服务器将在匿名用户登录时调用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chroot</span>(2)</span></a>， 以便将其访问限制在
+	<code class="systemitem">ftp</code> 用户的主目录中。</p><p>有两个文本文件可以用来指定显示在 FTP 客户程序中的欢迎文字。
+	<code class="filename">/etc/ftpwelcome</code> 文件中的内容将在用户连接上之后，
+	在登录提示之前显示。 在成功的登录之后， 将显示
+	<code class="filename">/etc/ftpmotd</code> 文件中的内容。
+	请注意后者是相对于登录环境的， 因此对于匿名用户而言，
+	将显示 <code class="filename">~ftp/etc/ftpmotd</code>。</p><p>一旦正确地配置了 FTP 服务器，
+        就必须在 <code class="filename">/etc/inetd.conf</code> 中启用它。
+        这里需要做的全部工作就是将注释符
+        <span class="quote">“<span class="quote">#</span>”</span> 从已有的
+        <span class="application">ftpd</span> 行之前去掉：</p><pre class="programlisting">ftp	stream	tcp	nowait	root	/usr/libexec/ftpd	ftpd -l</pre><p>如 <a class="xref" href="network-inetd.html#network-inetd-reread" title="Example 28.1. 重新加载 inetd 配置文件">Example 28.1, “重新加载 <span class="application">inetd</span>
+	  配置文件”</a> 所介绍的那样，
+        修改这个文件之后， 必须让 <span class="application">inetd</span> 重新加载它，
+        才能使新的设置生效。请参阅 <a class="xref" href="network-inetd.html#network-inetd-settings" title="28.2.2. 设置">Section 28.2.2, “设置”</a>
+        以获取更多有关如何在你系统上启用 <span class="application">inetd</span>
+        的详细信息。</p><p><span class="application">ftpd</span> 也可以作为一个独立的服务启动。
+        这样的话就需要在 <code class="filename">/etc/rc.conf</code>
+        中设置如下的变量：</p><pre class="programlisting">ftpd_enable="YES"</pre><p>在设置了上述变量之后，独立的服务将在下次系统重启的时候启动，
+        或者通过以 <code class="systemitem">root</code> 身份手动执行如下的命令启动：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/ftpd start</code></strong></pre><p>现在可以通过输入下面的命令来登录您的 FTP 服务器了：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ftp localhost</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87506768"></a>28.8.3. 维护</h3></div></div></div><a id="idp87507408" class="indexterm"></a><a id="idp87507920" class="indexterm"></a><p><span class="application">ftpd</span> 服务程序使用
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">syslog</span>(3)</span></a> 来记录消息。 默认情况下，
+        系统日志将把和 FTP 相关的消息记录到
+        <code class="filename">/var/log/xferlog</code> 文件中。 FTP 日志的位置，
+        可以通过修改
+        <code class="filename">/etc/syslog.conf</code> 中如下所示的行来修改：</p><pre class="programlisting">ftp.info      /var/log/xferlog</pre><a id="idp87511376" class="indexterm"></a><p>一定要小心对待在匿名 FTP 服务器中可能遇到的潜在问题。
+        一般而言， 允许匿名用户上传文件应三思。 您可能发现自己的 FTP
+        站点成为了交易未经授权的商业软件的论坛， 或发生更糟糕的情况。
+        如果不需要匿名的 FTP 上传， 可以在文件上配置权限，
+        使得您能够在其它匿名用户能够下载这些文件之前复查它们。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-apache.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-samba.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.7. Apache HTTP 服务器 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.9. 为 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 客户机提供文件和打印服务 (Samba)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

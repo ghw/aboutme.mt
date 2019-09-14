@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.8. 守护进程，信号和杀死进程</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="basics-processes.html" title="4.7. 进程" /><link rel="next" href="shells.html" title="4.9. Shells" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.8. 守护进程，信号和杀死进程</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="basics-processes.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="shells.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="basics-daemons"></a>4.8. 守护进程，信号和杀死进程</h2></div></div></div><p>当您运行一个编辑器时它是很容易控制的，告诉它去加载文件它就加载。
+    您之所以能这样做，是因为编辑器提供这样便利去这样做，和因为有编辑器去附上的<em class="firstterm">终端</em>。
+    一些程序在运行中不需要连续的用户输入，一有机会就从终端里分离到后台去。
+    例如，一个web系统整天都在作web请求的响应，他不需要您输入任何东西就能完成，
+    这个类别的另一个例子就是把email的传送。
+    </p><p>我们把那些程序叫 <em class="firstterm">守护进程</em>。
+    守护神是希腊神话中的一些人物，非正非邪，他们是些守护小精灵， 大体上为人类作出贡献。
+    许多类似web服务或mail服务的系统对于今天仍有用途，
+    这就是为什么在那么长的时间里，BSD的吉祥物保持为一双鞋加一把钢叉的守护神模样。
+    </p><p>守护进程的程序命名通常在最后加一个 <span class="quote">“<span class="quote">d</span>”</span>。
+    <span class="application">BIND</span> 是伯克利互联网域名服务 (而实际执行的程序名称则是
+      <code class="command">named</code>)，
+      <span class="application">Apache</span> web系统的程序就叫 <code class="command">httpd</code>，
+      在行式打印机上的打印守护进程就是 <code class="command">lpd</code>。
+      这只是一种惯例，不是标准或硬性规定。
+      例如，为<span class="application">Sendmail</span>而应用的主要mail守护进程就叫<code class="command">sendmail</code>，
+      却不叫<code class="command">maild</code>，这和您推测的一样。
+      </p><p>有时可能会需要与守护进程进行通讯。 而 <em class="firstterm">信号</em> 则是其中的一种通讯机制。
+    可以发送信号给守护进程 (或相关的另一些进程) 来与它进行通信，
+    不同的信号都有自己的数字编号──其中一些有特殊的含义，
+    其它的则可以被应用程序自己进行解释， 而一般来说，
+    应用程序的文档会告诉哪些信号会被如何处理。
+     您只能给所属于您的进程发信号，假如您给其他人的进程发信号，
+     进程就会用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a> 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">kill</span>(2)</span></a>权限进行拒绝。
+      当然,<code class="systemitem">root</code> 用户会例外，它能把各种信号发送给每个进程。
+      </p><p>在某些情况下，FreeBSD也会向应用软件发送信号。
+    假如一个应用软件含有恶意写入并试图去访问内存，那是不可想象的，FreeBSD会向那个进程发送
+    <em class="firstterm">段式违规</em> 信号 (<code class="literal">SIGSEGV</code>)。
+    假如一个应用软件使用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=alarm&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">alarm</span>(3)</span></a>系统去进行周期性调用闹钟功能，每当达到时间时，
+    FreeBSD会向应用软件发送闹钟信号(<code class="literal">SIGALRM</code>)。
+    </p><p>有两个信号可以停止进程:<code class="literal">SIGTERM</code> 和 <code class="literal">SIGKILL</code>。
+      <code class="literal">SIGTERM</code>比较友好，进程能<span class="emphasis"><em>捕捉</em></span>这个信号，
+      根据您的需要来关闭程序。在关闭程序之前，您可以结束打开的记录文件和完成正在做的任务。
+      在某些情况下， 假如进程正在进行作业而且不能中断，那么进程可以忽略这个
+      <code class="literal">SIGTERM</code>信号。
+     </p><p>对于<code class="literal">SIGKILL</code>信号，进程是不能忽略的。 这是一个
+       '<span class="quote">“<span class="quote">我不管您在做什么,立刻停止</span>”</span>'的信号。
+      假如您发送<code class="literal">SIGKILL</code>信号给进程，
+      FreeBSD就将进程停止在那里。<a href="#ftn.idp70299344" class="footnote" id="idp70299344"><sup class="footnote">[1]</sup></a>.</p><p>您可能会去使用
+      <code class="literal">SIGHUP</code>、 <code class="literal">SIGUSR1</code> 和
+      <code class="literal">SIGUSR2</code>信号。  这都是些通用的信号，各种应用程序都可以应用
+      在各方面的信号发送。
+      </p><p>假如您改变了web系统的配置文件──并想web系统去重读它的配置，
+    您可以停止然后再启动<code class="command">httpd</code>。但这样做web系统会导致一个短暂
+    的中断周期，那样是不受欢迎的。几乎所有的守护进程在编写时，都会指定对<code class="literal">SIGHUP</code>
+    信号进行响应从而重读配置文件。
+    所以， 最好的方法， 就不是杀死并重启
+    <code class="command">httpd</code>，
+    而是发一个 <code class="literal">SIGHUP</code> 信号给它。
+    因为在这方面没有一个标准，不同的守护进程有不同的用法，所以不了解时应读一下守护进程的文档。
+     </p><p>发送信号可用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a> 命令， 请参考<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a>所列出的例子。
+     </p><div class="procedure"><a id="idp70314576"></a><div class="procedure-title">Procedure 4.1. 发送一个信号给进程</div><p>这个例子显示了怎样去发一个信号给<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a>。
+      <code class="command">inetd</code>配置文件是<code class="filename">/etc/inetd.conf</code>，
+      如果想<code class="command">inetd</code> 去重读文件系统的话，可以给它发一个<code class="literal">SIGHUP</code>
+      信号。
+	  </p><ol class="procedure" type="1"><li class="step"><p>寻找您要发送信号的进程ID，可以用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a> 加 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=grep&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">grep</span>(1)</span></a>来完成。
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=grep&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">grep</span>(1)</span></a>命令被用在搜索输出方面，搜索您指定的字符串。
+     这命令是由普通用户来执行的，而<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a>是<code class="systemitem">root</code>用户运行的，
+     所以必须给<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a>带上<code class="option">ax</code>选项。
+     </p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ps -ax | grep inetd</code></strong>
+  198  ??  IWs    0:00.00 inetd -wW</pre><p>得出 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> PID号是198。 有时
+	  <code class="literal">grep inetd</code> 命令也出现在输出中，
+	  这是因为在这方面 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a> 也是寻找列表中运行进程。</p></li><li class="step"><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a> 去发送信号。 因为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a>
+	  是由 <code class="systemitem">root</code>启动的， 您必须使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=su&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">su</span>(1)</span></a> 去
+	  变为 <code class="systemitem">root</code> 用户。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>su</code></strong>
+<code class="prompt">Password:</code>
+<code class="prompt">#</code> <strong class="userinput"><code>/bin/kill -s HUP 198</code></strong></pre><p>和大多数 <span class="trademark">UNIX</span>® 命令一样， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a> 如果完成了任务, 就不会给出任何消息。
+	假如您发送信号给一个不属于您的进程，
+	您会看到 <span class="errorname">kill:
+	    <em class="replaceable"><code>PID</code></em>: Operation not
+	    permitted</span>.
+     假如输错了PID号，把信号发送到其他进程，那是坏事。
+     或者您侥幸，把信号发送到不存在的进程，
+     您会看见 <span class="errorname">kill:
+	    <em class="replaceable"><code>PID</code></em>: No such process</span>.</p><div xmlns="" class="note"><h3 class="admontitle">为什么使用 <code xmlns="http://www.w3.org/1999/xhtml" class="command">/bin/kill</code>?: </h3><p xmlns="http://www.w3.org/1999/xhtml">许多shell提供了内建 <code class="command">kill</code> 命令，
+	    这样， shell就能直接发送信号，而不是运行 <code class="filename">/bin/kill</code>。
+	    这点非常有用， 但不同shell有不同的语法来指定发送信号的名字，
+        与其试图把它们学完倒不如简单地直接使用
+        <code class="command">/bin/kill ...</code>。
+        </p></div></li></ol></div><p>发送其他的信号也很相似，
+      只要在命令行替换 <code class="literal">TERM</code> 或
+      <code class="literal">KILL</code> 就行了。
+     </p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">在系统上随意杀死进程是个坏主意，特别是<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a>，
+	它的进程ID是1，它非常特殊。可以运行
+	<code class="command">/bin/kill -s KILL 1</code> 命令来让系统迅速关机。
+	当您按下 <span class="keycap"><strong>Return</strong></span> （回车）键之前，
+	<span class="emphasis"><em>一定要</em></span> 详细检查您运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kill&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kill</span>(1)</span></a>
+	时所指定的参数。</p></div><div class="footnotes"><br /><hr class="footnote-hr" /><div id="ftn.idp70299344" class="footnote"><p><a href="#idp70299344" class="para"><sup class="para">[1] </sup></a>有点不正确──少数的东西是不能中断的。
+	  例如， 假如进程试图读取网络上另一计算机上的文件，
+	  而那个的计算机会因为某些原因拿走了这个文件，
+	  那这个进程从上述情况来看是 <span class="quote">“<span class="quote">不能中断</span>”</span>。
+      最终这个进程会超时，典型的两分钟。一出现超时进程将被杀死。
+    </p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="basics-processes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="shells.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.7. 进程 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.9. Shells</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

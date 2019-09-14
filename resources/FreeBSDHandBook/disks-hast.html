@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.18. 高可用性存储 (HAST)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="swap-encrypting.html" title="18.17. 对交换区进行加密" /><link rel="next" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.18. 高可用性存储 (HAST)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="swap-encrypting.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="GEOM.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="disks-hast"></a>18.18. 高可用性存储 (HAST)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Daniel</span> <span class="surname">Gerzo</span></span>. </span></div><div><span class="authorgroup">With inputs from <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Freddie</span> <span class="surname">Cash</span></span>, <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Pawel Jakub</span> <span class="surname">Dawidek</span></span>, <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Michael W.</span> <span class="surname">Lucas</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Viktor</span> <span class="surname">Petersson</span></span>. </span></div></div></div><a id="idp80886480" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80887632"></a>18.18.1. 概述</h3></div></div></div><p>高可用性是担负关键业务的应用的一项主要需求，
+	而高可用存储则是这类环境中的一项关键组件。
+	高可用存储 Highly Available STorage， 或
+	<acronym class="acronym">HAST<em><span class="remark">Highly Available
+	  STorage</span></em></acronym>， 是由 Pawel Jakub Dawidek
+	开发的一种用于提供在两台物理上隔离的系统之间以透明的方式， 通过
+	TCP/IP 网络传输数据的高可用性框架。 <acronym class="acronym">HAST</acronym>
+	可以看作通过网络进行的 RAID1 (镜像)， 类似于 GNU/<span class="trademark">Linux</span>® 平台上的
+	DRBD® 存储系统。 配合 FreeBSD 提供的其他高可用性基础设施，
+	如 <acronym class="acronym">CARP</acronym>， <acronym class="acronym">HAST</acronym>
+	可以用来构建可以抗御硬件故障的高可用存储集群。</p><p>读完这节， 您将了解：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>何为 <acronym class="acronym">HAST</acronym>， 它如何工作以及提供哪些功能。</p></li><li class="listitem"><p>如何在 FreeBSD 上配置和使用 <acronym class="acronym">HAST</acronym>。</p></li><li class="listitem"><p>如何与 <acronym class="acronym">CARP</acronym> 及
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devd</span>(8)</span></a> 配合构建可靠的存储系统。</p></li></ul></div><p>在阅读这节之前， 您应：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>了解 <span class="trademark">UNIX</span>® 和 FreeBSD 的基础知识
+	    (<a class="xref" href="basics.html" title="Chapter 4. UNIX 基础">Chapter 4, <em>UNIX 基础</em></a>)。</p></li><li class="listitem"><p>知道如何配置网络接口以及其他核心 FreeBSD 子系统 (<a class="xref" href="config-tuning.html" title="Chapter 12. 设置和调整">Chapter 12, <em>设置和调整</em></a>)。</p></li><li class="listitem"><p>理解 FreeBSD 的网络功能
+	    (<a class="xref" href="network-communication.html" title="Part IV. 网络通讯">Part IV, “网络通讯”</a>)。</p></li><li class="listitem"><p>使用 FreeBSD 8.1-RELEASE 或更新版本。</p></li></ul></div><p><acronym class="acronym">HAST</acronym> 项目是由
+	FreeBSD 基金会资助完成的， 并得到了来自 <a class="link" href="http://www.omc.net/" target="_top">OMCnet Internet Service GmbH</a>
+	和 <a class="link" href="http://www.transip.nl/" target="_top">TransIP BV</a>
+	的支持。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80907728"></a>18.18.2. HAST 的功能</h3></div></div></div><p><acronym class="acronym">HAST</acronym> 系统提供的功能主要包括：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>可以掩盖本地硬盘的 I/O 错误。</p></li><li class="listitem"><p>文件系统无关， 因而可以配合 FreeBSD 支持的任何文件系统使用。</p></li><li class="listitem"><p>高效率的快速重新同步机制， 令系统只同步在另一节点停机时修改过的块。</p></li><li class="listitem"><p>可以在已经部署好的环境中添加冗余。</p></li><li class="listitem"><p>配合 <acronym class="acronym">CARP</acronym>、
+	    <span class="application">Heartbeat</span> 或其他类似的工具，
+	    可以实现健壮的可靠存储系统。</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80918736"></a>18.18.3. HAST 的运行机制</h3></div></div></div><p>由于 <acronym class="acronym">HAST</acronym> 本质上是在多个机器间同步地进行块级复制，
+	因此它需要至少两个节点 (物理的机器)
+	── 其一作为 <code class="literal">主</code> (也称作
+	<code class="literal">master</code>) 节点， 另一个作为
+	<code class="literal">从</code> (<code class="literal">slave</code>) 节点。
+	这两台机器会共同构成一个集群。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前 HAST 只能使用最多两个集群节点。</p></div><p>由于 <acronym class="acronym">HAST</acronym> 是配置成以主从节点的方式运行，
+	在任何时刻都只能有唯一的一个节点是主节点。
+	<code class="literal">主</code> 节点， 也称作
+	<code class="literal">活跃</code> 节点， 负责处理由 <acronym class="acronym">HAST</acronym>
+	管理的设备的全部 I/O 请求。 而
+	<code class="literal">从</code> 节点则会自动从 <code class="literal">主</code>
+	节点同步数据的变更操作。</p><p>在 <acronym class="acronym">HAST</acronym>
+	系统中的物理设备包括：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>本地磁盘 (在主节点上)</p></li><li class="listitem"><p>远程磁盘 (在从节点上)</p></li></ul></div><p><acronym class="acronym">HAST</acronym> 在块的级别上同步运行，
+	这使其对文件系统和应用程序透明。 <acronym class="acronym">HAST</acronym>
+	在 <code class="filename">/dev/hast/</code>
+	目录中提供标准的 GEOM 设备供其他工具或应用程序使用，
+	因此， 在使用上， 对应用程序或文件系统而言，
+	<acronym class="acronym">HAST</acronym> 提供的设备与普通的裸盘或分区等没有任何区别。</p><p>发到本地磁盘的每次写、 删除或缓存刷写操作，
+	都会同时通过 TCP/IP 发到远程磁盘上。
+	读操作是由本地磁盘完成， 除非本地磁盘上的数据不是最新的，
+	或发生了 I/O 错误。 在这种情况下，
+	读操作会在从节点上完成。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80930384"></a>18.18.3.1. 同步及复制模式</h4></div></div></div><p><acronym class="acronym">HAST</acronym> 希望提供快速的故障恢复能力。
+	  基于这一考量， 减少在某个节点停机后需要的同步时间就十分重要。
+	  为了提供快速的同步能力， <acronym class="acronym">HAST</acronym>
+	  会维护一份保存在磁盘上的脏区段位映射表 (bitmap of dirty extents)，
+	  在普通的同步模式中， 它只同步这些部分的数据 (初始的同步除外)。</p><p>处理同步有多种不同的方式，
+	  <acronym class="acronym">HAST</acronym> 计划实现以下几种同步方式：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>memsync</em></span>： 当本地的写操作已经完成，
+	      并且远程节点汇报已经收到数据时， 便认为数据的写操作已经完成，
+	      而不是等待远程节点完成数据的写操作。 远程节点在发出回应之后，
+	      会立即开始执行写操作。 这种模式的目标是减少响应时间，
+	      但在同时仍然保持很好的可靠性。 目前
+	      <span class="emphasis"><em>memsync</em></span> 复制模式尚未实现。</p></li><li class="listitem"><p><span class="emphasis"><em>fullsync</em></span>： 只有在本地写操作完成，
+	      并且远程的写操作也已经完成的情况下， 才认为数据的写操作已经完成。
+	      这种模式是最保险， 同时也是最慢的一种复制模式。
+	      这是目前系统预设的复制模式。</p></li><li class="listitem"><p><span class="emphasis"><em>async</em></span>： 在本地写操作完成时，
+	      即认为数据已经写完。 这是最快， 同时也是风险最大的复制模式，
+	      一般而言只有在另一节点的延迟较大时才应考虑使用。 目前
+	      <span class="emphasis"><em>async</em></span> 复制模式尚未实现。</p></li></ul></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前， 只支持 <span class="emphasis"><em>fullsync</em></span> 复制模式。</p></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80942672"></a>18.18.4. HAST 的配置</h3></div></div></div><p><acronym class="acronym">HAST</acronym> 需要
+	<code class="literal">GEOM_GATE</code> 支持才能正常工作。
+	系统自带的预设 <code class="literal">GENERIC</code> 内核
+	<span class="emphasis"><em>并不</em></span> 包含 <code class="literal">GEOM_GATE</code>，
+	但默认的 FreeBSD 安装包含了 <code class="filename">geom_gate.ko</code>
+	内核模块。 如果对系统进行了裁剪，
+	则应确认这个模块是否可用。 此外，
+	<code class="literal">GEOM_GATE</code> 也可以静态联编进内核，
+	方法是在内核的编译配置中添加下面的设置：</p><pre class="programlisting">options	GEOM_GATE</pre><p>从操作系统的角度， <acronym class="acronym">HAST</acronym> 框架包含了下面这些部件：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>负责进行数据同步的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastd</span>(8)</span></a> 服务程序，</p></li><li class="listitem"><p>用于执行管理操作的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastctl</span>(8)</span></a> 用户态管理工具，</p></li><li class="listitem"><p>配置文件 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hast.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hast.conf</span>(5)</span></a>。</p></li></ul></div><p>下面的例子将介绍使用 <acronym class="acronym">HAST</acronym> 在两个节点之间以
+	<code class="literal">主</code>-<code class="literal">从</code> 模式复制数据的方法。
+	两个节点的名字分别是
+	<code class="literal">hasta</code> 其 IP，
+	地址为 <em class="replaceable"><code>172.16.0.1</code></em>， 以及
+	<code class="literal">hastb</code>， 其 IP
+	地址为 <em class="replaceable"><code>172.16.0.2</code></em>。
+	这两台机器都使用尺寸相同的磁盘
+	<code class="filename">/dev/ad6</code>
+	来专用于 <acronym class="acronym">HAST</acronym> 的运行。
+	<acronym class="acronym">HAST</acronym> 存储池 (有时也称为资源，
+	例如位于 <code class="filename">/dev/hast/</code> 的设备文件) 将命名为
+	<code class="filename">test</code>。</p><p><acronym class="acronym">HAST</acronym> 的配置文件是
+	<code class="filename">/etc/hast.conf</code>。 在两个节点上，
+	这个文件的内容应该是完全一样的。
+	最简配置如下：</p><pre class="programlisting">resource test {
+	on hasta {
+		local /dev/ad6
+		remote 172.16.0.2
+	}
+	on hastb {
+		local /dev/ad6
+		remote 172.16.0.1
+	}
+}</pre><p>如果需要更高级的配置， 请参阅联机手册
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hast.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hast.conf</span>(5)</span></a>。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 <code class="literal">remote</code> 语句中也可以使用主机名。
+	  这种情况下需要确保这些主机名是可以解析的，
+	  例如在 <code class="filename">/etc/hosts</code> 文件中，
+	  或在本地 <acronym class="acronym">DNS</acronym> 中进行了定义。</p></div><p>现在在两个节点上都有同样的配置了，
+	接下来我们需要创建 <acronym class="acronym">HAST</acronym> 存储池。
+	在两个节点上分别运行下面的命令来初始化本地此怕，
+	并启动 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastd</span>(8)</span></a> 服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hastctl create test</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/hastd onestart</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><span class="emphasis"><em>没有</em></span> 办法使用已经包含文件系统的 GEOM
+	  设备来创建存储池 (换言之，
+	  已经存在的文件系统无法转换为 <acronym class="acronym">HAST</acronym> 管理的存储池)，
+	  这是因为创建存储池的过程需要保存一些元数据，
+	  而已经写入文件系统的设备不再能提供保存这些元数据所需的空间。</p></div><p>HAST 并不负责选择节点的角色
+	(<code class="literal">主</code> 或 <code class="literal">从</code>)。
+	节点的角色是由管理员手工，
+	或由类似 <span class="application">Heartbeat</span> 这样的软件通过
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastctl</span>(8)</span></a> 来完成配置的。 在希望成为主节点的系统
+	(<code class="literal">hasta</code>)
+	上运行下面的命令令其成为主节点：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hastctl role primary test</code></strong></pre><p>类似地， 用下面的命令来指明从节点
+	(<code class="literal">hastb</code>)：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hastctl role secondary test</code></strong></pre><div xmlns="" class="caution"><h3 class="admontitle">Caution: </h3><p xmlns="http://www.w3.org/1999/xhtml">有可能会出现两个节点之间无法正常通讯，
+	  但又都配置为主节点这样的情况； 这种称作
+	  <code class="literal">脑分裂</code> 的状态是十分危险的。 在 <a class="xref" href="disks-hast.html#disks-hast-sb" title="18.18.5.2. 从脑分裂状态恢复">Section 18.18.5.2, “从脑分裂状态恢复”</a> 中介绍了如何从这种状态中恢复的方法。</p></div><p>接下来， 可以在两个节点上分别用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastctl</span>(8)</span></a> 工具来验证节点身份是否正确：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hastctl status test</code></strong></pre><p>这其中比较重要的是 <code class="literal">status</code>(状态) 这行，
+	在两个节点上， 其输出均应为 <code class="literal">complete</code>(完好)。
+	如果系统给出的输出是 <code class="literal">degraded</code> (降级)，
+	则表示出现了问题。 正常情况下， 节点间的同步已经开始。
+	当 <code class="command">hastctl status</code> 命令报告的
+	<code class="literal">dirty</code> 数据块数量为 0 字节时，
+	表示两个节点的数据已经完全同步。</p><p>最后一步是在 GEOM 设备
+	<code class="filename">/dev/hast/test</code>
+	上创建文件系统。 这项工作必须在
+	<code class="literal">主</code> 节点上进行 (因为
+	<code class="filename">/dev/hast/test</code>
+	只在 <code class="literal">主</code> 节点上出现)，
+	随硬盘尺寸的不同， 这可能需要花费数分钟的时间：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>newfs -U /dev/hast/test</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir /hast/test</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mount /dev/hast/test /hast/test</code></strong></pre><p>一旦完成了 <acronym class="acronym">HAST</acronym> 框架的配置，
+	最后一步就是确保
+	<acronym class="acronym">HAST</acronym> 在系统引导过程中会自动启动了。
+	为了达到这个目的， 应在
+	<code class="filename">/etc/rc.conf</code> 文件中添加这行配置：</p><pre class="programlisting">hastd_enable="YES"</pre><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81001552"></a>18.18.4.1. 故障转移配置</h4></div></div></div><p>这个例子的目的在于建立一套健壮的存储系统，
+	  令其能够抵御在任何一个节点上发生的故障。
+	  这其中的关键任务是对集群中的
+	  <code class="literal">主</code> 节点发生故障的情形进行及时的补救处理。
+	  当发生这种情况时， <code class="literal">从</code>
+	  节点可以无缝地接手主节点的工作， 对文件系统进行检查并挂接，
+	  从而继续运行， 而不损失任何数据。</p><p>为了达成这一任务， 需要使用 FreeBSD 提供的另一项功能 ──
+	  <acronym class="acronym">CARP</acronym> 所提供的 IP 层自动故障转移能力。
+	  <acronym class="acronym">CARP</acronym> 是共用地址冗余协议
+	  Common Address Redundancy Protocol 的缩写，
+	  它允许多个同网段的主机共享同一 IP 地址。 请根据 <a class="xref" href="carp.html" title="30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)">Section 30.14, “Common Address Redundancy Protocol (CARP， 共用地址冗余协议)”</a>
+	  的介绍在两个节点上都配置 <acronym class="acronym">CARP</acronym>。
+	  完成这些配置之后， 两个节点都会有自己的
+	  <code class="filename">carp0</code> 网络接口，
+	  共用 IP 地址 <em class="replaceable"><code>172.16.0.254</code></em>。
+	  显然， 集群中的 <acronym class="acronym">HAST</acronym> 主节点也必须是
+	  <acronym class="acronym">CARP</acronym> 主节点。</p><p>前面一节中创建的 <acronym class="acronym">HAST</acronym>
+	  存储池现在可以提供给网络上的其他主机使用了。
+	  其上的文件系统可以通过 <acronym class="acronym">NFS</acronym>、
+	  <span class="application">Samba</span> 等等，
+	  以共用 IP 地址 <em class="replaceable"><code>172.16.0.254</code></em> 来访问。
+	  现在余下的唯一问题是自动化对主节点故障的处理。</p><p>当 <acronym class="acronym">CARP</acronym> 网络接口的链路状态发生变化时，
+	  FreeBSD 操作系统会产生一个 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devd</span>(8)</span></a>
+	  消息， 这样就可以监视 <acronym class="acronym">CARP</acronym>
+	  网络接口的状态了。 <acronym class="acronym">CARP</acronym>
+	  接口的状态变化表示节点发生故障， 或重新回到了网络中。
+	  这些情况下需要运行特定的脚本来完成对应的处理。</p><p>为了截获
+	  <acronym class="acronym">CARP</acronym> 网络接口的状态变化，
+	  需要在两个节点的
+	  <code class="filename">/etc/devd.conf</code>
+	  文件中添加如下的设置：</p><pre class="programlisting">notify 30 {
+	match "system" "IFNET";
+	match "subsystem" "carp0";
+	match "type" "LINK_UP";
+	action "/usr/local/sbin/carp-hast-switch master";
+};
+
+notify 30 {
+	match "system" "IFNET";
+	match "subsystem" "carp0";
+	match "type" "LINK_DOWN";
+	action "/usr/local/sbin/carp-hast-switch slave";
+};</pre><p>为使编辑的配置生效， 需要在两个节点上执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/devd restart</code></strong></pre><p>当网络接口 <code class="filename">carp0</code>
+	  的状态发生变化时， 系统会产生一个通知消息，
+	  这允许 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devd</span>(8)</span></a> 子系统运行管理员指定的任意脚本，
+	  在这个例子中是
+	  <code class="filename">/usr/local/sbin/carp-hast-switch</code>。
+	  这个脚本的作用是自动化故障转移。 关于前面
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devd</span>(8)</span></a> 配置的具体含义， 请参阅联机手册
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devd.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devd.conf</span>(5)</span></a>。</p><p>下面是一个这种脚本的示例：</p><pre class="programlisting">#!/bin/sh
+
+# Original script by Freddie Cash &lt;fjwcash@gmail.com&gt;
+# Modified by Michael W. Lucas &lt;mwlucas@BlackHelicopters.org&gt;
+# and Viktor Petersson &lt;vpetersson@wireload.net&gt;
+
+# The names of the HAST resources, as listed in /etc/hast.conf
+resources="test"
+
+# delay in mounting HAST resource after becoming master
+# make your best guess
+delay=3
+
+# logging
+log="local0.debug"
+name="carp-hast"
+
+# end of user configurable stuff
+
+case "$1" in
+	master)
+		logger -p $log -t $name "Switching to primary provider for ${resources}."
+		sleep ${delay}
+
+		# Wait for any "hastd secondary" processes to stop
+		for disk in ${resources}; do
+			while $( pgrep -lf "hastd: ${disk} \(secondary\)" &gt; /dev/null 2&gt;&amp;1 ); do
+				sleep 1
+			done
+
+			# Switch role for each disk
+			hastctl role primary ${disk}
+			if [ $? -ne 0 ]; then
+				logger -p $log -t $name "Unable to change role to primary for resource ${disk}."
+				exit 1
+			fi
+		done
+
+		# Wait for the /dev/hast/* devices to appear
+		for disk in ${resources}; do
+			for I in $( jot 60 ); do
+				[ -c "/dev/hast/${disk}" ] &amp;&amp; break
+				sleep 0.5
+			done
+
+			if [ ! -c "/dev/hast/${disk}" ]; then
+				logger -p $log -t $name "GEOM provider /dev/hast/${disk} did not appear."
+				exit 1
+			fi
+		done
+
+		logger -p $log -t $name "Role for HAST resources ${resources} switched to primary."
+
+
+		logger -p $log -t $name "Mounting disks."
+		for disk in ${resources}; do
+			mkdir -p /hast/${disk}
+			fsck -p -y -t ufs /dev/hast/${disk}
+			mount /dev/hast/${disk} /hast/${disk}
+		done
+
+	;;
+
+	slave)
+		logger -p $log -t $name "Switching to secondary provider for ${resources}."
+
+		# Switch roles for the HAST resources
+		for disk in ${resources}; do
+			if ! mount | grep -q "^/dev/hast/${disk} on "
+			then
+			else
+				umount -f /hast/${disk}
+			fi
+			sleep $delay
+			hastctl role secondary ${disk} 2&gt;&amp;1
+			if [ $? -ne 0 ]; then
+				logger -p $log -t $name "Unable to switch role to secondary for resource ${disk}."
+				exit 1
+			fi
+			logger -p $log -t $name "Role switched to secondary for resource ${disk}."
+		done
+	;;
+esac</pre><p>简而言之， 在节点成为网络的 <code class="literal">master</code> /
+	  <code class="literal">primary</code> 节点时， 脚本会进行下面的操作：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>在本节点升格为 <acronym class="acronym">HAST</acronym> 存储池的主节点。</p></li><li class="listitem"><p>检查
+	      <acronym class="acronym">HAST</acronym> 存储池上的文件系统。</p></li><li class="listitem"><p>挂接存储池中的文件系统到适当的位置。</p></li></ul></div><p>当节点成为 <code class="literal">backup</code> /
+	  <code class="literal">secondary</code> 节点时：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>卸下 <acronym class="acronym">HAST</acronym> 存储池。</p></li><li class="listitem"><p>将本节点降格为 <acronym class="acronym">HAST</acronym> 存储池的从节点。</p></li></ul></div><div xmlns="" class="caution"><h3 class="admontitle">Caution: </h3><p xmlns="http://www.w3.org/1999/xhtml">务必注意， 上面的脚本只是概念性的介绍。
+	    它并不能处理所有可能发生的情况， 因此应根据实际情况进行修改，
+	    例如启动/停止必要的服务， 等等。</p></div><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">在前面的例子中， 出于示范的目的我们使用的是标准的 UFS
+	    文件系统。 为了减少恢复所需的时间， 可以使用带日志的 UFS
+	    文件系统， 或者使用 ZFS 文件系统。</p></div><p>更具体的信息和例子请参阅 <a class="link" href="http://wiki.FreeBSD.org/HAST" target="_top">HAST Wiki</a>
+	  页面。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81050192"></a>18.18.5. 故障排除</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81050832"></a>18.18.5.1. 一般故障排除提示</h4></div></div></div><p><acronym class="acronym">HAST</acronym> 通常都能够无故障地运行，
+	  不过， 和任何其他软件产品一样，
+	  有时它也可能会无法以希望的方式运转。
+	  导致问题的可能性有很多，
+	  但一般来说， 首先要确保集群中所有节点的时间是同步的。</p><p>当尝试排除 <acronym class="acronym">HAST</acronym> 故障时，
+	  应提高 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastd</span>(8)</span></a> 的调试级别。 这可以通过在启动
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastd</span>(8)</span></a> 服务时指定 <code class="literal">-d</code>
+	  参数来实现。 需要说明的是，
+	  可以多次指定这一参数来进一步提高调试级别。
+	  此外， 还可以考虑使用 <code class="literal">-F</code>
+	  参数来启动服务， 它会令 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hastd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hastd</span>(8)</span></a> 服务在前台运行。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-hast-sb"></a>18.18.5.2. 从脑分裂状态恢复</h4></div></div></div><p>当集群中的两个节点之间无法相互通讯时，
+	  两个节点都会认为自己是主节点， 从而导致
+	  <code class="literal">脑分裂</code> 的状态。
+	  这种情形十分危险， 因为两个节点会产生互相无法合并的数据。
+	  这种情形需要系统管理员实施手工干预。</p><p>从这种状态中恢复时， 管理员必须决定哪一个节点包含最重要的数据变动
+	  (或者手工合并这些改动) 并让 <acronym class="acronym">HAST</acronym>
+	  进行一次完整的同步操作， 覆盖有问题的那个节点的数据。
+	  要完成这个工作，在有问题的节点上执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hastctl role init &lt;resource&gt;</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>hastctl create &lt;resource&gt;</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>hastctl role secondary &lt;resource&gt;</code></strong></pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="swap-encrypting.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="GEOM.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.17. 对交换区进行加密 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 19. GEOM： 模块化磁盘变换框架</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

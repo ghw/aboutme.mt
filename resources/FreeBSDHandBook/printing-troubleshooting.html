@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>10.7. 疑难问题</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="printing.html" title="Chapter 10. 打印" /><link rel="prev" href="printing-lpd-alternatives.html" title="10.6. 替换标准后台打印" /><link rel="next" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.7. 疑难问题</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="printing-lpd-alternatives.html">Prev</a> </td><th width="60%" align="center">Chapter 10. 打印</th><td width="20%" align="right"> <a accesskey="n" href="linuxemu.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="printing-troubleshooting"></a>10.7. 疑难问题</h2></div></div></div><p>在使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a> 进行简单的测试之后，
+      您可能得到了下面的结果，
+      而不是正确的结果：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">过了一会儿， 它工作了； 或者， 它没有退出一整张纸。</span></dt><dd><p>打印机进行了打印， 但在这之前它呆了一段而且什么都没做。
+	    事实上， 您可能需要按一下打印机上的
+	    打印剩余 或者 送纸 按钮来让结果出现。</p><p>如果这是问题所在， 打印机可能在等待，
+	    看看在打印之前， 您的任务是否还有更多的数据。
+	    要修正这个问题， 您可以让文本过滤器发送一个送纸字符
+	    (或者其他需要的) 到打印机。
+	    这通常足够让打印机立即打印出内部缓存内剩余的文本。
+	    它同样可以用来确保每个任务的结尾都占用一整张纸，
+	    这样下一个任务才不会在前一个任务最后一张纸的中间开始。</p><p>接下来的 shell 脚本
+	    <code class="filename">/usr/local/libexec/if-simple</code>
+	    的脚本打印了一个送纸符在它发送任务到打印机之后：</p><pre class="programlisting">#!/bin/sh
+#
+# if-simple - Simple text input filter for lpd
+# Installed in /usr/local/libexec/if-simple
+#
+# Simply copies stdin to stdout.  Ignores all filter arguments.
+# Writes a form feed character (\f) after printing job.
+
+/bin/cat &amp;&amp; printf "\f" &amp;&amp; exit 0
+exit 2</pre></dd><dt><span class="term">它的输出产生了 <span class="quote">“<span class="quote">楼梯效果</span>”</span>。</span></dt><dd><p>您可能在纸上得到下面这些：</p><pre class="screen">!"#$%&amp;'()*+,-./01234
+                "#$%&amp;'()*+,-./012345
+                                 #$%&amp;'()*+,-./0123456</pre><a id="idp74918864" class="indexterm"></a><a id="idp74919376" class="indexterm"></a><a id="idp74919888" class="indexterm"></a><p>您也成为了 <span class="emphasis"><em>楼梯效果</em></span>
+	    的受害者， 这是由对新行的标志字符的解释不一致造成的。
+	    <span class="trademark">UNIX</span>® 风格的操作系统使用一个单个字符：
+	    ASCII 码 10，
+	    即换行 (LF)。 <span class="trademark">MS-DOS</span>®， <span class="trademark">OS/2</span>®， 和其他的系统使用一对儿字符，
+	    ASCII 码 10 <span class="emphasis"><em>和</em></span> ASCII 码
+	    13 (回车 CR)。 许多打印机使用 <span class="trademark">MS-DOS</span>®
+	    的习惯来代表新行。</p><p>当您在 FreeBSD 上打印时， 您的文本仅用了换行字符。
+	    打印机， 打印机看到换行字符后，
+	    走一行纸， 但还光标位置还是在这张纸上要打印的下一个字符处。
+	    这就是回车的作用：
+	    将下一个要打印的字符的位置移到纸张的左边缘。</p><p>这里是 FreeBSD 想要打印机做的：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><tbody><tr><td>打印机收到 CR</td><td>打印机打印 CR</td></tr><tr><td>打印机收到 LF</td><td>打印机打印 CR + LF</td></tr></tbody></table></div><p>下面有几种完成这个的办法：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>使用打印机的配置开关或者控制面板来更改它对这些字符的解释。
+		查看打印机的手册来找到怎样更改。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您引导您的系统到其他除了
+		  FreeBSD 之外的操作系统， 您可能不得不
+		  <span class="emphasis"><em>重新配置</em></span> 打印机使用
+		  这个操作系统对 CR 和 LF 字符的解释。
+		  您可能更喜欢下面这另一种解决方案。</p></div></li><li class="listitem"><p>让 FreeBSD 的串口驱动自动转换 LF 到 CR+LF。
+		当然， 这 <span class="emphasis"><em>仅仅</em></span> 工作在串口打印机上。
+		要开启这个功能，
+		定义 <code class="literal">ms#</code> 变量并
+		设置 <code class="literal">onlcr</code> 模式在
+		<code class="filename">/etc/printcap</code> 文件中相应打印机处。</p></li><li class="listitem"><p>发送一个 <span class="emphasis"><em>转义码</em></span> 到打印机来让它临时对 LF 字符做不同的处理。
+		参考您的打印机手册来了解您的打印机支持哪些转义码。
+		当您找到合适的转义码，
+		修改文本过滤器让其先发送这个转义码，
+		然后再发送打印任务。</p><a id="idp74950864" class="indexterm"></a><p>这里是一个为懂得
+		Hewlett-Packard PCL 转义码的打印机编写的文本过滤器。
+		这个过滤器使得打印机将 LF 作为一个 LF 和一个 CR 来对待；
+		然后它发送任务； 最后发送一个送纸符弹出任务的最后一张纸。
+		它应该可以在几乎所有
+		Hewlett Packard 打印机上工作。</p><pre class="programlisting">#!/bin/sh
+#
+# hpif - Simple text input filter for lpd for HP-PCL based printers
+# Installed in /usr/local/libexec/hpif
+#
+# Simply copies stdin to stdout.  Ignores all filter arguments.
+# Tells printer to treat LF as CR+LF.  Ejects the page when done.
+
+printf "\033&amp;k2G" &amp;&amp; cat &amp;&amp; printf "\033&amp;l0H" &amp;&amp; exit 0
+exit 2</pre><p>下面是一个 <code class="filename">/etc/printcap</code> 文件的例子在叫做
+		<code class="systemitem">orchid</code> 的主机上。 它只有一台打印机连接在第一个并口上，
+		一台 Hewlett Packard
+		LaserJet 3Si 名字叫做 <code class="literal">teak</code>。 它使用上面那段脚本作为文本过滤器：</p><pre class="programlisting">#
+#  /etc/printcap for host orchid
+#
+teak|hp|laserjet|Hewlett Packard LaserJet 3Si:\
+        :lp=<code class="filename">/dev/lpt0</code>:sh:sd=<code class="filename">/var/spool/lpd/teak</code>:mx#0:\
+        :if=<code class="filename">/usr/local/libexec/hpif</code>:</pre></li></ul></div></dd><dt><span class="term">行行覆盖。</span></dt><dd><p>打印机从来不进纸换行。
+	    所有的文本都打印在头一行文本的上面。</p><p>这个问题是 <span class="quote">“<span class="quote">相反</span>”</span> 于楼梯效果，
+	    像上面描述的那样， 并且更少见。
+	    一些地方， LF 这个 FreeBSD 用来结束一行的字符被作为
+	    CR 这个将打印位置返回到纸的左边的字符对待。
+	    而没有向下走纸一行。</p><p>使用打印机的配置开关或者控制面板来强制对
+	    LF 和 CR 进行下面的转换：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>打印机收到</th><th>打印机打印</th></tr></thead><tbody><tr><td>CR</td><td>CR</td></tr><tr><td>LF</td><td>CR + LF</td></tr></tbody></table></div></dd><dt><span class="term">打印丢掉字符。</span></dt><dd><p>当打印时， 每行里打印机都丢掉一些字符没有打。
+	    这个问题可能随着打印的进行越发严重，
+	    丢掉越来越多的字符。</p><p>这个问题是由打印机跟不上计算机通过串口发送数据的速度造成的
+	    (这个问题应该不会发生在并口打印机上)。
+	    有两种方法能克服这个问题：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果打印机支持 XON/XOFF 流量控制，
+		那就让 FreeBSD 使用它， 通过加入 <code class="literal">ixon</code> 模式在
+		<code class="literal">ms#</code> 变量里。</p></li><li class="listitem"><p>如果打印机支持请求/清除硬件握手信号
+                （通常时 <code class="literal">RTS/CTS</code>），
+		指定 <code class="literal">crtscts</code> 模式在
+		<code class="literal">ms#</code> 变量里。
+		并且要确定连接打印机和计算机的线是支持硬件流量控制的。</p></li></ul></div></dd><dt><span class="term">它打印出垃圾。</span></dt><dd><p>打印机打印出的东西看起来是一些随机的字符，
+	    而不是想要打印的东西。</p><p>这通常意味着另一种串口打印机通讯参数设置不正确的错误。
+	    复查
+	    <code class="literal">br</code> 变量中设定的波特， 和
+	    <code class="literal">ms#</code> 中的校验设置； 确定打印机也在使用和
+	    <code class="filename">/etc/printcap</code> 文件中相同的设置。</p></dd><dt><span class="term">没有反应。</span></dt><dd><p>如果没有反应， 问题就可能出在
+	    FreeBSD 而不是硬件上了。 增加日志文件
+	    (<code class="literal">lf</code>) 变量到
+	    <code class="filename">/etc/printcap</code> 文件里出现问题的打印机的记录处。
+	    比如， 下面是打印机 <code class="literal">rattan</code> 的记录， 使用了
+	    <code class="literal">lf</code> 变量：</p><pre class="programlisting">rattan|line|diablo|lp|Diablo 630 Line Printer:\
+        :sh:sd=<code class="filename">/var/spool/lpd/rattan</code>:\
+        :lp=<code class="filename">/dev/lpt0</code>:\
+        :if=<code class="filename">/usr/local/libexec/if-simple</code>:\
+        :lf=<code class="filename">/var/log/rattan.log</code></pre><p>然后， 再次打印。 检查日志文件 (在我们的例子当中， 是
+	    <code class="filename">/var/log/rattan.log</code> 这个文件) 来看是否有错误信息出现。
+	    根据出现的信息，
+	    试着来修正问题。</p><p>如果您没有指定 <code class="literal">lf</code> 变量，
+	    <span class="application">LPD</span> 会使用
+	    <code class="filename">/dev/console</code> 作为默认值。</p></dd></dl></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="printing-lpd-alternatives.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="printing.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="linuxemu.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">10.6. 替换标准后台打印 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 11. Linux二进制兼容模式</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

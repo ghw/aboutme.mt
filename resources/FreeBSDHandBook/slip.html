@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>26.7. 使用SLIP</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ppp-and-slip.html" title="Chapter 26. PPP 和 SLIP" /><link rel="prev" href="pppoa.html" title="26.6. 使用 ATM 上的 PPP (PPPoA)" /><link rel="next" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">26.7. 使用SLIP</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="pppoa.html">Prev</a> </td><th width="60%" align="center">Chapter 26. PPP 和 SLIP</th><td width="20%" align="right"> <a accesskey="n" href="mail.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="slip"></a>26.7. 使用SLIP</h2></div><div><span class="authorgroup">Originally contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Satoshi</span> <span class="surname">Asami</span></span>. </span></div><div><span class="authorgroup">With input from <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Guy</span> <span class="surname">Helmer</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Piero</span> <span class="surname">Serini</span></span>. </span></div></div></div><a id="idp85082704" class="indexterm"></a><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">这节内容只在
+	FreeBSD 7.X 上可用。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="slipc"></a>26.7.1. 设置 SLIP 客户端</h3></div></div></div><a id="idp85084752" class="indexterm"></a><p>下面是在静态主机网络上配置 FreeBSD 机器使用 SLIP 的方法。
+	对于动态主机名分配 (您的地址会随每次拨号而不同)，
+	您可能需要稍复杂一些的设置。</p><p>首先， 您需要确认调制解调器所连接的串口。
+	许多人会设置一个符号连接， 例如
+	<code class="filename">/dev/modem</code>， 用以指向实际的设备名， 如
+	<code class="filename">/dev/cuadN</code>。
+	这样您就可以对实际的设备名进行抽象，
+	以备调制解调器换到其他串口时方便调整之用。 不然， 修改
+	<code class="filename">/etc</code> 和遍布于系统中的 <code class="filename">.kermrc</code>
+	文件将是一件很麻烦的事情！</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="filename">/dev/cuad0</code> 对应
+	  <code class="filename">COM1</code>， 而 <code class="filename">/dev/cuad1</code>
+	  则对应
+	  <code class="filename">COM2</code>， 等等。</p></div><p>确保您的内核文件包含以下内容：</p><pre class="programlisting">device   sl</pre><p>这包含在<code class="filename">GENERIC</code>内核， 所以这应该不会是个问题， 除非您
+        已经删除了它。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85112528"></a>26.7.1.1. 只需做一次的事情</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>把您本地网络上的机器、 网关以及域名服务器，
+	      都加入到 <code class="filename">/etc/hosts</code> 文件中。
+	      我们的是下面这个样子：</p><pre class="programlisting">127.0.0.1               localhost loghost
+136.152.64.181          water.CS.Example.EDU water.CS water
+136.152.64.1            inr-3.CS.Example.EDU inr-3 slip-gateway
+128.32.136.9            ns1.Example.EDU ns1
+128.32.136.12           ns2.Example.EDU ns2</pre></li><li class="step"><p>请确保在您的 <code class="filename">/etc/nsswitch.conf</code>
+	      中的 <code class="literal">hosts:</code> 小节里面， <code class="literal">files</code> 先于
+	      <code class="literal">dns</code> 出现。 如果不是这样的话，
+	      可能会产生一些不希望的现象。</p></li><li class="step"><p>编辑<code class="filename">/etc/rc.conf</code>。</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>编辑以下这行设置主机名(hostname)：</p><pre class="programlisting">hostname="myname.my.domain"</pre><p>应该用您主机的Internet全名代替。</p></li><li class="listitem"><a id="idp85120464" class="indexterm"></a><p>改变这一行以指明默认的路由：</p><pre class="programlisting">defaultrouter="NO"</pre><p>改为：</p><pre class="programlisting">defaultrouter="slip-gateway"</pre></li></ol></div></li><li class="step"><p>创建文件<code class="filename">/etc/resolv.conf</code>， 写入以下内容：</p><pre class="programlisting">domain CS.Example.EDU
+nameserver 128.32.136.9
+nameserver 128.32.136.12</pre><a id="idp85124432" class="indexterm"></a><a id="idp85124944" class="indexterm"></a><p>正如您看到的， 这些行设置了域名服务器。 当然，
+	      实际的域名和IP地址取决于您的环境。</p></li><li class="step"><p>设置<code class="systemitem">root</code>和
+	      <code class="systemitem">toor</code>的密码(其它任何没有密码的帐号)。</p></li><li class="step"><p>重启计算机， 然后确认使用了正确的主机名。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85128912"></a>26.7.1.2. 创建一个SLIP连接</h4></div></div></div><a id="idp85129552" class="indexterm"></a><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>在命令提示符之后输入 <code class="command">slip</code> 进行拨号，
+	      输入您的机器名和口令。 具体需要输入什么，
+	      与您的环境密切相关。 如果使用
+	      <span class="application">Kermit</span>，
+	      则可以使用类似下面的脚本：</p><pre class="programlisting"># kermit setup
+set modem hayes
+set line /dev/modem
+set speed 115200
+set parity none
+set flow rts/cts
+set terminal bytesize 8
+set file type binary
+# The next macro will dial up and login
+define slip dial 643-9600, input 10 =&gt;, if failure stop, -
+output slip\x0d, input 10 Username:, if failure stop, -
+output silvia\x0d, input 10 Password:, if failure stop, -
+output ***\x0d, echo \x0aCONNECTED\x0a</pre><p>当然， 您还需要修改用户名和口令来满足实际需要。
+	      完成这些操作之后， 只需在 <span class="application">Kermit</span>
+              提示符之后输入 <code class="command">slip</code> 就可以连接了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">将密码以纯文本的形式存放在文件系统无论如何都是个 <span class="emphasis"><em>坏</em></span> 主意。
+		请考虑这样做的风险。</p></div></li><li class="step"><p>在这里退出 <span class="application">Kermit</span> (也可以用
+	      <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>z</strong></span> 将其挂起)， 以 <code class="systemitem">root</code> 用户键入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>slattach -h -c -s 115200 /dev/modem</code></strong></pre><p>如果您能<code class="command">ping</code>通路由器另一端的主机， 就是连接好了! 如果不行，
+	    您可以使用<code class="option">-a</code>选项代替
+<code class="option">-c</code>作为<code class="command">slattach</code>的参数。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85153744"></a>26.7.1.3. 关闭连接</h4></div></div></div><p>按下面的步骤做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kill -INT `cat /var/run/slattach.modem.pid`</code></strong></pre><p>来杀掉 <code class="command">slattach</code>。 切记上述操作只有以
+	  <code class="systemitem">root</code> 身份才能完成。 接下来回到
+	  <code class="command">kermit</code> (如果之前是将它挂起了，
+	  则使用 <code class="command">fg</code>) 并退出 (<span class="keycap"><strong>q</strong></span>)。</p><p>在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=slattach&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">slattach</span>(8)</span></a> 联机手册中提到，
+	  必须使用 <code class="command">ifconfig sl0 down</code>
+          才能将接口标记为关闭， 但和这样做似乎没有什么区别。
+	  (<code class="command">ifconfig sl0</code> 仍然报告同样的东西。)</p><p>有时， 您的 modem 可能会拒绝挂断。
+	  这种情况下， 只需重新启动 <code class="command">kermit</code>
+	  并再次退出它就可以了。 一般来说试二次就可以了。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85165136"></a>26.7.1.4. 问题解答</h4></div></div></div><p>如果还不行， 尽管发邮件到 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-net" target="_top">freebsd-net</a> 邮件列表来提问。
+	  常见的问题包括：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>执行 <code class="command">slattach</code> 时不使用
+	      <code class="option">-c</code>和<code class="option">-a</code>选项
+	      (这应该不是关键的， 但有些用户报告这样做解决了问题)。</p></li><li class="listitem"><p>使用<code class="option">s10</code>替换
+	      <code class="option">sl0</code> (在一些字体下很难看出不同)。</p></li><li class="listitem"><p>试试<code class="command">ifconfig sl0</code>来查看您的接口状态。
+	      例如， 您可以这样做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig sl0</code></strong>
+sl0: flags=10&lt;POINTOPOINT&gt;
+        inet 136.152.64.181 --&gt; 136.152.64.1 netmask ffffff00</pre></li><li class="listitem"><p>如果在使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ping&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ping</span>(8)</span></a> 时得到了
+            <span class="errorname">no route to host</span> 这样的提示，
+            则说明您的路由表可能有问题。 可以用 <code class="command">netstat -r</code>
+            命令来显示当前的路由：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>netstat -r</code></strong>
+Routing tables
+Destination      Gateway            Flags     Refs     Use  IfaceMTU    Rtt    Netmasks:
+
+(root node)
+(root node)
+
+Route Tree for Protocol Family inet:
+(root node) =&gt;
+default          inr-3.Example.EDU  UG          8   224515  sl0 -      -
+localhost.Exampl localhost.Example. UH          5    42127  lo0 -       0.438
+inr-3.Example.ED water.CS.Example.E UH          1        0  sl0 -      -
+water.CS.Example localhost.Example. UGH        34 47641234  lo0 -       0.438
+(root node)</pre><p>前述的例子来自于一个非常繁忙的系统。
+              您系统上的这些数字会因网络活动的不同而改变。</p></li></ul></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="slips"></a>26.7.2. 设置SLIP服务器</h3></div></div></div><a id="idp85177680" class="indexterm"></a><p>本文提供了在 FreeBSD 上设置 SLIP 服务，
+	也就是如何配置您的系统， 使其能在远程 SLIP
+	客户端登录时自动地开启连接的建议。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="slips-prereqs"></a>26.7.2.1. 前提条件</h4></div></div></div><a id="idp85180240" class="indexterm"></a><p>这一节技术性很强， 所以要求您有一定的背景知识。
+	  本节假定您熟悉 TCP/IP 网络协议， 特别是网络和节点寻址、
+	  子网掩码、 子网划分、 路由、 路由协议 (如RIP) 等知识。
+	  在拨号服务器上配置 SLIP 需要这些概念性的知识。
+	  如果您不熟悉它们， 请先阅读 Craig Hunt 的 <span class="emphasis"><em>TCP/IP 网络管理</em></span>
+	  由O'Reilly &amp; Associates, Inc. 出版 (ISBN 0-937175-82-X)，
+	  或 Douglas Comer 有关 TCP/IP 协议的书籍。</p><a id="idp85185744" class="indexterm"></a><p>此外还假定您已经配置好了您的调制解调器以及相应的系统文件，
+	  以允许通过调制解调器进行登录。 如果您还没有为此配置好系统，
+	  请参见 <a class="xref" href="dialup.html" title="25.4. 拨入服务">Section 25.4, “拨入服务”</a> 以了解关于如何进行拨号服务的配置。
+	  您可能也会想看一看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a> 的联机手册，
+	  以了解关于串口设备驱动的进一步信息， 以及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ttys&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ttys</span>(5)</span></a>、
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gettytab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">gettytab</span>(5)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=getty&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">getty</span>(8)</span></a> &amp; <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a>
+	  上关于怎样配置系统来接受来自调制解调器的登录请求的具体情况，
+	  还有 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=stty&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">stty</span>(1)</span></a> 以了解关于设置串口参数
+	  (例如 <code class="literal">clocal</code> 表示串口直联) 等。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85192144"></a>26.7.2.2. 快速浏览</h4></div></div></div><p>使用FreeBSD作为SLIP服务器， 在典型配置时， 它是这样工作的：
+	  一个SLIP客户拨号并以专用的login ID登录到FreeBSD SLIP服务器系统。
+	  这个用户使用 <code class="filename">/usr/sbin/sliplogin</code>
+	  作为 shell。 <code class="command">sliplogin</code> 程序会在文件
+	  <code class="filename">/etc/sliphome/slip.hosts</code> 中查找这个用户的项，
+	  如果找到了匹配项， 就将串行线连接到一个可用的 SLIP 接口，
+	  然后运行 shell 脚本 <code class="filename">/etc/sliphome/slip.login</code>
+	  以配置 SLIP 接口。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85198928"></a>26.7.2.2.1. 一个SLIP服务器登录的例子</h5></div></div></div><p>例如， 如果一个SLIP用户的ID是<code class="systemitem">Shelmerg</code>，
+         在<code class="filename">/etc/master.passwd</code>中<code class="systemitem">Shelmerg</code>的项如下的所示：</p><pre class="programlisting">Shelmerg:password:1964:89::0:0:Guy Helmer - SLIP:/usr/users/Shelmerg:/usr/sbin/sliplogin</pre><p><code class="systemitem">Shelmerg</code>登录时，
+	    <code class="command">sliplogin</code>在文件
+	    <code class="filename">/etc/sliphome/slip.hosts</code>中搜索与用户ID匹配的行;如下所示：</p><pre class="programlisting">Shelmerg        dc-slip sl-helmer       0xfffffc00		  autocomp</pre><p><code class="command">sliplogin</code>找到这条区配行，
+	   并将串行线与另一个可用的SLIP接口连起来，
+	   然后执行<code class="filename">/etc/sliphome/slip.login</code>脚本：</p><pre class="programlisting">/etc/sliphome/slip.login 0 19200 Shelmerg dc-slip sl-helmer 0xfffffc00 autocomp</pre><p>如果一切顺利
+	    <code class="filename">/etc/sliphome/slip.login</code> 将在
+            <code class="command">sliplogin</code> 绑定的 SLIP 接口上发出
+	    <code class="command">ifconfig</code> (前述的例子中是 SLIP 接口
+	    0， 这是 <code class="filename">slip.login</code> 的第一个参数)，
+	    以设置本地 IP 地址 (<code class="systemitem">dc-slip</code>)、 远程 IP 地址
+	    (<code class="systemitem">sl-helmer</code>)、 这一 SLIP
+	    接口的子网掩码 (<code class="systemitem">0xfffffc00</code>)，
+	    以及任何其他标志 (<code class="literal">autocomp</code>)。
+	    如果发生错误， <code class="command">sliplogin</code> 通常会通过
+	    <span class="application">syslogd</span> 的 daemon facility
+	    记下有用的信息， 前者会把这些信息保存到
+            <code class="filename">/var/log/messages</code>
+	    (参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">syslog.conf</span>(5)</span></a> 以及
+	    <code class="filename">/etc/syslog.conf</code> 的联机手册， 以了解
+	    <span class="application">syslogd</span> 在记录什么，
+	    以及这些内容将被记在哪里)。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85212624"></a>26.7.2.3. 内核配置</h4></div></div></div><a id="idp85213264" class="indexterm"></a><a id="idp85226832" class="indexterm"></a><p>FreeBSD 的默认内核 (<code class="filename">GENERIC</code>)
+	  提供了 SLIP (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sl</span>(4)</span></a>) 支持； 使用定制的内核时，
+	  您必须把下面的设置加入到配置文件：</p><pre class="programlisting">device   sl</pre><p>默认情况下， 您的 FreeBSD 计算机不会转发包。
+	  如果您希望将 FreeBSD SLIP 服务器作为路由器使用，
+	  就需要修改 <code class="filename">/etc/rc.conf</code> 文件，
+	  将 <code class="literal">gateway_enable</code> 变量设为
+	  <code class="option">YES</code>。 这样下次系统引导时就能够保持这一配置了。</p><p>要立即应用这些配置， 可以 <code class="systemitem">root</code>
+	  的身份运行：</p><pre class="screen"><code class="prompt">#</code> /etc/rc.d/routing start</pre><p>请参阅 <a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a> 以了解如何配置 FreeBSD
+	  内核， 并获得在重新配置内核方面的指导。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85233488"></a>26.7.2.4. Sliplogin配置</h4></div></div></div><p>正如先前所提到的，
+	  <code class="filename">/etc/sliphome</code> 目录中有三个文件，
+	  它们共同构成 <code class="filename">/usr/sbin/sliplogin</code> 的配置 (参考
+	  <code class="command">sliplogin</code> 的联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sliplogin&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sliplogin</span>(8)</span></a>)：
+	  用于定义 SLIP 用户和相关的 IP
+	  地址的 <code class="filename">slip.hosts</code>、
+	  通常仅用于配置 SLIP 接口的 <code class="filename">slip.login</code>， 以及 (可选的)
+	  <code class="filename">slip.logout</code>， 用以撤销由
+	  <code class="filename">slip.login</code> 所执行的动作。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85238224"></a>26.7.2.4.1. 配置 <code class="filename">slip.hosts</code></h5></div></div></div><p><code class="filename">/etc/sliphome/slip.hosts</code>里的每行包含至少四个元素， 元素之间由空格隔开：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>SLIP用户的登录ID</p></li><li class="listitem"><p>SLIP连接的本地地址(指SLIP服务器)</p></li><li class="listitem"><p>SLIP连接的远程地址</p></li><li class="listitem"><p>网络掩网</p></li></ul></div><p>本地和远程地址可以是主机名
+	    (通过文件<code class="filename">/etc/hosts</code>或者域名服务解析为IP地址，
+	    这取决于文件<code class="filename">/etc/nsswitch.conf</code>
+	    中的设置)， 网络掩网可以是一个
+	    能通过文件<code class="filename">/etc/networks</code>解析的名字。
+	    在一个样例系统中，
+	    <code class="filename">/etc/sliphome/slip.hosts</code>是这样的：</p><pre class="programlisting">#
+# login local-addr      remote-addr     mask            opt1    opt2
+#                                               (normal,compress,noicmp)
+#
+Shelmerg  dc-slip       sl-helmerg      0xfffffc00      autocomp</pre><p>在这行末尾是一或多个选项：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="option">normal</code> ──不压缩报头
+		</p></li><li class="listitem"><p><code class="option">compress</code> ── 压缩报头</p></li><li class="listitem"><p><code class="option">autocomp</code> ──如果远程端允许， 压缩报头</p></li><li class="listitem"><p><code class="option">noicmp</code> ──禁用ICMP数据包
+		(这样就会丢弃所有的<span class="quote">“<span class="quote">ping</span>”</span>数据包， 不占用您的带宽)</p></li></ul></div><a id="idp85259344" class="indexterm"></a><a id="idp85259856" class="indexterm"></a><p>对SLIP连接的本地及远程地址的选择取决是您是准备在SLIP服务器上使用 TCP/IP
+	    子网还是使用<span class="quote">“<span class="quote">ARP代理</span>”</span> (它并不是<span class="quote">“<span class="quote">真正的</span>”</span>ARP代理， 而是我们在本节用于介绍的术语)。
+	    如果您不能确定选择何种方式或者如何分配地址， 请参考"前提条件"(<a class="xref" href="slip.html#slips-prereqs" title="26.7.2.1. 前提条件">Section 26.7.2.1, “前提条件”</a>)里列出的TCP/IP书籍
+	    或者向您的IP网络管理员请教。</p><p>如果打算为您的 SLIP 客户使用一个独立的子网，
+	    就需要先从分配得到的网络号中取出一个子网号，
+	    然后再在这个子网里给每个 SLIP 客户分配 IP 地址。
+	    接下来， 您还需要通过 SLIP 服务器在最近的 IP
+	    路由器上配置一个指向 SLIP 子网的静态路由。</p><a id="idp85262416" class="indexterm"></a><p>如果要使用 <span class="quote">“<span class="quote">代理 ARP</span>”</span>
+	    的方式， 您还需要从 SLIP 服务器的以太子网中为每个 SLIP 客户分配IP地址，
+	    还必须修改<code class="filename">/etc/sliphome/slip.login</code> 和
+	    <code class="filename">/etc/sliphome/slip.logout</code>脚本以使用
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=arp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">arp</span>(8)</span></a>来管理在 SLIP
+	    服务器 ARP 表中的 <span class="quote">“<span class="quote">代理 ARP</span>”</span> 项。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85265744"></a>26.7.2.4.2. <code class="filename">slip.login</code> Configuration</h5></div></div></div><p>典型的<code class="filename">/etc/sliphome/slip.login</code>
+	   如下所示：</p><pre class="programlisting">#!/bin/sh -
+#
+#       @(#)slip.login  5.1 (Berkeley) 7/1/90
+
+#
+# generic login file for a slip line.  sliplogin invokes this with
+# the parameters:
+#      1        2         3        4          5         6     7-n
+#   slipunit ttyspeed loginname local-addr remote-addr mask opt-args
+#
+/sbin/ifconfig sl$1 inet $4 $5 netmask $6</pre><p>这个<code class="filename">slip.login</code>脚本仅仅为带有相应本地及远程地址和掩码的SLIP接口执行
+	    <code class="command">ifconfig</code>。</p><p>如果您决定使用<span class="quote">“<span class="quote">ARP代理</span>”</span>
+	    方式(而非为您的SLIP客户使用独立的子网)， 您的<code class="filename">/etc/sliphome/slip.login</code>
+	   应该是这样：</p><pre class="programlisting">#!/bin/sh -
+#
+#       @(#)slip.login  5.1 (Berkeley) 7/1/90
+
+#
+# generic login file for a slip line.  sliplogin invokes this with
+# the parameters:
+#      1        2         3        4          5         6     7-n
+#   slipunit ttyspeed loginname local-addr remote-addr mask opt-args
+#
+/sbin/ifconfig sl$1 inet $4 $5 netmask $6
+# Answer ARP requests for the SLIP client with our Ethernet addr
+/usr/sbin/arp -s $5 00:11:22:33:44:55 pub</pre><p><code class="filename">slip.login</code>新加的行<code class="command">arp -s
+	    $5 00:11:22:33:44:55 pub</code> 在 SLIP 服务器的 ARP
+	   表中加入了一个表项。 这个ARP项使得每当这个以太网上的其它
+	   IP 节点对 SLIP 客户端 IP 地址进行 ARP 请求时，
+	   SLIP 服务器会以自已的以太网MAC地址作为回应。</p><a id="idp85271632" class="indexterm"></a><p>当使用以上的例子时， 一定要将
+	  以太网MAC地址 （<code class="systemitem">00:11:22:33:44:55</code>）
+            替换成您系统网卡的MAC地址， 否则<span class="quote">“<span class="quote">ARP代理</span>”</span>
+            将完全无法工作！ 您可以查看 <code class="command">netstat -i</code>
+            输出结果以取得以太网 MAC 地址; 输出的第二行应该是这样：</p><pre class="screen">ed0   1500  &lt;Link&gt;0.2.c1.28.5f.4a         191923	0   129457     0   116</pre><p>这行表明这个系统的以太网MAC地址是<code class="systemitem">00:02:c1:28:5f:4a</code>
+	    ──<code class="command">netstat -i</code>输出的以太网MAC地址必须改成用冒号隔开， 并且要单个十六进数前加上。
+	     这是<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=arp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">arp</span>(8)</span></a>要求的格式; 参考<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=arp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">arp</span>(8)</span></a> 的联机手册以获取完整的使用方法。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在编写
+	      <code class="filename">/etc/sliphome/slip.login</code> 和
+	      <code class="filename">/etc/sliphome/slip.logout</code> 时， 一定要设置
+	      <span class="quote">“<span class="quote">可执行</span>”</span> (execute) 位 (换言之， <code class="command">chmod 755
+	      /etc/sliphome/slip.login /etc/sliphome/slip.logout</code>)，
+	      否则 <code class="command">sliplogin</code>将无法执行它。</p></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85280592"></a>26.7.2.4.3. <code class="filename">slip.logout</code>配置</h5></div></div></div><p><code class="filename">/etc/sliphome/slip.logout</code>并不是必需的
+	  (除非您使用了<span class="quote">“<span class="quote">ARP代理</span>”</span>)， 如果您准备创建它， 这里有一个基本的
+	  <code class="filename">slip.logout</code> 脚本的例子：</p><pre class="programlisting">#!/bin/sh -
+#
+#       slip.logout
+
+#
+# logout file for a slip line.  sliplogin invokes this with
+# the parameters:
+#      1        2         3        4          5         6     7-n
+#   slipunit ttyspeed loginname local-addr remote-addr mask opt-args
+#
+/sbin/ifconfig sl$1 down</pre><p>如果使用了 <span class="quote">“<span class="quote">代理 ARP</span>”</span>，
+	    则可能希望 <code class="filename">/etc/sliphome/slip.logout</code>
+	    在用户注销时自动为 SLIP 客户端删除
+	    ARP 项：</p><pre class="programlisting">#!/bin/sh -
+#
+#       @(#)slip.logout
+
+#
+# logout file for a slip line.  sliplogin invokes this with
+# the parameters:
+#      1        2         3        4          5         6     7-n
+#   slipunit ttyspeed loginname local-addr remote-addr mask opt-args
+#
+/sbin/ifconfig sl$1 down
+# Quit answering ARP requests for the SLIP client
+/usr/sbin/arp -d $5</pre><p><code class="command">arp -d $5</code> 将删除由 <span class="quote">“<span class="quote">代理 ARP</span>”</span>
+	    <code class="filename">slip.login</code> 在 SLIP 客户程序登录时所生成的
+	    ARP 项。</p><p>再次强调： 建立
+	    <code class="filename">/etc/sliphome/slip.logout</code> 之后，
+	    一定要设置可执行位 (也就是说， <code class="command">chmod 755
+	    /etc/sliphome/slip.logout</code>)。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85296336"></a>26.7.2.5. 路由考虑</h4></div></div></div><a id="idp85296976" class="indexterm"></a><p>如果没有使用 <span class="quote">“<span class="quote">代理 ARP</span>”</span> 的方法来在您的
+	  SLIP 客户机和网络的其余部分 (也可能是 Internet)
+	  之间路由数据包， 您可能需要增加离您最近的默认路由器的静态路由，
+	  以便通过 SLIP 服务器来在 SLIP 客户机子网上进行路由。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85298896"></a>26.7.2.5.1. 静态路由</h5></div></div></div><a id="idp85299536" class="indexterm"></a><p>向您最近的默认路由添加一个静态路由可以说是很麻烦
+	    (或者说是不可能， 如果您没有权限这么做)。 如果在您的组织中使用多路由器网络，
+	    有些路由器 (比如 Cisco 和 Proteon 生产的) 不但要配置指向 SLIP
+	    子网的路由， 而且还需要配置将哪些静态路由传给其它的路由器。
+	    所以一些专家意见和问题解答对于使基于静态路由表的路由正常工作很有必要。</p></div></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="pppoa.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ppp-and-slip.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mail.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">26.6. 使用 ATM 上的 <span class="application">PPP</span> (PPPoA) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 27. 电子邮件</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

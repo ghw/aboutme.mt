@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>11.7. 高级主题</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="prev" href="linuxemu-oracle.html" title="11.6. 安装Oracle®" /><link rel="next" href="system-administration.html" title="Part III. 系统管理" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.7. 高级主题</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="linuxemu-oracle.html">Prev</a> </td><th width="60%" align="center">Chapter 11. Linux二进制兼容模式</th><td width="20%" align="right"> <a accesskey="n" href="system-administration.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="linuxemu-advanced"></a>11.7. 高级主题</h2></div></div></div><p>如果您对Linux兼容模式是如何工作的感到好奇，这节正是您所需要的。 下面的绝大部分内容是由
+    Terry Lambert<code class="email">&lt;<a xmlns="" class="email" href="mailto:tlambert@primenet.com">tlambert@primenet.com</a>&gt;</code> （Message ID:
+      <code class="literal">&lt;199906020108.SAA07001@usr09.primenet.com&gt;</code>）发表在邮件列表<a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-chat" target="_top">FreeBSD 闲聊邮件列表</a>上的内容组成的。
+      </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75417552"></a>11.7.1. 它是如何工作的？</h3></div></div></div><a id="idp75418192" class="indexterm"></a><p>FreeBSD有一个<span class="quote">“<span class="quote">可执行类加载器</span>”</span>。它主要是嵌入了<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=execve&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">execve</span>(2)</span></a>系统调用。
+</p><p>碰巧的是FreeBSD有一个引导器（loader）的列表，而不是一个简单的返回一个
+      符号 <code class="literal">#!</code>的引导器！</p><p>从历史上来讲，只有<span class="trademark">UNIX</span>®平台的引导器会检查魔术（magic）数
+      （通常是文件的前4个或8个字节）是否是二进制的，
+      如果是，就调用二进制引导程序。</p><p>如果它不是二进制类型的<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=execve&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">execve</span>(2)</span></a>调用就会返回一个错误，shell就试图用shell命令执行它。
+      </p><p>缺省是使用<span class="quote">“<span class="quote">当前设定的shell</span>”</span>。</p><p>随后，进行了一些hack, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sh</span>(1)</span></a>开始检查前两个字符，如果它们是<code class="literal">:\n</code>，
+      那它就调用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=csh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">csh</span>(1)</span></a>（我们相信是SCO最先做这个hack的）。</p><p>FreeBSD现在所做的是用一个普通的<code class="literal">#!</code>引导器仔细检查引导器的列表，
+      然后由解释程序一个接一个地解释，返回给<code class="filename">/bin/sh</code>。
+      </p><a id="idp75431504" class="indexterm"></a><p>为了支持Linux ABI，FreeBSD就把魔术数看作为一个二进制ELF程序。（
+      这样一来，它就使得在FreeBSD， <span class="trademark">Solaris</span>™，Linux和其他任何操作系统之间只要使用ELF格式就都可以顺利运行）。
+      </p><a id="idp75432912" class="indexterm"></a><p>ELF引导器会寻找一个专门的<span class="emphasis"><em>标记</em></span>，
+       它是在ELF映像中的一个注释部分，但在SVR4/<span class="trademark">Solaris</span>™的ELF中没有。
+</p><p>为了执行Linux程序，它们必须被打上<code class="literal">Linux</code>类型的<span class="emphasis"><em>标记</em></span>；
+      使用<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=brandelf&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">brandelf</span>(1)</span></a>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>brandelf -t Linux file</code></strong></pre><p>做完之后，ELF引导器就会看到文件上的<code class="literal">Linux</code>的标记。
+      </p><a id="idp75438160" class="indexterm"></a><p>当ELF引导器看到<code class="literal">Linux</code>的标记，
+      引导器就会在<code class="literal">proc</code>结构中替换一个指示器。
+      所有的系统调用就会通过这个指示器来索引（在一个传统的 <span class="trademark">UNIX</span>®系统中，
+      这就是<code class="literal">sysent[]</code>结构队列，包含系统调用）。
+     此外，为了解决由于信号杂乱所造成的陷阱向量的问题，会造成线程的剧增，
+     需要切断其他（或较小的）由Linux内核模块产生的修正。
+      </p><p>Linux系统调用向量包含一个<code class="literal">sysent[]</code>记录的列表，
+      它的地址位于内核模块之中。</p><p>当一个系统调用被Linux程序调用时，有缺陷的代码会把系统调用功能的指示器从<code class="literal">proc</code>结构中解除，
+      然后获得Linux，而不是FreeBSD，系统调用入口点。</p><p>另外，Linux模式动态地<span class="emphasis"><em>reroots</em></span>查找；这和启动文件系统的<code class="option">union</code>
+      选项是等效的（即时不是<code class="literal">unionfs</code>文件系统）。
+      首先会试图在<code class="filename">/compat/linux/original-path</code>
+      目录查找文件，如果失败了，就会在<code class="filename">/original-path</code>
+      目录下查找。这使得需要其它程序的程序可以运行（例如，Linux工具链都可以在Linux ABI的支持下工作）。
+      也就是说Linux程序可以加载和执行FreeBSD程序，如果当前没有相应的Linux程序，
+      那您可以在<code class="filename">/compat/linux</code>目录树中放置一个<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uname&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">uname</span>(1)</span></a>，使 Linux 程序不易察觉它们并没有运行在 Linux 系统上。
+	</p><p>在FreeBSD内核中有一个Linux内核；由内核提供的能够提供所有服务的各种潜在功能
+      在FreeBSD系统调用表记录和Linux系统调用表记录之间是一样的：
+      文件系统操作，虚拟内存操作，信号发送，System V IPC，…等等。
+      唯一的不同是FreeBSD会得到FreeBSD的<span class="emphasis"><em>胶合</em></span>功能，
+      而Linux程序会得到Linux的<span class="emphasis"><em>胶合</em></span>功能
+      （大部分老的操作系统只有它们自己的<span class="emphasis"><em>胶合</em></span>函数，
+      函数地址在静态全局变量<code class="literal">sysent[]</code>结构数据里面，
+      而不是动态的初始化到进程的<code class="literal">proc</code>结构）。
+      </p><p>哪一个是FreeBSD自己的ABI呢？这无关紧要。基本上，
+      唯一的不同是FreeBSD的<span class="emphasis"><em>胶合</em></span>功能是被静态连接到内核，
+      而Linux的<span class="emphasis"><em>胶合</em></span>功能可能是被静态连接到内核，
+      也可能它们通过一个内核模块来访问。
+      </p><p>有一个真正的模拟器吗？没有，它只不过是一个ABI执行机制，不是一个模拟器。</p><p>为什么有时它被叫做<span class="quote">“<span class="quote">Linux模拟器</span>”</span>？
+      只是为了更容易地卖出FreeBSD罢了！
+      实际上，历史上从来没有描述这样一种执行机制的名字，FreeBSD并不是真正地运行Linux程序，如果您不编译进代码，
+      或加载一个模块。
+      就需要有一个名字来描述这样一种加载功能--因此就想出了<span class="quote">“<span class="quote">Linux模拟器</span>”</span>这样一个名字。
+      </p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="linuxemu-oracle.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="linuxemu.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="system-administration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">11.6. 安装<span class="trademark">Oracle</span>® </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part III. 系统管理</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

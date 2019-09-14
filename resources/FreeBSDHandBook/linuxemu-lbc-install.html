@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>11.2. 安装</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="prev" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="next" href="linuxemu-mathematica.html" title="11.3. 安装Mathematica®" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.2. 安装</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="linuxemu.html">Prev</a> </td><th width="60%" align="center">Chapter 11. Linux二进制兼容模式</th><td width="20%" align="right"> <a accesskey="n" href="linuxemu-mathematica.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="linuxemu-lbc-install"></a>11.2. 安装</h2></div></div></div><a id="idp75061072" class="indexterm"></a><p>默认情况下， 并不开启 Linux 二进制兼容支持。
+      启用这一功能最简单的方法是载入
+      <code class="literal">linux</code> KLD 模块 (<span class="quote">“<span class="quote">Kernel LoaDable
+      object</span>”</span>)。 以 <code class="systemitem">root</code>
+      的身份， 键入下列命令即可：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload linux</code></strong></pre><p>如果希望 Linux 兼容支持在系统初始化过程中自动启用， 则应在
+      <code class="filename">/etc/rc.conf</code> 中增加：</p><pre class="programlisting">linux_enable="YES"</pre><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldstat&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldstat</span>(8)</span></a>可以用来检查KLD模块是否加载：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>kldstat</code></strong>
+Id Refs Address    Size     Name
+ 1    2 0xc0100000 16bdb8   kernel
+ 7    1 0xc24db000 d000     linux.ko</pre><a id="idp75067472" class="indexterm"></a><p>如果您不想或者无法将Linux KLD加载，您就需要在内核中静态链接进Linux二进制兼容模式。您必须在
+      您的内核配置文件里面加入<code class="literal">options COMPAT_LINUX</code>，然后按照<a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>重新编译内核。
+      </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75069904"></a>11.2.1. 安装Linux运行时库</h3></div></div></div><a id="idp75070544" class="indexterm"></a><p>有两种方法来安装Linux运行时库，要么使用<a class="link" href="linuxemu-lbc-install.html#linuxemu-libs-port" title="11.2.1.1. 通过使用 linux_base Port 来安装">linux_base</a> port，
+      要么<a class="link" href="linuxemu-lbc-install.html#linuxemu-libs-manually" title="11.2.1.2. 手动安装">手动</a>安装。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="linuxemu-libs-port"></a>11.2.1.1. 通过使用 linux_base Port 来安装</h4></div></div></div><a id="idp75073872" class="indexterm"></a><p>这是最容易的安装方法，只需要像安装其他port一样从
+	<a class="link" href="file://localhost/usr/ports/" target="_top">Ports Collection</a>来安装：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/emulators/linux_base-f10</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install distclean</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">对于 FreeBSD 8.0 之前的版本的 FreeBSD 系统，
+            你需要使用 <span class="package">emulators/linux_base-fc4</span> port
+            而不是 <span class="package">emulators/linux_base-f10</span>。</p></div><p>
+	您现在应当是工作在Linux兼容模式下了。一些程序可能会提示系统库的版本不正确。通常，这不是问题。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">有多个版本的<span class="package">emulators/linux_base</span> port，针对不同的版本的Linux。
+	  您应该选择最接近Linux应用程序需要的那个版本来安装。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="linuxemu-libs-manually"></a>11.2.1.2. 手动安装</h4></div></div></div><p>如果您没有安装 Ports Collection，您也可以通过手动来安装Linux运行时库。
+          您将需要这些程序依赖的Linux共享库，而且您需要创建一个<span class="quote">“<span class="quote">shadow root</span>”</span>
+	  目录<code class="filename">/compat/linux</code>，任何要被Linux程序打开的共享库都首先在这个目录里面查找。
+	  所以，如果一个Linux程序加载了，例如，<code class="filename">/lib/libc.so</code>，FreeBSD 会首先尝试打开
+	  <code class="filename">/compat/linux/lib/libc.so</code>，如果不存在，它将尝试打开<code class="filename">/lib/libc.so</code>。
+	  共享库应该安装在<code class="filename">/compat/linux/lib</code>而不是Linux <code class="command">ld.so</code>报告的其他路径。</p><p>通常，您需要寻找Linux程序依赖的共享库。 此后，
+	  你的系统上就会有一组 Linux 共享库，
+	  这组共享库足以用来运行新安装的 Linux 二进制程序。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75092688"></a>11.2.1.3. 如何安装额外的共享库</h4></div></div></div><a id="idp75093328" class="indexterm"></a><p>如果您安装了<code class="filename">linux_base</code> port，但是您的
+	  您的应用程序仍会报告丢失共享库的信息？您如何知道Linux程序需要哪个共享库？
+	  基本上，有两种可能性（接下来的指令需要<code class="systemitem">root</code>权限）：</p><p>如果您有可以访问的Linux系统， 看看应用程序需要什么共享库，
+	把它们复制到您的FreeBSD系统。看下面的例子：</p><div class="informalexample"><p>我们假设您通过FTP得到Linux程序<span class="application">Doom</span>，
+	  并把它放在您能访问的Linux系统上。然后您可以通过<code class="command">ldd linuxdoom</code>来检查需要哪些共享库，
+	  就像这样：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ldd linuxdoom</code></strong>
+libXt.so.3 (DLL Jump 3.1) =&gt; /usr/X11/lib/libXt.so.3.1.0
+libX11.so.3 (DLL Jump 3.1) =&gt; /usr/X11/lib/libX11.so.3.1.0
+libc.so.4 (DLL Jump 4.5pl26) =&gt; /lib/libc.so.4.6.29</pre><a id="idp75097936" class="indexterm"></a><p>您需要得到上面输出的右列的所有文件，并把它们复制到 <code class="filename">/compat/linux</code>，
+	    第一列的名字用符号连接指向它们。这样您的FreeBSD系统上就有了这些文件：</p><pre class="screen">/compat/linux/usr/X11/lib/libXt.so.3.1.0
+/compat/linux/usr/X11/lib/libXt.so.3 -&gt; libXt.so.3.1.0
+/compat/linux/usr/X11/lib/libX11.so.3.1.0
+/compat/linux/usr/X11/lib/libX11.so.3 -&gt; libX11.so.3.1.0
+/compat/linux/lib/libc.so.4.6.29
+/compat/linux/lib/libc.so.4 -&gt; libc.so.4.6.29</pre><div class="blockquote"><blockquote class="blockquote"><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您已经有了一个与<code class="command">ldd</code> 输出的第一列的主修订号相匹配的Linux共享库，
+	      您就已经完成了工作， 而不需要把右列命名的文件复制到您的系统上了。
+              如果有一个新的版本， 那无论如何都要复制一个共享库。
+	      您可以删掉旧的， 您只要做一个符号连接到新的版本。
+	      所以，如果有这些库在您的系统上：
+	     </p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen">/compat/linux/lib/libc.so.4.6.27
+/compat/linux/lib/libc.so.4 -&gt; libc.so.4.6.27</pre><p xmlns="http://www.w3.org/1999/xhtml">如果您根据<code class="command">ldd</code>输出的发现需要一个更新版本的库：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen">libc.so.4 (DLL Jump 4.5pl26) -&gt; libc.so.4.6.29</pre><p xmlns="http://www.w3.org/1999/xhtml">如果结尾的数字只有一到两个版本过期，那也不要担心复制 <code class="filename">/lib/libc.so.4.6.29</code>，
+	      因为程序在稍微旧一些的版本上也能很好地工作。
+	      然而，如果喜欢的话，您可以替换<code class="filename">libc.so</code>，变成这样：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen">/compat/linux/lib/libc.so.4.6.29
+/compat/linux/lib/libc.so.4 -&gt; libc.so.4.6.29</pre></div></blockquote></div><div class="blockquote"><blockquote class="blockquote"><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">符号链接机制 <span class="emphasis"><em>仅仅是</em></span> Linux 程序需要的。
+	      FreeBSD 的运行时连接器会自己寻找匹配的主修订号，您不需要为此担心。</p></div></blockquote></div></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75106512"></a>11.2.2. 安装Linux ELF程序</h3></div></div></div><a id="idp75107152" class="indexterm"></a><p>ELF格式的程序需要一步额外的步骤<span class="quote">“<span class="quote">标记</span>”</span>。如果您尝试运行没有标记的ELF程序，
+      您会得到像下面这样的错误信息：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>./my-linux-elf-binary</code></strong>
+ELF binary type not known
+Abort</pre><p>为帮助 FreeBSD 内核分辨 FreeBSD ELF
+	执行文件和 Linux 执行文件， 需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=brandelf&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">brandelf</span>(1)</span></a>
+	工具。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>brandelf -t Linux my-linux-elf-binary</code></strong></pre><a id="idp75112272" class="indexterm"></a><p>GNU工具现在会自动把适当的标记信息放到ELF程序中，您以后遇到这个问题的机会越来越少。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75113296"></a>11.2.3. 安装各种基于 RPM 的应用程序</h3></div></div></div><p>FreeBSD 使用自己的包数据库来跟踪所有的 ports (包括 <span class="trademark">Linux</span>® ports)。
+        所以无法使用(不支持) <span class="trademark">Linux</span>® RPM 数据库。</p><p>如果你需要安装任意的一个基于 RPM 的 <span class="trademark">Linux</span>® 应用程序，
+        可以通过一下的步骤完成：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /compat/linux</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>rpm2cpio -q &lt; /path/to/linux.archive.rpm | cpio -id</code></strong></pre><p>然后对已安装的 ELF 二进制程序(不包括库)运行 brandelf。
+        用此种方法安装的程序不能被完全卸载， 但是可能有助于做些测试。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75126864"></a>11.2.4. 配置主机名解析器</h3></div></div></div><p>如果DNS不能正常工作或是您得到下列信息：</p><pre class="screen">resolv+: "bind" is an invalid keyword resolv+:
+"hosts" is an invalid keyword</pre><p>您就需要配置<code class="filename">/compat/linux/etc/host.conf</code>文件，此文件包含：</p><pre class="programlisting">order hosts, bind
+multi on</pre><p>order这一行指出<code class="filename">/etc/hosts</code>先被搜索再接着搜索DNS。
+	如果<code class="filename">/compat/linux/etc/host.conf</code>没有被安装，Linux程序会读取FreeBSD的
+	<code class="filename">/etc/host.conf</code>然后提示不兼容的FreeBSD语法。
+	如果您没有使用<code class="filename">/etc/resolv.conf</code> 文件设置DNS，应该删除<code class="literal">bind</code>。
+	</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="linuxemu.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="linuxemu.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="linuxemu-mathematica.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 11. Linux二进制兼容模式 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 11.3. 安装<span class="trademark">Mathematica</span>®</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

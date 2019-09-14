@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>11.3. 安装Mathematica®</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="prev" href="linuxemu-lbc-install.html" title="11.2. 安装" /><link rel="next" href="linuxemu-maple.html" title="11.4. 安装Maple™" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.3. 安装<span class="trademark">Mathematica</span>®</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="linuxemu-lbc-install.html">Prev</a> </td><th width="60%" align="center">Chapter 11. Linux二进制兼容模式</th><td width="20%" align="right"> <a accesskey="n" href="linuxemu-maple.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="linuxemu-mathematica"></a>11.3. 安装<span class="trademark">Mathematica</span>®</h2></div><div><span class="authorgroup">Updated for Mathematica 5.X by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Boris</span> <span class="surname">Hollas</span></span>. </span></div></div></div><a id="idp75139152" class="indexterm"></a><p>这份文档介绍了如何在 FreeBSD 系统中安装 Linux
+      版本的 <span class="application"><span class="trademark">Mathematica</span>® 5.X</span>。</p><p>Linux 版本的 <span class="application"><span class="trademark">Mathematica</span>®</span>
+      或 <span class="application"><span class="trademark">Mathematica</span>® for Students</span>
+      可以直接从 Wolfram 的
+      <code class="uri"><a class="uri" href="http://www.wolfram.com/" target="_top">http://www.wolfram.com/</a></code> 订购。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75143888"></a>11.3.1. 运行 <span class="trademark">Mathematica</span>® 安装程序</h3></div></div></div><p>首先您应告诉 FreeBSD
+	<span class="application"><span class="trademark">Mathematica</span>®</span> 的 Linux
+	可执行文件需要使用 Linux ABI。 达到这一目的最简单的办法，
+	是将未加标志的可执行文件的默认 ELF 标记为 Linux，
+	输入下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl kern.fallback_elf_brand=3</code></strong></pre><p>这会让 FreeBSD 假定所有未加标志的 ELF 可执行文件，
+	都应使用 Linux ABI， 这样就可以直接从 CDROM 执行安装程序了。</p><p>接下来， 需要将 <code class="filename">MathInstaller</code>
+	复制到硬盘上：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /cdrom</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp /cdrom/Unix/Installers/Linux/MathInstaller /localdir/</code></strong></pre><p>在这个文件的第一行中， 将 <code class="literal">/bin/sh</code>
+	改为 <code class="literal">/compat/linux/bin/sh</code>。
+	这样就能确保安装程序是使用 Linux
+	版本的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sh</span>(1)</span></a> 来运行的。 接下来， 使用文本编辑器或下面的脚本， 把所有的
+	<code class="literal">Linux)</code> 替换为 <code class="literal">FreeBSD)</code>。
+	由于 <span class="application"><span class="trademark">Mathematica</span>®</span>
+	安装程序会调用 <code class="command">uname -s</code> 来检测操作系统，
+	这样做能够让它视 FreeBSD 为一种 类-Linux 操作系统。
+	现在执行 <code class="command">MathInstaller</code>
+	就能安装 <span class="application"><span class="trademark">Mathematica</span>®</span> 了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75158992"></a>11.3.2. 修改 <span class="trademark">Mathematica</span>® 执行文件</h3></div></div></div><p>在安装
+	<span class="application"><span class="trademark">Mathematica</span>®</span> 的过程中所创建的脚本，
+	必须首先进行适当的修改才能使用。
+	如果您选择将 <code class="filename">/usr/local/bin</code>
+	作为
+	<span class="application"><span class="trademark">Mathematica</span>®</span> 可执行文件的安装路径，
+	则可以在这个目录中找到一些到名为
+	<code class="filename">math</code>、 <code class="filename">mathematica</code>、
+	<code class="filename">Mathematica</code>， 以及
+	<code class="filename">MathKernel</code> 的文件的符号连接。 您可以使用文本编辑器，
+	或者下面的 shell 脚本来将这些文件中的
+	<code class="literal">Linux)</code> 改为 <code class="literal">FreeBSD)</code>：</p><pre class="programlisting">#!/bin/sh
+cd /usr/local/bin
+for i in math mathematica Mathematica MathKernel
+  do sed 's/Linux)/FreeBSD)/g' $i &gt; $i.tmp
+  sed 's/\/bin\/sh/\/compat\/linux\/bin\/sh/g' $i.tmp &gt; $i
+  rm $i.tmp
+  chmod a+x $i
+done</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75165008"></a>11.3.3. 获得您的<span class="trademark">Mathematica</span>® 密码</h3></div></div></div><a id="idp75170384" class="indexterm"></a><p>在首次启动 <span class="application"><span class="trademark">Mathematica</span>®</span>
+	时， 您将被问及一个密码。 如果您还未从 Wolfram 获得密码， 则安装目录中的
+	<code class="command">mathinfo</code> 可以帮助您获得 <span class="quote">“<span class="quote">machine ID</span>”</span> (计算机 ID)。
+	这个计算机 ID 取决于您第一块以太网卡的 MAC 地址，
+	以确保您不在多台机器上运行
+	<span class="application"><span class="trademark">Mathematica</span>®</span>。</p><p>在通过电子邮件、 电话或传真向 Wolfram 注册时，
+	您需要向他们提供 <span class="quote">“<span class="quote">machine ID</span>”</span>，
+	探后它们会给您一个与之对应的由一组数字组成的密码。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75174864"></a>11.3.4. 通过网络来运行<span class="trademark">Mathematica</span>®</h3></div></div></div><p><span class="application"><span class="trademark">Mathematica</span>®</span> 使用一些特殊的字体来显示字符，
+      与现在使用的标准字体不一样（integrals, sums, Greek letters,等等）。 X协议要求将这些字体安装在
+      <span class="emphasis"><em>本地</em></span>。
+      这意味着您需要从<span class="application"><span class="trademark">Mathematica</span>®</span>的CDROM里面复制这些字体并安装到本地。
+	这些字体一般在CDROM的<code class="filename">/cdrom/Unix/Files/SystemFiles/Fonts</code>里面，
+	或本地硬盘的<code class="filename">/usr/local/mathematica/SystemFiles/Fonts</code>。
+	实际的字体在<code class="filename">Type1</code>和<code class="filename">X</code>子目录。有很多种方法来使用它们。
+	</p><p>第一种方法是把字体复制到一个已存在的目录<code class="filename">/usr/X11R6/lib/X11/fonts</code>。
+      这需要编辑<code class="filename">fonts.dir</code>文件。添加字体名字进去，并改变第一行的字体数目。
+      另外，您也需要在复制字体的目录下执行<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkfontdir&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">mkfontdir</span>(1)</span></a>。
+      </p><p>第二种方法是复制到 <code class="filename">/usr/X11R6/lib/X11/fonts</code> 目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/X11R6/lib/X11/fonts</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir X</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir MathType1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /cdrom/Unix/Files/SystemFiles/Fonts</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp X/* /usr/X11R6/lib/X11/fonts/X</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp Type1/* /usr/X11R6/lib/X11/fonts/MathType1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /usr/X11R6/lib/X11/fonts/X</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkfontdir</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd ../MathType1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkfontdir</code></strong></pre><p>现在，添加新的字体目录到您的字体目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>xset fp+ /usr/X11R6/lib/X11/fonts/X</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>xset fp+ /usr/X11R6/lib/X11/fonts/MathType1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>xset fp rehash</code></strong></pre><p>如果您正使用 <span class="application">Xorg</span> 服务器， 则可以通过修改
+	<code class="filename">xorg.conf</code> 文件来自动加载它们。</p><a id="idp75198288" class="indexterm"></a><p>如果您<span class="emphasis"><em>没有</em></span>一个叫<code class="filename">/usr/X11R6/lib/X11/fonts/Type1</code>的目录，
+      您可以把<code class="filename">MathType1</code>改成<code class="filename">Type1</code>。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="linuxemu-lbc-install.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="linuxemu.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="linuxemu-maple.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">11.2. 安装 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 11.4. 安装<span class="trademark">Maple</span>™</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

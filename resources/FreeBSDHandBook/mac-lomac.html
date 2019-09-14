@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.14. MAC LOMAC 模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-biba.html" title="16.13. MAC Biba 模块" /><link rel="next" href="mac-implementing.html" title="16.15. MAC Jail 中的 Nagios" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.14. MAC LOMAC 模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-biba.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-implementing.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-lomac"></a>16.14. MAC LOMAC 模块</h2></div></div></div><a id="idp78995280" class="indexterm"></a><p>模块名： <code class="filename">mac_lomac.ko</code></p><p>对应的内核配置： <code class="literal">options MAC_LOMAC</code></p><p>引导选项： <code class="literal">mac_lomac_load="YES"</code></p><p>和 <acronym class="acronym">MAC</acronym> Biba 策略不同，
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_lomac&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_lomac</span>(4)</span></a> 策略只允许在降低了完整性级别之后，
+      才允许在不破坏完整性规则的前提下访问较低完整性级别的客体。</p><p><acronym class="acronym">MAC</acronym> 版本的 Low-watermark
+      完整性策略不应与较早的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lomac&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lomac</span>(4)</span></a> 实现相混淆，
+      除了使用浮动的标签来支持主体通过辅助级别区间降级之外，
+      其工作方式与 Biba 大体相似。 这一次要的区间以 <code class="literal">[auxgrade]</code> 的形式出现。
+      当指定包含辅助级别的 lomac 策略时，
+      其形式应类似于： <code class="literal">lomac/10[2]</code>
+      这里数字二 (2) 就是辅助级别。</p><p><acronym class="acronym">MAC</acronym> LOMAC 策略依赖于系统客体上存在普适的标签，
+      这样就允许主体从较低完整性级别的客体读取， 并对主体的标签降级，
+	  以防止其在之后写高完整性级别的客体。 这就是前面讨论的
+      <code class="literal">[auxgrade]</code> 选项， 因此这个策略能够提供更大的兼容性，
+      而所需要的初始配置也要比 Biba 少。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79006928"></a>16.14.1. 例子</h3></div></div></div><p>与 Biba 和 <acronym class="acronym">MLS</acronym> 策略类似；
+	<code class="command">setfmac</code> 和 <code class="command">setpmac</code>
+	工具可以用来在系统客体上放置标签：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfmac /usr/home/trhodes lomac/high[low]</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>getfmac /usr/home/trhodes</code></strong> lomac/high[low]</pre><p>注意， 这里的辅助级别是 <code class="literal">low</code>，
+	这一特性只由 <acronym class="acronym">MAC</acronym>
+	LOMAC 策略提供。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-biba.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-implementing.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.13. MAC Biba 模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.15. MAC Jail 中的 Nagios</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

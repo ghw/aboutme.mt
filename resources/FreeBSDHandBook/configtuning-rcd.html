@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.7. 在 FreeBSD 中使用 rc</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-cron.html" title="12.6. 配置 cron" /><link rel="next" href="config-network-setup.html" title="12.8. 设置网卡" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.7. 在 FreeBSD 中使用 rc</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-cron.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="config-network-setup.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-rcd"></a>12.7. 在 FreeBSD 中使用 rc</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>在 2002 年， FreeBSD 整合了来自 NetBSD 的
+      <code class="filename">rc.d</code> 系统， 并通过它来完成系统的初始化工作。
+      用户要注意在
+      <code class="filename">/etc/rc.d</code> 目录下的文件。
+      这里面的许多文件是用来管理基础服务的， 它们可以通过
+      <code class="option">start</code>、 <code class="option">stop</code>，
+      以及 <code class="option">restart</code> 选项来控制。
+      举例来说， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a> 可以通过下面的命令来重启：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sshd restart</code></strong></pre><p>对其它服务的操作与此类似。 当然， 这些服务通常是在启动时根据
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 自动启动的。 例如， 要配置使系统启动时启动网络地址转换服务，
+      可以简单地通过在 <code class="filename">/etc/rc.conf</code> 中加入如下设置来完成：</p><pre class="programlisting">natd_enable="YES"</pre><p>如果 <code class="option">natd_enable="NO"</code> 行已经存在，
+      只要简单的把 <code class="option">NO</code> 改成
+      <code class="option">YES</code> 即可。
+      rc 脚本在下次重新启动的时候会自动的装载所需要的服务，
+      像下面所描述的那样。</p><p>由于 <code class="filename">rc.d</code>
+      系统在系统启动/关闭时首先启动/停止服务，如果设置了适当的
+      <code class="filename">/etc/rc.conf</code> 变量，标准的
+      <code class="option">start</code>、<code class="option">stop</code> 和
+      <code class="option">restart</code> 选项将会执行他们的动作。例如
+      <code class="command">sshd restart</code> 命令只在 <code class="filename">/etc/rc.conf</code>
+      中的 <code class="varname">sshd_enable</code> 设置成 <code class="option">YES</code>
+      的时候工作。不管是否在 <code class="filename">/etc/rc.conf</code> 中设置了，要
+      <code class="option">start</code>、<code class="option">stop</code> 或者 <code class="option">restart</code>
+      一个服务，命令前可以加上一个<span class="quote">“<span class="quote">one</span>”</span>前缀。例如要不顾当前
+      <code class="filename">/etc/rc.conf</code> 的设置重新启动
+      <code class="command">sshd</code>，执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sshd onerestart</code></strong></pre><p>用选项 <code class="option">rcvar</code> 可以简单来的检查
+      <code class="filename">/etc/rc.conf</code> 中用适当的 <code class="filename">rc.d</code>
+      脚本启动的服务是否被启用。从而管理员可以运行这样的程序来检查
+      <code class="command">sshd</code> 是否真的在 <code class="filename">/etc/rc.conf</code>
+      中被启动了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sshd rcvar</code></strong>
+# sshd
+$sshd_enable=YES</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">第二行 (<code class="literal"># sshd</code>) 是从
+	<code class="command">sshd</code> 命令中输出的，而不是
+	<code class="systemitem">root</code> 控制台。</p></div><p>为了确定一个服务是否真的在运行，可以用 <code class="option">status</code>
+      选项。例如验证 <code class="command">sshd</code> 是否真的启动了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sshd status</code></strong>
+sshd is running as pid 433.</pre><p>有些时候也可以 <code class="option">reload</code> 服务。
+      这一操作实际上是向服务发送一个信号， 来强制其重新加载配置。
+      多数情况下， 发给服务的会是 <code class="literal">SIGHUP</code>
+      信号。 并非所有服务都支持这一功能。</p><p><code class="filename">rc.d</code> 系统不仅用于网络服务，
+      它也为系统初始化中的多数过程提供支持。
+      比如 <code class="filename">bgfsck</code> 文件， 当它被执行时，
+      将会给出下述信息：</p><pre class="screen">Starting background file system checks in 60 seconds.</pre><p>这个文件用做后台文件系统检查，系统初始化的时候完成。</p><p>很多系统服务依赖其他服务提供的相应功能。例如，NIS 和其他基于
+      RPC 的服务启动可能在 <code class="command">rpcbind</code> 服务启动之前失败。
+      要解决这个问题，依赖关系信息和其他头信息当作注释被包含在每个启动脚本文件的前面。
+      程序在系统初始化时分析这些注释以决定调用其他系统服务来满足依赖关系。</p><p>下面的字句必须被包含在所有的启动脚本文件里，
+      （他们都是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.subr&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc.subr</span>(8)</span></a> 用来 <span class="quote">“<span class="quote">enable</span>”</span>
+      启动脚本必需的）:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">PROVIDE</code>: 指定此文件所提供的服务的名字。</p></li></ul></div><p>以下的字句可以被包含在启动文件的顶部。严格来说他们不是必需的，
+      但作为对于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rcorder&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rcorder</span>(8)</span></a> 有一定的提示作用：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">REQUIRE</code>: 列出此服务启动之前所需要的其他服务。
+	  此脚本提供的服务会在指定的那些服务 <span class="emphasis"><em>之后</em></span>
+	  启动。</p></li><li class="listitem"><p><code class="literal">BEFORE</code>: 列出依赖此服务的其他服务。
+	  此脚本提供的服务将在指定的那些服务 <span class="emphasis"><em>之前</em></span>
+	  启动。</p></li></ul></div><p>通过在启动脚本中仔细设定这些关键字，
+      系统管理员可以很有条理的控制脚本的启动顺序，
+      进而避免使用像其他 <span class="trademark">UNIX</span>® 操作系统那样混乱的
+      <span class="quote">“<span class="quote">runlevels</span>”</span>。</p><p>更多关于 <code class="filename">rc.d</code> 系统的信息， 可以在
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.subr&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc.subr</span>(8)</span></a> 联机手册中找到。
+      如果您有意撰写自己的 <code class="filename">rc.d</code> 脚本，
+      或对现有的脚本进行一些改进， 也可以参考
+      <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/rc-scripting" target="_top">这篇文章</a>。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-cron.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="config-network-setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.6. 配置 <code class="command">cron</code> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.8. 设置网卡</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

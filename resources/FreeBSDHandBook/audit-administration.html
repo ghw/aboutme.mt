@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>17.5. 管理审计子系统</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="audit.html" title="Chapter 17. 安全事件审计" /><link rel="prev" href="audit-config.html" title="17.4. 对审计进行配置" /><link rel="next" href="disks.html" title="Chapter 18. 存储" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.5. 管理审计子系统</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="audit-config.html">Prev</a> </td><th width="60%" align="center">Chapter 17. 安全事件审计</th><td width="20%" align="right"> <a accesskey="n" href="disks.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="audit-administration"></a>17.5. 管理审计子系统</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79381712"></a>17.5.1. 查看审计日志</h3></div></div></div><p>审计记帐是以 BSM 二进制格式保存的， 因此必须使用工具来对其进行修改，
+	或将其转换为文本。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=praudit&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">praudit</span>(1)</span></a>
+	命令能够将记帐文件转换为简单的文本格式； 而
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=auditreduce&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">auditreduce</span>(1)</span></a> 命令则可以为分析、 存档或打印目的来浓缩审计日志文件。
+	<code class="command">auditreduce</code> 支持一系列筛选参数， 包括事件类型、 事件类、
+	用户、 事件的日期和时间， 以及文件路径或操作对象。</p><p>例如， <code class="command">praudit</code> 工具会将指定的审计记帐转存为简单文本格式的审计日志：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>praudit /var/audit/AUDITFILE</code></strong></pre><p>此处 <code class="filename">AUDITFILE</code> 是要转存的审计日志文件。</p><p>审计记帐中包括一系列审计记录， 这些记录由一系列短语 (token) 组成，
+	而 <code class="command">praudit</code> 能把它们顺序显示为一行。
+	每个短语都属于某个特定的类型， 例如
+	<code class="literal">header</code> 表示审计记录头， 而
+	<code class="literal">path</code> 则表示在一次名字查找中的文件路径。 下面是一个
+	<code class="literal">execve</code> 事件的例子：</p><pre class="programlisting">header,133,10,execve(2),0,Mon Sep 25 15:58:03 2006, + 384 msec
+exec arg,finger,doug
+path,/usr/bin/finger
+attribute,555,root,wheel,90,24918,104944
+subject,robert,root,wheel,root,wheel,38439,38032,42086,128.232.9.100
+return,success,0
+trailer,133</pre><p>这个审计记录表示一次成功的 <code class="literal">execve</code>
+	调用， 执行了 <code class="literal">finger doug</code>。 在参数短语中是由 shell 提交给内核的命令行。
+	<code class="literal">path</code> 短语包含了由内核查找得到的可执行文件路径。 <code class="literal">attribute</code> 短语中包含了对可执行文件的描述，
+	特别地， 它包括了文件的权限模式， 用以确定应用程序是否是 setuid 的。
+	<code class="literal">subject</code>(主体) 短语描述了主体进程， 并顺序记录了审计用户 ID、 生效用户 ID 和组 ID、
+	实际用户 ID 和组 ID、 进程 ID、 会话 ID、 端口 ID， 以及登录地址。
+	注意审计用户 ID 和实际用户 ID 是不同的：
+	用户 <code class="systemitem">robert</code> 在执行这个命令之前已经切换为
+	<code class="systemitem">root</code> 帐户， 但它会以最初进行身份验证的用户身份进行审计。
+	最后， <code class="literal">return</code> 短语表示执行成功，
+	而 <code class="literal">trailer</code> 表示终结这一记录。</p><p><code class="command">praudit</code>
+	可以选择使用 <code class="option">-x</code> 参数来支持 XML 格式的输出。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79394768"></a>17.5.2. 浓缩审计记帐</h3></div></div></div><p>由于审计日志可能会很大， 管理员可能会希望选择记录的一个子集来使用，
+	例如与特定用户相关的记录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>auditreduce -u trhodes /var/audit/AUDITFILE | praudit</code></strong></pre><p>这将选择保存在
+	<code class="filename">AUDITFILE</code> 中的所有由
+      <code class="systemitem">trhodes</code> 产生的审计日志。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79402320"></a>17.5.3. 委派审计复审权限</h3></div></div></div><p>在 <code class="systemitem">audit</code> 组中的用户，
+	拥有读取 <code class="filename">/var/audit</code> 下的审计记帐的权限；
+	默认情况下， 这个组是空的， 因此只有 <code class="systemitem">root</code> 用户可以读取审计记帐。
+	如果希望给某个用户指定审计复审权， 则可以将其加入 <code class="systemitem">audit</code>。
+	由于查看审计日志的内容可以提供关于用户和进程行为的大量深度信息，
+	在您委派这些权力时， 请务必谨慎行事。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79405392"></a>17.5.4. 通过审计管道来实时监控</h3></div></div></div><p>审计管道是位于设备文件系统中的自动复制 (cloning) 的虚拟设备，
+	用于让应用程序控制正在运行的审计记录流， 这主要是为了满足入侵检测和系统监控软件作者的需要。
+	不过， 对管理员而言， 审计管道设备也提供了一种无需冒审计记帐文件属主出现问题的麻烦，
+	或由于日志翻转而打断事件流的麻烦， 而实现实时监控的方便途径。 要跟踪实时事件流，
+	使用下面的命令行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>praudit /dev/auditpipe</code></strong></pre><p>默认情况下， 审计管道设备节点只有 <code class="systemitem">root</code> 用户才能访问。 如果希望
+	<code class="systemitem">audit</code> 组的成员能够访问它， 应在 <code class="filename">devfs.rules</code>
+	中加入下述 <code class="literal">devfs</code> 规则：</p><pre class="programlisting">add path 'auditpipe*' mode 0440 group audit</pre><p>请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs.rules&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs.rules</span>(5)</span></a> 以了解关于配置 devfs 文件系统的进一步信息。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">很容易配置出审计事件反馈循环， 也就是查看事件的操作本身会产生更多的事件。
+	  例如， 如果所有的网络 I/O 均被审计， 又在 SSH 会话中执行
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=praudit&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">praudit</span>(1)</span></a>， 就会以很高的速率产生持续的审计事件流，
+	  因为每显示一个事件都会产生新的事件。 建议您在需要在审计管道设备上执行
+	  <code class="command">praudit</code> 时， 选择一个没有进行细粒度
+	  I/O 审计的会话来运行。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79413328"></a>17.5.5. 审计记帐文件的轮转</h3></div></div></div><p>审计计账只由内核写入， 且只能由
+	<span class="application">auditd</span> 管理。 管理员不应尝试使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">newsyslog.conf</span>(5)</span></a>
+	或其它工具来完成审计日志的轮转工作。 您可以使用 <code class="command">audit</code>
+	管理工具来关闭审计、 重新配置审计系统， 并完成日志轮转。
+	下面的命令将让审计服务创建新的审计日志，
+	并发信号给内核要求其使用新的日志。 旧日志将终止并被改名，
+	此时， 管理员就可以操作它了。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>audit -n</code></strong></pre><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果 <span class="application">auditd</span> 服务程序没有在运行，
+	  则这个命令将失败并给出错误提示。</p></div><p>在 <code class="filename">/etc/crontab</code> 加入如下设置，
+	将使 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a> 每十二小时将日志轮转一次。</p><pre class="programlisting">0     */12       *       *       *       root    /usr/sbin/audit -n</pre><p>这些修改会在您保存 <code class="filename">/etc/crontab</code> 后生效。</p><p>对于审计记帐文件基于尺寸的自动翻转， 可以通过
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=audit_control&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">audit_control</span>(5)</span></a> 中的 <code class="option">filesz</code> 选项来配置，
+	这个选项在这一章的配置文件一节中已经介绍过。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79422416"></a>17.5.6. 压缩审计记帐</h3></div></div></div><p>由于审计记帐文件会变得很大， 通常会希望在审计服务关闭它时，
+	对其进行压缩或归档。 <code class="filename">audit_warn</code> 脚本可以用来在一系列与审计有关的事件发生时，
+	执行一些用户定义的操作， 这也包括在审计记帐翻转时进行清理操作。 举例而言， 可以在
+	<code class="filename">audit_warn</code> 脚本中加入下列内容来在审计记帐关闭时压缩它：</p><pre class="programlisting">#
+# Compress audit trail files on close.
+#
+if [ "$1" = closefile ]; then
+        gzip -9 $2
+fi</pre><p>其它存档操作也包括将审计记帐复制到一个中央的服务器， 删除旧的记帐文件，
+	或浓缩审计记帐并删除不需要的记录等。 这个脚本会在审计记帐文件正常关闭时执行一次，
+	因此在非正常关闭系统时， 就不会执行它了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="audit-config.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="audit.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="disks.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">17.4. 对审计进行配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 18. 存储</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>8.2. 安装声卡</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="multimedia.html" title="Chapter 8. 多媒体" /><link rel="prev" href="multimedia.html" title="Chapter 8. 多媒体" /><link rel="next" href="sound-mp3.html" title="8.3. MP3音频" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.2. 安装声卡</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="multimedia.html">Prev</a> </td><th width="60%" align="center">Chapter 8. 多媒体</th><td width="20%" align="right"> <a accesskey="n" href="sound-mp3.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="sound-setup"></a>8.2. 安装声卡</h2></div><div><span class="authorgroup">贡献者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Moses</span> <span class="surname">Moore</span></span>. </span></div><div><span class="authorgroup">Enhanced by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="sound-device"></a>8.2.1. 配置系统</h3></div></div></div><a id="idp72101200" class="indexterm"></a><a id="idp72101712" class="indexterm"></a><a id="idp72102224" class="indexterm"></a><p>在开始之前，您应该清楚声卡类型、所用的芯片以及它是 PCI 还是 ISA 卡。
+      FreeBSD 支持种类繁多的 PCI 和 ISA 卡。检查 <a class="link" href="http://www.FreeBSD.org/releases/9.2R/hardware.html" target="_top">硬件兼容说明</a>
+      中支持的音频设备列表看看是否支持您的声卡，
+      硬件兼容说明也会说明支持您声卡的是哪个驱动程序。</p><a id="idp72103632" class="indexterm"></a><p>要使用声卡， 就应装载正确的驱动程序。完成的方式有两种：
+      最简单的是使用命令 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 来装载一个内核模块，在命令行输入</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload snd_emu10k1</code></strong></pre><p>或者在文件 <code class="filename">/boot/loader.conf</code> 里加入一行，内容如下</p><pre class="programlisting">snd_emu10k1_load="YES"</pre><p>上边实例用于 Creative <span class="trademark">SoundBlaster</span>® Live! 声卡。
+      其它可装载的模块列在文件
+      <code class="filename">/boot/defaults/loader.conf</code> 里边。
+      如果不知道应该使用哪个驱动， 您可以尝试加载
+      <code class="filename">snd_driver</code> module:</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload snd_driver</code></strong></pre><p>这是个 meta 驱动，一次加载了最常见的设备驱动。
+      这会提高搜索正确驱动的速度。也可以通过
+      <code class="filename">/boot/loader.conf</code> 工具来加载所有的声卡驱动。</p><p>如果希望在加载了 <code class="filename">snd_driver</code>
+      meta 驱动之后了解到底选择了哪种声卡， 可以通过使用
+      <code class="command">cat /dev/sndstat</code> 来查询 <code class="filename">/dev/sndstat</code>
+      文件。</p><p>另外，您也可以把支持您声卡的代码静态地编译到内核里去。
+      下一节就采用这种方式支持硬件给出提示。 关于重新编译内核，请参考 <a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72113872"></a>8.2.1.1. 定制内核使其支持声卡</h4></div></div></div><p>要做的第一件事情就是添加通用音频框架驱动
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sound&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sound</span>(4)</span></a> 到内核中， 您需要添加下面这行到内核配置文件中：</p><pre class="programlisting">device sound</pre><p>接下来就是加入对我们所用声卡的支持了。
+	首先需要确定我们的声卡需要使用哪一个驱动。
+	您可以参考 <a class="link" href="http://www.FreeBSD.org/releases/9.2R/hardware.html" target="_top">硬件兼容列表</a>
+	所列出的音频设备， 以确定您声卡的驱动。
+	例如， Creative <span class="trademark">SoundBlaster</span>® Live! 声卡由
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=snd_emu10k1&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">snd_emu10k1</span>(4)</span></a> 驱动来支持。 要添加它，
+	需要在内核编译配置文件中加入下面一行：</p><pre class="programlisting">device snd_emu10k1</pre><p>一定要阅读驱动的联机手册了解如何使用它们。
+	关于内核配置文件中声卡驱动的具体写法， 也可以在
+	<code class="filename">/usr/src/sys/conf/NOTES</code> 文件中找到。</p><p>非即插即用的 ISA 卡可能需要您为内核提供一些关于声卡配置的信息
+	(IRQ、 I/O 端口， 等等)， 这一点与其他不支持即插即用的 ISA 卡类似。 这项工作可以通过
+	<code class="filename">/boot/device.hints</code> 文件来完成。
+	系统启动时， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 将读取这个文件，
+	并将其中的配置传给内核。 例如， 旧式的
+	Creative <span class="trademark">SoundBlaster</span>® 16 ISA 非即插即用卡需要使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=snd_sbc&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">snd_sbc</span>(4)</span></a> 驱动并配合 snd_sb16(4)。
+	您可以在内核编译配置文件中增加如下配置：</p><pre class="programlisting">device snd_sbc
+device snd_sb16</pre><p>还有下面这些到
+	<code class="filename">/boot/device.hints</code>中：</p><pre class="programlisting">hint.sbc.0.at="isa"
+hint.sbc.0.port="0x220"
+hint.sbc.0.irq="5"
+hint.sbc.0.drq="1"
+hint.sbc.0.flags="0x15"</pre><p>这样，声卡使用 <code class="literal">0x220</code>
+	I/O 端口和 IRQ <code class="literal">5</code>。</p><p>在
+	<code class="filename">/boot/device.hints</code> 文件中所使用的语法， 在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sound&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sound</span>(4)</span></a> 联机手册中以及所用的具体声卡驱动的联机手册中，
+	会进行进一步的讲解。</p><p>上面所展示的是默认的配置。 有时候，
+	您可能需要更改 IRQ 或其他配置， 以适应声卡的实际情况。
+	查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=snd_sbc&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">snd_sbc</span>(4)</span></a> 联机手册了解更多信息。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="sound-testing"></a>8.2.2. 测试声卡</h3></div></div></div><p>用修改过的内核重起，或者加载了需要的模块之后，
+      声卡将会出现在您的系统消息缓存中
+      (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a>)，就像这样：</p><pre class="screen">pcm0: &lt;Intel ICH3 (82801CA)&gt; port 0xdc80-0xdcbf,0xd800-0xd8ff irq 5 at device 31.5 on pci0
+pcm0: [GIANT-LOCKED]
+pcm0: &lt;Cirrus Logic CS4205 AC97 Codec&gt;</pre><p>声卡的状态可以通过
+      <code class="filename">/dev/sndstat</code> 文件来查询：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cat /dev/sndstat</code></strong>
+FreeBSD Audio Driver (newpcm)
+Installed devices:
+pcm0: &lt;Intel ICH3 (82801CA)&gt; at io 0xd800, 0xdc80 irq 5 bufsz 16384
+kld snd_ich (1p/2r/0v channels duplex default)</pre><p>您系统的输出可能与此不同。如果没有看到
+      <code class="filename">pcm</code> 设备，回顾并检查一下前面做的。
+      重新检查您的内核配置文件并保证选择了正确的设备。
+      常见问题列在 <a class="xref" href="sound-setup.html#troubleshooting" title="8.2.2.1. 常见问题">Section 8.2.2.1, “常见问题”</a> 一节。</p><p>如果一切正常，您现在应该拥有一个多功能声卡了。
+      如果您的 CD-ROM 或者 DVD-ROM 驱动器的音频输出线已经与声卡连在一起，
+      您可以把 CD 放入驱动器并用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cdcontrol&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cdcontrol</span>(1)</span></a> 来播放：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cdcontrol -f /dev/acd0 play 1</code></strong></pre><p>许多应用程序，比如 <span class="package">audio/workman</span> 可以提供一个友好的界面。
+      您可能想要安装一个应用程序比如
+      <span class="package">audio/mpg123</span> 来听
+      MP3 音频文件。</p><p>另一种快速测试声卡的方法， 是将数据发送到
+      <code class="filename">/dev/dsp</code>， 像这样做：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cat filename &gt; /dev/dsp</code></strong></pre><p>这里 <code class="filename">filename</code> 可以是任意文件。
+      这行命令会产生一些噪音，证明声卡果真在工作。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">设备节点 <code class="filename">/dev/dsp*</code> 会在需要的时候自动产生。
+	如果没有使用它们， 则它们不会出现在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a> 的输出中。</p></div><p>声卡混音级别可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mixer&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mixer</span>(8)</span></a> 命令更改。
+      更多细节可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mixer&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mixer</span>(8)</span></a> 联机手册中找到。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="troubleshooting"></a>8.2.2.1. 常见问题</h4></div></div></div><a id="idp72180688" class="indexterm"></a><a id="idp72181200" class="indexterm"></a><a id="idp72181712" class="indexterm"></a><a id="idp72182224" class="indexterm"></a><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>错误信息</th><th>解决方法</th></tr></thead><tbody><tr><td><span class="errorname">sb_dspwr(XX) timed out</span></td><td><p>I/O端口没有设置正确。</p></td></tr><tr><td><span class="errorname">bad irq XX</span></td><td><p>IRQ设置不正确。确信设定的IRQ和声卡的IRQ是一样的。</p></td></tr><tr><td><span class="errorname">xxx: gus pcm not attached, out of memory</span></td><td><p>没有足够的内存空间供设置使用。</p></td></tr><tr><td><span class="errorname">xxx: can't open /dev/dsp!</span></td><td><p>使用命令 <code class="command">fstat | grep dsp</code>
+                进行检查是否有其它的程序打开了设备。 值得注意的是
+                <span class="application">esound</span> 和
+                <span class="application">KDE</span> 提供的声卡支持经常是造成麻烦的祸根。</p></td></tr></tbody></table></div><p>另一个问题是许多新式的显卡本身包含它们自己的声音驱动，
+        用以配合 <acronym class="acronym">HDMI</acronym> 这样的设备使用。
+        这个声音设备有时会在真正的声卡之前被探测到，
+        从而成为默认的回放设备， 而使真正的声卡无法发声。
+        要检查这种情况， 运行
+        <span class="application">dmesg</span> 并观察 <code class="literal">pcm</code>。
+        其输出类似下面这样：</p><pre class="programlisting">...
+hdac0: HDA Driver Revision: 20100226_0142
+hdac1: HDA Driver Revision: 20100226_0142
+hdac0: HDA Codec #0: NVidia (Unknown)
+hdac0: HDA Codec #1: NVidia (Unknown)
+hdac0: HDA Codec #2: NVidia (Unknown)
+hdac0: HDA Codec #3: NVidia (Unknown)
+pcm0: &lt;HDA NVidia (Unknown) PCM #0 DisplayPort&gt; at cad 0 nid 1 on hdac0
+pcm1: &lt;HDA NVidia (Unknown) PCM #0 DisplayPort&gt; at cad 1 nid 1 on hdac0
+pcm2: &lt;HDA NVidia (Unknown) PCM #0 DisplayPort&gt; at cad 2 nid 1 on hdac0
+pcm3: &lt;HDA NVidia (Unknown) PCM #0 DisplayPort&gt; at cad 3 nid 1 on hdac0
+hdac1: HDA Codec #2: Realtek ALC889
+pcm4: &lt;HDA Realtek ALC889 PCM #0 Analog&gt; at cad 2 nid 1 on hdac1
+pcm5: &lt;HDA Realtek ALC889 PCM #1 Analog&gt; at cad 2 nid 1 on hdac1
+pcm6: &lt;HDA Realtek ALC889 PCM #2 Digital&gt; at cad 2 nid 1 on hdac1
+pcm7: &lt;HDA Realtek ALC889 PCM #3 Digital&gt; at cad 2 nid 1 on hdac1
+...</pre><p>此处显卡 (<code class="literal">NVidia</code>) 先于真正的声卡
+        (<code class="literal">Realtek ALC889</code>) 被探测到。
+        要使用声卡作为默认的回放设备， 将
+        <code class="literal">hw.snd.default_unit</code> 改为对应的设备编号：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl hw.snd.default_unit=n</code></strong></pre><p>这里的 <code class="literal">n</code> 是希望使用的声音设备编号，
+        在这个例子中是 <code class="literal">4</code>。 您可以在
+        <code class="filename">/etc/sysctl.conf</code> 中写上这个配置来令其永久性生效：</p><pre class="programlisting">hw.snd.default_unit=<em class="replaceable"><code>4</code></em></pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="sound-multiple-sources"></a>8.2.3. 利用多个声源</h3></div><div><span class="authorgroup">贡献者<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Munish</span> <span class="surname">Chopra</span></span>. </span></div></div></div><p>通常而言， 会希望多个音源能够同时播放， 例如，
+      <span class="application">esound</span> 或者 <span class="application">artsd</span>
+      就可能不支持与其它程序共享音频设备。</p><p>FreeBSD 可以通过 <span class="emphasis"><em>虚拟声道(Virtual Sound
+      Channels)</em></span> 来达到这样的效果， 它可以用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 来启用。
+      虚拟的声道可以能过在内核里混合声音来混合声卡里播放的声道。</p><p>使用三条sysctl命令来设置虚拟声道的数目。 如果您是
+      <code class="systemitem">root</code> 用户， 执行下面的操作：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl dev.pcm.0.play.vchans=4</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>sysctl dev.pcm.0.rec.vchans=4</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>sysctl hw.snd.maxautovchans=4</code></strong></pre><p>上面的实例设定了4个虚拟声道，这也是实际上所使用的数目。
+      <code class="varname">dev.pcm.0.play.vchans=4</code> 和
+      <code class="varname">dev.pcm.0.rec.vchans=4</code>
+      是 <code class="filename">pcm0</code> 用来播放与录音的虚拟声道数，
+      一当链接上一个设备它就可配置了。
+      <code class="literal">hw.snd.maxautovchans</code> 是分配给新的音频设备的虚拟声道数，
+      此时这个设备要用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 来链接。 因为 <code class="filename">pcm</code>
+      模块可以独立装载许多硬件驱动程序， 因此 <code class="varname">hw.snd.maxautovchans</code>
+      也就可以存储分配给以后链接到的设备的虚拟声道数。
+      可参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pcm&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pcm</span>(4)</span></a> 手册页义获取更多细节。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">您不能在使用某个设备的时候改变其虚拟通道数。
+	首先需要关闭所有使用该设备的程序， 如音乐播放器或声音服务。</p></div><p>当应用程序请求 <code class="filename">/dev/dsp0</code>
+      时， 系统会自动为其分配正确的 <code class="filename">pcm</code>
+      设备。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72227152"></a>8.2.4. 如何设置混音器通道值</h3></div><div><span class="authorgroup">这一节的作者是 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Josef</span> <span class="surname">El-Rayes</span></span>. </span></div></div></div><p>不同的混音通道的默认音量是硬编码进 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pcm&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pcm</span>(4)</span></a> 驱动程序的。
+      同时， 也有很多应用或服务程序提供了允许用户直接设置并记住这些值的功能。
+      不过这并不是一个很好的解决方案， 您可能希望在驱动一级有一个可以设置的默认值。
+      这可以通过在 <code class="filename">/boot/device.hints</code> 定义适当的值来实现。
+      例如：</p><pre class="programlisting">hint.pcm.0.vol="50"</pre><p>这将在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pcm&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pcm</span>(4)</span></a> 模块加载时， 将通道音量设置为默认的
+      50。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="multimedia.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="multimedia.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="sound-mp3.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 8. 多媒体 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 8.3. MP3音频</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>15.3. 介绍</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="jails.html" title="Chapter 15. Jails" /><link rel="prev" href="jails-terms.html" title="15.2. 与 Jail 相关的一些术语" /><link rel="next" href="jails-build.html" title="15.4. 建立和控制 jail" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">15.3. 介绍</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jails-terms.html">Prev</a> </td><th width="60%" align="center">Chapter 15. Jails</th><td width="20%" align="right"> <a accesskey="n" href="jails-build.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="jails-intro"></a>15.3. 介绍</h2></div></div></div><p>由于系统管理是一项困难而又令人费解的任务， 因此人们开发了一系列强大的工具，
+      来让管理员的工作变得更加简单。 这些改进通常是让系统能够以更简单的方式安装、
+      配置， 并毫无问题地持续运转。 这其中， 许多管理员希望能够为系统正确地进行安全方面的配置，
+      使其能够用于真正的用途， 而阻止安全方面的风险。</p><p>FreeBSD 系统提供的一项用于改善安全的工具就是 <span class="emphasis"><em>jail</em></span>。
+      jail 是在 FreeBSD 4.X 中由 Poul-Henning Kamp 引入的， 它在
+      FreeBSD 5.X 中又进行了一系列改进， 使得它成为了一个强大而灵活的系统。
+      目前仍然在对其进行持续的开发， 以提高其可用性、 性能和安全性。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="jails-what"></a>15.3.1. Jail 是什么</h3></div></div></div><p>BSD-类的操作系统从 4.2BSD 开始即提供了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a>。
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chroot</span>(2)</span></a> 工具能够改变一组进程的根目录的位置，
+	从而建立一个与系统中其他部分相隔离的安全环境： 在 chroot 环境中的进程，
+	将无法访问其外的文件或其他资源。 正是由于这种能力，
+	即使攻击者攻破了某一个运行于 chroot 环境的服务， 也不能攻破整个系统。
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 对于那些不需要很多灵活性或复杂的高级功能的简单应用而言相当好用。
+	另外， 在引入 chroot 概念的过程中， 曾经发现过许多跳出
+	chroot 环境的方法， 尽管这些问题在较新的 FreeBSD 版本中已经修正， 但很明显地，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 并不是一项用于加固服务安全的理想解决方案。
+	因此， 必须实现一个新的子系统来解决这些问题。</p><p>这就是为什么要开发
+	<span class="emphasis"><em>jail</em></span> 最主要的原因。</p><p>Jail 以多种方式改进了传统的
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chroot</span>(2)</span></a> 环境概念。 在传统的
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chroot</span>(2)</span></a> 环境中， 只限制了进程能够访问文件系统的哪些部分。
+	其他部分的系统资源 (例如系统用户、 正在运行的进程， 以及网络子系统)
+	是由 chroot 进程与宿主系统中的其他进程共享的。 jail 扩展了这个模型，
+	它不仅将文件系统的访问虚拟化， 而且还将用户、 FreeBSD 的网络子系统，
+	以及一些其他系统资源虚拟化。 关于这些精细控制以及调整 jail
+	环境访问能力的更具体的介绍， 可参见 <a class="xref" href="jails-tuning.html" title="15.5. 微调和管理">Section 15.5, “微调和管理”</a>。</p><p>jail 具有以下四项特点：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>目录子树 ── 进入 jail 的起点。 一旦进入了 jail，
+	    进程就不再被允许访问这棵子树以外的对象。 传统上影响到最初
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chroot</span>(2)</span></a> 设计的安全问题不会影响 FreeBSD jail。</p></li><li class="listitem"><p>主机名 ── 将用于 jail 的主机名。 jail 主要用于存放网络服务，
+	    因此在每个 mail 上能够标注一个有意义的主机名，
+	    能够在很大程度上简化系统管理员的工作。</p></li><li class="listitem"><p><acronym class="acronym">IP</acronym> 地址 ── 这个地址是指定给 jail 的，
+	    在 jail 的生命周期内都无法改变。 通常 jail 的 IP 地址是某一个网络接口上的别名地址，
+	    但这并不是必需的。</p></li><li class="listitem"><p>命令 ── 准备在 jail 中执行的可执行文件的完整路径名。
+	    这个命令是相对于 jail 环境的根目录的， 随 jail 环境的类型不同，
+	    可能会有很多不同之处。</p></li></ul></div><p>除了这些之外， jail 也可以拥有自己的用户和自己的
+	<code class="systemitem">root</code> 用户。 自然， 这里的 <code class="systemitem">root</code>
+	用户的权力会受限于 jail 环境， 并且， 从宿主系统的观点看来，
+	jail <code class="systemitem">root</code> 用户并不是一个无所不能的用户。
+	此外， jail 中的 <code class="systemitem">root</code> 用户不能执行除了其对应 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=jail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">jail</span>(8)</span></a>
+	环境之外的系统中的一些关键操作。 关于
+	<code class="systemitem">root</code> 用户的能力和限制， 在后面的 <a class="xref" href="jails-tuning.html" title="15.5. 微调和管理">Section 15.5, “微调和管理”</a> 中将加以介绍。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jails-terms.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="jails.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="jails-build.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">15.2. 与 Jail 相关的一些术语 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 15.4. 建立和控制 jail</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

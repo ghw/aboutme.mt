@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.4. RAID1 - 镜像</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="GEOM-striping.html" title="19.3. RAID0 - 条带" /><link rel="next" href="GEOM-raid3.html" title="19.5. RAID3 - 使用专用校验设备的字节级条带" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.4. RAID1 - 镜像</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="GEOM-striping.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="GEOM-raid3.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="GEOM-mirror"></a>19.4. RAID1 - 镜像</h2></div></div></div><a id="idp81132624" class="indexterm"></a><a id="idp81133392" class="indexterm"></a><p>镜像是许多公司和家庭用户使用的一种无须中断的备份技术。
+      简单地说， 镜像的概念就是 磁盘B 是同步复制 (replicate) 的 磁盘A 的副本，
+      或者 磁盘C+D 是 diskA+B 的同步复制副本， 等等。 无论磁盘配置如何，
+      这种技术的共同特点都是一块磁盘或分区的内容会同步复制到另外的地方。
+      这样， 除了能够很容易地恢复信息之外，
+      还能够在无须中断服务或访问的情况下进行备份，
+      甚至直接将副本送到数据保安公司异地储存。</p><p>在开始做这件事之前， 首先请准备两个容量相同的磁盘驱动器，
+      下面的例子假定它们都是使用直接访问方式 (Direct Access， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=da&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">da</span>(4)</span></a>) 的
+      <acronym class="acronym">SCSI</acronym> 磁盘。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81136080"></a>19.4.1. 对主磁盘进行镜像</h3></div></div></div><p>假定您现有系统中的 FreeBSD 安装到了第一个， 也就是
+	<code class="filename">da0</code> 盘上， 则应告诉 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gmirror&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gmirror</span>(8)</span></a>
+	将主要数据保存在这里。</p><p>在开始构建镜像卷之前， 可以启用更多的调试信息，
+	并应开放对设备的完全访问。 这可以通过将 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 变量
+	<code class="varname">kern.geom.debugflags</code>
+	设置为下面的值来实现：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl kern.geom.debugflags=17</code></strong></pre><p>接下来需要创建镜像。 这个过程的第一步是在主磁盘上保存元数据信息，
+	也就是用下面的命令来创建
+	<code class="filename">/dev/mirror/gm</code> 设备：</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在引导用的设备基础上新建镜像时，
+	  有可能会导致保存在磁盘上最后一个扇区的数据丢失。
+	  在新安装 FreeBSD 之后立即创建镜像可以减低此风险。
+	  下面的操作与默认的 FreeBSD 9.<em class="replaceable"><code>X</code></em>
+	  安装过程不兼容， 因为它采用了新的 <acronym class="acronym">GPT</acronym>
+	  分区格式。 GEOM 会覆盖 <acronym class="acronym">GPT</acronym> 元数据，
+	  这会导致数据丢失， 并有可能导致系统无法引导。</p></div><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror label -vb round-robin gm0 /dev/da0</code></strong></pre><p>系统应给出下面的回应：</p><pre class="screen">Metadata value stored on /dev/da0.
+Done.</pre><p>初始化 GEOM， 这步操作会加载内核模块
+	<code class="filename">/boot/kernel/geom_mirror.ko</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror load</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当这个命令运行完之后， 系统会在
+	  <code class="filename">/dev/mirror</code>
+	  目录中创建设备节点
+	  <code class="filename">gm0</code>。</p></div><p>配置在系统初始化过程中自动加载 <code class="filename">geom_mirror.ko</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'geom_mirror_load="YES"' &gt;&gt; /boot/loader.conf</code></strong></pre><p>编辑 <code class="filename">/etc/fstab</code> 文件，
+	将其中先前的 <code class="filename">da0</code> 改为新的镜像设备
+	<code class="filename">gm0</code>。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vi&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vi</span>(1)</span></a> 是你喜欢的编辑器，
+          以下则是完成此项任务的一个简便方法：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>vi /etc/fstab</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vi&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vi</span>(1)</span></a> 中备份现有的
+	  <code class="filename">fstab</code> 内容， 具体操作是
+	  <strong class="userinput"><code>:w /etc/fstab.bak</code></strong>。 接着，
+	  把所有旧的 <code class="filename">da0</code>
+	  替换成 <code class="filename">gm0</code>， 也就是输入命令
+	  <strong class="userinput"><code>:%s/da/mirror\/gm/g</code></strong>。</p></div><p>修改完后的 <code class="filename">fstab</code> 文件应该是下面的样子。
+	磁盘驱动器是 <acronym class="acronym">SCSI</acronym> 或 <acronym class="acronym">ATA</acronym>
+	甚至 <acronym class="acronym">RAID</acronym> 都没有关系， 最终的结果都是
+	<code class="filename">gm</code>。</p><pre class="programlisting"># Device		Mountpoint	FStype	Options		Dump	Pass#
+/dev/mirror/gm0s1b	none		swap	sw		0	0
+/dev/mirror/gm0s1a	/		ufs	rw		1	1
+/dev/mirror/gm0s1d	/usr		ufs	rw		0	0
+/dev/mirror/gm0s1f	/home		ufs	rw		2	2
+#/dev/mirror/gm0s2d	/store		ufs	rw		2	2
+/dev/mirror/gm0s1e	/var		ufs	rw		2       2
+/dev/acd0		/cdrom		cd9660	ro,noauto	0	0</pre><p>重启系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>shutdown -r now</code></strong></pre><p>在系统初始化过程中， 新建的
+	<code class="filename">gm0</code> 会代替
+	<code class="filename">da0</code> 设备工作。 系统完成初始化之后，
+	可以通过检查 <code class="command">mount</code> 命令的输出来查看效果：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount</code></strong>
+Filesystem         1K-blocks    Used    Avail Capacity  Mounted on
+/dev/mirror/gm0s1a   1012974  224604   707334    24%    /
+devfs                      1       1        0   100%    /dev
+/dev/mirror/gm0s1f  45970182   28596 42263972     0%    /home
+/dev/mirror/gm0s1d   6090094 1348356  4254532    24%    /usr
+/dev/mirror/gm0s1e   3045006 2241420   559986    80%    /var
+devfs                      1       1        0   100%    /var/named/dev</pre><p>这个输出是正常的。 最后， 使用下面的命令将 <code class="filename">da1</code>
+	磁盘加到镜像卷中， 以开始同步过程：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror insert gm0 /dev/da1</code></strong></pre><p>在构建镜像卷的过程中， 可以用下面的命令查看状态：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror status</code></strong></pre><p>一旦镜像卷的构建操作完成， 这个命令的输出就会变成这样：</p><pre class="screen">      Name    Status  Components
+mirror/gm0  COMPLETE  da0
+                      da1</pre><p>如果有问题或者构建仍在进行， 输出中的
+	<code class="literal">COMPLETE</code> 就会是
+	<code class="literal">DEGRADED</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81246800"></a>19.4.2. 故障排除</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81247440"></a>19.4.2.1. 系统拒绝引导</h4></div></div></div><p>如果系统引导时出现类似下面的提示：</p><pre class="programlisting">ffs_mountroot: can't find rootvp
+Root mount failed: 6
+mountroot&gt;</pre><p>这种情况应使用电源或复位按钮重启机器。
+	  在引导菜单中， 选择第六 (6) 个选项。
+	  这将让系统进入 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 提示符。
+	  在此处手工加载内核模块：</p><pre class="screen">OK? <strong class="userinput"><code>load geom_mirror</code></strong>
+OK? <strong class="userinput"><code>boot</code></strong></pre><p>如果这样做能解决问题， 则说明由于某种原因模块没有被正确加载。
+	  检查 <code class="filename">/boot/loader.conf</code> 中相关条目是否正确。
+	  如果问题仍然存在，可以在内核配置文件中加入：</p><pre class="programlisting">options	GEOM_MIRROR</pre><p>然后重新编译和安装内核来解决这个问题。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81261136"></a>19.4.3. 从磁盘故障中恢复</h3></div></div></div><p>磁盘镜像的一大好处是在当其中一个磁盘出现故障时，
+	可以很容易地将其替换掉， 并且通常不会丢失数据。</p><p>考虑前面的 <acronym class="acronym">RAID</acronym>1
+	配置， 假设 <code class="filename">da1</code>
+	出现了故障并需要替换， 要替换它，
+	首先确定哪个磁盘出现了故障， 并关闭系统。
+	此时， 可以用换上新的磁盘， 并重新启动系统。
+	这之后可以用下面的命令来完成磁盘的替换操作：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror forget gm0</code></strong></pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gmirror insert gm0 /dev/da1</code></strong></pre><p>在重建过程中可以用 <code class="command">gmirror</code> <code class="option">status</code>
+	命令来监看进度。 就是这样简单。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="GEOM-striping.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="GEOM-raid3.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.3. RAID0 - 条带 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 19.5. <acronym class="acronym">RAID</acronym>3 - 使用专用校验设备的字节级条带</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

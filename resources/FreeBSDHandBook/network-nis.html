@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.4. 网络信息服务 (NIS/YP)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-nfs.html" title="28.3. 网络文件系统（NFS）" /><link rel="next" href="network-dhcp.html" title="28.5. 网络自动配置 (DHCP)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.4. 网络信息服务 (NIS/YP)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-nfs.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-dhcp.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-nis"></a>28.4. 网络信息服务 (NIS/YP)</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Bill</span> <span class="surname">Swingle</span></span>. </span></div><div><span class="authorgroup">Enhanced by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Eric</span> <span class="surname">Ogren</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Udo</span> <span class="surname">Erdelhoff</span></span>. </span></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86432976"></a>28.4.1. 它是什么？</h3></div></div></div><a id="idp86433616" class="indexterm"></a><a id="idp86434128" class="indexterm"></a><a id="idp86434768" class="indexterm"></a><a id="idp86435280" class="indexterm"></a><a id="idp86435792" class="indexterm"></a><a id="idp86436304" class="indexterm"></a><a id="idp86436816" class="indexterm"></a><p><acronym class="acronym">NIS</acronym>，
+        表示网络信息服务 (Network Information Services)，
+        最初由 Sun Microsystems 开发， 用于 <span class="trademark">UNIX</span>®
+        (最初是 <span class="trademark">SunOS</span>™) 系统的集中管理。 目前，
+        它基本上已经成为了业界标准； 所有主流的类 <span class="trademark">UNIX</span>® 系统
+        (<span class="trademark">Solaris</span>™, HP-UX, <span class="trademark">AIX</span>®, Linux, NetBSD, OpenBSD, FreeBSD,
+        等等) 都支持 <acronym class="acronym">NIS</acronym>。</p><a id="idp86441168" class="indexterm"></a><p><acronym class="acronym">NIS</acronym>
+	也就是人们所熟知的黄页(Yellow Pages)， 但由于商标的问题，
+	Sun 将其改名为现在的名字。 旧的术语 (以及 yp)，
+	仍然经常可以看到， 并被广泛使用。</p><a id="idp86446928" class="indexterm"></a><p>这是一个基于 RPC 的客户机/服务器系统，
+	它允许在一个 NIS 域中的一组机器共享一系列配置文件。
+	这样， 系统管理员就可以配置只包含最基本配置数据的 NIS 客户机系统，
+	并在单点上增加、 删除或修改配置数据。</p><a id="idp86448464" class="indexterm"></a><p>尽管实现的内部细节截然不同， 这和 <span class="trademark">Windows NT</span>® 域系统非常类似，
+        以至于可以将两者的基本功能相互类比。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86450000"></a>28.4.2. 您应该知道的术语和进程</h3></div></div></div><p>有一系列术语和重要的用户进程将在您在 FreeBSD
+        上实现 NIS 时用到， 无论是在创建
+        NIS 服务器， 或作为 NIS 客户机：</p><a id="idp86451024" class="indexterm"></a><a id="idp86451920" class="indexterm"></a><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>术语</th><th>说明</th></tr></thead><tbody><tr><td>NIS 域名</td><td>NIS 主服务器和所有其客户机
+		(包括从服务器) 会使用同一 NIS 域名。
+		和 <span class="trademark">Windows NT</span>® 域名类似， NIS 域名与
+		<acronym class="acronym">DNS</acronym> 无关。</td></tr><tr><td><span class="application">rpcbind</span></td><td>必须运行这个程序， 才能够启用
+		<acronym class="acronym">RPC</acronym> (远程过程调用， NIS
+		用到的一种网络协议)。 如果没有运行
+		<span class="application">rpcbind</span>，
+		则没有办法运行 NIS 服务器，
+		或作为 NIS 客户机。</td></tr><tr><td><span class="application">ypbind</span></td><td><span class="quote">“<span class="quote">绑定(bind)</span>”</span> NIS 客户机到它的 NIS
+		服务器上。 这样， 它将从系统中获取 NIS 域名，
+		并使用 <acronym class="acronym">RPC</acronym> 连接到服务器上。
+		<span class="application">ypbind</span> 是 NIS 环境中，
+		客户机-服务器通讯的核心； 如果客户机上的
+		<span class="application">ypbind</span> 死掉的话， 它将无法访问
+		NIS 服务器。</td></tr><tr><td><span class="application">ypserv</span></td><td>只应在 NIS 服务器上运行它； 这是 NIS 的服务器进程。
+		如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypserv&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypserv</span>(8)</span></a> 死掉的话，
+		则服务器将不再具有响应 NIS 请求的能力 (此时，
+		如果有从服务器的话， 则会接管操作)。 有一些 NIS
+		的实现 (但不是 FreeBSD 的这个) 的客户机上，
+		如果之前用过一个服务器， 而那台服务器死掉的话，
+		并不尝试重新连接到另一个服务器。 通常，
+		发生这种情况时， 唯一的办法就是重新启动服务器进程
+		(或者， 甚至重新启动服务器) 或客户机上的
+		<span class="application">ypbind</span> 进程。
+	      </td></tr><tr><td><span class="application">rpc.yppasswdd</span></td><td>另一个只应在
+		NIS 主服务器上运行的进程； 这是一个服务程序，
+		其作用是允许 NIS 客户机改变它们的 NIS 口令。
+		如果没有运行这个服务， 用户将必须登录到 NIS
+		主服务器上， 并在那里修改口令。</td></tr></tbody></table></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86484176"></a>28.4.3. 它是如何工作的？</h3></div></div></div><p>在 NIS 环境中， 有三种类型的主机：
+	主服务器， 从服务器， 以及客户机。
+	服务器的作用是充当主机配置信息的中央数据库。
+	主服务器上保存着这些信息的权威副本，
+	而从服务器则是保存这些信息的冗余副本。
+	客户机依赖于服务器向它们提供这些信息。</p><p>许多文件的信息可以通过这种方式来共享。
+	通常情况下， <code class="filename">master.passwd</code>、
+	<code class="filename">group</code>， 以及 <code class="filename">hosts</code>
+	是通过 NIS 分发的。 无论什么时候，
+	如果客户机上的某个进程请求这些本应在本地的文件中的资料的时候，
+	它都会向所绑定的 NIS 服务器发出请求， 而不使用本地的版本。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86486736"></a>28.4.3.1. 机器类型</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>一台 <span class="emphasis"><em>NIS 主服务器</em></span>。<a id="idp86488656" class="indexterm"></a>
+              这台服务器， 和 <span class="trademark">Windows NT</span>® 域控制器类似，
+              会维护所有 NIS 客户机所使用的文件。 <code class="filename">passwd</code>，
+              <code class="filename">group</code>， 以及许多其他 NIS
+              客户机所使用的文件， 都被存放到主服务器上。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">可以将一台 NIS 主服务器用在多个 NIS 域中。
+              然而， 本书不打算对这种配置进行介绍，
+              因为这种配置， 通常只出现在小规模的 NIS 环境中。</p></div></li><li class="listitem"><p><span class="emphasis"><em>NIS 从服务器</em></span><a id="idp86492112" class="indexterm"></a>。 这一概念，
+              与 <span class="trademark">Windows NT</span>® 的备份域控制器类似。 NIS 从服务器，
+              用于维护 NIS 主服务器的数据文件副本。
+              NIS 从服务器提供了一种冗余，
+              这在许多重要的环境中是必需的。 此外，
+              它也帮助减轻了主服务器的负荷： NIS
+              客户机总是挂接到最先响应它们的 NIS 服务器上，
+              而这也包括来自从服务器的响应。</p></li><li class="listitem"><p><span class="emphasis"><em>NIS 客户机</em></span>。<a id="idp86494416" class="indexterm"></a> NIS 客户机，
+              和多数 <span class="trademark">Windows NT</span>® 工作站类似， 通过
+              NIS 服务器 (或对于 <span class="trademark">Windows NT</span>® 工作站， 则是
+              <span class="trademark">Windows NT</span>® 域控制器) 来完成登录时的身份验证过程。</p></li></ul></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86501712"></a>28.4.4. 使用 NIS/YP</h3></div></div></div><p>这一节将通过实例介绍如何配置 NIS 环境。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86502736"></a>28.4.4.1. 规划</h4></div></div></div><p>假定您正在管理大学中的一个小型实验室。 在这个实验室中，
+          有 15 台 FreeBSD 机器， 目前尚没有集中的管理点；
+          每一台机器上有自己的
+          <code class="filename">/etc/passwd</code> 和
+          <code class="filename">/etc/master.passwd</code>。
+          这些文件通过人工干预的方法来保持与其他机器上版本的同步；
+          目前， 如果您在实验室中增加一个用户， 将不得不在所有 15
+          台机器上手工执行 <code class="command">adduser</code> 命令。
+          毋庸置疑， 这一现状必须改变，
+          因此您决定将整个实验室转为使用 NIS，
+          并使用两台机器作为服务器。</p><p>因此， 实验室的配置应该是这样的：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>机器名</th><th>IP 地址</th><th>机器的角色</th></tr></thead><tbody><tr><td><code class="systemitem">ellington</code></td><td><code class="systemitem">10.0.0.2</code></td><td>NIS 主服务器</td></tr><tr><td><code class="systemitem">coltrane</code></td><td><code class="systemitem">10.0.0.3</code></td><td>NIS 从服务器</td></tr><tr><td><code class="systemitem">basie</code></td><td><code class="systemitem">10.0.0.4</code></td><td>教员工作站</td></tr><tr><td><code class="systemitem">bird</code></td><td><code class="systemitem">10.0.0.5</code></td><td>客户机</td></tr><tr><td><code class="systemitem">cli[1-11]</code></td><td><code class="systemitem">10.0.0.[6-17]</code></td><td>其他客户机</td></tr></tbody></table></div><p>如果您是首次配置 NIS， 仔细思考如何进行规划就十分重要。
+	  无论您的网络的大小如何， 都必须进行几个决策。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86523088"></a>28.4.4.1.1. 选择 NIS 域名</h5></div></div></div><a id="idp86523728" class="indexterm"></a><p>这可能不是您过去使用的 <span class="quote">“<span class="quote">域名(domainname)</span>”</span>。
+	    它的规范的叫法， 应该是
+	    <span class="quote">“<span class="quote">NIS 域名</span>”</span>。 当客户机广播对此信息的请求时，
+	    它会将 NIS 域的名字作为请求的一部分发出。 这样，
+	    统一网络上的多个服务器， 就能够知道谁应该回应请求。
+	    您可以把 NIS 域名想象成以某种方式相关的一组主机的名字。</p><p>一些机构会选择使用它们的 Internet
+	    域名来作为 NIS 域名。 并不推荐这样做， 因为在调试网络问题时，
+	    这可能会导致不必要的困扰。 NIS 域名应该是在您网络上唯一的，
+	    并且有助于了解它所描述的到底是哪一组机器。 例如对于 Acme
+	    公司的美工部门， 可以考虑使用
+	    <span class="quote">“<span class="quote">acme-art</span>”</span> 这样的 NIS 域名。
+	    在这个例子中， 您使用的域名是
+	    <code class="literal">test-domain</code>。</p><a id="idp86527184" class="indexterm"></a><p>然而， 某些操作系统 (最著名的是 <span class="trademark">SunOS</span>™)
+          会使用其 NIS 域名作为 Internet 域名。
+          如果您的网络上存在包含这类限制的机器， 就
+          <span class="emphasis"><em>必须</em></span> 使用 Internet 域名来作为您的 NIS 域名。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86553680"></a>28.4.4.1.2. 服务器的物理要求</h5></div></div></div><p>选择 NIS 服务器时， 需要时刻牢记一些东西。
+	    NIS 的一个不太好的特性就是其客户机对于服务器的依赖程度。
+	    如果客户机无法与其 NIS 域的服务器联系，
+	    则这台机器通常会陷于不可用的状态。 缺少用户和组信息，
+	    会使绝大多数系统进入短暂的冻结状态。 基于这样的考虑，
+	    您需要选择一台不经常重新启动， 或用于开发的机器来承担其责任。
+	    如果您的网络不太忙， 也可以使用运行着其他服务的机器来安放 NIS
+	    服务， 只是需要注意， 一旦 NIS 服务器不可用， 则
+	    <span class="emphasis"><em>所有</em></span> 的 NIS 客户机都会受到影响。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86555344"></a>28.4.4.2. NIS 服务器</h4></div></div></div><p>所有的 NIS 信息的正规版本，
+	  都被保存在一台单独的称作 NIS 主服务器的机器上。
+	  用于保存这些信息的数据库， 称为 NIS 映射(map)。
+	  在 FreeBSD 中， 这些映射被保存在
+	  <code class="filename">/var/yp/[domainname]</code> 里， 其中
+	  <code class="filename">[domainname]</code> 是提供服务的 NIS
+	  域的名字。 一台 NIS 服务器， 可以同时支持多个域，
+	  因此可以建立很多这样的目录， 所支撑一个域对应一个。
+	  每一个域都会有一组独立的映射。</p><p>NIS 主和从服务器， 通过 <code class="command">ypserv</code>
+	  服务程序来处理所有的 NIS 请求。
+	  <code class="command">ypserv</code> 有责任接收来自 NIS 客户机的请求，
+	  翻译请求的域， 并将名字映射为相关的数据库文件的路径，
+	  然后将来自数据库的数据传回客户机。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86558288"></a>28.4.4.2.1. 配置 NIS 主服务器</h5></div></div></div><a id="idp86558928" class="indexterm"></a><p>配置主 NIS 服务器相对而言十分的简单，
+	    而其具体步骤则取决于您的需要。 FreeBSD
+	    提供了一步到位的 NIS 支持。 您需要做的全部事情， 只是在
+	    <code class="filename">/etc/rc.conf</code> 中加入一些配置，
+	    其他工作会由 FreeBSD 完成。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><pre class="programlisting">nisdomainname="test-domain"</pre><p>
+                这一行将在网络启动 (例如重新启动) 时， 把 NIS 域名配置为
+                <code class="literal">test-domain</code>。</p></li><li class="step"><pre class="programlisting">nis_server_enable="YES"</pre><p>
+                这将要求 FreeBSD 在网络子系统启动之后立即启动
+                NIS 服务进程。</p></li><li class="step"><pre class="programlisting">nis_yppasswdd_enable="YES"</pre><p>
+                这将启用 <code class="command">rpc.yppasswdd</code>
+                服务程序， 如前面提到的，
+                它允许用户在客户机上修改自己的 NIS 口令。</p></li></ol></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">随 NIS 配置的不同， 可能还需要增加其他一些项目。 请参见 <a class="link" href="network-nis.html#network-nis-server-is-client" title="28.4.10. 同时作为 NIS 客户机的 NIS 服务器">关于 NIS 服务器同时充当 NIS
+              客户机</a> 这一节， 以了解进一步的情况。</p></div><p>设置好前面这些配置之后， 需要以超级用户身份运行
+            <code class="command">/etc/netstart</code> 命令。 它会根据
+            <code class="filename">/etc/rc.conf</code> 的设置来配置系统中的其他部分。
+            最后， 在初始化 NIS 映射之前， 还需要手工启动
+	    <span class="application">ypserv</span> 服务程序：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/ypserv start</code></strong></pre></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86569040"></a>28.4.4.2.2. 初始化 NIS 映射</h5></div></div></div><a id="idp86569808" class="indexterm"></a><p><span class="emphasis"><em>NIS 映射</em></span> 是一些数据库文件，
+            它们位于 <code class="filename">/var/yp</code> 目录中。
+            这些文件基本上都是根据 NIS 主服务器的 <code class="filename">/etc</code>
+            目录自动生成的， 唯一的例外是：
+            <code class="filename">/etc/master.passwd</code> 文件。 一般来说，
+            您会有非常充分的理由不将 <code class="systemitem">root</code>
+            以及其他管理帐号的口令发到所有 NIS 域上的服务器上。
+            因此， 在开始初始化 NIS 映射之前， 我们应该：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cp /etc/master.passwd /var/yp/master.passwd</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /var/yp</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>vi master.passwd</code></strong></pre><p>这里， 删除掉和系统有关的帐号对应的项 (<code class="systemitem">bin</code>、
+            <code class="systemitem">tty</code>、 <code class="systemitem">kmem</code>、
+            <code class="systemitem">games</code>， 等等)，
+            以及其他不希望被扩散到 NIS 客户机的帐号
+            (例如 <code class="systemitem">root</code> 和任何其他 UID 0
+            (超级用户) 的帐号)。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">确认
+            <code class="filename">/var/yp/master.passwd</code> 这个文件是同组用户，
+            以及其他用户不可读的 (模式 600)！ 如果需要的话， 用
+            <code class="command">chmod</code> 命令来改它。</p></div><a id="idp86584272" class="indexterm"></a><p>完成这些工作之后， 就可以初始化
+            NIS 映射了！ FreeBSD 提供了一个名为
+            <code class="command">ypinit</code> 的脚本来帮助您完成这项工作 (详细信息，
+            请见其联机手册)。 请注意， 这个脚本在绝大多数 <span class="trademark">UNIX</span>®
+            操作系统上都可以找到， 但并不是所有操作系统的都提供。
+            在 Digital UNIX/Compaq Tru64 UNIX 上它的名字是
+            <code class="command">ypsetup</code>。 由于我们正在生成的是 NIS
+            主服务器的映射， 因此应该使用  <code class="command">ypinit</code> 的
+            <code class="option">-m</code> 参数。 如果已经完成了上述步骤，
+            要生成 NIS 映射， 只需执行：</p><pre class="screen">ellington<code class="prompt">#</code> <strong class="userinput"><code>ypinit -m test-domain</code></strong>
+Server Type: MASTER Domain: test-domain
+Creating an YP server will require that you answer a few questions.
+Questions will all be asked at the beginning of the procedure.
+Do you want this procedure to quit on non-fatal errors? [y/n: n] <strong class="userinput"><code>n</code></strong>
+Ok, please remember to go back and redo manually whatever fails.
+If you don't, something might not work.
+At this point, we have to construct a list of this domains YP servers.
+rod.darktech.org is already known as master server.
+Please continue to add any slave servers, one per line. When you are
+done with the list, type a &lt;control D&gt;.
+master server   :  ellington
+next host to add:  <strong class="userinput"><code>coltrane</code></strong>
+next host to add:  <strong class="userinput"><code>^D</code></strong>
+The current list of NIS servers looks like this:
+ellington
+coltrane
+Is this correct?  [y/n: y] <strong class="userinput"><code>y</code></strong>
+
+[..output from map generation..]
+
+NIS Map update completed.
+ellington has been setup as an YP master server without any errors.</pre><p><code class="command">ypinit</code> 应该会根据
+            <code class="filename">/var/yp/Makefile.dist</code> 来创建
+            <code class="filename">/var/yp/Makefile</code> 文件。
+            创建完之后， 这个文件会假定您正在操作只有 FreeBSD
+            机器的单服务器 NIS 环境。 由于 <code class="literal">test-domain</code>
+            还有一个从服务器， 您必须编辑
+            <code class="filename">/var/yp/Makefile</code>：</p><pre class="screen">ellington<code class="prompt">#</code> <strong class="userinput"><code>vi /var/yp/Makefile</code></strong></pre><p>应该能够看到这样一行， 其内容是</p><pre class="programlisting">NOPUSH = "True"</pre><p>(如果还没有注释掉的话)。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86598736"></a>28.4.4.2.3. 配置 NIS 从服务器</h5></div></div></div><a id="idp86599376" class="indexterm"></a><p>配置 NIS 从服务器， 甚至比配置主服务器还要简单。
+	    登录到从服务器上， 并按照前面的方法，
+            编辑 <code class="filename">/etc/rc.conf</code> 文件。 唯一的区别是，
+            在运行 <code class="command">ypinit</code> 时需要使用
+            <code class="option">-s</code> 参数。
+            这里的 <code class="option">-s</code> 选项， 同时要求提供 NIS
+            主服务器的名字， 因此我们的命令行应该是：</p><pre class="screen">coltrane<code class="prompt">#</code> <strong class="userinput"><code>ypinit -s ellington test-domain</code></strong>
+
+Server Type: SLAVE Domain: test-domain Master: ellington
+
+Creating an YP server will require that you answer a few questions.
+Questions will all be asked at the beginning of the procedure.
+
+Do you want this procedure to quit on non-fatal errors? [y/n: n]  <strong class="userinput"><code>n</code></strong>
+
+Ok, please remember to go back and redo manually whatever fails.
+If you don't, something might not work.
+There will be no further questions. The remainder of the procedure
+should take a few minutes, to copy the databases from ellington.
+Transferring netgroup...
+ypxfr: Exiting: Map successfully transferred
+Transferring netgroup.byuser...
+ypxfr: Exiting: Map successfully transferred
+Transferring netgroup.byhost...
+ypxfr: Exiting: Map successfully transferred
+Transferring master.passwd.byuid...
+ypxfr: Exiting: Map successfully transferred
+Transferring passwd.byuid...
+ypxfr: Exiting: Map successfully transferred
+Transferring passwd.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring group.bygid...
+ypxfr: Exiting: Map successfully transferred
+Transferring group.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring services.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring rpc.bynumber...
+ypxfr: Exiting: Map successfully transferred
+Transferring rpc.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring protocols.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring master.passwd.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring networks.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring networks.byaddr...
+ypxfr: Exiting: Map successfully transferred
+Transferring netid.byname...
+ypxfr: Exiting: Map successfully transferred
+Transferring hosts.byaddr...
+ypxfr: Exiting: Map successfully transferred
+Transferring protocols.bynumber...
+ypxfr: Exiting: Map successfully transferred
+Transferring ypservers...
+ypxfr: Exiting: Map successfully transferred
+Transferring hosts.byname...
+ypxfr: Exiting: Map successfully transferred
+
+coltrane has been setup as an YP slave server without any errors.
+Don't forget to update map ypservers on ellington.</pre><p>现在应该会有一个叫做
+	    <code class="filename">/var/yp/test-domain</code> 的目录。
+	    在这个目录中， 应该保存 NIS 主服务器上的映射的副本。
+	    接下来需要确定这些文件都及时地同步更新了。 在从服务器上， 下面的
+	    <code class="filename">/etc/crontab</code> 项将帮助您确保这一点：</p><pre class="programlisting">20      *       *       *       *       root   /usr/libexec/ypxfr passwd.byname
+21      *       *       *       *       root   /usr/libexec/ypxfr passwd.byuid</pre><p>这两行将强制从服务器将映射与主服务器同步。
+	    由于主服务器会尝试确保所有其 NIS 映射的变动都知会从服务器，
+	    因此这些项并不是绝对必需的。 不过，
+	    由于保持其他客户端的口令信息正确性十分重要， 而这则依赖于从服务器，
+	    强烈推荐明确指定让系统时常强制更新口令映射。 对于繁忙的网络而言，
+	    这一点尤其重要， 因为有时可能出现映射更新不完全的情况。</p><p>现在， 在从服务器上执行 <code class="command">/etc/netstart</code>，
+            就可以启动 NIS 服务了。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86611152"></a>28.4.4.3. NIS 客户机</h4></div></div></div><p>NIS 客户机会通过
+	  <code class="command">ypbind</code> 服务程序来与特定的 NIS
+	  服务器建立一种称作绑定的联系。
+	  <code class="command">ypbind</code> 会检查系统的默认域
+	  (这是通过 <code class="command">domainname</code> 命令来设置的)，
+	  并开始在本地网络上广播 RPC 请求。 这些请求会指定
+	  <code class="command">ypbind</code> 尝试绑定的域名。
+	  如果已经配置了服务器， 并且这些服务器接到了广播， 它将回应
+	  <code class="command">ypbind</code>， 后者则记录服务器的地址。
+	  如果有多个可用的服务器 (例如一个主服务器， 加上多个从服务器)，
+	  <code class="command">ypbind</code> 将使用第一个响应的地址。
+	  从这一时刻开始， 客户机会把所有的 NIS 请求直接发给那个服务器。
+	  <code class="command">ypbind</code> 偶尔会 <span class="quote">“<span class="quote">ping</span>”</span>
+	  服务器以确认其仍然在正常运行。 如果在合理的时间内没有得到响应， 则
+	  <code class="command">ypbind</code> 会把域标记为未绑定， 并再次发起广播，
+	  以期找到另一台服务器。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86615760"></a>28.4.4.3.1. 设置 NIS 客户机</h5></div></div></div><a id="idp86616400" class="indexterm"></a><p>配置一台 FreeBSD 机器作为 NIS 客户机是非常简单的。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>编辑 <code class="filename">/etc/rc.conf</code> 文件，
+                并在其中加上下面几行， 以设置 NIS 域名，
+                并在网络启动时启动 <code class="command">ypbind</code>：</p><pre class="programlisting">nisdomainname="test-domain"
+nis_client_enable="YES"</pre></li><li class="step"><p>要从 NIS 服务器导入所有的口令项，
+		需要从您的
+		<code class="filename">/etc/master.passwd</code> 文件中删除所有用户，
+		并使用
+		<code class="command">vipw</code> 在这个文件的最后一行加入：</p><pre class="programlisting">+:::::::::</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这一行将让 NFS 服务器的口令映射中的帐号能够登录。
+		  也有很多修改这一行来配置 NIS 客户机的办法。
+		  请参见稍后的 <a class="link" href="network-nis.html#network-netgroups" title="28.4.7. 使用 Netgroups">netgroups
+		  小节</a> 以了解进一步的情况。
+                  要了解更多信息， 可以参阅 O'Reilly 的
+		  <code class="literal">Managing NFS and NIS</code> 这本书。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">需要至少保留一个本地帐号 (也就是不通过 NIS 导入) 在您的
+                  <code class="filename">/etc/master.passwd</code> 文件中，
+                  而这个帐号应该是
+                  <code class="systemitem">wheel</code> 组的成员。 如果 NIS 发生不测，
+                  这个帐号可以用来远程登录，
+                  成为 <code class="systemitem">root</code>， 并修正问题。</p></div></li><li class="step"><p>要从 NIS 服务器上导入组信息， 需要在
+		<code class="filename">/etc/group</code> 文件末尾加入：</p><pre class="programlisting">+:*::</pre></li></ol></div><p>想要立即启动 NIS 客户端， 需要以超级用户身份运行执行下列命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/netstart</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/ypbind start</code></strong></pre><p>完成这些步骤之后， 就应该可以通过运行
+	    <code class="command">ypcat passwd</code> 来看到 NIS 服务器的口令映射了。</p></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86639184"></a>28.4.5. NIS 的安全性</h3></div></div></div><p>基本上， 任何远程用户都可以发起一个 RPC 到
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypserv&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypserv</span>(8)</span></a> 并获得您的 NIS 映射的内容，
+	如果远程用户了解您的域名的话。
+	要避免这类未经授权的访问， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypserv&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypserv</span>(8)</span></a>
+	支持一个称为 <span class="quote">“<span class="quote">securenets</span>”</span> 的特性，
+	用以将访问限制在一组特定的机器上。 在启动过程中，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypserv&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypserv</span>(8)</span></a> 会尝试从
+	<code class="filename">/var/yp/securenets</code>
+	中加载 securenet 信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这个路径随
+	  <code class="option">-p</code> 参数改变。 这个文件包含了一些项，
+	  每一项中包含了一个网络标识和子网掩码， 中间用空格分开。
+	  以 <span class="quote">“<span class="quote">#</span>”</span> 开头的行会被认为是注释。
+	  示范的 securenets 文件如下所示：</p></div><pre class="programlisting"># allow connections from local host -- mandatory
+127.0.0.1     255.255.255.255
+# allow connections from any host
+# on the 192.168.128.0 network
+192.168.128.0 255.255.255.0
+# allow connections from any host
+# between 10.0.0.0 to 10.0.15.255
+# this includes the machines in the testlab
+10.0.0.0      255.255.240.0</pre><p>如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypserv&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypserv</span>(8)</span></a> 接到了来自匹配上述任一规则的地址的请求，
+	则它会正常处理请求。 反之， 则请求将被忽略， 并记录一条警告信息。 如果
+	<code class="filename">/var/yp/securenets</code> 文件不存在， 则
+	<code class="command">ypserv</code> 会允许来自任意主机的请求。</p><p><code class="command">ypserv</code> 程序也支持
+	Wietse Venema 的 <span class="application">TCP Wrapper</span> 软件包。
+	这样， 管理员就能够使用
+	<span class="application">TCP Wrapper</span> 的配置文件来代替
+	<code class="filename">/var/yp/securenets</code> 完成访问控制。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">尽管这两种访问控制机制都能够提供某种程度的安全，
+          但是， 和特权端口检查一样，
+          它们无法避免 <span class="quote">“<span class="quote">IP 伪造</span>”</span> 攻击。 您的防火墙应该阻止所有与
+          NIS 有关的访问。</p><p xmlns="http://www.w3.org/1999/xhtml">使用 <code class="filename">/var/yp/securenets</code> 的服务器，
+          可能会无法为某些使用陈旧的 TCP/IP 实现的 NIS 客户机服务。
+          这些实现可能会在广播时， 将主机位都设置为 0，
+          或在计算广播地址时忽略子网掩码。
+          尽管这些问题可以通过修改客户机的配置来解决，
+          其他一些问题也可能导致不得不淘汰那些客户机系统，
+          或者不使用 <code class="filename">/var/yp/securenets</code>。</p><p xmlns="http://www.w3.org/1999/xhtml">在使用陈旧的 TCP/IP 实现的系统上，
+	  使用 <code class="filename">/var/yp/securenets</code> 是一个非常糟糕的做法，
+	  因为这将导致您的网络上的 NIS 丧失大部分功能。</p><a xmlns="http://www.w3.org/1999/xhtml" id="idp86651984" class="indexterm"></a><p xmlns="http://www.w3.org/1999/xhtml">使用 <span class="application">TCP Wrapper</span>
+          软件包， 会导致您的 NIS 服务器的响应延迟增加。
+          而增加的延迟， 则可能会导致客户端程序超时，
+          特别是在繁忙的网络或者很慢的
+          NIS 服务器上。 如果您的某个客户机因此而产生一些异常，
+          则应将这些客户机变为 NIS 从服务器，
+          并强制其绑定自己。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86653520"></a>28.4.6. 不允许某些用户登录</h3></div></div></div><p>在我们的实验室中， <code class="systemitem">basie</code> 这台机器，
+        是一台教员专用的工作站。 我们不希望将这台机器拿出 NIS 域，
+        而主 NIS 服务器上的 <code class="filename">passwd</code> 文件，
+        则同时包含了教员和学生的帐号。 这时应该怎么做？</p><p>有一种办法来禁止特定的用户登录机器， 即使他们身处 NIS 数据库之中。
+        要完成这一工作， 只需要在客户机的 <code class="filename">/etc/master.passwd</code>
+        文件中加入一些
+        <code class="literal">-username</code> 这样的项，
+        其中， <em class="replaceable"><code>username</code></em> 是希望禁止登录的用户名。
+        一般推荐使用 <code class="command">vipw</code> 来完成这个工作，
+        因为 <code class="command">vipw</code> 会对您在 <code class="filename">/etc/master.passwd</code>
+        文件上所作的修改进行合法性检查，
+        并在编辑结束时重新构建口令数据库。 例如， 如果希望禁止用户
+        <code class="systemitem">bill</code> 登录
+        <code class="systemitem">basie</code>， 我们应该：</p><pre class="screen">basie<code class="prompt">#</code> <strong class="userinput"><code>vipw</code></strong>
+<strong class="userinput"><code>[在末尾加入 -bill， 并退出]</code></strong>
+vipw: rebuilding the database...
+vipw: done
+
+basie<code class="prompt">#</code> <strong class="userinput"><code>cat /etc/master.passwd</code></strong>
+
+root:[password]:0:0::0:0:The super-user:/root:/bin/csh
+toor:[password]:0:0::0:0:The other super-user:/root:/bin/sh
+daemon:*:1:1::0:0:Owner of many system processes:/root:/sbin/nologin
+operator:*:2:5::0:0:System &amp;:/:/sbin/nologin
+bin:*:3:7::0:0:Binaries Commands and Source,,,:/:/sbin/nologin
+tty:*:4:65533::0:0:Tty Sandbox:/:/sbin/nologin
+kmem:*:5:65533::0:0:KMem Sandbox:/:/sbin/nologin
+games:*:7:13::0:0:Games pseudo-user:/usr/games:/sbin/nologin
+news:*:8:8::0:0:News Subsystem:/:/sbin/nologin
+man:*:9:9::0:0:Mister Man Pages:/usr/share/man:/sbin/nologin
+bind:*:53:53::0:0:Bind Sandbox:/:/sbin/nologin
+uucp:*:66:66::0:0:UUCP pseudo-user:/var/spool/uucppublic:/usr/libexec/uucp/uucico
+xten:*:67:67::0:0:X-10 daemon:/usr/local/xten:/sbin/nologin
+pop:*:68:6::0:0:Post Office Owner:/nonexistent:/sbin/nologin
+nobody:*:65534:65534::0:0:Unprivileged user:/nonexistent:/sbin/nologin
++:::::::::
+-bill
+
+basie<code class="prompt">#</code></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-netgroups"></a>28.4.7. 使用 Netgroups</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Udo</span> <span class="surname">Erdelhoff</span></span>. </span></div></div></div><a id="idp86672592" class="indexterm"></a><p>前一节介绍的方法，
+        在您需要为非常少的用户和/或机器进行特殊的规则配置时还算凑合。
+        在更大的网络上， 您
+        <span class="emphasis"><em>一定会</em></span> 忘记禁止某些用户登录到敏感的机器上，
+        或者， 甚至必须单独地修改每一台机器的配置， 因而丢掉了 NIS 最重要的优越性：
+        <span class="emphasis"><em>集中式</em></span> 管理。</p><p>NIS 开发人员为这个问题提供的解决方案， 被称作
+        <span class="emphasis"><em>netgroups</em></span>。 它们的作用和语义，
+        基本上可以等同于 <span class="trademark">UNIX</span>® 文件系统上使用的组。
+        主要的区别是它们没有数字化的 ID， 以及可以在 netgroup
+        中同时包含用户和其他 netgroup。</p><p>Netgroups 被设计用来处理大的、 复杂的包含数百用户和机器的网络。
+        一方面， 在您不得不处理这类情形时， 这是一个很有用的东西。
+        而另一方面， 它的复杂性又使得通过非常简单的例子很难解释 netgroup
+        到底是什么。 这一节的其余部分的例子将展示这个问题。</p><p>假设您在实验室中成功地部署 NIS 引起了上司的兴趣。
+        您接下来的任务是将 NIS 域扩展， 以覆盖校园中的一些其他的机器。
+        下面两个表格中包括了新用户和新机器， 及其简要说明。</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>用户名</th><th>说明</th></tr></thead><tbody><tr><td><code class="systemitem">alpha</code>, <code class="systemitem">beta</code></td><td>IT 部门的普通雇员</td></tr><tr><td><code class="systemitem">charlie</code>, <code class="systemitem">delta</code></td><td>IT 部门的学徒</td></tr><tr><td><code class="systemitem">echo</code>, <code class="systemitem">foxtrott</code>, <code class="systemitem">golf</code>, ...</td><td>普通雇员</td></tr><tr><td><code class="systemitem">able</code>, <code class="systemitem">baker</code>, ...</td><td>目前的实习生</td></tr></tbody></table></div><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>机器名</th><th>说明</th></tr></thead><tbody><tr><td><code class="systemitem">war</code>, <code class="systemitem">death</code>,
+              <code class="systemitem">famine</code>,
+              <code class="systemitem">pollution</code></td><td>最重要的服务器。 只有 IT
+                部门的雇员才允许登录这些机器。</td></tr><tr><td><code class="systemitem">pride</code>, <code class="systemitem">greed</code>,
+              <code class="systemitem">envy</code>, <code class="systemitem">wrath</code>,
+              <code class="systemitem">lust</code>, <code class="systemitem">sloth</code></td><td>不太重要的服务器， 所有 IT 部门的成员，
+              都可以登录这些机器。</td></tr><tr><td><code class="systemitem">one</code>, <code class="systemitem">two</code>,
+                <code class="systemitem">three</code>, <code class="systemitem">four</code>,
+                ...</td><td>普通工作站。 只有
+                <span class="emphasis"><em>真正的</em></span> 雇员才允许登录这些机器。</td></tr><tr><td><code class="systemitem">trashcan</code></td><td>一台不包含关键数据的旧机器。
+                即使是实习生， 也允许登录它。</td></tr></tbody></table></div><p>如果您尝试通过一个一个地阻止用户来实现这些限制，
+        就需要在每一个系统的 <code class="filename">passwd</code> 文件中，
+        为每一个不允许登录该系统的用户添加对应的
+        <code class="literal">-user</code> 行。
+        如果忘记了任何一个， 就可能会造成问题。 在进行初始配置时，
+        正确地配置也许不是什么问题， 但随着日复一日地添加新用户，
+        <span class="emphasis"><em>总有一天</em></span> 您会忘记为新用户添加某个行。
+        毕竟， Murphy 是一个乐观的人。</p><p>使用 netgroups 来处理这一状况可以带来许多好处。
+        不需要单独地处理每一个用户； 您可以赋予用户一个或多个 netgroups
+        身份， 并允许或禁止某一个 netgroup 的所有成员登录。
+        如果添加了新的机器， 只需要定义 netgroup 的登录限制。
+        如果增加了新用户， 也只需要将用户加入一个或多个 netgroup。
+        这些变化是相互独立的： 不再需要 <span class="quote">“<span class="quote">对每一个用户和机器执行
+        ……</span>”</span>。 如果您的 NIS 配置经过了谨慎的规划，
+        就只需要修改一个中央的配置文件， 就能够允许或禁止访问某台机器的权限了。</p><p>第一步是初始化 NIS 映射
+        netgroup。 FreeBSD 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypinit&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypinit</span>(8)</span></a> 默认情况下并不创建这个映射，
+        但它的 NIS 实现能够在创建这个映射之后立即对其提供支持。
+        要创建空映射， 简单地输入</p><pre class="screen">ellington<code class="prompt">#</code> <strong class="userinput"><code>vi /var/yp/netgroup</code></strong></pre><p>并开始增加内容。 在我们的例子中， 至少需要四个 nergruop：
+         IT 雇员， IT 学徒， 普通雇员和实习生。</p><pre class="programlisting">IT_EMP  (,alpha,test-domain)    (,beta,test-domain)
+IT_APP  (,charlie,test-domain)  (,delta,test-domain)
+USERS   (,echo,test-domain)     (,foxtrott,test-domain) \
+        (,golf,test-domain)
+INTERNS (,able,test-domain)     (,baker,test-domain)</pre><p><code class="literal">IT_EMP</code>, <code class="literal">IT_APP</code> 等等，
+        是 netgroup 的名字。 每一个括号中的组中，
+        都有一些用户帐号。 组中的三个字段是：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>在哪些机器上能够使用这些项。 如果不指定主机名，
+            则项在所有机器上都有效。 如果指定了主机，
+            则很容易造成混淆。</p></li><li class="listitem"><p>属于这个 netgroup 的帐号。</p></li><li class="listitem"><p>帐号的 NIS 域。 您可以从其他 NIS
+            域中把帐号导入到您的 netgroup 中，
+            如果您管理多个 NIS 域的话。</p></li></ol></div><p>每一个字段都可以包括通配符。 参见
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=netgroup&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">netgroup</span>(5)</span></a> 了解更多细节。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><a xmlns="http://www.w3.org/1999/xhtml" id="idp86753360" class="indexterm"></a><p xmlns="http://www.w3.org/1999/xhtml">Netgroup 的名字一般来说不应超过 8 个字符，
+          特别是当您的 NIS 域中有机器打算运行其它操作系统的时候。
+          名字是区分大小写的； 使用大写字母作为 netgroup 的名字，
+          能够让您更容易地区分用户、 机器和 netgroup 的名字。</p><p xmlns="http://www.w3.org/1999/xhtml">某些 NIS 客户程序 (FreeBSD 以外的那些) 可能无法处理含有大量项的
+          netgroup。 例如， 某些早期版本的 <span class="trademark">SunOS</span>™ 会在 netgroup
+          中包含多于 15 个 <span class="emphasis"><em>项</em></span> 时出现问题。
+          要绕过这个问题， 可以创建多个 子netgroup，每一个中包含少于 15 个用户，
+          以及一个包含所有 子netgroup 的真正的 netgroup：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">BIGGRP1  (,joe1,domain)  (,joe2,domain)  (,joe3,domain) [...]
+BIGGRP2  (,joe16,domain)  (,joe17,domain) [...]
+BIGGRP3  (,joe31,domain)  (,joe32,domain)
+BIGGROUP  BIGGRP1 BIGGRP2 BIGGRP3</pre><p xmlns="http://www.w3.org/1999/xhtml">如果需要超过 225 个用户， 可以继续重复上面的过程。</p></div><p>激活并分发新的 NIS 映射非常简单：</p><pre class="screen">ellington<code class="prompt">#</code> <strong class="userinput"><code>cd /var/yp</code></strong>
+ellington<code class="prompt">#</code> <strong class="userinput"><code>make</code></strong></pre><p>这个操作会生成三个 NIS 映射， 即
+        <code class="filename">netgroup</code>、
+        <code class="filename">netgroup.byhost</code> 和
+        <code class="filename">netgroup.byuser</code>。 用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypcat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ypcat</span>(1)</span></a>
+        可以检查这些 NIS 映射是否可用了：</p><pre class="screen">ellington<code class="prompt">%</code> <strong class="userinput"><code>ypcat -k netgroup</code></strong>
+ellington<code class="prompt">%</code> <strong class="userinput"><code>ypcat -k netgroup.byhost</code></strong>
+ellington<code class="prompt">%</code> <strong class="userinput"><code>ypcat -k netgroup.byuser</code></strong></pre><p>第一个命令的输出，
+        应该与 <code class="filename">/var/yp/netgroup</code> 的内容相近。
+        第二个命令， 如果没有指定本机专有的 netgroup，
+        则应该没有输出。 第三个命令，
+        则用于显示某个用户对应的 netgroup 列表。</p><p>客户机的设置也很简单。 要配置服务器
+        <code class="systemitem">war</code>， 只需进入
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vipw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">vipw</span>(8)</span></a> 并把</p><pre class="programlisting">+:::::::::</pre><p>改为</p><pre class="programlisting">+@IT_EMP:::::::::</pre><p>现在， 只有 netgroup
+        <code class="literal">IT_EMP</code> 中定义的用户会被导入到
+        <code class="systemitem">war</code> 的口令数据库中，
+        因此只有这些用户能够登录。</p><p>不过， 这个限制也会作用于 shell 的
+	<code class="literal">~</code>， 以及所有在用户名和数字用户 ID
+	之间实施转换的函数的功能。 换言之， <code class="command">cd
+	~user</code> 将不会正常工作， 而
+	<code class="command">ls -l</code> 也将显示数字的 ID 而不是用户名，
+	并且 <code class="command">find . -user joe -print</code>
+	将失败， 并给出 <span class="errorname">No such user</span> 的错误信息。
+	要修正这个问题， 您需要导入所有的用户项， 而
+	<span class="emphasis"><em>不允许他们登录服务器</em></span>。</p><p>这可以通过在
+        <code class="filename">/etc/master.passwd</code> 加入另一行来完成。
+        这行的内容是：</p><p><code class="literal">+:::::::::/sbin/nologin</code>， 意思是
+        <span class="quote">“<span class="quote">导入所有的项， 但导入项的 shell 则替换为
+        <code class="filename">/sbin/nologin</code></span>”</span>。
+        通过在 <code class="filename">/etc/master.passwd</code>
+        中增加默认值， 可以替换掉
+        <code class="literal">passwd</code> 中的任意字段。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">务必确认
+        <code class="literal">+:::::::::/sbin/nologin</code> 这一行出现在
+        <code class="literal">+@IT_EMP:::::::::</code> 之后。
+        否则， 所有从 NIS 导入的用户帐号将以 <code class="filename">/sbin/nologin</code>
+        作为登录 shell。</p></div><p>完成上面的修改之后， 在 IT 部门有了新员工时，
+        只需修改一个 NIS 映射就足够了。 您也可以用类似的方法，
+        在不太重要的服务器上， 把先前本地版本的 <code class="filename">/etc/master.passwd</code>
+        中的 <code class="literal">+:::::::::</code> 改为：</p><pre class="programlisting">+@IT_EMP:::::::::
++@IT_APP:::::::::
++:::::::::/sbin/nologin</pre><p>相关的用于普通工作站的配置则应是：</p><pre class="programlisting">+@IT_EMP:::::::::
++@USERS:::::::::
++:::::::::/sbin/nologin</pre><p>一切平安无事， 直到数周后， 有一天策略发生了变化：
+        IT 部门也开始招收实习生了。 IT 实习生允许使用普通的终端，
+        以及不太重要的服务器； 而 IT 学徒， 则可以登录主服务器。
+        您增加了新的 netgroup <code class="literal">IT_INTERN</code>， 以及新的 IT
+        实习生到这个 netgroup 并开始修改每一台机器上的配置……
+        老话说得好：<span class="quote">“<span class="quote">牵一发， 动全身</span>”</span>。</p><p>NIS 通过 netgroup 来建立 netgroup 的能力，
+        正可以避免这样的情形。 一种可能的方法是建立基于角色的 netgroup。
+        例如， 您可以创建称为
+        <code class="literal">BIGSRV</code> 的 netgroup， 用于定义最重要的服务器上的登录限制，
+        以及另一个成为 <code class="literal">SMALLSRV</code> 的 netgroup，
+        用以定义次重要的服务器， 以及第三个， 用于普通工作站的 netgroup
+        <code class="literal">USERBOX</code>。 这三个 netgroup 中的每一个，
+        都包含了允许登录到这些机器上的所有 netgroup。
+        您的 NIS 映射中的新项如下所示：</p><pre class="programlisting">BIGSRV    IT_EMP  IT_APP
+SMALLSRV  IT_EMP  IT_APP  ITINTERN
+USERBOX   IT_EMP  ITINTERN USERS</pre><p>这种定义登录限制的方法，
+        在您能够将机器分组并加以限制的时候可以工作的相当好。
+        不幸的是， 这是种例外， 而非常规情况。 多数时候，
+        需要按机器去定义登录限制。</p><p>与机器相关的 netgroup 定义， 是处理上述策略改动的另一种可能的方法。
+        此时， 每台机器的 <code class="filename">/etc/master.passwd</code> 中，
+        都包含两个 <span class="quote">“<span class="quote">+</span>”</span> 开头的行。 第一个用于添加允许登录的 netgroup
+        帐号， 而第二个则用于增加其它帐号， 并把 shell
+        设置为 <code class="filename">/sbin/nologin</code>。 使用 <span class="quote">“<span class="quote">全大写</span>”</span>
+        的机器名作为 netgroup 名是个好主意。 换言之， 这些行应该类似于：</p><pre class="programlisting">+@<em class="replaceable"><code>BOXNAME</code></em>:::::::::
++:::::::::/sbin/nologin</pre><p>一旦在所有机器上都完成了这样的修改， 就再也不需要修改本地的
+        <code class="filename">/etc/master.passwd</code> 了。
+        所有未来的修改都可以在 NIS 映射中进行。 这里是一个例子，
+        其中展示了在这一应用情景中所需要的 netgroup 映射，
+        以及其它一些常用的技巧：</p><pre class="programlisting"># Define groups of users first
+IT_EMP    (,alpha,test-domain)    (,beta,test-domain)
+IT_APP    (,charlie,test-domain)  (,delta,test-domain)
+DEPT1     (,echo,test-domain)     (,foxtrott,test-domain)
+DEPT2     (,golf,test-domain)     (,hotel,test-domain)
+DEPT3     (,india,test-domain)    (,juliet,test-domain)
+ITINTERN  (,kilo,test-domain)     (,lima,test-domain)
+D_INTERNS (,able,test-domain)     (,baker,test-domain)
+#
+# Now, define some groups based on roles
+USERS     DEPT1   DEPT2     DEPT3
+BIGSRV    IT_EMP  IT_APP
+SMALLSRV  IT_EMP  IT_APP    ITINTERN
+USERBOX   IT_EMP  ITINTERN  USERS
+#
+# And a groups for a special tasks
+# Allow echo and golf to access our anti-virus-machine
+SECURITY  IT_EMP  (,echo,test-domain)  (,golf,test-domain)
+#
+# machine-based netgroups
+# Our main servers
+WAR       BIGSRV
+FAMINE    BIGSRV
+# User india needs access to this server
+POLLUTION  BIGSRV  (,india,test-domain)
+#
+# This one is really important and needs more access restrictions
+DEATH     IT_EMP
+#
+# The anti-virus-machine mentioned above
+ONE       SECURITY
+#
+# Restrict a machine to a single user
+TWO       (,hotel,test-domain)
+# [...more groups to follow]</pre><p>如果您正使用某种数据库来管理帐号，
+        应该可以使用您的数据库的报告工具来创建映射的第一部分。
+        这样， 新用户就自动地可以访问这些机器了。</p><p>最后的提醒： 使用基于机器的 netgroup 并不总是适用的。
+        如果正在为学生实验室部署数十台甚至上百台同样的机器，
+        您应该使用基于角色的 netgroup， 而不是基于机器的 netgroup，
+        以便把 NIS 映射的尺寸保持在一个合理的范围内。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86811728"></a>28.4.8. 需要牢记的事项</h3></div></div></div><p>这里是一些其它在使用 NIS 环境时需要注意的地方。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>每次需要在实验室中增加新用户时，
+            必须 <span class="emphasis"><em>只</em></span> 在 NIS 服务器上加入用户，
+            而且 <span class="emphasis"><em>一定要记得重建 NIS 映射</em></span>。
+            如果您忘记了这样做， 新用户将无法登录除 NIS
+            主服务器之外的任何其它机器。 例如， 如果要在实验室增加新用户
+            <code class="systemitem">jsmith</code>， 我们需要：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw useradd jsmith</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /var/yp</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make test-domain</code></strong></pre><p>也可以运行 <code class="command">adduser jsmith</code> 而不是
+            <code class="command">pw useradd jsmith</code>.</p></li><li class="listitem"><p><span class="emphasis"><em>将管理用的帐号排除在
+            NIS 映射之外</em></span>。 一般来说，
+            您不希望这些管理帐号和口令被扩散到那些包含不应使用它们的用户的机器上。</p></li><li class="listitem"><p><span class="emphasis"><em>确保 NIS 主和从服务器的安全，
+            并尽可能减少其停机时间</em></span>。
+            如果有人攻入或简单地关闭这些机器，
+            则整个实验室的任也就无法登录了。</p><p>这是集中式管理系统中最薄弱的环节。
+            如果没有保护好 NIS 服务器， 您就有大批愤怒的用户需要对付了！</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86829776"></a>28.4.9. NIS v1 兼容性</h3></div></div></div><p>FreeBSD 的 <span class="application">ypserv</span> 提供了某些为 NIS v1
+	客户提供服务的支持能力。 FreeBSD 的 NIS 实现，
+	只使用 NIS v2 协议， 但其它实现可能会包含 v1 协议，
+	以提供对旧系统的向下兼容能力。 随这些系统提供的
+	<span class="application">ypbind</span> 服务将首先尝试绑定 NIS v1
+	服务器， 即使它们并不真的需要它 (有些甚至可能会一直广播搜索请求，
+	即使已经从某台 v2 服务器得到了回应也是如此)。
+	注意， 尽管支持一般的客户机调用， 这个版本的
+	<span class="application">ypserv</span> 并不能处理 v1 的映射传送请求；
+	因而， 它就不能与较早的支持 v1 协议的 NIS 服务器配合使用，
+	无论是作为主服务器还是从服务器。 幸运的是，
+	现今应该已经没有仍然在用的这样的服务器了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-nis-server-is-client"></a>28.4.10. 同时作为 NIS 客户机的 NIS 服务器</h3></div></div></div><p>在多服务器域的环境中， 如果服务器同时作为 NIS 客户， 在运行
+	<span class="application">ypserv</span> 时要特别小心。
+	一般来说， 强制服务器绑定自己要比允许它们广播绑定请求要好，
+	因为这种情况下它们可能会相互绑定。 某些怪异的故障，
+	很可能是由于某一台服务器停机， 而其它服务器都依赖其服务所导致的。
+	最终， 所有的客户机都会超时并绑定到其它服务器，
+	但这个延迟可能会相当可观，
+	而且恢复之后仍然存在再次发生此类问题的隐患。</p><p>您可以强制一台机器绑定到特定的服务器， 这是通过
+	<code class="command">ypbind</code> 的 <code class="option">-S</code>
+	参数来完成的。 如果不希望每次启动 NIS 服务器时都手工完成这项工作，
+	可以在 <code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">nis_client_enable="YES"	# run client stuff as well
+nis_client_flags="-S <em class="replaceable"><code>NIS domain</code></em>,<em class="replaceable"><code>server</code></em>"</pre><p>参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ypbind&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ypbind</span>(8)</span></a> 以了解更多情况。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86837712"></a>28.4.11. 口令格式</h3></div></div></div><a id="idp86838352" class="indexterm"></a><p>在实现 NIS 时， 口令格式的兼容性问题是一种最为常见的问题。
+	假如您的 NIS 服务器使用 DES 加密口令， 则它只能支持使用 DES
+	的客户机。 例如， 如果您的网络上有
+	<span class="trademark">Solaris</span>™ NIS 客户机， 则几乎肯定需要使用 DES 加密口令。</p><p>要检查您的服务器和客户机使用的口令格式，
+	需要查看 <code class="filename">/etc/login.conf</code>。
+	如果主机被配置为使用 DES 加密的口令， 则
+	<code class="literal">default</code> class 将包含类似这样的项：</p><pre class="programlisting">default:\
+	:passwd_format=des:\
+	:copyright=/etc/COPYRIGHT:\
+	[Further entries elided]</pre><p>其他一些可能的 <code class="literal">passwd_format</code>
+	包括 <code class="literal">blf</code> 和 <code class="literal">md5</code>
+	(分别对应于 Blowfish 和 MD5 加密口令)。</p><p>如果修改了
+	<code class="filename">/etc/login.conf</code>， 就必须重建登录性能数据库，
+	这是通过以
+	<code class="systemitem">root</code> 身份运行下面的程序来完成的：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cap_mkdb /etc/login.conf</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">已经在
+	<code class="filename">/etc/master.passwd</code> 中的口令的格式不会被更新，
+	直到用户在登录性能数据库重建
+	<span class="emphasis"><em>之后</em></span> 首次修改口令为止。</p></div><p>接下来， 为了确保所有的口令都按照您选择的格式加密了，
+	还需要检查 <code class="filename">/etc/auth.conf</code>
+	中 <code class="literal">crypt_default</code> 给出的优先选择的口令格式。
+	要完成此工作， 将您选择的格式放到列表的第一项。 例如，
+	当使用 DES 加密的口令时， 对应项应为：</p><pre class="programlisting">crypt_default	=	des blf md5</pre><p>在每一台基于 FreeBSD 的 NIS 服务器和客户机上完成上述工作之后，
+	就可以肯定您的网络上它们都在使用同样的口令格式了。 如果在 NIS
+	客户机上做身份验证时发生问题， 这也是第一个可能出现问题的地方。
+	注意： 如果您希望在混合的网络上部署 NIS 服务器，
+	可能就需要在所有系统上都使用 DES，
+	因为这是所有系统都能够支持的最低限度的公共标准。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-nfs.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-dhcp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.3. 网络文件系统（NFS） </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.5. 网络自动配置 (DHCP)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

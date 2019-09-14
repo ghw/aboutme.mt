@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.3. 安装前的准备工作</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-hardware.html" title="3.2. 硬件需求" /><link rel="next" href="install-start.html" title="3.4. 开始安装" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.3. 安装前的准备工作</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-hardware.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-start.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-pre"></a>3.3. 安装前的准备工作</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-inventory"></a>3.3.1. 列出您电脑的硬件清单</h3></div></div></div><p>在安装 FreeBSD 之前，您应该试着将您电脑中的硬件清单列出来。
+	FreeBSD 安装程序会将这些硬件(磁盘、网卡、光驱等等)
+	以及型号及制造厂商列出来。FreeBSD 也会尝试为这些设备找出最适当的 IRQ
+	及 IO 端口的设定。但是因为 PC 的硬件种类实在太过复杂，
+	这个步骤不一定总是能成功。这时，
+	您就可能需要手动更改有问题的设备的设定值。</p><p>如果您已经安装了其它的操作系统，如 <span class="trademark">Windows</span>® 或 Linux，
+	那么您可以先由这些系统所提供的工具来查看您的设备设定值是怎么分配的。
+	如果您真的没办法确定某些接口卡用什么设定值，那么您可以检查看看，
+	说不定它的设定已经标示在卡上。常用的 IRQ 号码为 3、5 以及 7；
+	IO 端口的值通常以 16 进制位表示，例如 Ox330。</p><p>我们建议您在安装 FreeBSD 之前把这些信息打印或记录下来，做成表格
+      的样子也许会比较有帮助，例如：</p><div class="table"><a id="idp67972688"></a><div class="table-title">Table 3.1. 硬件设备清单</div><div class="table-contents"><table summary="硬件设备清单" width="100%" border="0"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th>设备名</th><th>IRQ</th><th>IO 端口号</th><th>备注</th></tr></thead><tbody><tr><td>第一块硬盘</td><td>N/A</td><td>N/A</td><td>40 GB，Seagate 制造，第一个 IDE 接口主设备</td></tr><tr><td>CDROM</td><td>N/A</td><td>N/A</td><td>第一个 IDE 接口从设备</td></tr><tr><td>第二块硬盘</td><td>N/A</td><td>N/A</td><td>20 GB，IBM 制造, 第二个 IDE 接口主设备</td></tr><tr><td>第一个 IDE 控制器</td><td>14</td><td>0x1f0</td><td> </td></tr><tr><td>网卡</td><td>N/A</td><td>N/A</td><td><span class="trademark">Intel</span>® 10/100</td></tr><tr><td>Modem</td><td>N/A</td><td>N/A</td><td><span class="trademark">3Com</span>® 56K faxmodem，位于 COM1 口</td></tr><tr><td>…</td><td class="auto-generated"> </td><td class="auto-generated"> </td><td class="auto-generated"> </td></tr></tbody></table></div></div><br class="table-break" /><p>在清楚地了解了您计算机的配置之后， 需要检查它是否符合您希望安装的
+	FreeBSD 版本的硬件需求。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67996368"></a>3.3.2. 备份您的数据</h3></div></div></div><p>如果您的电脑上面存有重要的数据资料，
+	那么在安装 FreeBSD 前请确定您已经将这些资料备份了，
+	并且先测试这些备份文档是否有问题。FreeBSD
+	安装程序在要写入任何资料到您的硬盘前都会先提醒您确认，
+	一旦您确定要写入，那么以后就没有反悔的机会。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-where"></a>3.3.3. 决定要将 FreeBSD 安装到哪里</h3></div></div></div><p>如果您想让 FreeBSD 使用整个硬盘，那么请直接跳到下一节。</p><p>但是，如果您想让 FreeBSD 跟您已有的系统并存，
+	那么您必须对您数据存在硬盘的分布方式有深入的了解，
+	以及其所造成的影响。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-where-i386"></a>3.3.3.1. FreeBSD/i386 体系结构的硬盘分配方式</h4></div></div></div><p>一个 PC 硬盘可以被细分为许多块。
+	这些块被称为 <em class="firstterm">partitions (分区)</em>。
+	由于 FreeBSD 内部也有分区的概念，如此命名很容易导致混淆，
+	因此我们在 FreeBSD 中，将其称为磁盘 slice，或简称为 slices。
+	例如， FreeBSD 提供的用于操作 PC 磁盘分区的工具
+	<code class="command">fdisk</code> 就将其称为 slice 而不是 partition。
+	由于设计的原因， 每个硬盘仅支持四个分区； 这些分区叫做
+	<em class="firstterm">主分区(Primary partion)</em>。
+	为了突破这个限制以便能使用更多的分区，就有了新的分区类型，叫做
+	<em class="firstterm">扩展分区(Extended partition)</em>。
+	一个硬盘可以拥有一个扩展分区。在扩展分区里可以建立许多个所谓的
+	<em class="firstterm">逻辑分区(Logical partitions)</em>。</p><p>每个分区都有其独立的 <em class="firstterm">分区号(partition ID)</em>,
+	用以区分每个分区的数据类型。FreeBSD 分区的分区号为
+	<code class="literal">165</code>。</p><p>一般而言，每种操作系统都会有自己独特的方式来区别分区。
+	例如 DOS 及其之后的 <span class="trademark">Windows</span>®， 会分配给每个主分区及逻辑分区一个
+	<em class="firstterm">驱动器字符</em>，
+	从 <code class="filename">C:</code> 开始。</p><p>FreeBSD 必须安装在主分区。FreeBSD
+	可以在这个分区上面存放系统数据或是您建立的任何文件。
+	然而，如果您有多个硬盘，您也可以在这些硬盘上(全部或部分)建立 FreeBSD
+	分区。在您安装 FreeBSD 的时候，必须要有一个分区可以给 FreeBSD 使用。
+	这个分区可以是尚未规划的分区，
+	或是已经存在且存有数据但您不再需要的分区。</p><p>如果您已经用完了您硬盘上的所有分区，
+	那么您必须使用其它操作系统所提供的工具
+	(如 DOS 或 <span class="trademark">Windows</span>® 下的 <code class="command">fdisk</code>)
+	来腾出一个分区给 FreeBSD 使用。</p><p>如果您的某个分区有多余的空间，您可以使用它。
+	但是使用前您需要先整理一下这些分区。</p><p>FreeBSD 最小安装需要约 100 MB 的空间，但是这仅是
+	<span class="emphasis"><em>非常</em></span> 基本的安装，
+	几乎没有剩下多少空间可以建立您自己的文件。一个较理想的最小安装是
+	250 MB，不含图形界面；或是 350 MB 以上，包含图形界面。
+	如果您还需要安装其它的第三方厂商的套件，
+	那么将需要更多的硬盘空间。</p><p>您可以使用类似 <span class="application"><span class="trademark">PartitionMagic</span>®</span>
+	这样的商业版本工具， 或类似 <span class="application">GParted</span>
+	这样的自由软件工具来调整分区尺寸， 从而为 FreeBSD 腾出空间。
+	<span class="application"><span class="trademark">PartitionMagic</span>®</span> 和
+	<span class="application">GParted</span>
+	都能改变 <acronym class="acronym">NTFS</acronym> 分区的尺寸。
+	<span class="application">GParted</span> 在许多 Live CD Linux 发行版， 如
+	<a class="link" href="http://www.sysresccd.org/" target="_top">SystemRescueCD</a>
+	中均有提供。</p><p>目前已经有报告显示改变 <span class="trademark">Microsoft</span>® Vista
+	分区尺寸时会出现问题。 在进行此类操作时，
+	建议您准备一张 Vista 安装 CDROM。如同其他的磁盘维护操作一样，
+	强烈建议您事先进行备份。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">不当的使用这些工具可能会删掉您硬盘上的数据资料！
+	  在使用这些工具前确定您有最近的、没问题的备份数据。</p></div><div class="example"><a id="idp68025808"></a><div class="example-title">Example 3.1. 使用已存在的分区</div><div class="example-contents"><p>假设您只有一个 4GB 的硬盘，而且已经装了 <span class="trademark">Windows</span>®
+	  然后您将这个硬盘分成两个分区 <code class="filename">C:</code> 跟
+	  <code class="filename">D:</code>，每个分区大小为 2 GB。在
+	  <code class="filename">C:</code> 分区上存放有 1 GB 的数据、
+	  <code class="filename">D:</code>分区上存放 0.5 GB 的数据。</p><p>这意味着您的盘上有两个分区，一个驱动器符号是一个分区
+	  (如 c:、d:)。	您可以把所有存放在 <code class="filename">D:</code>
+	  分区上的数据复制到 <code class="filename">C:</code> 分区,
+	  这样就空出了一个分区(d:)给 FreeBSD 使用。</p></div></div><br class="example-break" /><div class="example"><a id="idp68030288"></a><div class="example-title">Example 3.2. 缩减已现在的分区</div><div class="example-contents"><p>假设您只有一个 4 GB 的硬盘，而且已经装了 <span class="trademark">Windows</span>®。
+	  您在安装 <span class="trademark">Windows</span>® 的时候把 4 GB 都给了
+	  <code class="filename">C:</code> 分区，并且已经使用了 1.5 GB
+	  的空间。您想将剩余空间中的 2 GB 给 FreeBSD 使用。</p><p>为了安装 FreeBSD，您必须从下面两种方式中选择一种：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>备份 <span class="trademark">Windows</span>® 的数据资料，然后重新安装 <span class="trademark">Windows</span>®，
+	      并给 <span class="trademark">Windows</span>® 分配 2 GB 的空间。</p></li><li class="listitem"><p>使用上面提及的 <span class="application"><span class="trademark">PartitionMagic</span>®</span>
+	      来整理或切割您的分区。</p></li></ol></div></div></div><br class="example-break" /></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp68037712"></a>3.3.4. 收集您的网络配置相关资料</h3></div></div></div><p>如果您想通过网络(FTP 或是 NFS)安装 FreeBSD，
+	那么您就必须知道您的网络配置信息。在安装 FreeBSD
+	的过程中将会提示您输入这些资料，以顺利完成安装过程。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp68038736"></a>3.3.4.1. 使用以太网或电缆/DSL Modem</h4></div></div></div><p>如果您通过局域网或是要通过网卡使用电缆/DSL 上网，
+	  那么您必须准备下面的信息：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>IP 地址。</p></li><li class="listitem"><p>默认网关 IP 地址。</p></li><li class="listitem"><p>主机名称。</p></li><li class="listitem"><p>DNS 服务器的 IP 地址。</p></li><li class="listitem"><p>子网掩码。</p></li></ol></div><p>如果您不知道这些信息，
+	  您可以询问系统管理员或是您的网络服务提供者。
+	他们可能会说这些信息会由 <em class="firstterm">DHCP</em>
+	  自动分配；如果这样的话，请记住这一点就可以了。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp68045136"></a>3.3.4.2. 使用 Modem 连接</h4></div></div></div><p>如果您由 ISP 提供的拨号服务上网，您仍然可以通过它安装
+	  FreeBSD，只是会需要很长的时间。</p><p>您必须知道：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>拨号到 ISP 的电话号码。</p></li><li class="listitem"><p>您的 modem 是连接到哪个 COM 端口。</p></li><li class="listitem"><p>您拨号到 ISP 所用的账号和密码。</p></li></ol></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp68053840"></a>3.3.5. 检查 FreeBSD 发行勘误</h3></div></div></div><p>虽然我们尽力确保每个 FreeBSD 发行版本的稳定性，
+	但偶尔也会有一些错误进入发行版。极少数情况下，
+	这些问题甚至可能会影响安装。
+	当发现和修正问题之后，它们会列在 FreeBSD 网站中的
+	<a class="link" href="http://www.FreeBSD.org/releases/9.2R/errata.html" target="_top">FreeBSD 发行勘误</a> 中。
+	在您安装之前，应该首先看一看这份勘误表，以了解可能存在的问题。</p><p>关于所有释出版本的信息，包括勘误表，可以在
+	<a class="link" href="../../../../index.html" target="_top">FreeBSD 网站</a> 的 <a class="link" href="../../../../releases/index.html" target="_top">发行版信息</a>
+	一节中找到。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp68056912"></a>3.3.6. 准备安装介质</h3></div></div></div><p>FreeBSD 可以通过下面任何一种安装介质进行安装：</p><div class="itemizedlist"><div class="itemizedlist-title">安装介质</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>CDROM 或 DVD</p></li><li class="listitem"><p>USB 记忆棒</p></li><li class="listitem"><p>在同一计算机上的 DOS 分区</p></li><li class="listitem"><p> SCSI 或 QIC 磁带</p></li><li class="listitem"><p>软盘</p></li></ul></div><div class="itemizedlist"><div class="itemizedlist-title">网络</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>通过防火墙的一个 FTP 站点，或使用 HTTP 代理。</p></li><li class="listitem"><p> NFS 服务器</p></li><li class="listitem"><p>一个指定的并行或串行接口</p></li></ul></div><p>如果您购买了 FreeBSD 的 CD 或 DVD，那么您可以直接进入下一节
+	(<a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a>)。</p><p>如果您还没有 FreeBSD 的安装文件， 则应按照
+	<a class="xref" href="install-diff-media.html" title="3.13. 准备您自己的安装介质">Section 3.13, “准备您自己的安装介质”</a> 来准备。
+	读完那节之后， 您就可以回到这节并从
+	<a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a> 继续了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-boot-media"></a>3.3.7. 准备引导介质</h3></div></div></div><p>FreeBSD 的安装过程开始于将您的电脑开机进入 FreeBSD
+	安装环境 ── －并非在其它的操作系统上运行一个程序。
+	计算机通常使用安装在硬盘上的操作系统进行引导，
+	也可以配置成使用一张<span class="quote">“<span class="quote">bootable(可引导)</span>”</span>的软盘进行启动。
+	大多数现代计算机也都可以从光驱或 USB 盘来引导系统。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您有 FreeBSD 的安装光盘或 DVD(或者是您购买的，
+	  或者是您自己准备的。)并且您的计算机可以从光驱进行启动
+	  (通常在 BIOS 中会有 <span class="quote">“<span class="quote">Boot Order</span>”</span>
+	  或类似的选项可以设置)，那么您就可以跳过此小节。
+	  因为 FreeBSD 光盘及 DVD 光盘都是可以引导的，
+	  用它们开机您不用做什么特别的准备。</p></div><p>要创建引导系统所需的记忆棒，
+	需按下面的操作进行：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p class="title"><strong>获取记忆棒映像文件</strong></p><p>记忆棒映像文件可以从 <em class="replaceable"><code>arch</code></em> 对应的
+	    <code class="literal">ISO-IMAGES</code> 目录， 例如
+	    <code class="literal">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/arch/ISO-IMAGES/version/FreeBSD-9.2-RELEASE-arch-memstick.img</code>
+	    获得。 其中， <em class="replaceable"><code>arch</code></em> 和
+	    <em class="replaceable"><code>version</code></em> 需要替换为您使用的平台和版本。
+	    例如， FreeBSD/i386 9.2-RELEASE
+	    的记忆棒映像位于 <code class="uri"><a class="uri" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/ISO-IMAGES/9.2/FreeBSD-9.2-RELEASE-i386-memstick.img" target="_top">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/ISO-IMAGES/9.2/FreeBSD-9.2-RELEASE-i386-memstick.img</a></code>。</p><p>记忆棒的映像文件扩展名是 <code class="filename">.img</code>。
+	    在 <code class="filename">ISO-IMAGES/</code> 目录中提供了多种不同的映像，
+	    您需要根据使用的 FreeBSD 版本， 有时也包括硬件来选择合适的映像。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">在继续安装之前， 务必 <span class="emphasis"><em>备份</em></span>
+	      您目前保存在 USB 记忆棒上的数据，
+	      接下来的操作将会 <span class="emphasis"><em>擦除</em></span> 这些数据。</p></div></li><li class="step"><p class="title"><strong>准备记忆棒</strong></p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">下面的例子中， 目标记忆棒对应的设备名是
+	      <code class="filename">/dev/da0</code>。
+	      请小心地确认这是希望覆盖的设备，
+	      否则可能会损坏您的现有数据。</p></div><p>设置 <code class="varname">kern.geom.debugflags</code> sysctl
+	    为允许写入目标设备的主引导记录。</p><pre class="screen"><strong class="userinput"><code><code class="prompt">#</code> sysctl kern.geom.debugflags=16</code></strong></pre></li><li class="step"><p class="title"><strong>将映像文件写入记忆棒</strong></p><p><code class="filename">.img</code> 文件
+	    <span class="emphasis"><em>不是</em></span> 直接复制到记忆棒中的那种普通文件。
+	    这个映像是一份包含启动盘全部内容的映像。
+	    这意味着简单地从一个地方复制到另一个地方是 <span class="emphasis"><em>不能</em></span>
+	    赋予其引导系统的能力的。 您必须使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dd</span>(1)</span></a> 将映像文件直接写入磁盘：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=FreeBSD-9.2-RELEASE-i386-memstick.img of=/dev/da0 bs=64k</code></strong></pre></li></ol></div><p>一般来说，要建立安装盘(软盘)请依照下列步骤：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p class="title"><strong>获取开机软盘映像文件</strong></p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">请注意， 从 FreeBSD 8.0 开始，
+	      我们不再提供软盘映像了。 请参阅前面关于如何使用 USB 记忆棒，
+	      或 CDROM 和 DVD 来安装 FreeBSD 的介绍。</p></div><p>开机软盘映像文件可以在您的安装介质的
+	    <code class="filename">floppies/</code> 目录下找到，
+	    另外您也可以从下述网站的 floppies 目录下载： <code class="literal">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/架构名/版本-RELEASE/floppies/</code>。
+	    将 <em class="replaceable"><code>&lt;架构名&gt;</code></em> 和
+	    <em class="replaceable"><code>&lt;版本&gt;</code></em>
+	    替换为您使用的计算机体系结构和希望安装的版本号。
+	    例如，用于安装 <span class="trademark">i386</span>™ 上的
+	    FreeBSD/i386 8.4-RELEASE 的文件的地址，
+	    应该是 <code class="uri"><a class="uri" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/8.4-RELEASE/floppies/" target="_top">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/8.4-RELEASE/floppies/</a></code>。</p><p>软盘映像文件的扩展名是 <code class="filename">.flp</code>。
+	    在 <code class="filename">floppies/</code> 目录中包括了许多不同的映像文件，
+	    随您安装的 FreeBSD 版本， 某些时候也随硬件的不同，
+	    您需要使用的映像文件可能会有所不同。 您通常会需要四张软盘，
+	    即 <code class="filename">boot.flp</code>、
+	    <code class="filename">kern1.flp</code>、
+	    <code class="filename">kern2.flp</code>， 以及
+	    <code class="filename">kern3.flp</code>。 请查阅同一目录下的
+	    <code class="filename">README.TXT</code>
+	    文件以了解关于这些映像文件的最新信息。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">您的 FTP 程序必须使用 <span class="emphasis"><em>二进制模式</em></span> 来下载这些映
+		像文件。有些浏览器只会用 <span class="emphasis"><em>text</em></span> (或<span class="emphasis"><em>ASCII
+		</em></span>) 模式来传输数据，
+		用这些浏览器下载的映像文件做成的软盘将无法正常开机。</p></div></li><li class="step"><p class="title"><strong>准备软盘</strong></p><p>您必须为您下载的每一个映像文件准备一张软盘。
+	    并且请避免使用到坏掉的软盘。
+	    最简单的方式就是您先将这些软盘格式化，
+	    不要相信所谓的已格式化的软盘。在 <span class="trademark">Windows</span>®
+	    下的格式化程序不会告诉您出现多少坏块，
+	    它只是简单的标记它们为 <span class="quote">“<span class="quote">bad</span>”</span> 并且忽略它们。
+	    根据建议您应该使用全新的软盘来存放安装程序。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您在安装 FreeBSD 的过程中造成当机、
+	      冻结或是其它怪异现象，第一个要怀疑的就是引导软盘。
+	      请用其它的软盘制作映像文件再试试看。</p></div></li><li class="step"><p class="title"><strong>将映像文件写入软盘中</strong></p><p><code class="filename">.flp</code> 文件 <span class="emphasis"><em>并非</em></span>
+	    一般的文件，您不能直接将它们复制到软盘上。
+	    事实上它是一张包含完整磁盘内容的映像文件。这表示您
+	    <span class="emphasis"><em>不能</em></span> 简单的使用 DOS 的 copy
+	    命令将文件写到软盘上，
+	    而必须使用特别的工具程序将映像文件直接写到软盘中。</p><a id="idp68121296" class="indexterm"></a><p>如果您使用 <span class="trademark">MS-DOS</span>® 或 <span class="trademark">Windows</span>® 操作系统来制作引导盘，
+	    那么您可以使用我们提供的 <code class="command">fdimage</code>
+	    程序来将映像文件写到软盘中。</p><p>如果您使用的是光盘，假设光盘的驱动器符号为
+	    <code class="filename">E:</code>，那么请执行下面的命令：</p><pre class="screen"><code class="prompt">E:\&gt;</code> <strong class="userinput"><code>tools\fdimage floppies\boot.flp A:</code></strong></pre><p>重复上述命令以完成每个 <code class="filename">.flp</code> 文件的写入，
+	    每换一个映像文件都必须更换软盘；
+	    制作好的软盘请注明是使用哪个映像文件做的。
+	    如果您的映像文件存放在不同的地方，请自行修改上面的指令指向您存放
+	    <code class="filename">.flp</code> 文件的地方。要是您没有 FreeBSD 光盘，
+	    您可以到 FreeBSD 的 FTP 站点
+	    <a class="link" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/tools/" target="_top">
+	      <code class="filename">tools</code>目录</a>
+	    中下载。</p><p>如果您在 <span class="trademark">UNIX</span>® 系统上制作软盘(例如其它 FreeBSD 机器)，
+	    您可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dd</span>(1)</span></a> 命令来将映像文件写到软盘中。
+	    如果您用 FreeBSD,可以执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=boot.flp of=/dev/fd0</code></strong></pre><p>在 FreeBSD 中，<code class="filename">/dev/fd0</code>
+	    指的是第一个软驱(即 <code class="filename">A:</code> 驱动器)；
+	    <code class="filename">/dev/fd1</code> 是 <code class="filename">B:</code>
+	    驱动器,依此类推。其它的 <span class="trademark">UNIX</span>® 系统可能会用不同的的名称，
+	    这时您就要查阅该系统的说明文件。</p></li></ol></div><p>您现在可以安装 FreeBSD 了</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-hardware.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-start.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.2. 硬件需求 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.4. 开始安装</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>25.6. 设置串口控制台</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="prev" href="dialout.html" title="25.5. 拨出设备" /><link rel="next" href="ppp-and-slip.html" title="Chapter 26. PPP 和 SLIP" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.6. 设置串口控制台</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dialout.html">Prev</a> </td><th width="60%" align="center">Chapter 25. 串口通讯</th><td width="20%" align="right"> <a accesskey="n" href="ppp-and-slip.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="serialconsole-setup"></a>25.6. 设置串口控制台</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Kazutaka</span> <span class="surname">YOKOTA</span></span>. </span></div><div><span class="authorgroup">Based on a document by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Bill</span> <span class="surname">Paul</span></span>. </span></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， 用于串口的设备节点从
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>；
+	从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户需要根据实际情况对这份文档中的例子进行必要的调整。</p></div><a id="idp84182736" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-intro"></a>25.6.1. 介绍</h3></div></div></div><p>FreeBSD可以通过一个串口只使用一个哑 (dumb) 终端就可以启动一个系统。
+	这样一种配置只有两种人能使用： 希望在机器上安装 FreeBSD 的系统管理员，
+	他没有键盘或显示器， 还有就是要调试内核或设备驱动程序的开发人员。</p><p>就象 <a class="xref" href="boot.html" title="Chapter 13. The FreeBSD 引导过程">Chapter 13, <em>The FreeBSD 引导过程</em></a> 描述的， FreeBSD
+	采用一个三步的启动过程。 最先两步储存在 FreeBSD 启动磁盘的启动
+	slice 的启动代码块中。 引导块然后就被加载，
+	接着运行第三步启动引导器 (<code class="filename">/boot/loader</code>)。</p><p>为了设置串口控制台， 您必须配置启动代码块， 启动引导器代码和内核。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-howto-fast"></a>25.6.2. 串口控制台的配置， 简明版</h3></div></div></div><p>这一节假定您使用默认的配置， 只希望迅速地获得关于配置串口控制台的概览。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>使用串口电缆连接 <code class="filename">COM1</code>
+            和控制终端。</p></li><li class="step"><p>要在串口控制台上显示所有的引导信息，
+	    需要以超级用户的身份执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> echo 'console="comconsole"' &gt;&gt; /boot/loader.conf</pre></li><li class="step"><p>编辑 <code class="filename">/etc/ttys</code> 并把
+            <code class="filename">ttyu0</code> 的
+	    <code class="literal">off</code> 改为 <code class="literal">on</code>，
+	    <code class="literal">dialup</code> 改为 <code class="literal">vt100</code>。
+	    否则通过串口控制台上将不会提示输入口令，
+	    从而导致潜在的安全漏洞。</p></li><li class="step"><p>重新启动并观察是否生效。</p></li></ol></div><p>如果需要不同的配置， 更进一步的配置讨论可以在
+	<a class="xref" href="serialconsole-setup.html#serialconsole-howto" title="25.6.3. 串口控制台的设置">Section 25.6.3, “串口控制台的设置”</a> 找到。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-howto"></a>25.6.3. 串口控制台的设置</h3></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>准备一根串口线缆。</p><a id="idp84201040" class="indexterm"></a><p>您需要使用一个 null-modem 的线缆或标准的串口线和一个 null-modem
+	    适配器。 请参考 <a class="xref" href="serial.html#serial-cables-ports" title="25.2.2. 线缆和端口">Section 25.2.2, “线缆和端口”</a>
+	    中有关串口线的讨论。</p></li><li class="step"><p>拔掉键盘。</p><p>绝大多数的PC在开机检测的时候会检测到键盘，
+	    如果没有检测到键盘， 则会出现错误。 一些机器会提示缺少键盘，
+	    就不会继续引导系统。</p><p>如果您的计算机出现错误， 但仍能继续启动， 您可以不必理它。</p><p>如果您的计算机没有键盘拒绝启动， 那您需要配置 BIOS
+	    来避免它。 请参考您的主板的使用说明了解更多细节。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 BIOS 中将键盘设为 <span class="quote">“<span class="quote">Not installed</span>”</span> (未安装)。
+	      现在您仍然无法使用键盘。 这样做只是告诉 BIOS
+	      在启动时不要探测键盘。 您的 BIOS 不应抱怨键盘不存在。
+	      即使这一标志设置为 <span class="quote">“<span class="quote">Not
+	      installed</span>”</span> 时， 只要把键盘插上，
+	      它就仍可使用。 如果以上的选项不存在于 BIOS 中，
+              可尝试寻找 <span class="quote">“<span class="quote">Halt on Error</span>”</span> 选项。
+              把这一项设置为 <span class="quote">“<span class="quote">All but Keyboard</span>”</span>
+              或者是 <span class="quote">“<span class="quote">No Errors</span>”</span>， 都能器到相同的作用。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果系统有 PS/2 鼠标， 如果幸运的话，
+	      您也可以象键盘一样把它拔下来， 这是因为 PS/2
+	      鼠标与键盘的一些硬件是共享的， 您的鼠标插上去，
+	      系统会认为键盘仍在那儿。</p></div></li><li class="step"><p>插一个哑 (dumb) 终端到<code class="filename">COM1</code>：（<code class="filename">sio0</code>）。</p><p>如果您没有哑终端， 可以使用一个比较老的带有一个 modem
+	    程序的PC/XT机器， 或在其他 <span class="trademark">UNIX</span>® 机器上的串口。 如果您没有
+	    <code class="filename">COM1</code>： (<code class="filename">sio0</code>)，
+	    去找一个。 这时， 您就不能只能选择
+	    <code class="filename">COM1</code>：来启动系统。
+	    如果您已经在另一台设备上使用 <code class="filename">COM1</code>，
+	    您必须临时删除那个设备， 然后安装一个新的系统引导块和内核。</p></li><li class="step"><p>确信您的内核配置文件已经为 <code class="filename">COM1</code>：
+	    (<code class="filename">sio0</code>) 设置了适当的标记：</p><p>有关的标记是：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">0x10</code></span></dt><dd><p>启用控制台支持。 如果没有设置它，
+		  则其他的控制台标记都会被忽略。 现在，
+		  绝大多数的设置都有控制台的支持。
+		  这个标记的第一个就是首选的。
+		  这个单独选项是不能确保串口适用于控制台的，
+		  设置下面的标记或加上下面描述的 <code class="option">-h</code> 选项，
+		  和这个放在一起。</p></dd><dt><span class="term"><code class="literal">0x20</code></span></dt><dd><p>无论是否使用了下面将要讨论的
+		  <code class="option">-h</code> 选项， 都强制这个单元作为控制台
+		  (除非使用了更高优先级的控制台)。
+		  标志 <code class="literal">0x20</code> 必须与 <code class="option">0x10</code> 一起使用。</p></dd><dt><span class="term"><code class="literal">0x40</code></span></dt><dd><p>预留这个单元 (配合
+		  <code class="literal">0x10</code>) 并让它不能用于普通的使用。
+		  您不应在希望作为控制台的串口单元上设置这个标志。
+		  这一标志是为内核远程调试准备的。
+		  参见 <a class="link" href="../../../../doc/en_US.ISO8859-1/books/developers-handbook/index.html" target="_top">开发者手册</a>
+		  以了解关于远程调试更进一步的情况。</p></dd></dl></div><p>例如：</p><pre class="programlisting">device sio0 flags 0x10</pre><p>看看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a> 的联机手册了解更多信息。</p><p>如果标记没有被设置， 您必须运行UserConfig或重新编译内核。</p></li><li class="step"><p>在启动磁盘的 <code class="literal">a</code> 分区的根目录创建
+	    <code class="filename">boot.config</code> 文件。</p><p>这个文件将指导引导块代码如何启动系统。 为了激活串口控制台，
+	    您必须有一个或多个下面的选项――如果您要多个选项，
+	    在同一行必须都包含它们：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-h</code></span></dt><dd><p>切换内部和串口控制台。 您使用这个来交换控制台设备。
+		  例如， 如果您从内部控制台启动， 您可以使用 <code class="option">-h</code>
+		  来直接使用启动引导器和内核来使用串口作为它的控制台设备。
+		  另外， 如果您从串口启动， 您可以使用 <code class="option">-h</code>
+		  来告诉启动引导器和内核使用显示设备作为控制台。</p></dd><dt><span class="term"><code class="option">-D</code></span></dt><dd><p>切换单一和双重控制台配置。 在单一配置中，
+		  控制台将是本机的控制台 (显示设备) 或串口。
+		  在双重控制台配置中， 显示设备和串口将同时成为控制台，
+		  无论 <code class="option">-h</code> 的选项的情形。 然而，
+		  双控制台配置只在引导块运行的过程中起作用。
+		  一旦启动引导器获得控制， 由 <code class="option">-h</code>
+		  选项指定的控制台将成为唯一的控制台。</p></dd><dt><span class="term"><code class="option">-P</code></span></dt><dd><p>在启动时，探测键盘。如果键盘找不到，
+		  <code class="option">-D</code> 和 <code class="option">-h</code> 选项会自动设置。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">由于当前版本引导块的空间限制， <code class="option">-P</code>
+		    选项只能探测扩展的键盘。 少于101键的键盘将无法被探测到。
+		    如果您碰到这个情况， 您必须避免使用 <code class="option">-P</code>
+		    选项。 目前还没有绕过这个问题的办法。</p></div></dd></dl></div><p>使用 <code class="option">-P</code> 选项来自动选择控制台， 或使用
+	    <code class="option">-h</code> 选项来激活控制台。</p><p>您也可以使用boot联机文档中所描述的其他选项。</p><p>除了 <code class="option">-P</code> 选项， 所有选项将被传给启动引导器
+	    (<code class="filename">/boot/loader</code>)。 启动引导器将通过检查
+	    <code class="option">-h</code> 选项的状态来决定是显示设备成为控制台，
+	    还是串口成为控制台。 这表示如果您指定 <code class="option">-D</code> 选项，
+	    但在 <code class="filename">/boot.config</code> 中没有 <code class="option">-h</code>
+	    选项， 您在启动代码块时使用串口作为控制台。
+	    启动引导器将使用内部显示设备作为控制台。</p></li><li class="step"><p>启动机器</p><p>当您启动您的FreeBSD时，引导块将把 <code class="filename">/boot.config</code>
+	    的内容发给控制台。例如：</p><pre class="screen">/boot.config: -P
+Keyboard: no</pre><p>如果您把 <code class="option">-P</code> 放在 <code class="filename">/boot.config</code>
+	    中并指出键盘存在或不存在， 那将只出现第二行。
+	    这些信息会被定位到串口或内部控制台， 或两者同时， 这完全取决于
+	    <code class="filename">/boot.config</code> 中的选项。</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th align="left">选项</th><th align="left">送出消息的设备</th></tr></thead><tbody><tr><td>none</td><td>内部控制台</td></tr><tr><td><code class="option">-h</code></td><td>串口控制台</td></tr><tr><td><code class="option">-D</code></td><td>串口控制台和内部控制台</td></tr><tr><td><code class="option">-Dh</code></td><td>串口控制台和内部控制台</td></tr><tr><td><code class="option">-P</code>， 有键盘</td><td>内部控制台</td></tr><tr><td><code class="option">-P</code>， 无键盘</td><td>串口控制台</td></tr></tbody></table></div><p>出现上面信息后，
+            在引导块加载启动引导器和更多信息被映到屏幕之前将有一个小小的停顿。
+	    在通常情况下，您不需要打断启动进程，
+            但为了确信设置是否正确，您也可以这样做。</p><p>在控制台上按 <span class="keycap"><strong>Enter</strong></span> 以外的任意键就能打断启动进程。
+	    引导块将进入命令行模式。 您将看到：</p><pre class="screen">&gt;&gt; FreeBSD/i386 BOOT
+Default: 0:ad(0,a)/boot/loader
+boot:</pre><p>检验上面出现的信息， 可能是串口， 或内部控制台， 或两个同时，
+	    完全取决于您在 <code class="filename">/boot.config</code> 中的选项。
+	    如果信息出现在正确的控制台， 按 <span class="keycap"><strong>Enter</strong></span>
+	    继续启动进程。</p><p>如果您要使用串口控制台， 但您没有看到命令行， 那可能设置有问题。
+	    这时， 输入 <code class="option">-h</code> 然后按 <span class="keycap"><strong>Enter</strong></span> 或
+            <span class="keycap"><strong>Return</strong></span> 来告诉引导块
+            (然后是启动引导器和内核) 选择串口作为控制台。 一旦系统起来了，
+	    就可以回去检查一下是什么出了问题。</p></li></ol></div><p>启动引导器加载完后， 您将进入启动进程的第三步，
+	您仍然可以在启动引导器通过设定您喜欢的环境来切换内部控制台和串口控制台。
+	参考 <a class="xref" href="serialconsole-setup.html#serialconsole-loader" title="25.6.6. 从启动引导器修改控制台">Section 25.6.6, “从启动引导器修改控制台”</a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-summary"></a>25.6.4. 摘要</h3></div></div></div><p>这是几个在这章要讨论的几个设置和选择的控制台的摘要。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84282704"></a>25.6.4.1. 例1： 您为 <code class="filename">sio0</code> 设置标记 0x10</h4></div></div></div><pre class="programlisting">device sio0 flags 0x10</pre><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th align="left">在 /boot.config 中的选项</th><th align="left">引导块执行时所用的控制台</th><th align="left">引导加载器执行时所用的控制台</th><th align="left">内核所用的控制台</th></tr></thead><tbody><tr><td>无</td><td>内部</td><td>内部</td><td>内部</td></tr><tr><td><code class="option">-h</code></td><td>串口</td><td>串口</td><td>串口</td></tr><tr><td><code class="option">-D</code></td><td>串口和内部</td><td>内部</td><td>内部</td></tr><tr><td><code class="option">-Dh</code></td><td>串口和内部</td><td>串口</td><td>串口</td></tr><tr><td><code class="option">-P</code>， 有键盘</td><td>内部</td><td>内部</td><td>内部</td></tr><tr><td><code class="option">-P</code>， 没有键盘</td><td>串口和内部</td><td>串口</td><td>串口</td></tr></tbody></table></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84305488"></a>25.6.4.2. 例2：您为 <code class="filename">sio0</code> 设置标记为 0x30</h4></div></div></div><pre class="programlisting">device sio0 flags 0x30</pre><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th align="left">在 /boot.config 中的选项</th><th align="left">引导块执行时所用的控制台</th><th align="left">引导加载器执行时所用的控制台</th><th align="left">内核所用的控制台</th></tr></thead><tbody><tr><td>无</td><td>内部</td><td>内部</td><td>串口</td></tr><tr><td><code class="option">-h</code></td><td>串口</td><td>串口</td><td>串口</td></tr><tr><td><code class="option">-D</code></td><td>串口和内部</td><td>内部</td><td>串口</td></tr><tr><td><code class="option">-Dh</code></td><td>串口和内部</td><td>串口</td><td>串口</td></tr><tr><td><code class="option">-P</code>， 有键盘</td><td>内部</td><td>内部</td><td>串口</td></tr><tr><td><code class="option">-P</code>， 没有键盘</td><td>串口和内部</td><td>串口</td><td>串口</td></tr></tbody></table></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-tips"></a>25.6.5. 串口控制台的提示</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84329040"></a>25.6.5.1. 设置更高的串口速度</h4></div></div></div><p>在默认配置中， 串口的设置是： 速率 9600 波特、 8
+	  数据位、 无奇偶校验位、 1 停止位。 如果您希望修改默认的控制台速率，
+	  可以采用下列几种方法之一：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>将 <code class="varname">BOOT_COMCONSOLE_SPEED</code> 配置为希望的速率，
+	      并重新编译引导块。 请参见 <a class="xref" href="serialconsole-setup.html#serialconsole-com2" title="25.6.5.2. 使用 sio0 以外的串口 作为控制台">Section 25.6.5.2, “使用 <code class="filename">sio0</code> 以外的串口
+	  作为控制台”</a>
+	      以了解如何联编和安装新的引导块。</p><p>如果串口控制台已配置为使用 <code class="option">-h</code> 以外的其它方式引导，
+	      或者内核使用的速率与引导块不同， 则必需在内核配置文件中加入下述设置，
+	      并重新联编新内核：</p><pre class="programlisting">options CONSPEED=19200</pre></li><li class="listitem"><p>使用内核引导选项 <code class="option">-S</code>.
+	      <code class="option">-S</code> 这个命令行选项可以加到 <code class="filename">/boot.config</code>
+	      中。 请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=boot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">boot</span>(8)</span></a> 以获得如何在 <code class="filename">/boot.config</code>
+	      中增加选项， 以及其它的可用选项。</p></li><li class="listitem"><p>在您的 <code class="filename">/boot/loader.conf</code> 文件中启用 <code class="varname">comconsole_speed</code>
+	      选项。</p><p>使用这个选项时，您还需要在 <code class="filename">/boot/loader.conf</code>
+	      中配置 <code class="varname">console</code>、
+	      <code class="varname">boot_serial</code>， 以及
+	      <code class="varname">boot_multicons</code>。 下面是一个利用
+	      <code class="varname">comconsole_speed</code> 改变串口控制台速率的例子：</p><pre class="programlisting">boot_multicons="YES"
+boot_serial="YES"
+comconsole_speed="115200"
+console="comconsole,vidconsole"</pre></li></ul></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-com2"></a>25.6.5.2. 使用 <code class="filename">sio0</code> 以外的串口
+	  作为控制台</h4></div></div></div><p>使用串口而不是 <code class="filename">sio0</code>
+	  作为控制台需要做一些重编译。 如果您无论如何都要使用另一个串口，
+	  重新编译引导块， 启动引导器和内核。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>取得内核源代码 (参考 <a class="xref" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD">Chapter 23, <em>更新与升级 FreeBSD</em></a>)。</p></li><li class="step"><p>编辑 <code class="filename">/etc/make.conf</code> 文件， 然后设置
+	      <code class="literal">BOOT_COMCONSOLE_PORT</code>作为您要使用
+	      (<code class="literal">0x3f8</code>、 <code class="literal">0x2f8</code>、 0x3E8
+	      或 0x2E8) 端口的地址。 只有 <code class="filename">sio0</code> 到
+	      <code class="filename">sio3</code> (<code class="filename">COM1</code> 到
+	      <code class="filename">COM4</code>) 都可以使用； 但多口串口卡将不会工作。
+	      不需要任何中断设置。</p></li><li class="step"><p>创建一个定制的内核配置文件， 在您要使用的串口添加合适的标记。
+	      例如， 如果要将 <code class="filename">sio1</code>
+	      (<code class="filename">COM2</code>) 作为控制台：</p><pre class="programlisting">device sio1 flags 0x10</pre><p>或</p><pre class="programlisting">device sio1 flags 0x30</pre><p>其他端口的控制台标记也不要设。</p></li><li class="step"><p>重新编译和安装引导块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /sys/boot</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make clean</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install</code></strong></pre></li><li class="step"><p>重建和安装内核。</p></li><li class="step"><p>用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a>
+	      将引导块写到启动盘上，然后从新内核启动。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-ddb"></a>25.6.5.3. 通过串口线进入DDB调试器</h4></div></div></div><pre class="programlisting">options BREAK_TO_DEBUGGER
+options DDB</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84367696"></a>25.6.5.4. 在串口控制台上得到一个登录命令行</h4></div></div></div><p>您可能希望通过串口线进入登录提示， 现在您可以看到启动信息，
+	  通过串口控制台键入内核调试信息。可以这样做。</p><p>用一个编辑器打开 <code class="filename">/etc/ttys</code> 文件，
+	  然后找到下面的行：</p><pre class="programlisting">ttyu0 "/usr/libexec/getty std.9600" unknown off secure
+ttyu1 "/usr/libexec/getty std.9600" unknown off secure
+ttyu2 "/usr/libexec/getty std.9600" unknown off secure
+ttyu3 "/usr/libexec/getty std.9600" unknown off secure</pre><p><code class="filename">ttyu0</code> 到
+          <code class="filename">ttyu3</code> 相当于
+	  <code class="filename">COM1</code> 到 <code class="filename">COM4</code>。
+	  可以打开或关闭某个端口。 如果您已经改变了串口的速度，
+	  还必须改掉标准的 <code class="literal">9600</code>
+          与当前的例如 <code class="literal">19200</code> 相匹配。</p><p>您也可以改变终端的类型从不知名的到您串口终端的真实类型。
+	  编辑完这个文件， 您必须 <code class="command">kill -HUP 1</code>
+	  来使这个修改生效。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-loader"></a>25.6.6. 从启动引导器修改控制台</h3></div></div></div><p>前面一节描述了如何通过调整引导块来设定串口控制台。
+	这节将讲到在启动引导器中通过键入一些命令和环境变量来指定控制台。
+	由于启动引导器会被启动进程的第三步所调用， 引导块以后，
+	在启动引导器中的设置将忽略在引导块中的设置。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84387280"></a>25.6.6.1. 配置串口控制台</h4></div></div></div><p>您可以很容易地指定启动引导器和内核来使用串口控制台， 只需要在
+	  <code class="filename">/boot/loader.ronf</code>中写入下面这行：</p><pre class="programlisting">console="comconsole"</pre><p>无论前一节中的引导块如何配置， 这个设置都会生效。</p><p>您最好把上面一行放在
+          <code class="filename">/boot/loader.conf</code>
+          文件的第一行，以便尽早地在启动时看到串口控制台的启动信息。</p><p>同样地，您可以指定内部控制台为：</p><pre class="programlisting">console="vidconsole"</pre><p>如果您不设置启动引导环境变量控制台，
+	  启动引导器和内核将使用在引导块时用 <code class="option">-h</code>
+	  选项指定的控制台。</p><p>控制台可以在
+	  <code class="filename">/boot/loader.conf.local</code> 或者是在
+	  <code class="filename">/boot/loader.conf</code> 中指定。</p><p>看看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">loader.conf</span>(5)</span></a> 的联机手册了解更多信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前，  引导块尚不提供与引导加载器的
+	    <code class="option">-P</code> 选项等价的选项，
+	    另外， 它也不能根据是否有键盘存在自动决定选择使用内部控制台还是串口控制台。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84399568"></a>25.6.6.2. 使用串口而不是<code class="filename">sio0</code>作为控制台</h4></div></div></div><p>要使用一个串口而不是 <code class="filename">sio0</code> 作为串口控制台
+	  需要重新编译启动引导器。下面的步骤跟
+	  <a class="xref" href="serialconsole-setup.html#serialconsole-com2" title="25.6.5.2. 使用 sio0 以外的串口 作为控制台">Section 25.6.5.2, “使用 <code class="filename">sio0</code> 以外的串口
+	  作为控制台”</a> 描述的相似。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serialconsole-caveats"></a>25.6.7. 警告</h3></div></div></div><p>这篇文章本意是想告诉人们如何设定没有显示设备或键盘的专用服务器。
+	不幸的是， 绝大多数系统没有键盘可以让您启动，
+	而没有显示设备就不让您启动。 使用 AMI BIOS 的机器可以通过在 CMOS
+	中将 <span class="quote">“<span class="quote">graphics adapter</span>”</span> 项设为
+	<span class="quote">“<span class="quote">Not installed</span>”</span> 来在启动时不要求显示适配器。</p><p>然而， 许多机器并不支持这个选项，
+	如果您的系统没有显示硬件就拒绝启动。 对于这些机器， 即使您没有显示器，
+	也必须在机器上插上显示适配器。 建议您试试采用 AMI BIOS 的机器。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dialout.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="serialcomms.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ppp-and-slip.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">25.5. 拨出设备 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 26. PPP 和 SLIP</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

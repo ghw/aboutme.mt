@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.7. 选择要安装的软件包</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-steps.html" title="3.6. 分配磁盘空间" /><link rel="next" href="install-media.html" title="3.8. 选择您要使用的安装介质" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.7. 选择要安装的软件包</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-steps.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-media.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-choosing"></a>3.7. 选择要安装的软件包</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="distset"></a>3.7.1. 选择要安装的软件包</h3></div></div></div><p>安装哪些软件包在很大程度上取决于系统将被用来做什么，
+	以及有多少可用的磁盘空间。内建的选项包括了运行所需要的最小系统，
+	到把所有软件包全都装上的常用配置。<span class="trademark">UNIX</span>® 或 FreeBSD
+	新手通常直接选择一个设定好的软件包就可以了，
+	而有经验的使用者则可以考虑自己订制安装哪些软件包。</p><p>按下 <span class="keycap"><strong>F1</strong></span> 可以看到有关软件包的更多选项信息，
+	以及它们都包含了哪些软件，之后，可以按 <span class="keycap"><strong>Enter</strong></span>
+	回到软件包选择画面。</p><p>如果需要图形用户界面， 则配置 X 服务以及选择默认桌面需要在完成 FreeBSD
+	之后完成。 关于安装和配置 X 服务的信息，
+	可以在 <a class="xref" href="x11.html" title="Chapter 6. X Window 系统">Chapter 6, <em>X Window 系统</em></a> 找到。</p><p>如果需要定制内核， 您还需要选择包含源代码的那个选项。
+	要了解为什么应该编译和构建新的内核， 请参见
+	<a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>。</p><p>显然， 包含所有组件的系统是最万能的。
+	如果磁盘空间足够， 用光标键选择
+	<a class="xref" href="install-choosing.html#distribution-set1" title="Figure 3.26. 选择软件包">Figure 3.26, “选择软件包”</a> 中的
+	<span class="guimenuitem">All</span>
+	并按 <span class="keycap"><strong>Enter</strong></span>。 如果担心磁盘空间不够的话，
+	则选择最合适的选项。 不要担心选择的是否是最合适的，
+	因为其他软件包可以在安装完毕后再加入进来。</p><div class="figure"><a id="distribution-set1"></a><div class="figure-title">Figure 3.26. 选择软件包</div><div class="figure-contents"><div class="mediaobject"><img src="install/dist-set.png" alt="选择软件包" /></div></div></div><br class="figure-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="portscol"></a>3.7.2. 安装ports软件包</h3></div></div></div><p>当选择完您想要安装的部分后，接着会询问您要不要安装FreeBSD Ports
+	软件包；Ports软件包可以让您简单方便地安装软件包。Ports本身并不包含编辑
+	软件所需要的程序源代码，而是一个包含自动下载、编辑以及安装的文档集合。
+	<a class="xref" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">Chapter 5, <em>安装应用程序: Packages 和 Ports</em></a> 一章讨论如何使用Ports.</p><p>安装程序并不会检查您是否有足够的硬盘空间,
+	在选择这一项之前请先确定您有足够的硬盘空间。
+	目前 FreeBSD 9.2 版本中， FreeBSD Ports Collection
+	大约占用 500 MB 大小的硬盘空间。
+	对于近期的版本您可能需要更多一些空间来安装他们。</p><pre class="screen">                         User Confirmation Requested
+ Would you like to install the FreeBSD Ports Collection?
+
+ This will give you ready access to over 24,000 ported software packages,
+ at a cost of around 500 MB of disk space when "clean" and possibly much
+ more than that if a lot of the distribution tarballs are loaded
+ (unless you have the extra CDs from a FreeBSD CD/DVD distribution
+ available and can mount it on /cdrom, in which case this is far less
+ of a problem).
+
+ The Ports Collection is a very valuable resource and well worth having
+ on your /usr partition, so it is advisable to say Yes to this option.
+
+ For more information on the Ports Collection &amp; the latest ports,
+ visit:
+     http://www.FreeBSD.org/ports
+
+                              [ Yes ]     No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 将会安装
+	Ports Collection， 而选择 <span class="guibutton">[ No ]</span>
+	则将跳过它。 选好后按 <span class="keycap"><strong>Enter</strong></span> 继续。
+	此后， 选择安装的软件包的屏幕将再次出现。</p><div class="figure"><a id="distribution-set2"></a><div class="figure-title">Figure 3.27. 确认您要安装的软件包</div><div class="figure-contents"><div class="mediaobject"><img src="install/dist-set2.png" alt="确认您要安装的软件包" /></div></div></div><br class="figure-break" /><p>如果对您的选择感到满意，请选择<span class="guimenuitem">Exit</span>
+	退出，确保<span class="guibutton">[ OK ]</span> 被高亮显示，然后按<span class="keycap"><strong>Enter</strong></span>
+	继续。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-steps.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-media.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.6. 分配磁盘空间 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.8. 选择您要使用的安装介质</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

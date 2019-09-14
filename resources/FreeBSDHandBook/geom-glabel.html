@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.7. 为磁盘设备添加卷标</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="geom-ggate.html" title="19.6. GEOM Gate 网络设备" /><link rel="next" href="geom-gjournal.html" title="19.8. 通过 GEOM 实现 UFS 日志" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.7. 为磁盘设备添加卷标</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="geom-ggate.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="geom-gjournal.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="geom-glabel"></a>19.7. 为磁盘设备添加卷标</h2></div></div></div><a id="idp81331664" class="indexterm"></a><a id="idp81332432" class="indexterm"></a><p>在系统初始化的过程中， FreeBSD 内核会为检测到的设备创建设备节点。
+      这种检测方式存在一些问题， 例如，
+      在通过 <acronym class="acronym">USB</acronym> 添加设备时应如何处理？
+      很可能有闪存盘设备最初被识别为
+      <code class="filename">da0</code> 而在这之后， 则由
+      <code class="filename">da0</code> 变成了
+      <code class="filename">da1</code>。 而这则会在挂接
+      <code class="filename">/etc/fstab</code> 中的文件系统时造成问题，
+      这些问题， 还可能在系统引导时导致无法正常启动。</p><p>解决这个问题的一个方法是以连接拓扑方式链式地进行
+      <acronym class="acronym">SCSI</acronym> 设备命名， 这样，
+      当在 <acronym class="acronym">SCSI</acronym> 卡上增加新设备时， 这些设备将使用一个未用的编号。
+      但如果 <acronym class="acronym">USB</acronym> 设备取代了主 <acronym class="acronym">SCSI</acronym> 磁盘的位置呢？
+      由于 <acronym class="acronym">USB</acronym> 通常会在 <acronym class="acronym">SCSI</acronym> 卡之前检测到，
+      因此很可能出现这种现象。 当然， 可以通过在系统引导之后再插入这些设备来绕过这个问题。
+      另一种绕过这个问题的方法， 则是只使用
+      <acronym class="acronym">ATA</acronym> 驱动器， 并避免在
+      <code class="filename">/etc/fstab</code> 中列出
+      <acronym class="acronym">SCSI</acronym> 设备。</p><p>还有一种更好的解决方法。 通过使用
+      <code class="command">glabel</code> 工具， 管理员或用户可以为磁盘设备打上标签， 并在
+      <code class="filename">/etc/fstab</code> 中使用这些标签。 由于
+      <code class="command">glabel</code> 会将标签保存在对应 provider 的最后一个扇区，
+      在系统重启之后， 它仍会持续存在。 因此， 通过将具体的设备替换为使用标签表示，
+      无论设备节点变成什么， 文件系统都能够顺利地完成挂接。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这并不是说标签一定是永久性的。
+	<code class="command">glabel</code> 工具既可以创建永久性标签， 也可以创建临时性标签。
+	在重启时， 只有永久性标签会保持。 请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=glabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">glabel</span>(8)</span></a>
+	以了解两者之间的差异。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81342928"></a>19.7.1. 标签类型和使用示范</h3></div></div></div><p>有两种类型的标签， 一种是普通标签， 另一种是文件系统标签。
+	标签可以是永久性的或暂时性的。永久性的标签可以通过 
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tunefs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tunefs</span>(8)</span></a> 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a> 命令创键。根据文件系统的类型，
+	它们将在 <code class="filename">/dev</code>
+	下的一个子目录中被创建。例如，
+	<acronym class="acronym">UFS</acronym>2 文件系统的标签会创建到
+	<code class="filename">/dev/ufs</code>
+	目录中。永久性的标签还可以使用 <code class="command">glabel label</code>
+	创建。它们不再是文件系统特定的，而是会在
+	<code class="filename">/dev/label</code>
+	目录中被创建。</p><p>暂时性的标签在系统下次重启时会消失， 这些标签会创建到
+	<code class="filename">/dev/label</code> 目录中，
+	很适合测试之用。可以使用 <code class="command">glabel create</code>
+	创建暂时性的标签。请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=glabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">glabel</span>(8)</span></a>
+	手册页以获取更多详细信息。</p><p>要为一个 <acronym class="acronym">UFS</acronym>2 文件系统创建永久性标签，
+        而不破坏其上的数据，可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tunefs -L home /dev/da3</code></strong></pre><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果文件系统满了， 这可能会导致数据损坏； 不过， 如果文件系统快满了，
+	  此时应首先删除一些无用的文件， 而不是增加标签。</p></div><p>现在， 您应可以在
+	<code class="filename">/dev/ufs</code> 目录中看到标签，
+	并将其加入 <code class="filename">/etc/fstab</code>：</p><pre class="programlisting">/dev/ufs/home		/home            ufs     rw              2      2</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当运行 <code class="command">tunefs</code> 时， 应首先卸下文件系统。</p></div><p>现在可以像平时一样挂接文件系统了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /home</code></strong></pre><p>现在， 只要在系统引导时通过 <code class="filename">/boot/loader.conf</code> 配置加载了内核模块
+	<code class="filename">geom_label.ko</code>， 或在联编内核时指定了
+	<code class="literal">GEOM_LABEL</code> 选项，
+	设备节点由于增删设备而顺序发生变化时， 就不会影响文件系统的挂接了。</p><p>通过使用 <code class="command">newfs</code> 命令的
+	<code class="option">-L</code> 参数， 可以在创建文件系统时为其添加默认的标签。
+	请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a> 以了解进一步的详情。</p><p>下列命令可以清除标签：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>glabel destroy home</code></strong></pre><p>以下的例子展示了如何为一个启动磁盘打上标签。</p><div class="example"><a id="idp81369808"></a><div class="example-title">Example 19.1. 为启动磁盘打上标签</div><div class="example-contents"><p>为启动磁盘打上永久性标签， 系统应该能够正常启动，
+	  即使磁盘被移动到了另外一个控制器或者转移到了一个不同的系统上。
+	  此例中我们假设使用了一个 <acronym class="acronym">ATA</acronym> 磁盘，
+	  当前这个设备被系统识别为 <code class="filename">ad0</code>。
+	  还假设使用了标准的 FreeBSD 分区划分方案，
+	  <code class="filename">/</code>,
+	  <code class="filename">/var</code>,
+	  <code class="filename">/usr</code> 和
+	  <code class="filename">/tmp</code> 文件系统，
+	  还有一个 swap 分区。</p><p>重启系统，在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 提示符下键入
+	  <span class="keycap"><strong>4</strong></span> 启动到单用户模式。
+	  然后输入以下的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>glabel label rootfs /dev/ad0s1a</code></strong>
+GEOM_LABEL: Label for provider /dev/ad0s1a is label/rootfs
+<code class="prompt">#</code> <strong class="userinput"><code>glabel label var /dev/ad0s1d</code></strong>
+GEOM_LABEL: Label for provider /dev/ad0s1d is label/var
+<code class="prompt">#</code> <strong class="userinput"><code>glabel label usr /dev/ad0s1f</code></strong>
+GEOM_LABEL: Label for provider /dev/ad0s1f is label/usr
+<code class="prompt">#</code> <strong class="userinput"><code>glabel label tmp /dev/ad0s1e</code></strong>
+GEOM_LABEL: Label for provider /dev/ad0s1e is label/tmp
+<code class="prompt">#</code> <strong class="userinput"><code>glabel label swap /dev/ad0s1b</code></strong>
+GEOM_LABEL: Label for provider /dev/ad0s1b is label/swap
+<code class="prompt">#</code> <strong class="userinput"><code>exit</code></strong></pre><p>系统加继续启动进入多用户模式。 在启动完毕后， 编辑
+	  <code class="filename">/etc/fstab</code> 用各自的标签替换下常规的设备名。
+	  最终 <code class="filename">/etc/fstab</code> 看起来差不多是这样的：</p><pre class="programlisting"># Device                Mountpoint      FStype  Options         Dump    Pass#
+/dev/label/swap         none            swap    sw              0       0
+/dev/label/rootfs       /               ufs     rw              1       1
+/dev/label/tmp          /tmp            ufs     rw              2       2
+/dev/label/usr          /usr            ufs     rw              2       2
+/dev/label/var          /var            ufs     rw              2       2</pre><p>现在可以重启系统了。 如果一切顺利的话，
+	  系统可以正常启动并且 <code class="command">mount</code> 命令显示：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount</code></strong>
+/dev/label/rootfs on / (ufs, local)
+devfs on /dev (devfs, local)
+/dev/label/tmp on /tmp (ufs, local, soft-updates)
+/dev/label/usr on /usr (ufs, local, soft-updates)
+/dev/label/var on /var (ufs, local, soft-updates)</pre></div></div><br class="example-break" /><p>从 FreeBSD 7.2 开始， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=glabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">glabel</span>(8)</span></a> class
+	新增了一种用于 <acronym class="acronym">UFS</acronym> 文件系统唯一标识符，
+	<code class="literal">ufsid</code> 的标签支持。
+	这些标签可以在 <code class="filename">/dev/ufsid</code>
+	目录中找到， 它们会在系统引导时自动创建。
+	在 <code class="filename">/etc/fstab</code> 机制中，
+	也可以使用 <code class="literal">ufsid</code> 标签。 您可以使用
+	<code class="command">glabel status</code> 命令来获得与文件系统对应的
+	<code class="literal">ufsid</code> 标签列表：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>glabel status</code></strong>
+                  Name  Status  Components
+ufsid/486b6fc38d330916     N/A  ad4s1d
+ufsid/486b6fc16926168e     N/A  ad4s1f</pre><p>在上面的例子中 <code class="filename">ad4s1d</code>
+	代表了 <code class="filename">/var</code>
+	文件系统， 而 <code class="filename">ad4s1f</code> 则代表了
+	<code class="filename">/usr</code> 文件系统。 您可以使用这些
+	<code class="literal">ufsid</code> 值来挂载它们， 在
+	<code class="filename">/etc/fstab</code> 中配置类似这样：</p><pre class="programlisting">/dev/ufsid/486b6fc38d330916        /var        ufs        rw        2      2
+/dev/ufsid/486b6fc16926168e        /usr        ufs        rw        2      2</pre><p>所有包含了 <code class="literal">ufsid</code> 的标签都可以用这种方式挂载，
+	从而消除了需要手工创建永久性标签的麻烦，
+	而又能够提供提供与设备名无关的挂载方式的便利。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="geom-ggate.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="geom-gjournal.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.6. GEOM Gate 网络设备 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 19.8. 通过 GEOM 实现 UFS 日志</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

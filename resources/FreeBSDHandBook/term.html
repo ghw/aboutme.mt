@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>25.3. 终端</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="prev" href="serial.html" title="25.2. 介绍" /><link rel="next" href="dialup.html" title="25.4. 拨入服务" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.3. 终端</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="serial.html">Prev</a> </td><th width="60%" align="center">Chapter 25. 串口通讯</th><td width="20%" align="right"> <a accesskey="n" href="dialup.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="term"></a>25.3. 终端</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Sean</span> <span class="surname">Kelly</span></span>. </span></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， 用于串口的设备节点从
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>；
+	从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户需要根据实际情况对这份文档中的例子进行必要的调整。</p></div><a id="idp83726800" class="indexterm"></a><p>当您在计算机控制台或是在一个连接的网络上时，
+      终端提供了一个方便和低成本的访问 FreeBSD 系统的方法。
+      这节描述了如何在 FreeBSD 上使用终端。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-uses"></a>25.3.1. 终端的用法和类型</h3></div></div></div><p>早期的 <span class="trademark">UNIX</span>® 系统没有控制台。
+	人们通过将终端连接到计算机的串口来登录和使用程序。
+	它很像用 modem 和一些终端软件来拨号进入一个远程的系统，
+	只能执行文本的工作。</p><p>今天的 PC 已经可以使用高质量的图形了，
+	但与今天的其他<span class="trademark">UNIX</span>®操作系统一样，建立一个登录会话的能力仍然存在。
+	通过使用一个终端连接到一个没有使用的串口，
+	您就能登录和运行任何文本程序或在 X 视窗系统中运行一个
+	<code class="command">xterm</code> 窗口程序。</p><p>对于商业用户，您可以把任何终端连接到 FreeBSD 系统，
+	然后把它们放在员工的桌面上。 对于家庭用户，则可以使用一台比较老的
+	IBM PC 或 Macintosh 运行一个终端连接到一台运行 FreeBSD
+	的高性能机器上。</p><p>对于FreeBSD，有三种终端：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="term.html#term-dumb" title="25.3.1.1. 哑终端">哑终端</a></p></li><li class="listitem"><p><a class="link" href="term.html#term-pcs" title="25.3.1.2. 充当终端的PC">充当终端的PC</a></p></li><li class="listitem"><p><a class="link" href="term.html#term-x" title="25.3.1.3. X 终端">X 终端</a></p></li></ul></div><p>下面一小节将描述每一种终端。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-dumb"></a>25.3.1.1. 哑终端</h4></div></div></div><p>哑终端需要专门的好几种硬件，让您通过串口线连接到计算机。
+	  它们被叫做 <span class="quote">“<span class="quote">哑</span>”</span> 是因为它们只能够用来显示，
+	  发送和接收文本。 您不能在它上面运行任何程序。</p><p>有好几百种哑终端，包括Digital Equipment Corporation
+	  的VT-100和Wyse的WY-75。只有几种可以在FreeBSD上工作。
+	  一些高端的终端可以显示图形，但只有某些软件包可以使用这些高级特性。</p><p>哑终端被广泛用于那些不需要图形应用的工作中。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-pcs"></a>25.3.1.2. 充当终端的PC</h4></div></div></div><p>假如 <a class="link" href="term.html#term-dumb" title="25.3.1.1. 哑终端">哑终端</a> 的功能仅限于显示、
+	  发送和接收文本的话， 那么显然任何一台闲置的个人计算机，
+	  都完全能够胜任哑终端的工作。 因此您需要的是合适的线缆，
+	  以及一些在这台计算机上运行的 <span class="emphasis"><em>终端仿真</em></span>
+	  软件。</p><p>这种配置在家庭中应用十分广泛。 例如， 如果您的爱人正忙于在您的
+	  FreeBSD 系统的控制台上工作时，
+	  您就可以将一台功能稍弱的计算机挂在这个 FreeBSD
+	  系统上来同时完成一些文本界面的工作。</p><p>在 FreeBSD 的基本系统中至少有两个能用于进行串口连接的工具：
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cu&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cu</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tip</span>(1)</span></a>。</p><p>如果要从运行 FreeBSD 的计算机上通过串口连接到另一系统，
+	  可以使用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu -l 串口设备</code></strong></pre><p>此处 <span class="quote">“<span class="quote">串口设备</span>”</span> 表示您计算机上某个串口对应的设备名。
+          <code class="filename">/dev/cuauN</code>。</p><p>此处的 <span class="quote">“<span class="quote">N</span>”</span> 表示串口的编号。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">请注意在 FreeBSD 中设备的编号是从零而非一开始的
+	    (这一点与另一些系统， 如基于 <span class="trademark">MS-DOS</span>® 的系统不同)。
+	    因此， 在基于 <span class="trademark">MS-DOS</span>® 系统中的
+            <code class="filename">COM1</code> 在 FreeBSD
+	    中通常叫做 <code class="filename">/dev/cuau0</code>。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">其他一些人可能喜欢使用另一些来自 Ports 套件的程序。
+	    Ports 中提供了几个与 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cu&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cu</span>(1)</span></a> 和
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tip</span>(1)</span></a> 类似的工具，
+	    例如 <span class="package">comms/minicom</span>。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-x"></a>25.3.1.3. X 终端</h4></div></div></div><p>X终端是最复杂的终端系统。它们通常需要使用以太网来连接。
+	  它们能显示任何X应用程序。</p><p>我们介绍X终端只是为了感兴趣。然而，
+	  这章<span class="emphasis"><em>不会</em></span>涉及X终端的安装，配置或使用。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-config"></a>25.3.2. 配置</h3></div></div></div><p>这节描述了您在一个终端上启用一个登录会话时， 需要在 FreeBSD
+	系统上进行的配置。 假设已经配置好了内核来支持串口，
+	就可以直接开始连接了。</p><p>在 <a class="xref" href="boot.html" title="Chapter 13. The FreeBSD 引导过程">Chapter 13, <em>The FreeBSD 引导过程</em></a> 中曾经提到， <code class="command">init</code>
+	进程依赖于系统启动时所有的处理控制和初始化。
+	通过 <code class="command">init</code> 来执行的一些任务将先读取
+	<code class="filename">/etc/ttys</code>文件，
+	然后在可用的终端上启用一个 <code class="command">getty</code> 进程。
+	<code class="command">getty</code> 进程可用来阅读一个登录名和启动
+	<code class="command">login</code>程序。</p><p>然而，要为您的FreeBSD系统配置终端，您需要以
+	<code class="systemitem">root</code> 身份执行下面的步骤：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>如果它不在那里， 您需要为串口在
+	    <code class="filename">/dev</code> 目录下添加一行记录到
+	    <code class="filename">/etc/ttys</code>。</p></li><li class="step"><p>指定 <code class="command">/usr/libexec/getty</code> 在端口上运行，
+	    然后从 <code class="filename">/etc/gettytab</code> 文件指定适当的
+	    <em class="replaceable"><code>getty</code></em> 类型。</p></li><li class="step"><p>指定默认的终端类型。</p></li><li class="step"><p>设置端口为 <span class="quote">“<span class="quote">on</span>”</span>。</p></li><li class="step"><p>确定端口是否为 <span class="quote">“<span class="quote">secure</span>”</span>。</p></li><li class="step"><p>迫使<code class="command">init</code> 重新读取
+	    <code class="filename">/etc/ttys</code>文件。</p></li></ol></div><p>作为可选的步骤，您可以通过在 <code class="filename">/etc/gettytab</code>
+	中建立一个记录，在第2步创建一个定制的
+	<em class="replaceable"><code>getty</code></em> 类型来使用。这章不会介绍如何做。
+	您可以参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gettytab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">gettytab</span>(5)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=getty&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">getty</span>(8)</span></a>
+	的联机手册了解更多信息。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-etcttys"></a>25.3.2.1. 添加一个记录到<code class="filename">/etc/ttys</code></h4></div></div></div><p><code class="filename">/etc/ttys</code>文件列出了您
+	  FreeBSD系统上允许登录的所有端口。 例如， 第一个虚拟控制台
+	  <code class="filename">ttyv0</code> 在这个文件中有一个记录。
+	  您可以使用这个记录登录进控制台。
+	  这个文件也包含其他虚拟控制台的记录，串口，和伪 ttys 终端。
+	  对于一个硬连线的终端， 只要列出串口的
+	  <code class="filename">/dev</code> 记录而不需要
+	  <code class="filename">/dev</code> 部分 (例如，
+	  <code class="filename">/dev/ttyv0</code> 可以被列为
+	  <code class="filename">ttyv0</code>)。</p><p>默认的 FreeBSD 安装包括一个支持最初四个串口
+	  <code class="filename">ttyu0</code> 到 <code class="filename">ttyu3</code>
+	  的<code class="filename">/etc/ttys</code> 文件。
+	  如果您从那些端口中某一个使用终端，您不需要添加另一个记录。</p><div class="example"><a id="ex-etc-ttys"></a><div class="example-title">Example 25.1. 在
+	    <code class="filename">/etc/ttys</code> 中增加终端记录</div><div class="example-contents"><p>假设我们连接两个终端给系统： 一个 Wyse-50 和一个老的运行
+	    <span class="application">Procomm</span> 终端软件模拟一个
+	    VT-100 终端的286IBM PC。 在 <code class="filename">/etc/ttys</code>
+	    文件中的相应的记录是这样的：</p><pre class="programlisting">ttyu1<a id="co-ttys-line1col1"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>  "/usr/libexec/getty std.38400"<a id="co-ttys-line1col2"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>  wy50<a id="co-ttys-line1col3"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>  on<a id="co-ttys-line1col4"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>  insecure<a id="co-ttys-line1col5"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+ttyu5   "/usr/libexec/getty std.19200"  vt100  on  insecure
+	  </pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttys-line1col1"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>第一部分指定了终端指定文件的名称， 它可以在
+	      <code class="filename">/dev</code>中找到。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttys-line1col2"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>第二部分是在这行执行的命令，通常是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=getty&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">getty</span>(8)</span></a>。
+	        <code class="command">getty</code> 初始化然后打开一行，设置速度，
+	        用户名的命令和执行登录程序。</p><p><code class="command">getty</code> 程序在它的命令行接收一个参数 (可选)，
+	        <em class="replaceable"><code>getty</code></em> 类型。 一个
+	        <em class="replaceable"><code>getty</code></em> 类型会在终端行描述一个特征，
+	        像波特率和奇偶校验。 <code class="command">getty</code> 程序从
+	        <code class="filename">/etc/gettytab</code> 文件读取这些特征。</p><p>文件<code class="filename">/etc/gettytab</code>
+	        包含了许多老的和新的终端行记录。
+	        在很多例子中，启动文本 <code class="literal">std</code>
+	        的记录将用硬连线终端来工作。 这些记录忽略了奇偶性。
+	        这是一个从110到115200 bit/s的 <code class="literal">std</code> 记录。
+	        当然，您可以添加您自己的记录到这个文件。
+	        gettytab 的联机手册提供了更多的信息。</p><p>当在<code class="filename">/etc/ttys</code>中设置
+	        <em class="replaceable"><code>getty</code></em> 类型的时候，
+	        确信在终端上的通讯设置匹配。
+	        在我们的例子中， Wyse-50 不使用奇偶性， 用38400 bit/s
+	        来连接。286 PC不使用奇偶性，用19200bit/s来连接。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttys-line1col3"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p>第三部分是通常连接到那个tty行的终端类型。对于拨号端口，
+	        <code class="literal">unknown</code> 或 <code class="literal">dialup</code>
+	        通常被用在这个地方。 对于硬连线的终端，终端类型不会改变，
+	        所以您可以从termcap数据库文件中放一个真正的终端类型。</p><p>在我们的例子中， Wyse-50 使用真正的终端类型，
+	        而运行 <span class="application">Procomm</span> 的286
+	        PC将被设置成在VT-100上的模拟。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttys-line1col4"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p>如果端口被启用，可以指定第四个部分。在第二部分，
+	        把它放在这儿将执行初始化进程来启动程序
+	        <code class="command">getty</code>。如果您在这部分拖延，
+	        将没有<code class="command">getty</code>，在端口上因此就没有登录。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttys-line1col5"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p>最后部分被用来指定端口是否安全。
+	        标记一个安全的端口意味着您信任它允许用 <code class="systemitem">root</code>
+	        帐户从那个端口登录。 不安全的端口不允许
+	        <code class="systemitem">root</code>登录。 在一个不安全的端口上，
+	        用户必须用无特权的帐户登录， 然后使用
+	        <code class="command">su</code> 或一个相似的机制来获得超级用户的权限。</p></td></tr></table></div></div></div><br class="example-break" /></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-hup"></a>25.3.2.2. 重新读取<code class="filename">/etc/ttys</code>来强制<code class="command">init</code>
+	  </h4></div></div></div><p>对<code class="filename">/etc/ttys</code>文件做一个必要的修改后，您必须发送一个
+	  SIGHUP 信号给初始化进程来迫使它重新读取配置文件，例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kill -HUP 1</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="command">init</code> 总是系统运行时的第一个进程，因此它总是PID 1。</p></div><p>如果能够正确设置，所有的线缆都是适当的，终端将可以启用了，
+	  然后一个 <code class="command">getty</code> 进程将在每个终端运行，
+	  您将在您的终端上看到登录命令行。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-debug"></a>25.3.3. 您的连接可能出现的问题</h3></div></div></div><p>即使您小心翼翼地注意细节，您仍然可能会在设置终端时出错。
+	  这有一个有关问题和解决办法的列表：</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83843280"></a>25.3.3.1. 没有登录命令出现：</h4></div></div></div><p>确定终端被嵌入和打开了。如果把一台个人计算机充当一个终端，
+	  确信终端模拟软件运行在正确的串口上。</p><p>确信线缆被稳固地连接在终端和 FreeBSD 计算机上。
+	  确信用了正确的电缆。</p><p>确定终端和 FreeBSD 的传输速度和奇偶设置已经一致了。
+	  如果您有一个图像显示终端，确信对比度已经调节好了。
+	  如果它是一个可打印的终端，确信纸张和墨水已经就绪了。</p><p>确定一个 <code class="command">getty</code> 进程正在运行和服务终端。
+	  例如， 可以用<code class="command">ps</code> 命令得到运行
+	  <code class="command">getty</code> 程序的列表，键入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ps -axww|grep getty</code></strong></pre><p>您将看到一个终端的记录。例如，下面的显示表明一个<code class="command">getty</code>
+	  正在第二个串口 <code class="filename">ttyu1</code> 运行，
+	  正在 <code class="filename">/etc/gettytab</code> 中使用 <code class="literal">std.38400</code>
+	  的记录：</p><pre class="screen">22189  d1  Is+    0:00.03 /usr/libexec/getty std.38400 ttyu1</pre><p>如果没有 <code class="command">getty</code> 进程运行，
+	  确信您已经在<code class="filename">/etc/ttys</code>中启用了端口。
+	  在修改完<code class="filename">/etc/ttys</code>文件后，记得运行
+	  <code class="command">kill -HUP 1</code>。</p><p>如果 <code class="command">getty</code> 进程确实在运行，
+	  但终端上仍然没有显示出登录提示， 或者虽然显示了单缺不允许您输入，
+	  您的终端或电缆可能不支持硬件握手。 请尝试将
+	  <code class="filename">/etc/ttys</code> 中的
+	  <code class="literal">std.38400</code> 改为
+	  <code class="literal">3wire.38400</code> (注意在改完
+	  <code class="filename">/etc/ttys</code> 之后要
+	  <code class="command">kill -HUP 1</code>)。
+	  <code class="literal">3wire</code> 记录和
+	  <code class="literal">std</code> 类似， 但忽略硬件握手。
+	  您可能需要在使用 <code class="literal">3wire</code>
+	  时减少波特率或启用软件流控制以避免缓冲区溢出。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83860176"></a>25.3.3.2. 出现一个 <span class="quote">“<span class="quote">垃圾</span>”</span> 而不是一个登录命令行</h4></div></div></div><p>确信终端和 FreeBSD 使用相同的 bit/s 传输率和奇偶校验设置。
+	  检查一下 <code class="command">getty</code> 进程确信当前使用正确的
+	  <em class="replaceable"><code>getty</code></em> 类型。 如果没有，
+	  编辑<code class="filename">/etc/ttys</code>然后运行<code class="command">kill
+	  -HUP 1</code>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83863248"></a>25.3.3.3. 当键入密码时，字符两个两个出现</h4></div></div></div><p>将终端 (或终端模拟软件) 从 <span class="quote">“<span class="quote">半双工</span>”</span>
+	  或 <span class="quote">“<span class="quote">本地回显</span>”</span> 换成
+	  <span class="quote">“<span class="quote">全双工</span>”</span>。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="serial.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="serialcomms.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dialup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">25.2. 介绍 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 25.4. 拨入服务</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

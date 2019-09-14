@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.8. 选择您要使用的安装介质</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-choosing.html" title="3.7. 选择要安装的软件包" /><link rel="next" href="install-final-warning.html" title="3.9. 安装确认" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.8. 选择您要使用的安装介质</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-choosing.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-final-warning.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-media"></a>3.8. 选择您要使用的安装介质</h2></div></div></div><p>如果要从 CDROM 或 DVD安装，使用方向键将光标移到
+      <span class="guimenuitem">Install from a FreeBSD CD/DVD</span>。确认
+       <span class="guibutton">[ OK ]</span> 被选取，然后按 <span class="keycap"><strong>Enter</strong></span> 开始安装程序。</p><p>如果要使用其它的方式安装，
+      请选择适当的安装介质然后按照屏幕指示进行安装。</p><p>按 <span class="keycap"><strong>F1</strong></span> 可以显示安装介质的在线说明。按一下
+	 <span class="keycap"><strong>Enter</strong></span> 可返回选择安装介质画面。</p><div class="figure"><a id="choose-media"></a><div class="figure-title">Figure 3.28. 选择安装介质</div><div class="figure-contents"><div class="mediaobject"><img src="install/media.png" alt="选择安装介质" /></div></div></div><br class="figure-break" /><div xmlns="" class="note"><h3 class="admontitle">FTP安装模式: </h3><a xmlns="http://www.w3.org/1999/xhtml" id="idp68674896" class="indexterm"></a><p xmlns="http://www.w3.org/1999/xhtml">使用FTP安装，有三种方式：主动式（active）FTP、被动式（passive）FTP
+	或是透过HTTP代理服务器。</p><div xmlns="http://www.w3.org/1999/xhtml" class="variablelist"><dl class="variablelist"><dt><span class="term">主动式FTP： <span class="guimenuitem">从FTP服务器安装</span></span></dt><dd><p>这个选项将会使所有的FTP传输使用 <span class="quote">“<span class="quote">Active</span>”</span>模式。
+	      这将无法通过防火墙，但是可以使用在那些比较早期，
+	      不支持被动模式的FTP站。如果您的连接在使用被动（默认值）
+	      模式卡住了，请换主动模式看看！</p></dd><dt><span class="term">被动模式FTP：<span class="guimenuitem">通过防火墙从FTP服务器安装</span></span></dt><dd><a id="idp68680528" class="indexterm"></a><p>此选项会让 <span class="application">sysinstall</span> 使用
+		<span class="quote">“<span class="quote">Passive</span>”</span>模式来安装。这使得使用者可以穿过
+		不允许用非固定TCP PORTS连入的防火墙。 </p></dd><dt><span class="term">FTP 透过 HTTP 代理服务器： <span class="guimenuitem">透过HTTP代理服务器，
+	      由 FTP 服务器安装</span></span></dt><dd><a id="idp68684368" class="indexterm"></a><p>此选项会让 <span class="application">sysinstall</span>
+	      通过HTTP协议 （像浏览器一样）连到proxy服务器。
+	      proxy服务器会解释送出的请求，然后通知FTP服务器。
+	      因为通过HTTP协议，所以可以穿过防火墙。
+	      要用这种方式，您必须指定proxy服务器的地址。</p></dd></dl></div><p xmlns="http://www.w3.org/1999/xhtml">对于一个 FTP 代理服务器而言，
+	通常在使用者登入名称中加入您要登入的服务器的用户名，
+	加在 <span class="quote">“<span class="quote">@</span>”</span> 符号后面。然后代理服务器就会
+	<span class="quote">“<span class="quote">假装</span>”</span> 成一个真的服务器。例如，假设您要从
+	<code class="systemitem">ftp.FreeBSD.org</code> 安装，通过 FTP
+	代理服务器 <code class="systemitem">foo.example.com</code>，
+	使用1234端口。</p><p xmlns="http://www.w3.org/1999/xhtml">在这种情况下，您可以到 options 菜单，将 FTP username 设为
+	 <code class="literal">ftp@ftp.FreeBSD.org</code>，密码设为您的电子邮件地址。
+	安装介质部分，指定FTP (或是被动式 FTP，如果代理服务器支持的话)
+	 以及URL为
+	 <code class="literal">ftp://foo.example.com:1234/pub/FreeBSD</code>。</p><p xmlns="http://www.w3.org/1999/xhtml">因为<code class="systemitem">ftp.FreeBSD.org</code>的
+	<code class="filename">/pub/FreeBSD</code> 目录会被抓取到
+	<code class="systemitem">foo.example.com</code>之下，您就可以从
+	<span class="emphasis"><em>这台</em></span> 机器 (会从
+	<code class="systemitem">ftp.FreeBSD.org</code> 抓取文件) 安装。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-choosing.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-final-warning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.7. 选择要安装的软件包 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.9. 安装确认</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

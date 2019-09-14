@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.11. 文件系统访问控制表</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="openssh.html" title="14.10. OpenSSH" /><link rel="next" href="security-portaudit.html" title="14.12. 监视第三方安全问题" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.11. 文件系统访问控制表</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="openssh.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="security-portaudit.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="fs-acl"></a>14.11. 文件系统访问控制表</h2></div><div><span class="authorgroup">作者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp78054480" class="indexterm"></a><p>与文件系统在其他方面的加强， 如快照等一道， FreeBSD
+      提供了通过文件系统访问控制表
+      (<acronym class="acronym">ACL</acronym>) 实现的安全机制。</p><p>访问控制表以高度兼容 (<span class="trademark">POSIX</span>®.1e) 的方式扩展了标准的 <span class="trademark">UNIX</span>®
+      权限模型。 这一特性使得管理员能够利用其优势设计更为复杂的安全模型。</p><p>如果想为 <acronym class="acronym">UFS</acronym> 文件系统启用 <acronym class="acronym">ACL</acronym>
+      支持， 则需要添加下列选项：</p><pre class="programlisting">options UFS_ACL</pre><p>并重新编译内核。 如果没有将这个选项编译进内核，
+      则在挂接支持 <acronym class="acronym">ACL</acronym> 的文件系统时将会收到警告。
+      这个选项在 <code class="filename">GENERIC</code> 内核中已经包含了。
+      <acronym class="acronym">ACL</acronym> 依赖于在文件系统上启用扩展属性。
+      在新一代的 <span class="trademark">UNIX</span>® 文件系统，
+      <acronym class="acronym">UFS2</acronym> 中内建了这种支持。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 <acronym class="acronym">UFS1</acronym> 上配置扩展属性需要比 <acronym class="acronym">UFS2</acronym>
+      更多的管理开销。 而且， 在 <acronym class="acronym">UFS2</acronym>
+      上的扩展属性的性能也有极大的提高。
+      因此， 如果想要使用访问控制表， 推荐使用 <acronym class="acronym">UFS2</acronym>
+      而不是 <acronym class="acronym">UFS1</acronym>。</p></div><p><acronym class="acronym">ACL</acronym> 可以在挂接时通过选项
+      <code class="option">acls</code> 来启动， 它可以加入 <code class="filename">/etc/fstab</code>。
+      另外， 也可以通过使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tunefs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tunefs</span>(8)</span></a> 修改超级块中的 <acronym class="acronym">ACL</acronym>
+      标记来持久性地设置自动的挂接属性。 一般而言， 后一种方法是推荐的做法，
+      其原因是：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>挂接时的 <acronym class="acronym">ACL</acronym> 标记无法被重挂接
+	(<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> <code class="option">-u</code>) 改变， 只有完整地
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">umount</span>(8)</span></a> 并做一次新的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 才能改变它。
+	这意味着 <acronym class="acronym">ACL</acronym> 状态在系统启动之后就不可能在 root 文件系统上发生变化了。
+	另外也没有办法改变正在使用的文件系统的这个状态。</p></li><li class="listitem"><p>在超级块中的设置将使得文件系统总被以启用
+	<acronym class="acronym">ACL</acronym> 的方式挂接， 即使在
+	<code class="filename">fstab</code> 中的对应项目没有作设置， 或设备顺序发生变化时也是如此。
+	这避免了不慎将文件系统以没有启用 <acronym class="acronym">ACL</acronym> 的状态挂接，
+	从而避免没有强制 <acronym class="acronym">ACL</acronym> 这样的安全问题。</p></li></ul></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">可以修改 <acronym class="acronym">ACL</acronym> 行为， 以允许在没有执行一次全新的
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 的情况下启用它， 但我们认为， 不鼓励在未启用
+      <acronym class="acronym">ACL</acronym> 时这么做是有必要的， 因为如果启用了
+      <acronym class="acronym">ACL</acronym>， 然后关掉它， 然后在没有刷新扩展属性的情况下重新启用它是很容易造成问题的。
+      一般而言， 一旦启用了文件系统的 <acronym class="acronym">ACL</acronym> 就不应该再关掉它，
+      因为此时的文件系统的保护措施可能和用户所期待的样子不再兼容，
+      而重新启用 <acronym class="acronym">ACL</acronym> 将重新把先前的
+      <acronym class="acronym">ACL</acronym> 附着到文件上， 而由于它们的权限发生了变化，
+      就很可能造成无法预期的行为。</p></div><p>在查看目录时， 启用了 <acronym class="acronym">ACL</acronym> 的文件将在通常的属性后面显示 <code class="literal">+</code>
+      (加号)。 例如：</p><pre class="programlisting">drwx------  2 robert  robert  512 Dec 27 11:54 private
+drwxrwx---+ 2 robert  robert  512 Dec 23 10:57 directory1
+drwxrwx---+ 2 robert  robert  512 Dec 22 10:20 directory2
+drwxrwx---+ 2 robert  robert  512 Dec 27 11:57 directory3
+drwxr-xr-x  2 robert  robert  512 Nov 10 11:54 public_html</pre><p>这里我们看到了 <code class="filename">directory1</code>、 <code class="filename">directory2</code>， 以及 <code class="filename">directory3</code>
+      目录使用了 <acronym class="acronym">ACL</acronym>。 而
+      <code class="filename">public_html</code> 则没有。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78089680"></a>14.11.1. 使用 <acronym class="acronym">ACL</acronym></h3></div></div></div><p>文件系统 <acronym class="acronym">ACL</acronym> 可以使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=getfacl&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">getfacl</span>(1)</span></a> 工具来查看。 例如， 如果想查看 <code class="filename">test</code> 的
+	<acronym class="acronym">ACL</acronym> 设置， 所用的命令是：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>getfacl test</code></strong>
+	#file:
+	#owner:1001
+	#group:1001
+	user::rw-
+	group::r--
+	other::r--</pre><p>要修改这个文件上的 <acronym class="acronym">ACL</acronym> 设置，
+	则需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setfacl&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">setfacl</span>(1)</span></a> 工具。 例如：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>setfacl -k test</code></strong></pre><p><code class="option">-k</code> 参数将把所有当前定义的
+	<acronym class="acronym">ACL</acronym> 从文件或文件系统中删除。
+	一般来说应该使用 <code class="option">-b</code> 因为它会保持让
+	<acronym class="acronym">ACL</acronym> 正常工作的那些项不变。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>setfacl -m u:trhodes:rwx,group:web:r--,o::--- test</code></strong></pre><p>在前面的命令中， <code class="literal">-m</code>
+	选项被用来修改默认的 <acronym class="acronym">ACL</acronym> 项。由于已经被先前的命令
+	删除，因此没有预先定义的项，于是默认的选项被恢复，并附加上指定的选项。
+	请小心地检查，如果您加入了一个不存在的用户或组，那么将会在
+	<code class="filename">stdout</code> 得到一条 <span class="errorname">Invalid argument</span>
+	的错误提示。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="openssh.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="security-portaudit.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.10. OpenSSH </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.12. 监视第三方安全问题</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.8. 只发送邮件的配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="SMTP-UUCP.html" title="27.7. SMTP 与 UUCP" /><link rel="next" href="SMTP-dialup.html" title="27.9. 拨号连接时使用邮件传送" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.8. 只发送邮件的配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="SMTP-UUCP.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="SMTP-dialup.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="outgoing-only"></a>27.8. 只发送邮件的配置</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Bill</span> <span class="surname">Moran</span></span>. </span></div></div></div><p>许多时候， 可能只希望通过转发服务器来发送邮件。
+      典型的情况包括：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>使用桌面机， 但希望通过类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=send-pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">send-pr</span>(1)</span></a>
+	  这样的程序发送邮件。 这样就需要使用 ISP 的邮件转发服务器。</p></li><li class="listitem"><p>不在本地处理邮件的服务器，
+	  但它需要把邮件交给转发服务器来进行处理。</p></li></ul></div><p>几乎任何一个 <acronym class="acronym">MTA</acronym> 都能够胜任这样的工作。
+      然而不幸的是， 要把一个全功能的 <acronym class="acronym">MTA</acronym>
+      正确地配置为只把邮件交给其他服务器是一件很困难的事情。 使用
+      <span class="application">sendmail</span> 以及
+      <span class="application">postfix</span> 这样的程序，
+      多少有些杀鸡用牛刀的感觉。</p><p>此外， 如果您使用典型的 Internet 访问服务，
+      您的协议可能会包含禁止运行
+      <span class="quote">“<span class="quote">邮件服务器</span>”</span> 的条款。</p><p>满足这些需要最简单的办法是安装
+      <span class="package">mail/ssmtp</span> port。
+      以 <code class="systemitem">root</code> 身份执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/mail/ssmtp</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install replace clean</code></strong></pre><p>一旦装好，
+      <span class="package">mail/ssmtp</span> 就可以用四行
+      <code class="filename">/usr/local/etc/ssmtp/ssmtp.conf</code> 来配置：</p><pre class="programlisting">root=yourrealemail@example.com
+mailhub=mail.example.com
+rewriteDomain=example.com
+hostname=_HOSTNAME_</pre><p>请确认您为
+      <code class="systemitem">root</code> 使用了真实的电子邮件地址。
+      用您的 ISP 提供的外发邮件转发服务器名称，
+      替换掉 <code class="systemitem">mail.example.com</code> (某些 ISP
+      可能将其称为 <span class="quote">“<span class="quote">外发邮件服务器</span>”</span> 或
+      <span class="quote">“<span class="quote">SMTP 服务器</span>”</span>)。</p><p>接下来需要确认禁用了 <span class="application">sendmail</span>，
+      包括邮件发出服务在内。 请参见
+      <a class="xref" href="mail-changingmta.html#mail-disable-sendmail" title="27.4.2. 禁用 sendmail">Section 27.4.2, “禁用 <span class="application">sendmail</span>”</a> 以了解进一步的细节。</p><p><span class="package">mail/ssmtp</span> 也提供了一些其他选项。
+      请参见在
+      <code class="filename">/usr/local/etc/ssmtp</code> 中的示例配置， 或者
+      <span class="application">ssmtp</span>
+      的联机手册来得到一些例子和更多的其他信息。</p><p>以这种方式配置 <span class="application">ssmtp</span>，
+      能够让您计算机上的任何需要发送邮件的软件都正常运转，
+      而不必冒违反 ISP 的使用政策，
+      或使您的电脑被劫持用于发送垃圾邮件的风险。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="SMTP-UUCP.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="SMTP-dialup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.7. SMTP 与 UUCP </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.9. 拨号连接时使用邮件传送</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

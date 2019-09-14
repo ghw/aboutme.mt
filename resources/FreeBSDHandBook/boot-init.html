@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>13.6. Init：进程控制的初始化</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="boot.html" title="Chapter 13. The FreeBSD 引导过程" /><link rel="prev" href="device-hints.html" title="13.5. Device Hints" /><link rel="next" href="boot-shutdown.html" title="13.7. 关机 (shutdown) 过程" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">13.6. Init：进程控制的初始化</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="device-hints.html">Prev</a> </td><th width="60%" align="center">Chapter 13. The FreeBSD 引导过程</th><td width="20%" align="right"> <a accesskey="n" href="boot-shutdown.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="boot-init"></a>13.6. Init：进程控制的初始化</h2></div></div></div><a id="idp76854352" class="indexterm"></a><p>一旦内核完成引导， 它就把控制权交给了用户进程
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a>， 后者位于 <code class="filename">/sbin/init</code>，
+      或者由 <code class="command">loader</code> 设置的
+      <code class="envar">init_path</code> 变量指定的程序路径中。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="boot-autoreboot"></a>13.6.1. 自动重启过程</h3></div></div></div><p>自动重启过程会确认系统中的文件系统处于一致的健康状态。
+	如果不是这样， 并且使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fsck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fsck</span>(8)</span></a> 也无法修复这些问题，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a> 会进入 <a class="link" href="boot-init.html#boot-singleuser" title="13.6.2. 单用户模式">单用户模式</a>
+	以便由系统管理员自行修正这些问题。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="boot-singleuser"></a>13.6.2. 单用户模式</h3></div></div></div><a id="idp76870480" class="indexterm"></a><a id="idp76870992" class="indexterm"></a><p>此模式可以通过自动重启过程
+	(<a class="xref" href="boot-init.html#boot-autoreboot" title="13.6.1. 自动重启过程">Section 13.6.1, “自动重启过程”</a>) 或者通过带有
+	<code class="option">-s</code> 选项的用户引导，
+	或通过在 <code class="command">loader</code>
+	中设置 <code class="envar">boot_single</code> 变量等多种方式来达到。</p><p>此外， 也可以在多用户模式下不使用重启 (<code class="option">-r</code>) 选项和停机
+	(<code class="option">-h</code>) 选项的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=shutdown&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">shutdown</span>(8)</span></a>
+	命令来进入单用户模式。</p><p>如果在文件 <code class="filename">/etc/ttys</code> 中把系统控制台
+	<code class="literal">console</code> 设置为不安全
+	<code class="literal">insecure</code>，
+	则在初始化单用户模式前会出现要求输入 <code class="systemitem">root</code>
+	密码的命令行提示符。</p><div class="example"><a id="boot-insecure-console"></a><div class="example-title">Example 13.3. 在 <code class="filename">/etc/ttys</code> 文件中的不安全控制台</div><div class="example-contents"><pre class="programlisting"># name  getty                           type    status          comments
+#
+# If console is marked "insecure", then init will ask for the root password
+# when going to single-user mode.
+console none                            unknown off insecure</pre></div></div><br class="example-break" /><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">把控制台设置成不安全 <code class="literal">insecure</code>
+	  的结果是系统将只允许知道 <code class="systemitem">root</code>
+	  密码的人进入单用户模式。 如果您相信这有助于改善系统的安全性，
+	  则可以将控制台如此配置为 <code class="literal">insecure</code>，
+	  而非默认的安全
+	  <code class="literal">secure</code>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="boot-multiuser"></a>13.6.3. 多用户模式</h3></div></div></div><a id="idp76891088" class="indexterm"></a><p>如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a> 发现您的文件系统一切正常，又或者用户在单用户模式
+	(<a class="xref" href="boot-init.html#boot-singleuser" title="13.6.2. 单用户模式">Section 13.6.2, “单用户模式”</a>) 完成了工作，
+	系统就会进入多用户模式， 开始系统的资源配置。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="boot-rc"></a>13.6.3.1. 资源配置</h4></div></div></div><a id="idp76893904" class="indexterm"></a><p>资源配置分别从文件 <code class="filename">/etc/defaults/rc.conf</code>、
+	  <code class="filename">/etc/rc.conf</code> 中读取默认配置和细节配置，
+	  然后加载在文件 <code class="filename">/etc/fstab</code> 中提及的文件系统、
+	  启动网络服务、启动各种系统守护进程，最后启动本地安装包的启动脚本。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc</span>(8)</span></a> 联机手册是关于资源配置的很好的参考。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="device-hints.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="boot.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="boot-shutdown.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">13.5. Device Hints </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 13.7. 关机 (shutdown) 过程</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

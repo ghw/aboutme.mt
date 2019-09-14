@@ -1,0 +1,17 @@
+sed -i "s/https:\/\/napolin.cn/https:\/\/dcryan.com\//g" `grep -rl "napolin.cn" ./`
+http://cfoxiang.com/2015/01/11/aprefectweek0f201 #完美的开始,CFO.xiang
+http://lmmsoft.github.io/notes/2014.html #马年我去过哪些地方 #网页PPT模板，很喜欢
+https://github.com/cookfront/learn-note #不知道什么医院fork的
+https://github.com/iissnan/iissnan.github.com #简介的主页风格
+https://github.com/yujiangshui/about-me #照片风格
+https://github.com/kiwiwin/Book-Notes #会计从业资格考试-会计基础
+http://demo.thememotor.com/metrocv/   #很不错的简历站模板 METRO风格
+http://amandaharlin.github.io/aboutme #目前使用的aboutme模块
+http://thiago.me/					  #文本模式主页
+http://williamlfang.github.io/		  #
+http://miantiao.me/					  #超级漂亮的jekyll主题
+http://ibacor.com/					  #电视效果
+http://huzhijuan.cn/				  #Hu Zhijuan 忘初心 方得始终
+http://zhenchen.me/					  #爱生活，爱Coding
+http://www.zhedot.com/pho/pho2.html	  #相册
+http://www.proforz.com/2014/07/21/个人技术博客集萃/

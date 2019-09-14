@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-atm.html" title="30.13. 异步传输模式 (ATM)" /><link rel="next" href="appendices.html" title="Part V. 附录" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-atm.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="appendices.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="carp"></a>30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)</h2></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp90613584" class="indexterm"></a><a id="idp90614096" class="indexterm"></a><p>Common Address Redundancy Protocol， 或简称
+      <acronym class="acronym">CARP</acronym> 能够使多台主机共享同一
+      <acronym class="acronym">IP</acronym> 地址。 在某些配置中， 这样做可以提高可用性，
+      或实现负载均衡。 下面的例子中， 这些主机也可以同时使用其他的不同的
+      <acronym class="acronym">IP</acronym> 地址。</p><p>要启用 <acronym class="acronym">CARP</acronym> 支持， 必须在 FreeBSD
+      内核配置中增加下列选项， 并按照 <a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>
+      章节介绍的方法重新联编内核：</p><pre class="programlisting">device	carp</pre><p>另外的一个方法是在启动时加载
+      <code class="filename">if_carp.ko</code> 模块。
+      把如下的这行加入到 <code class="filename">/boot/loader.conf</code>：</p><pre class="programlisting">if_carp_load="YES"</pre><p>这样就可以使用 <acronym class="acronym">CARP</acronym> 功能了，
+      一些具体的参数， 可以通过一系列 <code class="command">sysctl</code>
+      <acronym class="acronym">OID</acronym> 来调整。</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>OID</th><th>描述</th></tr></thead><tbody><tr><td><code class="varname">net.inet.carp.allow</code></td><td>接受进来的 <acronym class="acronym">CARP</acronym> 包。
+	      默认启用。</td></tr><tr><td><code class="varname">net.inet.carp.preempt</code></td><td>当主机中有一个 <acronym class="acronym">CARP</acronym> 网络接口失去响应时，
+	      这个选项将停止这台主机上所有的 <acronym class="acronym">CARP</acronym>
+	      接口。 默认禁用。</td></tr><tr><td><code class="varname">net.inet.carp.log</code></td><td>当值为 <code class="literal">0</code> 表示禁止记录所有日志。
+	      值为 <code class="literal">1</code> 表示记录损坏的 <acronym class="acronym">CARP</acronym>
+	      包。任何大于 <code class="literal">1</code> 表示记录 <acronym class="acronym">CARP</acronym>
+	      网络接口的状态变化。默认值为 <code class="literal">1</code>。</td></tr><tr><td><code class="varname">net.inet.carp.arpbalance</code></td><td>使用 <acronym class="acronym">ARP</acronym> 均衡本地网络流量。
+	      默认禁用。</td></tr><tr><td><code class="varname">net.inet.carp.suppress_preempt</code></td><td>此只读 <acronym class="acronym">OID</acronym> 显示抑制抢占的状态。
+	      如果一个接口上的连接失去响应, 则抢占会被抑制。
+	      当这个变量的值为 <code class="literal">0</code> 时，表示抢占未被抑制。
+	      任何问题都会使 <acronym class="acronym">OID</acronym> 递增。</td></tr></tbody></table></div><p><acronym class="acronym">CARP</acronym> 设备可以通过 <code class="command">ifconfig</code>
+      命令来创建。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig carp0 create</code></strong></pre><p>在真实环境中， 这些接口需要一个称作 <acronym class="acronym">VHID</acronym> 的标识编号。 这个
+      <acronym class="acronym">VHID</acronym> 或 Virtual Host Identification (虚拟主机标识)
+      用于在网络上区分主机。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90659280"></a>30.14.1. 使用 CARP 来改善服务的可用性 (CARP)</h3></div></div></div><p>如前面提到的那样， <acronym class="acronym">CARP</acronym> 的作用之一是改善服务的可用性。
+	这个例子中， 将为三台主机提供故障转移服务， 这三台服务器各自有独立的 <acronym class="acronym">IP</acronym>
+	地址， 并提供完全一样的 web 内容。 三台机器以 <acronym class="acronym">DNS</acronym>
+	轮询的方式提供服务。 用于故障转移的机器有两个
+	<acronym class="acronym">CARP</acronym> 接口，
+	分别配置另外两台服务器的 <acronym class="acronym">IP</acronym> 地址。
+	当有服务器发生故障时， 这台机器会自动得到故障机的
+	<acronym class="acronym">IP</acronym> 地址。 这样以来，
+	用户就完全感觉不到发生了故障。 故障转移的服务器提供的内容和服务，
+	应与其为之提供热备份的服务器一致。</p><p>两台机器的配置， 除了主机名和 <acronym class="acronym">VHID</acronym> 之外应完全一致。
+	在我们的例子中， 这两台机器的主机名分别是
+	<code class="systemitem">hosta.example.org</code> 和
+	<code class="systemitem">hostb.example.org</code>。 首先，
+	需要将 <acronym class="acronym">CARP</acronym> 配置加入到 <code class="filename">rc.conf</code>。 对于
+	<code class="systemitem">hosta.example.org</code> 而言，
+	<code class="filename">rc.conf</code> 文件中应包含下列配置：</p><pre class="programlisting">hostname="hosta.example.org"
+ifconfig_fxp0="inet 192.168.1.3 netmask 255.255.255.0"
+cloned_interfaces="carp0"
+ifconfig_carp0="vhid 1 pass testpass 192.168.1.50/24"</pre><p>在 <code class="systemitem">hostb.example.org</code> 上，
+	对应的 <code class="filename">rc.conf</code> 配置则是：</p><pre class="programlisting">hostname="hostb.example.org"
+ifconfig_fxp0="inet 192.168.1.4 netmask 255.255.255.0"
+cloned_interfaces="carp0"
+ifconfig_carp0="vhid 2 pass testpass 192.168.1.51/24"</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在两台机器上由 <code class="command">ifconfig</code> 的
+	  <code class="option">pass</code> 选项指定的密码必须是一致的，
+	  这一点非常重要。 <code class="filename">carp</code> 设备只会监听和接受来自持有正确密码的机器的公告。
+	  此外， 不同虚拟主机的 <acronym class="acronym">VHID</acronym> 必须不同。</p></div><p>第三台机器，
+	<code class="systemitem">provider.example.org</code> 需要进行配置，
+	以便在另外两台机器出现问题时接管。 这台机器需要两个 <code class="filename">carp</code>
+	设备， 分别处理两个机器。 对应的 <code class="filename">rc.conf</code>
+	配置类似下面这样：</p><pre class="programlisting">hostname="provider.example.org"
+ifconfig_fxp0="inet 192.168.1.5 netmask 255.255.255.0"
+cloned_interfaces="carp0 carp1"
+ifconfig_carp0="vhid 1 advskew 100 pass testpass 192.168.1.50/24"
+ifconfig_carp1="vhid 2 advskew 100 pass testpass 192.168.1.51/24"</pre><p>配置两个 <code class="filename">carp</code> 设备，
+        能够让 <code class="systemitem">provider.example.org</code> 在两台机器中的任何一个停止响应时，
+	立即接管其 <acronym class="acronym">IP</acronym> 地址。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">默认的 FreeBSD 内核 <span class="emphasis"><em>可能</em></span> 启用了主机间抢占。
+	  如果是这样的话，
+	  <code class="systemitem">provider.example.org</code> 可能在正式的内容服务器恢复时不释放
+	  <acronym class="acronym">IP</acronym> 地址。 此时， 管理员必须手工强制 IP
+	  回到原来内容服务器。 具体做法是在
+	  <code class="systemitem">provider.example.org</code> 上使用下面的命令：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig carp0 down &amp;&amp; ifconfig carp0 up</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">这个操作需要在与出现问题的主机对应的那个 <code class="filename">carp</code>
+	  接口上进行。</p></div><p>现在您已经完成了 <acronym class="acronym">CARP</acronym> 的配置， 并可以开始测试了。
+	测试过程中， 可以随时重启或切断两台机器的网络。</p><p>如欲了解更多细节， 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=carp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">carp</span>(4)</span></a>
+        联机手册。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-atm.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="appendices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.13. 异步传输模式 (ATM) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part V. 附录</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

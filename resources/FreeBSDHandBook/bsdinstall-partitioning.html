@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>2.7. 分配磁盘空间</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="prev" href="bsdinstall-netinstall.html" title="2.6. 通过网络安装" /><link rel="next" href="bsdinstall-final-warning.html" title="2.8. 安装确认" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.7. 分配磁盘空间</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsdinstall-netinstall.html">Prev</a> </td><th width="60%" align="center">Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</th><td width="20%" align="right"> <a accesskey="n" href="bsdinstall-final-warning.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="bsdinstall-partitioning"></a>2.7. 分配磁盘空间</h2></div></div></div><p>FreeBSD 提供了三种方式来分配磁盘空间： 
+      <span class="emphasis"><em>Guided（向导式）</em></span> 分区能够自动设置磁盘分区；
+      而 <span class="emphasis"><em>Manual（手动式）</em></span> 分区则允许高级用户创建自定义分区；
+      还可以进入 shell 中直接使用类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gpart&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gpart</span>(8)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fdisk&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fdisk</span>(8)</span></a> 与
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a> 这样的命令行程序。</p><div class="figure"><a id="bsdinstall-part-guided-manual"></a><div class="figure-title">Figure 2.10. 选择分配磁盘空间的方式</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-guided-manual.png" alt="选择分配磁盘空间的方式" /></div></div></div><br class="figure-break" /><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-part-guided"></a>2.7.1. 向导式分区</h3></div></div></div><p>如果机器上配有多块磁盘， 则需要为 FreeBSD 的安装指定目标磁盘。</p><div class="figure"><a id="bsdinstall-part-guided-disk"></a><div class="figure-title">Figure 2.11. 从多块磁盘中进行选择</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-guided-disk.png" alt="从多块磁盘中进行选择" /></div></div></div><br class="figure-break" /><p>可以将整个磁盘都分配给 FreeBSD， 也可以只分配其中的一部分。
+	若选择的是
+	<span class="guibutton">[ Entire Disk ]</span>，
+	则创建分区布局时会直接使用整个磁盘； 若选择的是
+	<span class="guibutton">[ Partition ]</span>，
+	则创建分区时仅会使用磁盘上的空闲空间。</p><div class="figure"><a id="bsdinstall-part-entire-part"></a><div class="figure-title">Figure 2.12. 选择如何创建分区布局</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-entire-part.png" alt="选择如何创建分区布局" /></div></div></div><br class="figure-break" /><p>请仔细检查分区布局的创建结果。
+	如果发现有错误之处， 可以选择
+	<span class="guibutton">[ Revert ]</span> 来还原之前的分区；
+	此外， 也可以选择
+	<span class="guibutton">[ Auto ]</span> 重新让 FreeBSD 自动创建分区。
+	也可以手动创建、 修改或删除分区。 正确创建了分区之后，
+	请选择 <span class="guibutton">[ Finish ]</span> 以继续安装。</p><div class="figure"><a id="bsdinstall-part-review"></a><div class="figure-title">Figure 2.13. 检查已创建分区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-review.png" alt="检查已创建分区" /></div></div></div><br class="figure-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-part-manual"></a>2.7.2. 手动式分区</h3></div></div></div><p>手动式分区将直接使用分区编辑器进行操作。</p><div class="figure"><a id="bsdinstall-part-manual-create"></a><div class="figure-title">Figure 2.14. 手动创建分区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-manual-create.png" alt="手动创建分区" /></div></div></div><br class="figure-break" /><p>高亮目标驱动器（本例中为 <code class="filename">ada0</code>）并选择
+	<span class="guibutton">[ Create ]</span> 以显示
+	<em class="firstterm">partitioning scheme（分区方案）</em> 菜单。</p><div class="figure"><a id="bsdinstall-part-manual-partscheme"></a><div class="figure-title">Figure 2.15. 手动创建分区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-manual-partscheme.png" alt="手动创建分区" /></div></div></div><br class="figure-break" /><p>对于 PC 兼容机来说， <acronym class="acronym">GPT</acronym> 分区通常是最合适的选择，
+	而某些不兼容 <acronym class="acronym">GPT</acronym> 的老式操作系统则可能需要使用
+	<acronym class="acronym">MBR</acronym> 分区。
+	除此之外的分区方案仅用于一些不常见的或其他的老式操作系统。</p><div class="table"><a id="idp67543888"></a><div class="table-title">Table 2.1. 分区方案</div><div class="table-contents"><table summary="分区方案" width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th align="left">缩写</th><th align="left">说明</th></tr></thead><tbody><tr><td align="left">APM</td><td align="left"><a class="link" href="http://support.apple.com/kb/TA21692" target="_top">Apple
+		  Partition Map， 用于 <span class="trademark">PowerPC</span>®
+		  <span class="trademark">Macintosh</span>®。</a></td></tr><tr><td align="left">BSD</td><td align="left">不带 MBR 的 BSD Label， 有时也称作危险的专用模式，
+		“dangerously dedicated mode”。 请参阅
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a>。</td></tr><tr><td align="left">GPT</td><td align="left"><a class="link" href="http://en.wikipedia.org/wiki/GUID_Partition_Table" target="_top">GUID
+		  分区表。</a></td></tr><tr><td align="left">MBR</td><td align="left"><a class="link" href="http://en.wikipedia.org/wiki/Master_boot_record" target="_top">Master
+		  Boot Record， 主引导记录。</a></td></tr><tr><td align="left">PC98</td><td align="left"><a class="link" href="http://en.wikipedia.org/wiki/Pc9801" target="_top">MBR
+		  变体， 用于 NEC PC-98
+		  计算机。</a></td></tr><tr><td align="left">VTOC8</td><td align="left">Volume Table Of Contents， 用于 Sun SPARC64 和
+		UltraSPARC 计算机。</td></tr></tbody></table></div></div><br class="table-break" /><p>确定了分区方案并创建完成后， 可再次选择
+	<span class="guibutton">[ Create ]</span> 以创建新的分区。</p><div class="figure"><a id="bsdinstall-part-manual-addpart"></a><div class="figure-title">Figure 2.16. 手动创建分区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-part-manual-addpart.png" alt="手动创建分区" /></div></div></div><br class="figure-break" /><p>FreeBSD 的标准 <acronym class="acronym">GPT</acronym> 安装至少会使用三个分区：</p><div class="itemizedlist"><div class="itemizedlist-title">标准 FreeBSD <acronym class="acronym">GPT</acronym> 分区</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">freebsd-boot</code> - FreeBSD 引导分区，
+	    它必须处于首位。</p></li><li class="listitem"><p><code class="literal">freebsd-ufs</code> - FreeBSD 的 UFS 文件系统。</p></li><li class="listitem"><p><code class="literal">freebsd-swap</code> - FreeBSD 的交换空间。</p></li></ul></div><p>也可以同时创建多个文件系统分区。
+	有些用户会喜欢传统的分区格局，
+	为 <code class="filename">/</code>、
+	<code class="filename">/var</code>、 <code class="filename">/tmp</code>， 以及 <code class="filename">/usr</code>
+	文件系统分别创建分区。 请参阅 <a class="xref" href="bsdinstall-partitioning.html#bsdinstall-part-manual-splitfs" title="Example 2.3. 创建传统的分割式文件系统分区">Example 2.3, “创建传统的分割式文件系统分区”</a>
+	中的例子。</p><p>可用的
+	<acronym class="acronym">GPT</acronym> 分区类型可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gpart&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gpart</span>(8)</span></a>
+	中找到。</p><p>在指定尺寸时， 可以使用常用的缩写：
+	<span class="emphasis"><em>K</em></span> 表示 kilobytes、 <span class="emphasis"><em>M</em></span>
+	表示 megabytes， 而 <span class="emphasis"><em>G</em></span> 表示 gigabytes。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">正确地对齐磁盘扇区能够获取最佳性能。
+	  无论磁盘的每个扇区为 512 字节还是 4K 字节，
+	  将分区大小设置为 4K 字节的倍数都能够确保对齐。
+	  实际操作中， 只要使分区的大小等于 1M 或 1G 的倍数即可。
+	  唯一的例外是 <span class="emphasis"><em>freebsd-boot</em></span> 分区，
+	  目前由于引导代码所限， 此分区不能大于 512K。</p></div><p>若分区包含文件系统，则需要在 Mountpoint 项中为其输入挂载点；
+	若仅创建了一个 UFS 分区， 则应在此项中输入 <code class="filename">/</code>。</p><p>最后需要输入的是 <em class="firstterm">Label（标签）</em> 项，
+	用于命名所创建的分区。 如果将驱动器连接至不同的控制器或端口，
+	其名称或编号会发生改变， 但对应的标签并不会变化。
+	在类似 <code class="filename">/etc/fstab</code> 这样的文件中，
+	通过标签引用分区比通过驱动器名加分区编号引用更加灵活，
+	因为这样引用使系统对硬件的改变更加宽容。
+	GPT 的标签会在磁盘连接后出现在 <code class="filename">/dev/gpt/</code> 中；
+	而其他分区方案中的标签也有不同的功能， 它们会出现在
+	<code class="filename">/dev/</code> 中的不同目录里。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">为避免冲突， 请给每个文件系统指定独一无二的标签。
+	  与计算机的名称、 用途或位置相关的字符均可添加至标签。 例如，
+	  实验室计算机的 UFS 根目录可以命名为 “labroot” 或 “rootfs-lab”。</p></div><div class="example"><a id="bsdinstall-part-manual-splitfs"></a><div class="example-title">Example 2.3. 创建传统的分割式文件系统分区</div><div class="example-contents"><p>在传统的分区布局中， 目录 <code class="filename">/</code>、
+	  <code class="filename">/var</code>、 <code class="filename">/tmp</code> 及
+	  <code class="filename">/user</code> 都是位于自己分区上的独立文件系统；
+	  在 GPT 分区方案中也可以创建这样的分区布局。
+	  本例中所使用的是一块 20G 的硬盘， 如果使用更大的硬盘，
+	  建议创建更大的交换或 <code class="filename">/var</code> 分区。
+	  标签的前缀 <code class="literal">ex</code> 是指 “example”，
+	  具体操作时您可以使用任何独一无二的字符。</p><div class="informaltable"><table border="0"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th>分区类型</th><th>大小</th><th>挂载点</th><th>标签</th></tr></thead><tbody><tr><td><code class="literal">freebsd-boot</code></td><td><code class="literal">512K</code></td><td> </td><td> </td></tr><tr><td><code class="literal">freebsd-ufs</code></td><td><code class="literal">2G</code></td><td><code class="filename">/</code></td><td><code class="literal">exrootfs</code></td></tr><tr><td><code class="literal">freebsd-swap</code></td><td><code class="literal">4G</code></td><td> </td><td><code class="literal">exswap</code></td></tr><tr><td><code class="literal">freebsd-ufs</code></td><td><code class="literal">2G</code></td><td><code class="filename">/var</code></td><td><code class="literal">exvarfs</code></td></tr><tr><td><code class="literal">freebsd-ufs</code></td><td><code class="literal">1G</code></td><td><code class="filename">/tmp</code></td><td><code class="literal">extmpfs</code></td></tr><tr><td><code class="literal">freebsd-ufs</code></td><td>接受默认值（剩余空间）</td><td><code class="filename">/usr</code></td><td><code class="literal">exusrfs</code></td></tr></tbody></table></div></div></div><br class="example-break" /><p>创建了自定义分区后， 请选择
+	<span class="guibutton">[ Finish ]</span> 以继续安装。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsdinstall-netinstall.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="bsdinstall.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="bsdinstall-final-warning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.6. 通过网络安装 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.8. 安装确认</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

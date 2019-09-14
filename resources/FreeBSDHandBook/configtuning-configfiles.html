@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.10. 配置文件</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-virtual-hosts.html" title="12.9. 虚拟主机" /><link rel="next" href="configtuning-sysctl.html" title="12.11. 用 sysctl 进行调整" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.10. 配置文件</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-virtual-hosts.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-sysctl.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-configfiles"></a>12.10. 配置文件</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75913040"></a>12.10.1. <code class="filename">/etc</code> 布局</h3></div></div></div><p>在配置信息中有很多的目录，这些包括：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><tbody><tr><td><code class="filename">/etc</code></td><td>一般的系统配置信息。这儿的数据是与特定系统相关的。</td></tr><tr><td><code class="filename">/etc/defaults</code></td><td>系统配置文件的默认版本。</td></tr><tr><td><code class="filename">/etc/mail</code></td><td>额外的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendmail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sendmail</span>(8)</span></a> 配置信息，其他 MTA 配置文件。
+	      </td></tr><tr><td><code class="filename">/etc/ppp</code></td><td>用于用户级和内核级 ppp 程序的配置。
+	      </td></tr><tr><td><code class="filename">/etc/namedb</code></td><td><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">named</span>(8)</span></a> 数据的默认位置。通常 <code class="filename">named.conf</code> 和区域文件存放在这里。</td></tr><tr><td><code class="filename">/usr/local/etc</code></td><td>被安装的应用程序配置文件。可以参考每个应用程序的子目录。</td></tr><tr><td><code class="filename">/usr/local/etc/rc.d</code></td><td>被安装程序的 启动/停止 脚本。</td></tr><tr><td><code class="filename">/var/db</code></td><td>特定系统自动产生的数据库文件，像 package 数据库，位置数据库等等。</td></tr></tbody></table></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75937232"></a>12.10.2. 主机名</h3></div></div></div><a id="idp75937872" class="indexterm"></a><a id="idp75938384" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75938896"></a>12.10.2.1. <code class="filename">/etc/resolv.conf</code></h4></div></div></div><a id="idp75939664" class="indexterm"></a><p><code class="filename">/etc/resolv.conf</code> 指示了 FreeBSD 如何访问域名系统(DNS)。</p><p><code class="filename">resolv.conf</code> 中最常见的记录是：
+	</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><tbody><tr><td><code class="literal">nameserver</code></td><td>按顺序要查询的名字服务器的 IP 地址，最多三个。</td></tr><tr><td><code class="literal">search</code></td><td>
+		搜索机器名的列表。这通常由本地机器名的域决定。</td></tr><tr><td><code class="literal">domain</code></td><td>本地域名。</td></tr></tbody></table></div><p>一个典型的 <code class="filename">resolv.conf</code> 文件：</p><pre class="programlisting">search example.com
+nameserver 147.11.1.11
+nameserver 147.11.100.30</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">只能使用一个 <code class="literal">search</code> 和
+	  <code class="literal">domain</code> 选项。</p></div><p>如果您在使用 DHCP，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dhclient&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dhclient</span>(8)</span></a> 经常使用从 DHCP
+	  服务器接受来的信息重写 <code class="filename">resolv.conf</code>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75952336"></a>12.10.2.2. <code class="filename">/etc/hosts</code></h4></div></div></div><a id="idp75953232" class="indexterm"></a><p><code class="filename">/etc/hosts</code> 是 Internet
+	  早期使用的一个简单文本数据库。
+	  它结合 DNS 和 NIS 提供名字到 IP 地址的映射。
+	  通过局域网连接的机器可以用这个简单的命名方案来替代设置一个
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">named</span>(8)</span></a> 服务器。另外，<code class="filename">/etc/hosts</code>
+	  也可以提供一个 Internet 名称的本地纪录以减轻需要从外部查询带来的负担。</p><pre class="programlisting"># $FreeBSD$
+#
+#
+# Host Database
+#
+# This file should contain the addresses and aliases for local hosts that
+# share this file.  Replace 'my.domain' below with the domainname of your
+# machine.
+#
+# In the presence of the domain name service or NIS, this file may
+# not be consulted at all; see /etc/nsswitch.conf for the resolution order.
+#
+#
+::1			localhost localhost.my.domain
+127.0.0.1		localhost localhost.my.domain
+#
+# Imaginary network.
+#10.0.0.2		myname.my.domain myname
+#10.0.0.3		myfriend.my.domain myfriend
+#
+# According to RFC 1918, you can use the following IP networks for
+# private nets which will never be connected to the Internet:
+#
+#	10.0.0.0	-   10.255.255.255
+#	172.16.0.0	-   172.31.255.255
+#	192.168.0.0	-   192.168.255.255
+#
+# In case you want to be able to connect to the Internet, you need
+# real official assigned numbers.  Do not try to invent your own network
+# numbers but instead get one from your network provider (if any) or
+# from your regional registry (ARIN, APNIC, LACNIC, RIPE NCC, or AfriNIC.)
+#</pre><p><code class="filename">/etc/hosts</code> 用简单的格式：</p><pre class="programlisting">[Internet address] [official hostname] [alias1] [alias2] ...</pre><p>例如：</p><pre class="programlisting">10.0.0.1 myRealHostname.example.com myRealHostname foobar1 foobar2</pre><p>参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hosts&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hosts</span>(5)</span></a> 以获得更多信息。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75959120"></a>12.10.3. 日志文件配置</h3></div></div></div><a id="idp75959760" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75960272"></a>12.10.3.1. <code class="filename">syslog.conf</code></h4></div></div></div><a id="idp75969360" class="indexterm"></a><p><code class="filename">syslog.conf</code> 是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a> 程序的配置文件。
+	它指出了的  <code class="command">syslog</code> 哪种信息类型被存储在特定的日志文件中。</p><pre class="programlisting"># $FreeBSD$
+#
+#       Spaces ARE valid field separators in this file. However,
+#       other *nix-like systems still insist on using tabs as field
+#       separators. If you are sharing this file between systems, you
+#       may want to use only tabs as field separators here.
+#       Consult the syslog.conf(5) manual page.
+*.err;kern.debug;auth.notice;mail.crit          /dev/console
+*.notice;kern.debug;lpr.info;mail.crit;news.err /var/log/messages
+security.*                                      /var/log/security
+mail.info                                       /var/log/maillog
+lpr.info                                        /var/log/lpd-errs
+cron.*                                          /var/log/cron
+*.err                                           root
+*.notice;news.err                               root
+*.alert                                         root
+*.emerg                                         *
+# uncomment this to log all writes to /dev/console to /var/log/console.log
+#console.info                                   /var/log/console.log
+# uncomment this to enable logging of all log messages to /var/log/all.log
+#*.*                                            /var/log/all.log
+# uncomment this to enable logging to a remote log host named loghost
+#*.*                                            @loghost
+# uncomment these if you're running inn
+# news.crit                                     /var/log/news/news.crit
+# news.err                                      /var/log/news/news.err
+# news.notice                                   /var/log/news/news.notice
+!startslip
+*.*                                             /var/log/slip.log
+!ppp
+*.*                                             /var/log/ppp.log</pre><p>参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">syslog.conf</span>(5)</span></a> 手册页以获得更多信息</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75973456"></a>12.10.3.2. <code class="filename">newsyslog.conf</code></h4></div></div></div><a id="idp75974224" class="indexterm"></a><p><code class="filename">newsyslog.conf</code> 是一个通常用
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a> 计划运行的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newsyslog</span>(8)</span></a> 程序的配置文件。
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newsyslog</span>(8)</span></a> 指出了什么时候日志文件需要打包或者重新整理。
+	  比如 <code class="filename">logfile</code> 被移动到
+	  <code class="filename">logfile.0</code>，<code class="filename">logfile.0</code>
+	  被移动到 <code class="filename">logfile.1</code> 等等。另外，日志文件可以用
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gzip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">gzip</span>(1)</span></a> 来压缩，它们是这样的命名格式：
+	  <code class="filename">logfile.0.gz</code>，<code class="filename">logfile.1.gz</code>
+	  等等。</p><p><code class="filename">newsyslog.conf</code>
+	  指出了哪个日志文件要被管理，要保留多少和它们什么时候被创建。
+	  日志文件可以在它们达到一定大小或者在特定的日期被重新整理。</p><pre class="programlisting"># configuration file for newsyslog
+# $FreeBSD$
+#
+# filename          [owner:group]    mode count size when [ZB] [/pid_file] [sig_num]
+/var/log/cron                           600  3     100  *     Z
+/var/log/amd.log                        644  7     100  *     Z
+/var/log/kerberos.log                   644  7     100  *     Z
+/var/log/lpd-errs                       644  7     100  *     Z
+/var/log/maillog                        644  7     *    @T00  Z
+/var/log/sendmail.st                    644  10    *    168   B
+/var/log/messages                       644  5     100  *     Z
+/var/log/all.log                        600  7     *    @T00  Z
+/var/log/slip.log                       600  3     100  *     Z
+/var/log/ppp.log                        600  3     100  *     Z
+/var/log/security                       600  10    100  *     Z
+/var/log/wtmp                           644  3     *    @01T05 B
+/var/log/daily.log                      640  7     *    @T00  Z
+/var/log/weekly.log                     640  5     1    $W6D0 Z
+/var/log/monthly.log                    640  12    *    $M1D0 Z
+/var/log/console.log                    640  5     100  *     Z</pre><p>参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newsyslog</span>(8)</span></a> 手册页以获得更多信息。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="configtuning-sysctlconf"></a>12.10.4. <code class="filename">sysctl.conf</code></h3></div></div></div><a id="idp75988304" class="indexterm"></a><a id="idp75988816" class="indexterm"></a><p><code class="filename">sysctl.conf</code> 和
+	<code class="filename">rc.conf</code> 这两个文件的风格很接近。 其中的配置均为
+	<code class="literal">变量=值</code>
+	这样的形式。 在这个文件中配置的值， 均会在系统进入多用户模式之后进行实际的修改操作。
+	需要注意的是， 并不是所有的变量都能够在多用户模式下修改。</p><p>如果希望关闭对收到致命的信号退出的进程进行记录，
+	并阻止普通用户看到其他用户的进程， 可以在 <code class="filename">sysctl.conf</code>
+	中进行下列配置：</p><pre class="programlisting"># 不记录由于致命信号导致的进程退出 (例如信号 11，访问越界)
+kern.logsigexit=0
+
+# 阻止用户看到以其他用户 UID 身份执行的进程。
+security.bsd.see_other_uids=0</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-virtual-hosts.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-sysctl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.9. 虚拟主机 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.11. 用 sysctl 进行调整</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

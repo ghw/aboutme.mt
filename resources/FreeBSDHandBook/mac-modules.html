@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.6. 模块配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-planning.html" title="16.5. 规划安全配置" /><link rel="next" href="mac-seeotheruids.html" title="16.7. MAC seeotheruids 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.6. 模块配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-planning.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-seeotheruids.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-modules"></a>16.6. 模块配置</h2></div></div></div><p>在 <acronym class="acronym">MAC</acronym> 框架中的每个模块，
+      都可以像前述那样连编入内核， 或作为运行时内核模块加载。
+      推荐的用法， 是通过在
+      <code class="filename">/boot/loader.conf</code> 加入适当的设置，
+      以便在系统启动时的初始化操作过程中加载这些模块。</p><p>接下来的一些小节， 将讨论许多
+      <acronym class="acronym">MAC</acronym> 模块， 并简单介绍它们的功能。
+      此外， 这一章还将介绍一些具体环境中的用例。
+      某些模块支持一种称为标签 (labeling) 的用法，
+      它可以通过使用类似 <span class="quote">“<span class="quote">允许做这个而不允许做那个</span>”</span>
+      的标签来实现访问控制。 标签配置文件可以控制允许的文件访问方式、
+      网络通讯， 以及许多其他权限。 在前一节中，
+      我们已经展示了文件系统中如何通过 <code class="option">multilabel</code>
+      标志来启用基于文件或分区的访问控制的方法。</p><p>单标签配置在整个系统中只强制一个标签的限制，
+      这也是 <code class="command">tunefs</code> 选项为什么是
+      <code class="option">multilabel</code> 的原因。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-planning.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-seeotheruids.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.5. 规划安全配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.7. MAC seeotheruids 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

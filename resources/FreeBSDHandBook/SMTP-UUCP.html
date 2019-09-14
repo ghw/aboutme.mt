@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.7. SMTP 与 UUCP</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="mail-advanced.html" title="27.6. 高级主题" /><link rel="next" href="outgoing-only.html" title="27.8. 只发送邮件的配置" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.7. SMTP 与 UUCP</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mail-advanced.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="outgoing-only.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="SMTP-UUCP"></a>27.7. SMTP 与 UUCP</h2></div></div></div><p><span class="application">sendmail</span> 的配置，在
+      FreeBSD 中已经配置好为您的站点直接的连接 Internet。
+      如果站点希望他们的邮件通过 UUCP 交换，则必须安装其它的
+      <span class="application">sendmail</span> 配置文件。</p><p>手工的配置 <code class="filename">/etc/mail/sendmail.cf</code>
+      是一个高级主题。<span class="application">sendmail</span> 8 版本通过
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=m4&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">m4</span>(1)</span></a> 预处理生成一个配置文件，实际上这个配置发生在一个比较高的抽象层。
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=m4&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">m4</span>(1)</span></a> 配置文件可以在 <code class="filename">/usr/share/sendmail/cf</code>
+      下找到。 <code class="filename">cf</code>
+      目录中的 <code class="filename">README</code> 文件是关于
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=m4&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">m4</span>(1)</span></a> 配置的基本的介绍。</p><p>最好的支持 UUCP 传送的方法是使用
+      <code class="literal">mailertable</code> 的特点。建立一个资料库让
+      <span class="application">sendmail</span> 可以使用它自己的路由决策。</p><p>首先，您必须建立您自己的 <code class="filename">.mc</code> 文件。
+      <code class="filename">/usr/share/sendmail/cf/cf</code> 目录包含一些例子。
+      假定您已经命名自己的文件叫做 <code class="filename">foo.mc</code>，
+      您要做的只是把它转换成一个有效的 <code class="filename">sendmail.cf</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /etc/mail</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make foo.cf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp foo.cf /etc/mail/sendmail.cf</code></strong></pre><p>一个典型的 <code class="filename">.mc</code> 文件看起来可能象这样：</p><pre class="programlisting">VERSIONID(`<em class="replaceable"><code>Your version number</code></em>') OSTYPE(bsd4.4)
+
+FEATURE(accept_unresolvable_domains)
+FEATURE(nocanonify)
+FEATURE(mailertable, `hash -o /etc/mail/mailertable')
+
+define(`UUCP_RELAY', <em class="replaceable"><code>your.uucp.relay</code></em>)
+define(`UUCP_MAX_SIZE', 200000)
+define(`confDONT_PROBE_INTERFACES')
+
+MAILER(local)
+MAILER(smtp)
+MAILER(uucp)
+
+Cw    <em class="replaceable"><code>your.alias.host.name</code></em>
+Cw    <em class="replaceable"><code>youruucpnodename.UUCP</code></em></pre><p>
+      <code class="literal">accept_unresolvable_domains</code>、
+      <code class="literal">nocanonify</code> 和 <code class="literal">confDONT_PROBE_INTERFACES</code>
+      特性将避免在传送邮件时使用DNS的机会。<code class="literal">UUCP_RELAY</code>
+      项是支持 UUCP 传送所必须的。简单的放入一个 Internet 上可以处理
+      UUCP 虚拟域地址的主机名。通常，您在这里填入您 ISP 邮件的回复处。</p><p>一旦您做完这些，您还需要这个
+      <code class="filename">/etc/mail/mailertable</code> 文件。
+      如果您只有一个用来传递所有邮件的对外通道的话，
+      以下的文件就足够了：</p><pre class="programlisting">#
+# makemap hash /etc/mail/mailertable.db &lt; /etc/mail/mailertable
+.                             uucp-dom:<em class="replaceable"><code>your.uucp.relay</code></em></pre><p>一个更复杂点的例子象这样：</p><pre class="programlisting">#
+# makemap hash /etc/mail/mailertable.db &lt; /etc/mail/mailertable
+#
+horus.interface-business.de   uucp-dom:horus
+.interface-business.de        uucp-dom:if-bus
+interface-business.de         uucp-dom:if-bus
+.heep.sax.de                  smtp8:%1
+horus.UUCP                    uucp-dom:horus
+if-bus.UUCP                   uucp-dom:if-bus
+.                             uucp-dom:</pre><p>头三行处理域地址邮件，不应该被传送出默认的路由，
+      而由某些 UUCP 邻居取代的特殊情况，这是为了走<span class="quote">“<span class="quote">捷径</span>”</span>。
+      下一行处理本地网的邮件让它可以使用 SMTP 来传送。
+      最后，UUCP 邻居提起。UUCP 虚拟域的记载，
+      允许一个 <code class="literal">uucp-neighbor
+      !recipient</code>
+      推翻默认规则。最后一行则以一个单独的句点最为结束，
+      以 UUCP 传送到提供您所有的邮件网关的 UUCP 邻居。
+      所有在 <code class="literal">uucp-dom:</code> 关键字里的节点名称必须是有效的
+      UUCP 邻居，您可以用 <code class="literal">uuname</code> 去确认。</p><p>提醒您这个文件在使用前必须被转换成 DBM 数据库文件。最好在
+      <code class="filename">mailertable</code> 最上面用注解写出命令行来完成这个工作。
+      当您每次更换您的 <code class="filename">mailertable</code> 后您总是需要执行这个命令。</p><p>最后提示：如果您不确定某个特定的路径可用，
+      记得把 <code class="option">-bt</code> 选项加到
+      <span class="application">sendmail</span>。这会将
+      <span class="application">sendmail</span> 启动在
+      <span class="emphasis"><em>地址检测模式</em></span>。只要按下
+      <code class="literal">3,0</code>，接着输入您希望测试的邮件路径位置。
+      最后一行告诉您使用邮件代理程序，
+      代理程序会通知目的主机以及 (可能转换) 地址。
+      要离开此模式请按 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>D</strong></span>。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>sendmail -bt</code></strong>
+ADDRESS TEST MODE (ruleset 3 NOT automatically invoked)
+Enter &lt;ruleset&gt; &lt;address&gt;
+<code class="prompt">&gt;</code> <strong class="userinput"><code>3,0 foo@example.com</code></strong>
+canonify           input: foo @ example . com
+...
+parse            returns: $# uucp-dom $@ <em class="replaceable"><code>your.uucp.relay</code></em> $: foo &lt; @ example . com . &gt;
+<code class="prompt">&gt;</code> <strong class="userinput"><code>^D</code></strong></pre></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mail-advanced.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="outgoing-only.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.6. 高级主题 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.8. 只发送邮件的配置</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

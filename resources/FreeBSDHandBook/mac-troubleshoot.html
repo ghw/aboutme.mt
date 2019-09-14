@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.17. MAC 框架的故障排除</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-userlocked.html" title="16.16. User Lock Down" /><link rel="next" href="audit.html" title="Chapter 17. 安全事件审计" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.17. MAC 框架的故障排除</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-userlocked.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="audit.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-troubleshoot"></a>16.17. MAC 框架的故障排除</h2></div></div></div><a id="idp79112144" class="indexterm"></a><p>在开发过程中， 有一些用户报告了正常配置下出现的问题。
+      其中的一些问题如下所示：</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79113424"></a>16.17.1. 无法在 <code class="filename">/</code> 上启用
+	<code class="option">multilabel</code> 选项</h3></div></div></div><p><code class="option">multilabel</code> 标志在根 (<code class="filename">/</code>)
+	分区上没有保持启用状态！</p><p>看起来每五十个用户中就有一个遇到这样的问题，
+	当然， 在我们的初始配置过程中也出现过这样的问题。
+	更进一步的观察使得我相信这个所谓的
+	<span class="quote">“<span class="quote">bug</span>”</span> 是由于文档中不确切的描述，
+	或对其产生的误解造成的。 无论它是因为什么引发的，
+	下面的步骤应该能够解决此问题：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>编辑 <code class="filename">/etc/fstab</code> 并将根分区设置为
+	    <code class="option">ro</code>， 表示只读。</p></li><li class="step"><p>重新启动并进入单用户模式。</p></li><li class="step"><p>在 <code class="filename">/</code> 上运行
+	    <code class="command">tunefs</code> <code class="option">-l enable</code></p></li><li class="step"><p>重新启动并进入正常的模式。</p></li><li class="step"><p>运行 <code class="command">mount</code> <code class="option">-urw</code>
+	  <code class="filename">/</code> 并把 <code class="filename">/etc/fstab</code>
+	  中的 <code class="option">ro</code> 改回 <code class="option">rw</code>，
+	  然后再次重新启动。</p></li><li class="step"><p>再次检查来自
+	  <code class="command">mount</code> 的输出， 已确认根文件系统上正确地设置了
+	  <code class="option">multilabel</code>。</p></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79155536"></a>16.17.2. 在 <acronym class="acronym">MAC</acronym> 之后无法启动 X11 了</h3></div></div></div><p>在使用 <acronym class="acronym">MAC</acronym> 建立安全的环境之后， 就无法启动
+	X 了！</p><p>这可能是由于 <acronym class="acronym">MAC</acronym>
+	<code class="literal">partition</code> 策略， 或者对某个
+	<acronym class="acronym">MAC</acronym> 标签策略进行了错误的配置导致的。
+	要调试这个问题， 请尝试：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>检查错误信息； 如果用户是在
+	    <code class="literal">insecure</code> class 中， 则
+	    <code class="literal">partition</code> 策略就可能导致问题。
+	    尝试将用户的 class 重新改为
+	    <code class="literal">default</code> class，
+	    并使用 <code class="command">cap_mkdb</code> 命令重建数据库。
+	    如果这无法解决问题， 则进入第二步。</p></li><li class="step"><p>仔细检查标签策略。 确认针对有问题的用户的策略是正确的， 特别是
+	    X11 应用， 以及 <code class="filename">/dev</code>
+	    项。</p></li><li class="step"><p>如果这些都无法解决问题， 将出错消息和对您的环境的描述，
+	    发送到 <a class="link" href="http://www.TrustedBSD.org" target="_top">TrustedBSD</a>
+	    网站上的 TrustedBSD 讨论邮件列表，
+	    或者 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-questions" target="_top">FreeBSD 一般问题邮件列表</a> 邮件列表。</p></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79169232"></a>16.17.3. Error: <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=_secure_path&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">_secure_path</span>(3)</span></a> cannot stat <code class="filename">.login_conf</code></h3></div></div></div><p>当我试图从 <code class="systemitem">root</code>
+	用户切换到其同中的其他用户时， 出现了错误提示
+	<span class="errorname">_secure_path: unable to state .login_conf</span>。</p><p>这个提示通常在用户拥有高于它将要成为的那个用户的
+	标签设定时出现。 例如， 如果系统上的一个用户
+	<code class="systemitem">joe</code> 拥有默认的
+	<code class="option">biba/low</code> 标签， 而 <code class="systemitem">root</code> 用户拥有
+	<code class="option">biba/high</code>， 它也就不能查看
+	<code class="systemitem">joe</code> 的主目录，
+	无论 <code class="systemitem">root</code> 是否使用了
+	<code class="command">su</code> 来成为 <code class="systemitem">joe</code>。
+	这种情况下， Biba 完整性模型，
+	就不会允许 <code class="systemitem">root</code> 查看在较低完整性级别中的客体。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79185232"></a>16.17.4. <code class="systemitem">root</code> 用户名被破坏了！</h3></div></div></div><p>在普通模式， 甚至是单用户模式中，
+	<code class="systemitem">root</code> 不被识别。
+	<code class="command">whoami</code> 命令返回了 0 (零) 而
+	<code class="command">su</code> 则提示 <span class="errorname">who are you?</span>。
+	到底发生了什么？</p><p>标签策略被禁用可能会导致这样的问题，
+	无论是通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 或是卸载了策略模块。
+	如果打算禁用策略， 或者临时禁用它，
+	则登录性能数据库需要重新配置，
+	在其中删除 <code class="option">label</code> 选项。
+	仔细检查 <code class="filename">login.conf</code>
+	以确保所有的 <code class="option">label</code> 选项都已经删除， 然后使用
+	<code class="command">cap_mkdb</code> 命令来重建数据库。</p><p>这种情况也可能在通过策略来限制访问
+	<code class="filename">master.passwd</code> 文件或对应的那个数据库时发生。
+	这主要是由于管理员修改受某一 label 限制的文件，
+	而与系统级的通用策略发生了冲突。 这时，
+	用户信息将由系统直接读取， 而在文件继承了新的 label
+	之后则会拒绝访问。 此时， 只需使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 禁用这一策略， 一切就会恢复正常了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-userlocked.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="audit.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.16. User Lock Down </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 17. 安全事件审计</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.4. 蓝牙</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-wireless.html" title="30.3. 无线网络" /><link rel="next" href="network-bridging.html" title="30.5. 桥接" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.4. 蓝牙</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-wireless.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-bridging.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-bluetooth"></a>30.4. 蓝牙</h2></div><div><span class="authorgroup">作者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Pav</span> <span class="surname">Lucistnik</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">袁</span> <span class="surname">苏义</span></span>. </span></div></div></div><a id="idp89359056" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89359568"></a>30.4.1. 简介</h3></div></div></div><p>Bluetooth (蓝牙) 是一项无线技术，
+	用于建立带宽为 2.4GHZ，波长为 10 米的私有网络。
+	网络一般是由便携式设备，比加手机 (cellular phone)，
+	掌上电脑 (handhelds) 和膝上电脑 (laptops)) 以 ad-hoc
+	形式组成。不象其它流行的无线技术――Wi-Fi，Bluetooth
+	提供了更高级的服务层面，像类 FTP 的文件服务、文件推送
+	(file pushing)、语音传送、串行线模拟等等。</p><p>在 FreeBSD 里，蓝牙栈 (Bluetooth stack) 通过使用
+	Netgraph 框架 (请看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=netgraph&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">netgraph</span>(4)</span></a>) 来的实现。
+	大量的"Bluetooth USB dongle"由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_ubt&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_ubt</span>(4)</span></a> 驱动程序支持。
+	基于 Broadcom BCM2033 芯片组的 Bluetooth 设备可以通过
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ubtbcmfw&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ubtbcmfw</span>(4)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_ubt&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_ubt</span>(4)</span></a> 驱动程序支持。
+	3Com Bluetooth PC 卡 3CRWB60-A 由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_bt3c&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_bt3c</span>(4)</span></a> 驱动程序支持。
+	基于 Serial 和 UART 的蓝牙设备由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a>、<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_h4&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_h4</span>(4)</span></a>
+	和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hcseriald&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hcseriald</span>(8)</span></a>。本节介绍 USB Bluetooth dongle
+	的使用。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89367504"></a>30.4.2. 插入设备</h3></div></div></div><p>默认的 Bluetooth 设备驱动程序已存在于内核模块里。
+	接入设备前，您需要将驱动程序加载入内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload ng_ubt</code></strong></pre><p>如果系统启动时 Bluetooth 设备已经存在于系统里，
+	那么从 <code class="filename">/boot/loader.conf</code> 里加载这个模块：</p><pre class="programlisting">ng_ubt_load="YES"</pre><p>插入USB dongle。控制台(console)(或syslog中)会出现类似如下的信息：</p><pre class="screen">ubt0: vendor 0x0a12 product 0x0001, rev 1.10/5.25, addr 2
+ubt0: Interface 0 endpoints: interrupt=0x81, bulk-in=0x82, bulk-out=0x2
+ubt0: Interface 1 (alt.config 5) endpoints: isoc-in=0x83, isoc-out=0x3,
+      wMaxPacketSize=49, nframes=6, buffer size=294</pre><p>脚本 <code class="filename">/etc/rc.d/bluetooth</code>
+        是用来启动和停止 Bluetooth stack (蓝牙栈)的。
+        最好在拔出设备前停止 stack(stack)，当然也不是非做不可。
+        启动 stack (栈) 时，会得到如下的输出：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/bluetooth start ubt0</code></strong>
+BD_ADDR: 00:02:72:00:d4:1a
+Features: 0xff 0xff 0xf 00 00 00 00 00
+&lt;3-Slot&gt; &lt;5-Slot&gt; &lt;Encryption&gt; &lt;Slot offset&gt;
+&lt;Timing accuracy&gt; &lt;Switch&gt; &lt;Hold mode&gt; &lt;Sniff mode&gt;
+&lt;Park mode&gt; &lt;RSSI&gt; &lt;Channel quality&gt; &lt;SCO link&gt;
+&lt;HV2 packets&gt; &lt;HV3 packets&gt; &lt;u-law log&gt; &lt;A-law log&gt; &lt;CVSD&gt;
+&lt;Paging scheme&gt; &lt;Power control&gt; &lt;Transparent SCO data&gt;
+Max. ACL packet size: 192 bytes
+Number of ACL packets: 8
+Max. SCO packet size: 64 bytes
+Number of SCO packets: 8</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89373264"></a>30.4.3. 主控制器接口 (HCI)</h3></div></div></div><a id="idp89373904" class="indexterm"></a><p>主控制器接口 (HCI)
+	提供了通向基带控制器和连接管理器的命令接口及访问硬件状态字和控制寄存器的通道。
+	这个接口提供了访问蓝牙基带 (Bluetooth baseband) 功能的统一方式。
+	主机上的 HCI 层与蓝牙硬件上的 HCI 固件交换数据和命令。
+	主控制器的传输层 (如物理总线) 驱动程序提供两个 HCI
+	层交换信息的能力。</p><p>为每个蓝牙 (Bluetooth) 设备创建一个
+	<span class="emphasis"><em>hci</em></span> 类型的 Netgraph 结点。
+	HCI 结点一般连接蓝牙设备的驱动结点 (下行流) 和
+	L2CAP 结点 (上行流)。 所有的HCI操作必须在 HCI
+	结点上进行而不是设备驱动结点。HCI 结点的默认名是
+	<span class="quote">“<span class="quote">devicehci</span>”</span>。更多细节请参考
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_hci&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_hci</span>(4)</span></a> 的联机手册。</p><p>最常见的任务是发现在 RF proximity
+	中的蓝牙 (Bluetooth) 设备。这个就叫做
+	<span class="emphasis"><em>质询(inquiry)</em></span>。质询及 HCI
+	相关的操作可以由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hccontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hccontrol</span>(8)</span></a> 工具来完成。
+	以下的例子展示如何找出范围内的蓝牙设备。
+	在几秒钟内您应该得到一张设备列表。
+	注意远程主机只有被置于
+	<span class="emphasis"><em>discoverable(可发现)</em></span>
+	模式才能答应质询。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>hccontrol -n ubt0hci inquiry</code></strong>
+Inquiry result, num_responses=1
+Inquiry result #0
+       BD_ADDR: 00:80:37:29:19:a4
+       Page Scan Rep. Mode: 0x1
+       Page Scan Period Mode: 00
+       Page Scan Mode: 00
+       Class: 52:02:04
+       Clock offset: 0x78ef
+Inquiry complete. Status: No error [00]</pre><p><code class="literal">BD_ADDR</code> 是蓝牙设备的特定地址，
+	类似于网卡的 MAC 地址。需要用此地址与某个设备进一步地通信。
+	可以为 BD_ADDR 分配由人可读的名字 (human readable name)。
+	文件 <code class="filename">/etc/bluetooth/hosts</code>
+	包含已知蓝牙主机的信息。
+	下面的例子展示如何获得分配给远程设备的可读名。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>hccontrol -n ubt0hci remote_name_request 00:80:37:29:19:a4</code></strong>
+BD_ADDR: 00:80:37:29:19:a4
+Name: Pav's T39</pre><p>如果在远程蓝牙上运行质询，您会发现您的计算机是
+	<span class="quote">“<span class="quote">your.host.name (ubt0)</span>”</span>。
+	分配给本地设备的名字可随时改变。</p><p>蓝牙系统提供点对点连接 (只有两个蓝牙设备参与)
+	和点对多点连接。在点对多点连接中，连接由多个蓝牙设备共享。
+	以下的例子展示如何取得本地设备的活动基带 (baseband)
+	连接列表。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>hccontrol -n ubt0hci read_connection_list</code></strong>
+Remote BD_ADDR    Handle Type Mode Role Encrypt Pending Queue State
+00:80:37:29:19:a4     41  ACL    0 MAST    NONE       0     0 OPEN</pre><p><span class="emphasis"><em>connection handle(连接柄)</em></span>
+	在需要终止基带连接时有用。注意：一般不需要手动完成。
+	栈 (stack) 会自动终止不活动的基带连接。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hccontrol -n ubt0hci disconnect 41</code></strong>
+Connection handle: 41
+Reason: Connection terminated by local host [0x16]</pre><p>参考 <code class="command">hccontrol help</code>
+	获取完整的 HCI 命令列表。大部分 HCI
+	命令不需要超级用户权限。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89390800"></a>30.4.4. 逻辑连接控制和适配协议(L2CAP)</h3></div></div></div><a id="idp89391440" class="indexterm"></a><p>逻辑连接控制和适配协议 (L2CAP)
+	为上层协议提供面向连接和无连接的数据服务，
+	并提供多协议功能和分割重组操作。L2CAP
+	充许上层协议和应用软件传输和接收最大长度为
+	64K 的 L2CAP 数据包。</p><p>L2CAP 基于 <span class="emphasis"><em>通道(channel)</em></span> 的概念。
+	通道 (Channel) 是位于基带 (baseband) 连接之上的逻辑连接。
+	每个通道以多对一的方式绑定一个单一协议 (single protocol)。
+	多个通道可以绑定同一个协议，但一个通道不可以绑定多个协议。
+	每个在通道里接收到的 L2CAP 数据包被传到相应的上层协议。
+	多个通道可共享同一个基带连接。</p><p>为每个蓝牙 (Bluetooth) 设备创建一个
+	<span class="emphasis"><em>l2cap</em></span> 类型的 Netgraph 结点。
+	L2CAP 结点一般连接 HCI 结点(下行流)和蓝牙设备的驱动结点(上行流)。
+	L2CAP 结点的默认名是 <span class="quote">“<span class="quote">devicel2cap</span>”</span>。
+	更多细节请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ng_l2cap&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ng_l2cap</span>(4)</span></a> 的联机手册。</p><p>一个有用的命令是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=l2ping&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">l2ping</span>(8)</span></a>，
+	它可以用来 ping 其它设备。
+	一些蓝牙实现可能不会返回所有发送给它们的数据，
+	所以下例中的 <code class="literal">0 bytes</code> 是正常的。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>l2ping -a 00:80:37:29:19:a4</code></strong>
+0 bytes from 0:80:37:29:19:a4 seq_no=0 time=48.633 ms result=0
+0 bytes from 0:80:37:29:19:a4 seq_no=1 time=37.551 ms result=0
+0 bytes from 0:80:37:29:19:a4 seq_no=2 time=28.324 ms result=0
+0 bytes from 0:80:37:29:19:a4 seq_no=3 time=46.150 ms result=0</pre><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=l2control&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">l2control</span>(8)</span></a> 工具用于在 L2CAP 上进行多种操作。
+	以下这个例子展示如何取得本地设备的逻辑连接 (通道)
+	和基带连接的列表：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>l2control -a 00:02:72:00:d4:1a read_channel_list</code></strong>
+L2CAP channels:
+Remote BD_ADDR     SCID/ DCID   PSM  IMTU/ OMTU State
+00:07:e0:00:0b:ca    66/   64     3   132/  672 OPEN
+<code class="prompt">%</code> <strong class="userinput"><code>l2control -a 00:02:72:00:d4:1a read_connection_list</code></strong>
+L2CAP connections:
+Remote BD_ADDR    Handle Flags Pending State
+00:07:e0:00:0b:ca     41 O           0 OPEN</pre><p>另一个诊断工具是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=btsockstat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">btsockstat</span>(1)</span></a>。
+	它完成与 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=netstat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">netstat</span>(1)</span></a> 类似的操作，
+	只是用了蓝牙网络相关的数据结构。
+	以下这个例子显示与 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=l2control&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">l2control</span>(8)</span></a> 相同的逻辑连接。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>btsockstat</code></strong>
+Active L2CAP sockets
+PCB      Recv-Q Send-Q Local address/PSM       Foreign address   CID   State
+c2afe900      0      0 00:02:72:00:d4:1a/3     00:07:e0:00:0b:ca 66    OPEN
+Active RFCOMM sessions
+L2PCB    PCB      Flag MTU   Out-Q DLCs State
+c2afe900 c2b53380 1    127   0     Yes  OPEN
+Active RFCOMM sockets
+PCB      Recv-Q Send-Q Local address     Foreign address   Chan DLCI State
+c2e8bc80      0    250 00:02:72:00:d4:1a 00:07:e0:00:0b:ca 3    6    OPEN</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89412816"></a>30.4.5. RFCOMM 协议</h3></div></div></div><a id="idp89413456" class="indexterm"></a><p>RFCOMM 协议提供基于 L2CAP 协议的串行端口模拟。
+	该协议基于 ETSI TS 07.10 标准。RFCOMM 是一个简单的传输协议，
+	附加了摸拟 9 针 RS-232(EIATIA-232-E) 串行端口的定义。
+	RFCOMM 协议最多支持 60 个并发连接 (RFCOMM通道)。</p><p>为了实现 RFCOMM，
+	运行于不同设备上的应用程序建立起一条关于它们之间通信段的通信路径。
+	RFCOMM实际上适用于使用串行端口的应用软件。
+	通信段是一个设备到另一个设备的蓝牙连接 (直接连接)。</p><p>RFCOMM 关心的只是直接连接设备之间的连接，
+	或在网络里一个设备与 modem 之间的连接。RFCOMM 能支持其它的配置，
+	比如在一端通过蓝牙无线技术通讯而在另一端使用有线接口。</p><p>在FreeBSD，RFCOMM 协议在蓝牙套接字层 (Bluetooth sockets layer) 实现。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89415632"></a>30.4.6. 设备的结对(Pairing of Devices)</h3></div></div></div><a id="idp89416272" class="indexterm"></a><p>默认情况下，蓝牙通信是不需要验证的，
+	任何设备可与其它任何设备对话。一个蓝牙设备 (比如手机)
+	可以选择通过验证以提供某种特殊服务 (比如拨号服务)。
+	蓝牙验证一般使用 <span class="emphasis"><em>PIN码(PIN codes)</em></span>。
+	一个 PIN 码是最长为 16 个字符的 ASCII 字符串。
+	用户需要在两个设备中输入相同的PIN码。用户输入了 PIN 码后，
+	两个设备会生成一个 <span class="emphasis"><em>连接密匙(link key)</em></span>。
+	接着连接密钥可以存储在设备或存储器中。
+	连接时两个设备会使用先前生成的连接密钥。
+	以上介绍的过程被称为 <span class="emphasis"><em>结对(pairing)</em></span>。
+	注意如果任何一方丢失了连接密钥，必须重新进行结对。</p><p>守护进程 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hcsecd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hcsecd</span>(8)</span></a> 负责处理所有蓝牙验证请求。
+	默认的配置文件是 <code class="filename">/etc/bluetooth/hcsecd.conf</code>。
+	下面的例子显示一个手机的 PIN 码被预设为<span class="quote">“<span class="quote">1234</span>”</span>：</p><pre class="programlisting">device {
+        bdaddr  00:80:37:29:19:a4;
+        name    "Pav's T39";
+        key     nokey;
+        pin     "1234";
+      }</pre><p>PIN 码没有限制(除了长度)。有些设备
+	(例如蓝牙耳机) 会有一个预置的 PIN 码。<code class="option">-d</code>
+	开关强制 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hcsecd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hcsecd</span>(8)</span></a> 守护进程处于前台，因此很容易看清发生了什么。
+	设置远端设备准备接收结对 (pairing)，然后启动蓝牙连接到远端设备。
+	远端设备应该回应接收了结对并请求PIN码。输入与
+	<code class="filename">hcsecd.conf</code> 中一样的 PIN 码。
+	现在您的个人计算机已经与远程设备结对了。
+	另外您也可以在远程设备上初始结点。</p><p>可以通过在
+	<code class="filename">/etc/rc.conf</code> 文件中增加下面的行， 以便让
+	<span class="application">hcsecd</span> 在系统启动时自动运行：</p><pre class="programlisting">hcsecd_enable="YES"</pre><p>以下是简单的
+	<span class="application">hcsecd</span> 服务输出样本：</p><pre class="programlisting">hcsecd[16484]: Got Link_Key_Request event from 'ubt0hci', remote bdaddr 0:80:37:29:19:a4
+hcsecd[16484]: Found matching entry, remote bdaddr 0:80:37:29:19:a4, name 'Pav's T39', link key doesn't exist
+hcsecd[16484]: Sending Link_Key_Negative_Reply to 'ubt0hci' for remote bdaddr 0:80:37:29:19:a4
+hcsecd[16484]: Got PIN_Code_Request event from 'ubt0hci', remote bdaddr 0:80:37:29:19:a4
+hcsecd[16484]: Found matching entry, remote bdaddr 0:80:37:29:19:a4, name 'Pav's T39', PIN code exists
+hcsecd[16484]: Sending PIN_Code_Reply to 'ubt0hci' for remote bdaddr 0:80:37:29:19:a4</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89425616"></a>30.4.7. 服务发现协议 (SDP)</h3></div></div></div><a id="idp89426256" class="indexterm"></a><p>服务发现协议 (SDP) 提供给客户端软件一种方法，
+	它能发现由服务器软件提供的服务及属性。
+	服务的属性包括所提供服务的类型或类别，
+	使用该服务所需要的机制或协议。</p><p>SDP 包括 SDP 服务器和 SDP 客户端之间的通信。
+	服务器维护一张服务记录列表，它介绍服务器上服务的特性。
+	每个服务记录包含关于单个服务的信息。通过发出 SDP 请求，
+	客户端会得到服务记录列表的信息。如果客户端 (或者客户端上的应用软件)
+	决定使用一个服务，为了使用这个服务它必须与服务提供都建立一个独立的连接。
+	SDP 提供了发现服务及其属性的机制，但它并不提供使用这些服务的机制。</p><p>一般地，SDP客户端按照服务的某种期望特征来搜索服务。
+	但是，即使没有任何关于由 SDP 服务端提供的服务的预设信息，
+	有时也能令人满意地发现它的服务记录里所描述的是哪种服务类型。
+	这种发现所提供服务的过程称为 <span class="emphasis"><em>浏览(browsing)</em></span>。</p><p>蓝牙 SDP 服务端 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpd</span>(8)</span></a> 和命令行客户端
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpcontrol</span>(8)</span></a> 都包括在了标准的 FreeBSD 安装里。
+	下面的例子展示如何进行 SDP 浏览查询。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>sdpcontrol -a 00:01:03:fc:6e:ec browse</code></strong>
+Record Handle: 00000000
+Service Class ID List:
+        Service Discovery Server (0x1000)
+Protocol Descriptor List:
+        L2CAP (0x0100)
+                Protocol specific parameter #1: u/int/uuid16 1
+                Protocol specific parameter #2: u/int/uuid16 1
+
+Record Handle: 0x00000001
+Service Class ID List:
+        Browse Group Descriptor (0x1001)
+
+Record Handle: 0x00000002
+Service Class ID List:
+        LAN Access Using PPP (0x1102)
+Protocol Descriptor List:
+        L2CAP (0x0100)
+        RFCOMM (0x0003)
+                Protocol specific parameter #1: u/int8/bool 1
+Bluetooth Profile Descriptor List:
+        LAN Access Using PPP (0x1102) ver. 1.0
+</pre><p>...等等。注意每个服务有一个属性
+	(比如 RFCOMM 通道)列表。
+	根据服务您可能需要为一些属性做个注释。
+	有些<span class="quote">“<span class="quote">蓝牙实现 (Bluetooth implementation)</span>”</span>不支持服务浏览，
+	可能会返回一个空列表。这种情况，可以搜索指定的服务。
+	下面的例子展示如何搜索 OBEX Object Push (OPUSH) 服务：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>sdpcontrol -a 00:01:03:fc:6e:ec search OPUSH</code></strong></pre><p>要在 FreeBSD 里为蓝牙客户端提供服务，可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpd</span>(8)</span></a> 服务。
+	您可以通过在
+	<code class="filename">/etc/rc.conf</code> 中加入下面的行：</p><pre class="programlisting">sdpd_enable="YES"</pre><p>然后用下面的命令来启动 <span class="application">sdpd</span> 服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sdpd start</code></strong></pre><p>需要为远端提供蓝牙服务的本地的服务程序会使用本地 SDP
+	进程注册服务。像这样的程序就有 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a>。
+	一旦启动它，就会使用本地 SDP 进程注册蓝牙 LAN 服务。</p><p>使用本地 SDP 进程注册的服务列表，可以通过本地控制通道发出
+	SDP 浏览查询获得：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sdpcontrol -l browse</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89451728"></a>30.4.8. 拨号网络 (DUN) 和使用 PPP(LAN) 层面的网络接入</h3></div></div></div><p>拨号网络 (DUN) 配置通常与 modem 和手机一起使用。
+	如下是这一配置所涉及的内容：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>计算机使用手机或 modem 作为无线
+	  modem 来连接拨号因特网连入服务器，
+	  或者使用其它的拨号服务；</p></li><li class="listitem"><p>计算机使用手机或 modem 接收数据请求。</p></li></ul></div><p>使用 PPP(LAN) 层面的网络接入常使用在如下情形：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>单个蓝牙设备的局域网连入；
+           </p></li><li class="listitem"><p>多个蓝牙设备的局域网接入；
+          </p></li><li class="listitem"><p>PC 到 PC (使用基于串行线模拟的 PPP 网络)。</p></li></ul></div><p>在 FreeBSD 中，两个层面使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ppp</span>(8)</span></a> 和
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a> (一种封装器，可以将 RFCOMM
+	蓝牙连接转换为 PPP 可操作的东西) 来实现。
+	在使用任何层面之前，一个新的 PPP 标识必须在
+	<code class="filename">/etc/ppp/ppp.conf</code> 中建立。
+	想要实例请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a>。</p><p>在下面的例子中，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a> 用来在
+	NUN RFCOMM 通道上打开一个到 BD_ADDR 为 00:80:37:29:19:a4
+	的设备的 RFCOMM 连接。具体的 RFCOMM 通道号要通过 SDP
+	从远端设备获得。也可以手动指定通 RFCOMM，这种情况下
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a> 将不能执行 SDP 查询。使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpcontrol</span>(8)</span></a> 来查找远端设备上的 RFCOMM 通道。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>rfcomm_pppd -a 00:80:37:29:19:a4 -c -C dun -l rfcomm-dialup</code></strong></pre><p>为了提供 PPP(LAN) 网络接入服务，必须运行
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpd</span>(8)</span></a> 服务。一个新的 LAN 客户端条目必须在
+	<code class="filename">/etc/ppp/ppp.conf</code> 文件中建立。
+	想要实例请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_pppd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rfcomm_pppd</span>(8)</span></a>。
+	最后，在有效地通道号上开始 RFCOMM PPP 服务。
+	RFCOMM PPP 服务会使用本地 SDP 进程自动注册蓝牙 LAN
+	服务。下面的例子展示如何启动 RFCOMM PPP 服务。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>rfcomm_pppd -s -C 7 -l rfcomm-server</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89470544"></a>30.4.9. OBEX 对象推送 (OBEX Object Push - OPUSH) 层面</h3></div></div></div><a id="idp89471184" class="indexterm"></a><p>OBEX协议被广泛地用于移动设备之间简单的文件传输。
+	它的主要用处是在红外线通信领域，
+	被用于笔记本或手持设备之间的一般文件传输。</p><p>OBEX 服务器和客户端由第三方软件包
+	<span class="application">obexapp</span>实现，它可以从
+	<span class="package">comms/obexapp</span>
+	port 安装。</p><p>OBEX 客户端用于向 OBEX 服务器推入或接出对象。
+	一个对像可以是(举个例子)商业卡片或约会。 OBEX 客户能通过
+	SDP 从远程设备取得 RFCOMM 通道号。这可以通过指定服务名代替
+	RFCOMM 通道号来完成。支持的服务名是有：IrMC、FTRN 和 OPUSH。
+	也可以用数字来指定 RFCOMM 通道号。下面是一个 OBEX
+	会话的例子，一个设备信息对像从手机中被拉出，
+	一个新的对像被推入手机的目录。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>obexapp -a 00:80:37:29:19:a4 -C IrMC</code></strong>
+obex&gt; get telecom/devinfo.txt devinfo-t39.txt
+Success, response: OK, Success (0x20)
+obex&gt; put new.vcf
+Success, response: OK, Success (0x20)
+obex&gt; di
+Success, response: OK, Success (0x20)</pre><p>为了提供 OBEX 推入服务，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sdpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sdpd</span>(8)</span></a>
+	必须处于运行状态。必须创建一个根目录用于存放所有进入的对象。
+	根文件夹的默认路径是 <code class="filename">/var/spool/obex</code>。
+	最后，在有效的 RFCOMM 通道号上开始 OBEX 服务。OBEX 服务会使用
+	SDP 进程自动注册 OBEX 对象推送 (OBEX Object Push) 服务。
+	下面的例子展示如何启动 OBEX 服务。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>obexapp -s -C 10</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89477200"></a>30.4.10. 串口(SP)层面</h3></div></div></div><p>串口(SP)层面允许蓝牙设备完成 RS232 (或类似) 串口线的仿真。
+	这个层面所涉及到情形是，
+	通过虚拟串口使用蓝牙代替线缆来处理以前的程序。</p><p>工具 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_sppd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rfcomm_sppd</span>(1)</span></a> 来实现串口层。
+	<span class="quote">“<span class="quote">Pseudo tty</span>”</span> 用来作为虚拟的串口。
+	下面的例子展示如何连接远程设备的串口服务。
+	注意您不必指定 RFCOMM 通道――<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rfcomm_sppd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rfcomm_sppd</span>(1)</span></a>
+	能够通过 SDP 从远端设备那里获得。
+	如果您想代替它的话，可以在命令行里指定 RFCOMM
+	通道来实现：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>rfcomm_sppd -a 00:07:E0:00:0B:CA -t /dev/ttyp6</code></strong>
+rfcomm_sppd[94692]: Starting on /dev/ttyp6...</pre><p>一旦连接上，<span class="quote">“<span class="quote">pseudo tty</span>”</span>就可以充当串口了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu -l ttyp6</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89483472"></a>30.4.11. 问题解答</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89484112"></a>30.4.11.1. 不能连接远端设备</h4></div></div></div><p>一些较老的蓝牙设备并不支持角色转换
+	  (role switching)。默认情况下，FreeBSD 接受一个新的连接时，
+	  它会尝试进行角色转换并成为主控端 (master)。
+	  不支持角色转换的设备将无法连接。
+	  注意角色转换是在新连接建立时运行的，
+	  因此如果远程设备不支持角色转换，就不可能向它发出请求。
+	  一个 HCI 选项用来在本地端禁用角色转换。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hccontrol -n ubt0hci write_node_role_switch 0</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89494480"></a>30.4.11.2. 如果有错， 能否知道到底正在发生什么？</h4></div></div></div><p>可以。 需要借助第三方软件包
+          <span class="application">hcidump</span>， 它可以通过
+	  <span class="package">comms/hcidump</span> port
+	  来安装。 <span class="application">hcidump</span> 工具和
+          <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tcpdump&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tcpdump</span>(1)</span></a> 非常相像。 它可以用来显示蓝牙数据包的内容，
+          并将其记录到文件中。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-wireless.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-bridging.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.3. 无线网络 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.5. 桥接</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

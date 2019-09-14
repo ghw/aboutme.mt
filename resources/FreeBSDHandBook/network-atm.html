@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.13. 异步传输模式 (ATM)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-ipv6.html" title="30.12. IPv6" /><link rel="next" href="carp.html" title="30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.13. 异步传输模式 (ATM)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-ipv6.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="carp.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-atm"></a>30.13. 异步传输模式 (ATM)</h2></div><div><span class="authorgroup">贡献者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Harti</span> <span class="surname">Brandt</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span>. </span></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90545488"></a>30.13.1. 配置 classical IP over ATM (PVCs)</h3></div></div></div><p>Classical IP over ATM (<acronym class="acronym">CLIP</acronym>)
+	是一种最简单的使用带 IP 的 ATM 的方法。
+	这种方法可以用在交换式连接 (SVC) 和永久连接
+	(PVC) 上。这部分描述的就是配置基于 PVC 的网络。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90551120"></a>30.13.1.1. 完全互连的配置</h4></div></div></div><p>第一种使用PVC来设置 <acronym class="acronym">CLIP</acronym>
+	  的方式就是通过专用的 PVC 让网络里的每一台机子都互连在一起。
+	  尽管这样配置起来很简单，但对于数量更多一点的机子来说就有些不切实际了。
+	  例如我们有四台机子在网络里，每一台都使用一张 ATM 适配器卡连接到 ATM
+	  网络。第一步就是规划 IP 地址和机子间的 ATM 连接。我们使用下面的：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>主机</th><th>IP 地址</th></tr></thead><tbody><tr><td><code class="systemitem">hostA</code></td><td><code class="systemitem">192.168.173.1</code></td></tr><tr><td><code class="systemitem">hostB</code></td><td><code class="systemitem">192.168.173.2</code></td></tr><tr><td><code class="systemitem">hostC</code></td><td><code class="systemitem">192.168.173.3</code></td></tr><tr><td><code class="systemitem">hostD</code></td><td><code class="systemitem">192.168.173.4</code></td></tr></tbody></table></div><p>为了建造完全交错的网络，我们需要在第一对机子间有一个 ATM 连接：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>机器</th><th>VPI.VCI 对</th></tr></thead><tbody><tr><td><code class="systemitem">hostA</code> - <code class="systemitem">hostB</code></td><td>0.100</td></tr><tr><td><code class="systemitem">hostA</code> - <code class="systemitem">hostC</code></td><td>0.101</td></tr><tr><td><code class="systemitem">hostA</code> - <code class="systemitem">hostD</code></td><td>0.102</td></tr><tr><td><code class="systemitem">hostB</code> - <code class="systemitem">hostC</code></td><td>0.103</td></tr><tr><td><code class="systemitem">hostB</code> - <code class="systemitem">hostD</code></td><td>0.104</td></tr><tr><td><code class="systemitem">hostC</code> - <code class="systemitem">hostD</code></td><td>0.105</td></tr></tbody></table></div><p>在每一个连接端 VPI 和 VCI 的值都可能会不同，
+	  只是为了简单起见，我们假定它们是一样的。
+	  下一步我们需要配置每一个主机上的 ATM 接口：</p><pre class="screen">hostA<code class="prompt">#</code> <strong class="userinput"><code>ifconfig hatm0 192.168.173.1 up</code></strong>
+hostB<code class="prompt">#</code> <strong class="userinput"><code>ifconfig hatm0 192.168.173.2 up</code></strong>
+hostC<code class="prompt">#</code> <strong class="userinput"><code>ifconfig hatm0 192.168.173.3 up</code></strong>
+hostD<code class="prompt">#</code> <strong class="userinput"><code>ifconfig hatm0 192.168.173.4 up</code></strong></pre><p>假定所有主机上的 ATM 接口都是 <code class="filename">hatm0</code>。
+	  现在 PVC 需要配置到 <code class="systemitem">hostA</code> 上
+	  (我们假定它们都已经配置在了 ATM 交换机上，至于怎么做的，
+	  您就需要参考一下该交换机的手册了)。</p><pre class="screen">hostA<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.2 hatm0 0 100 llc/snap ubr</code></strong>
+hostA<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.3 hatm0 0 101 llc/snap ubr</code></strong>
+hostA<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.4 hatm0 0 102 llc/snap ubr</code></strong>
+
+hostB<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.1 hatm0 0 100 llc/snap ubr</code></strong>
+hostB<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.3 hatm0 0 103 llc/snap ubr</code></strong>
+hostB<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.4 hatm0 0 104 llc/snap ubr</code></strong>
+
+hostC<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.1 hatm0 0 101 llc/snap ubr</code></strong>
+hostC<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.2 hatm0 0 103 llc/snap ubr</code></strong>
+hostC<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.4 hatm0 0 105 llc/snap ubr</code></strong>
+
+hostD<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.1 hatm0 0 102 llc/snap ubr</code></strong>
+hostD<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.2 hatm0 0 104 llc/snap ubr</code></strong>
+hostD<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm add 192.168.173.3 hatm0 0 105 llc/snap ubr</code></strong></pre><p>当然，除 UBR 外其它的通信协定也可让 ATM 适配器支持这些。
+	  此种情况下，通信协定的名字要跟人通信参数后边。工具
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atmconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">atmconfig</span>(8)</span></a> 的帮助可以这样得到：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atmconfig help natm add</code></strong></pre><p>或者在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atmconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">atmconfig</span>(8)</span></a> 手册页里得到。</p><p>相同的配置也可以通过 <code class="filename">/etc/rc.conf</code>
+	  来完成。对于 <code class="systemitem">hostA</code>，看起来就象这样：</p><pre class="programlisting">network_interfaces="lo0 hatm0"
+ifconfig_hatm0="inet 192.168.173.1 up"
+natm_static_routes="hostB hostC hostD"
+route_hostB="192.168.173.2 hatm0 0 100 llc/snap ubr"
+route_hostC="192.168.173.3 hatm0 0 101 llc/snap ubr"
+route_hostD="192.168.173.4 hatm0 0 102 llc/snap ubr"</pre><p>所有 <acronym class="acronym">CLIP</acronym> 路由的当前状态可以使用如下命令获得：</p><pre class="screen">hostA<code class="prompt">#</code> <strong class="userinput"><code>atmconfig natm show</code></strong></pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-ipv6.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="carp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.12. IPv6 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

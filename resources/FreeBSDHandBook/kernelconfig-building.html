@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>9.5. 建立并安装一个定制的内核</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="prev" href="kernelconfig-modules.html" title="9.4. 内核驱动，子系统和模块" /><link rel="next" href="kernelconfig-config.html" title="9.6. 配置文件" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">9.5. 建立并安装一个定制的内核</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="kernelconfig-modules.html">Prev</a> </td><th width="60%" align="center">Chapter 9. 配置FreeBSD的内核</th><td width="20%" align="right"> <a accesskey="n" href="kernelconfig-config.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="kernelconfig-building"></a>9.5. 建立并安装一个定制的内核</h2></div></div></div><a id="idp72857552" class="indexterm"></a><p>首先对内核构建目录做一个快速的浏览。
+      这里所提到的所有目录都在
+      <code class="filename">/usr/src/sys</code> 目录中； 也可以通过
+      <code class="filename">/sys</code> 来访问它。
+      这里的众多子目录包含了内核的不同部分，
+      但对我们所要完成的任务最重要的目录是
+      <code class="filename">arch/conf</code>，
+      您将在这里编辑定制的内核配置； 以及
+      <code class="filename">compile</code>， 编译过程中的文件将放置在这里。
+      <em class="replaceable"><code>arch</code></em> 表示
+      <code class="filename">i386</code>、
+      <code class="filename">amd64</code>、 <code class="filename">ia64</code>、
+      <code class="filename">powerpc</code>、 <code class="filename">sparc64</code>， 或
+      <code class="filename">pc98</code> (在日本比较流行的另一种
+      PC 硬件开发分支)。 在特定硬件架构目录中的文件只和特定的硬件有关；
+      而其余代码则是与机器无关的， 则所有已经或将要移植并运行 FreeBSD
+      的平台上都共享这些代码。
+      文件目录是按照逻辑组织的， 所支持的硬件设备、
+      文件系统， 以及可选的组件通常都在它们自己的目录中。</p><p>这一章提供的例子假定您使用 i386 架构的计算机。
+      如果您的情况不是这样， 只需对目录名作相应的调整即可。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您的系统中 <span class="emphasis"><em>没有</em></span>
+	<code class="filename">/usr/src/sys</code> 这样一个目录，
+	则说明没有安装内核源代码。 安装它最简单的方法是通过以 root 身份运行
+	<code class="command">sysinstall</code>， 选择
+	<span class="guimenuitem">Configure</span>， 然后是
+	<span class="guimenuitem">Distributions</span>、
+	<span class="guimenuitem">src</span>， 选中其中的
+	<span class="guimenuitem">base</span> 和
+	<span class="guimenuitem">sys</span>。 如果您不喜欢
+	<span class="application">sysinstall</span> 并且有一张
+	<span class="quote">“<span class="quote">官方的</span>”</span> FreeBSD CDROM， 也可以使用下列命令，
+	从命令行来安装源代码：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /cdrom</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir -p /usr/src/sys</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ln -s /usr/src/sys /sys</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cat /cdrom/src/ssys.[a-d]* | tar -xzvf -</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cat /cdrom/src/sbase.[a-d]* | tar -xzvf -</code></strong></pre></div><p>接下来， 进入 <code class="filename">arch/conf</code>
+	目录下面， 复制 <code class="filename">GENERIC</code> 配置文件，
+	并给这个文件起一个容易辨认的名称， 它就是您的内核名称。例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src/sys/i386/conf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp GENERIC MYKERNEL</code></strong></pre><p>通常，这个名称是大写的，如果您正维护着多台不同硬件的FreeBSD机器，
+    以您机器的域名来命名是非常好的主意。我们把它命名为
+      <code class="filename">MYKERNEL</code>就是这个原因。
+    </p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">将您的内核配置文件直接保存在
+	<code class="filename">/usr/src</code> 可能不是一个好主意。
+	如果您遇到问题， 删掉
+	<code class="filename">/usr/src</code> 并重新开始很可能是一个诱人的选择。
+	一旦开始做这件事，
+	您可能几秒钟之后才会意识到您同时会删除定制的内核配置文件。
+	另外， 也不要直接编辑 <code class="filename">GENERIC</code>，
+	因为下次您
+	<a class="link" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD">更新代码</a> 时它会被覆盖，
+	而您的修改也就随之丢失了。</p><p xmlns="http://www.w3.org/1999/xhtml">您也可以考虑把内核配置文件放到别的地方，
+	然后再到 <code class="filename">i386</code>
+	目录中创建一个指向它的符号链接。</p><p xmlns="http://www.w3.org/1999/xhtml">例如：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src/sys/i386/conf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir /root/kernels</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cp GENERIC /root/kernels/MYKERNEL</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ln -s /root/kernels/MYKERNEL</code></strong></pre></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">必须以 <code class="systemitem">root</code> 身份执行这些和接下来命令，
+	否则就会得到 <span class="errortype">permission denied</span> 的错误提示。
+      </p></div><p>现在就可以用您喜欢的文本编辑器来编辑
+      <code class="filename">MYKERNEL</code> 了。
+      如果您刚刚开始使用 FreeBSD， 唯一可用的编辑器很可能是
+      <span class="application">vi</span>， 它的使用比较复杂， 限于篇幅，
+      这里不予介绍， 您可以在 <a class="link" href="bibliography.html" title="Appendix B. 参考文献">参考书目</a> 一章中找到很多相关书籍。
+      不过， FreeBSD 也提供了一个更好用的编辑器，
+      它叫做 <span class="application">ee</span>， 对于新手来说，
+      这很可能是一个不错的选择。
+      您可以修改配置文件中的注释以反映您的配置，
+      或其他与 <code class="filename">GENERIC</code> 不同的地方。</p><a id="idp72895568" class="indexterm"></a><p>如果您在<span class="trademark">SunOS</span>™或者其他BSD系统下定制过内核，那这个文件中的绝大部分将对您非常熟悉。
+     如果您使用的是诸如DOS这样的系统，那<code class="filename">GENERIC</code>配置文件看起来就非常困难，
+     所以在下面的 <a class="link" href="kernelconfig-config.html" title="9.6. 配置文件">配置文件</a>章节将慢慢地、仔细地进行介绍。
+      </p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您和 FreeBSD project 进行了 <a class="link" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD">代码同步</a>，
+        则一定要在进行任何更新之前查看
+        <code class="filename">/usr/src/UPDATING</code>。
+        这个文件中描述了更新过的代码中出现的重大问题或需要注意的地方。
+        <code class="filename">/usr/src/UPDATING</code> 总是和您的
+        FreeBSD 源代码对应， 因此能够提供比手册更具时效性的新内容。</p></div><p>现在应该编译内核的源代码了。</p><div class="procedure"><a id="idp72904528"></a><div class="procedure-title">Procedure 9.1. 联编内核</div><ol class="procedure" type="1"><li class="step"><p>进入 <code class="filename">/usr/src</code> 目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong></pre></li><li class="step"><p>编译内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make buildkernel KERNCONF=MYKERNEL</code></strong></pre></li><li class="step"><p>安装新内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make installkernel KERNCONF=MYKERNEL</code></strong></pre></li></ol></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">使用这种方法联编内核时， 需要安装完整的 FreeBSD 源代码。</p></div><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">默认情况下， 在联编您所定制的内核时，
+	<span class="emphasis"><em>全部</em></span> 内核模块也会同时参与构建。
+	如果您希望更快地升级内核， 或者只希望联编您所需要的模块，
+	则应在联编之前编辑 <code class="filename">/etc/make.conf</code>：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">MODULES_OVERRIDE = linux acpi sound/sound sound/driver/ds1 ntfs</pre><p xmlns="http://www.w3.org/1999/xhtml">这个变量的内容是所希望构建的模块列表。</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">WITHOUT_MODULES = linux acpi sound ntfs</pre><p xmlns="http://www.w3.org/1999/xhtml">这个变量的内容是将不在联编过程中编译的顶级模块列表。
+	如果希望了解更多与构建内核有关的变量， 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">make.conf</span>(5)</span></a>
+	联机手册。</p></div><a id="idp72927696" class="indexterm"></a><p>新内核将会被复制到 <code class="filename">/boot/kernel</code> 目录中成为
+      <code class="filename">/boot/kernel/kernel</code> 而旧的则被移到
+      <code class="filename">/boot/kernel.old/kernel</code>。
+      现在关闭系统， 然后用新的内核启动计算机。 如果出现问题，
+      后面的一些 <a class="link" href="kernelconfig-trouble.html" title="9.7. 如果出现问题怎么办">故障排除方法</a>
+      将帮您摆脱困境。 如果您的内核 <a class="link" href="kernelconfig-trouble.html#kernelconfig-noboot">无法启动</a>， 请参考那一节。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">其他与启动过程相关的文件， 如
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 及其配置， 则放在
+	<code class="filename">/boot</code>。 第三方或定制的模块也可以放在
+	<code class="filename">/boot/kernel</code>，
+	不过应该注意保持模块和内核的同步时很重要的，
+	否则会导致不稳定和错误。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="kernelconfig-modules.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="kernelconfig.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="kernelconfig-config.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">9.4. 内核驱动，子系统和模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 9.6. 配置文件</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

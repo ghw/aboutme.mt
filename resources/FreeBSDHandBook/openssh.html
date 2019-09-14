@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.10. OpenSSH</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="ipsec.html" title="14.9. IPsec 上的 VPN" /><link rel="next" href="fs-acl.html" title="14.11. 文件系统访问控制表" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.10. OpenSSH</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ipsec.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="fs-acl.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="openssh"></a>14.10. OpenSSH</h2></div><div><span class="authorgroup">原著 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Chern</span> <span class="surname">Lee</span></span>. </span></div></div></div><a id="idp77860816" class="indexterm"></a><a id="idp77861328" class="indexterm"></a><p><span class="application">OpenSSH</span> 是一组用于安全地访问远程计算机的连接工具。
+      它可以作为 <code class="command">rlogin</code>、
+      <code class="command">rsh</code> <code class="command">rcp</code> 以及
+      <code class="command">telnet</code> 的直接替代品使用。
+      更进一步， 其他任何 TCP/IP 连接都可以通过 SSH 安全地进行隧道/转发。
+      <span class="application">OpenSSH</span> 对所有的传输进行加密，
+      从而有效地阻止了窃听、 连接劫持， 以及其他网络级的攻击。</p><p><span class="application">OpenSSH</span> 由 OpenBSD project 维护， 它基于
+      SSH v1.2.12 并包含了最新的错误修复和更新。
+      它同时兼容 SSH 协议的 1 和 2 两个版本。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77865808"></a>14.10.1. 使用 OpenSSH 的好处</h3></div></div></div><p>一般说来， 在使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=telnet&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">telnet</span>(1)</span></a> 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rlogin&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rlogin</span>(1)</span></a> 时，
+        数据是以未经加密的明文的形式发送的。 这样一来，
+        在客户机和服务器之间的网络上运行的听包程序，
+        便可以在会话中窃取到传输的用户名/密码和数据。
+        <span class="application">OpenSSH</span> 提供了多种的身份验证和加密方法来防止这种情况的发生。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77868880"></a>14.10.2. 启用 sshd</h3></div></div></div><a id="idp77869520" class="indexterm"></a><p><span class="application">sshd</span> 的启用是作为 FreeBSD 安装中
+        <code class="literal">Standard</code> 安装过程中的一步来进行的。 要查看
+        <span class="application">sshd</span> 是否已被启用， 请检查
+        <code class="filename">rc.conf</code> 文件中的：</p><pre class="screen">sshd_enable="YES"</pre><p>这表示在下次系统启动时加载 <span class="application">OpenSSH</span>
+	的服务程序 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a>。 此外， 也可以手动使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc</span>(8)</span></a>
+	脚本 <code class="filename">/etc/rc.d/sshd</code>
+	来启动 <span class="application">OpenSSH</span>：</p><pre class="programlisting">/etc/rc.d/sshd start</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77884880"></a>14.10.3. SSH 客户</h3></div></div></div><a id="idp77885520" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> 的工作方式和
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rlogin&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rlogin</span>(1)</span></a> 非常类似。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ssh user@example.com</code></strong>
+Host key not found from the list of known hosts.
+Are you sure you want to continue connecting (yes/no)? <strong class="userinput"><code>yes</code></strong>
+Host 'example.com' added to the list of known hosts.
+user@example.com's password: <strong class="userinput"><code>*******</code></strong></pre><p>登录过程和使用
+        <code class="command">rlogin</code> 或
+        <code class="command">telnet</code> 建立的会话非常类似。
+        在连接时， SSH 会利用一个密钥指纹系统来验证服务器的真实性。
+        只有在第一次连接时， 用户会被要求输入
+	<code class="literal">yes</code>。 之后的连接将会验证预先保存下来的密钥指纹。
+        如果保存的指纹与登录时接收到的不符， 则将会给出警告。
+        指纹保存在 <code class="filename">~/.ssh/known_hosts</code> 中， 对于 SSH v2 指纹， 则是
+	<code class="filename">~/.ssh/known_hosts2</code>。</p><p>默认情况下， 较新版本的
+        <span class="application">OpenSSH</span> 只接受 SSH v2
+        连接。 如果能用版本 2 则客户程序会自动使用，
+        否则它会返回使用版本 1 的模式。 此外，
+        也可以通过命令行参数 <code class="option">-1</code> 或
+        <code class="option">-2</code> 来相应地强制使用版本 1 或 2。
+        保持客户端的版本 1 能力是为了考虑较早版本的兼容性。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77902416"></a>14.10.4. 安全复制</h3></div></div></div><a id="idp77903056" class="indexterm"></a><a id="idp77904208" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scp</span>(1)</span></a> 命令和
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rcp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rcp</span>(1)</span></a>; 的用法类似， 它用于将文件复制到远程的机器上， 或复制过来，
+	区别是它是安全的。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code> scp user@example.com:/COPYRIGHT COPYRIGHT</code></strong>
+user@example.com's password: <strong class="userinput"><code>*******</code></strong>
+COPYRIGHT            100% |*****************************|  4735
+00:00
+<code class="prompt">#</code></pre><p>由于先前的例子中已经保存了指纹， 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scp</span>(1)</span></a>
+        时会自动地加以验证。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scp</span>(1)</span></a> 使用的参数同
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cp</span>(1)</span></a> 类似。 第一个参数是一个或一组文件，
+	然后是复制的目标。 由于文件是通过 SSH 在网上传递的，
+	因此某些文件的名字需要写成
+	<code class="option">用户名@主机名:&lt;远程文件路径&gt;</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77911888"></a>14.10.5. 配置</h3></div></div></div><a id="idp77912528" class="indexterm"></a><p>针对 <span class="application">OpenSSH</span> 服务程序和客户端的系统级配置文件在
+	<code class="filename">/etc/ssh</code>
+	目录中。</p><p><code class="filename">ssh_config</code> 用于配置客户端的设定，
+        而 <code class="filename">sshd_config</code> 则用于配置服务器端。</p><p>另外 <code class="option">sshd_program</code>
+	(默认是 <code class="filename">/usr/sbin/sshd</code>)， 以及
+	<code class="option">sshd_flags</code> 这两个 <code class="filename">rc.conf</code>
+	选项提供了更多的配置选择。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="security-ssh-keygen"></a>14.10.6. ssh-keygen</h3></div></div></div><p>用于取代口令的一种方法是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 来生成
+        DSA 或 RSA 密钥对用于验证用户的身份：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ssh-keygen -t dsa</code></strong>
+Generating public/private dsa key pair.
+Enter file in which to save the key (/home/user/.ssh/id_dsa):
+Created directory '/home/user/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/user/.ssh/id_dsa.
+Your public key has been saved in /home/user/.ssh/id_dsa.pub.
+The key fingerprint is:
+bb:48:db:f2:93:57:80:b6:aa:bc:f5:d5:ba:8f:79:17 user@host.example.com
+</pre><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 会生成一个包含公私钥对用于验证身份。 私钥将保存到
+        <code class="filename">~/.ssh/id_dsa</code> 或
+        <code class="filename">~/.ssh/id_rsa</code>， 而公钥则被存放到
+        <code class="filename">~/.ssh/id_dsa.pub</code> 或
+        <code class="filename">~/.ssh/id_rsa.pub</code>， 文件名取决于您选择的
+	<acronym class="acronym">DSA</acronym> 和 <acronym class="acronym">RSA</acronym>
+	密钥类型。 <acronym class="acronym">RSA</acronym> 或者 <acronym class="acronym">DSA</acronym>
+	公钥必须被存放到远程机器上的
+        <code class="filename">~/.ssh/authorized_keys</code> 才能够使系统正确运转。
+      </p><p>这将允许从远程连接时以基于
+        SSH 密钥的验证来代替口令验证。</p><p>如果在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 中使用了通行字，
+        则每次使用私钥时都需要输入它。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a>
+        能够缓解多次输入长通行字的压力， 并将在接下来的
+        <a class="xref" href="openssh.html#security-ssh-agent" title="14.10.7. ssh-agent 和 ssh-add">Section 14.10.7, “ssh-agent 和 ssh-add”</a> 予以详述。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">选项和配置文件可能随 <span class="application">OpenSSH</span>
+        的版本不同而不同； 为了避免出现问题，
+        您应参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 联机手册。</p></div><p>这将使到远程机器的连接基于 SSH 密钥而不是口令。</p><p>如果在运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 时使用了通行字，
+	每次使用私钥的时候用户都将被要求输入通行字。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a>
+	能够减缓重复输入较长通行字的负担， 有关更详细的探究在
+	<a class="xref" href="openssh.html#security-ssh-agent" title="14.10.7. ssh-agent 和 ssh-add">Section 14.10.7, “ssh-agent 和 ssh-add”</a> 下一节 .</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">随着你系统上的 <span class="application">OpenSSH</span>
+	  版本的不同，各种选项和配置文件也会不同； 为了避免此类问题，
+	  你需要参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 联机手册。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="security-ssh-agent"></a>14.10.7. ssh-agent 和 ssh-add</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-add</span>(1)</span></a> 这两个工具，
+        提供了一种将 <span class="application">SSH</span> 秘钥加载到内存中以便使用，
+        而不必每次都输入通行字的方法。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> 工具能够使用加载到其中的私钥来处理验证过程。
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> 应被用于启动另一个应用程序。 最基本的用法是，
+        使用它来启动 shell， 而高级一些的用法则是用它来启动窗口管理器。</p><p>要在 shell 中使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a>， 首先应把 shell
+        作为参数来启动它。 随后， 应通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-add</span>(1)</span></a> 并输入通行字，
+        来向它提供身份验证信息。 一旦这些步骤都做完了，
+        用户就应该能够 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> 到任何一个安装了对应公钥的机器了。
+        例如：</p><pre class="screen"><code class="prompt">%</code> ssh-agent <em class="replaceable"><code>csh</code></em>
+<code class="prompt">%</code> ssh-add
+Enter passphrase for /home/user/.ssh/id_dsa:
+Identity added: /home/user/.ssh/id_dsa (/home/user/.ssh/id_dsa)
+<code class="prompt">%</code></pre><p>要在 X11 中使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a>， 调用
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> 的过程应置于
+        <code class="filename">~/.xinitrc</code> 之中。 这将把
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> 服务提供给所有在 X11 中运行的程序。
+        下面是一个 <code class="filename">~/.xinitrc</code> 文件的实例：</p><pre class="programlisting">exec ssh-agent <em class="replaceable"><code>startxfce4</code></em></pre><p>这将启动 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a>， 而后者将在每次 X11
+        启动时运行 <span class="application">XFCE</span>。
+        作完这些之后就可以重启 X11 以便使修改生效。
+        随后您就可以运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-add</span>(1)</span></a> 来加载全部 SSH 密钥了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="security-ssh-tunneling"></a>14.10.8. SSH 隧道</h3></div></div></div><a id="idp77988176" class="indexterm"></a><p><span class="application">OpenSSH</span> 能够创建隧道以便用加密的会话来封装其他协议。</p><p>下面的命令告诉 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> 为 <span class="application">telnet</span> 创建一个隧道：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ssh -2 -N -f -L 5023:localhost:23 user@foo.example.com</code></strong>
+<code class="prompt">%</code></pre><p>上述 <code class="command">ssh</code> 命令使用了下面这些选项：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-2</code></span></dt><dd><p>强制 <code class="command">ssh</code> 使用第2版的协议
+	      (如果需要和较老的 SSH 一同工作请不要使用这个选项)。</p></dd><dt><span class="term"><code class="option">-N</code></span></dt><dd><p>表示不使用命令行， 或者说只使用隧道。 如果省略，
+	      <code class="command">ssh</code> 将同时初始化会话。</p></dd><dt><span class="term"><code class="option">-f</code></span></dt><dd><p>强制 <code class="command">ssh</code> 在后台执行。</p></dd><dt><span class="term"><code class="option">-L</code></span></dt><dd><p>表示产生一条
+	      <em class="replaceable"><code>本地端口:远程主机:远程端口</code></em>
+	      形式的隧道。</p></dd><dt><span class="term"><code class="option">user@foo.example.com</code></span></dt><dd><p>远程 SSH 服务器。</p></dd></dl></div><p>SSH 隧道通过监听
+	<code class="systemitem">localhost</code> 上面指定端口来完成工作。
+	它将把本机主机/端口上接收到的连接通过 SSH 连接转发到远程主机/端口。</p><p>本例中， 位于 <code class="systemitem">localhost</code> 的 <em class="replaceable"><code>5023</code></em> 端口
+	被用于转发 <code class="systemitem">localhost</code> 的连接到远程主机的
+	<em class="replaceable"><code>23</code></em> 端口。
+	由于 <em class="replaceable"><code>23</code></em> 是 <span class="application">telnet</span> 使用的，
+	因此它将通过 SSH 隧道完成 <span class="application">telnet</span> 会话。</p><p>这可以用来封装任意不安全的 TCP 协议， 例如
+        SMTP、 POP3、 FTP等等。</p><div class="example"><a id="idp78012368"></a><div class="example-title">Example 14.1. 使用 SSH 为 SMTP 创建安全隧道</div><div class="example-contents"><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ssh -2 -N -f -L 5025:localhost:25 user@mailserver.example.com</code></strong>
+user@mailserver.example.com's password: <strong class="userinput"><code>*****</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>telnet localhost 5025</code></strong>
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 mailserver.example.com ESMTP</pre><p>这可以与
+          <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a> 以及额外的用户帐号配合来建立一个更透明的 SSH
+          隧道环境。 密钥可以被用在需要输入口令的地方， 而且可以为不同的用户配置不同的隧道。</p></div></div><br class="example-break" /><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78016592"></a>14.10.8.1. 实用的 SSH 通道例子</h4></div></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78017232"></a>14.10.8.1.1. 加强 POP3 服务的安全</h5></div></div></div><p>工作时， 有一个允许外来连接的 SSH 服务器。
+	    同一个办公网络中有一个邮件服务器提供 POP3 服务。
+	    这个网络， 或从您家到办公室的网络可能不，
+	    或不完全可信。 基于这样的原因，
+	    您需要以安全的方式来查看邮件。
+	    解决方法是创建一个到办公室 SSH 服务器的连接，
+	    并通过这个连接来访问 POP3 服务：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ssh -2 -N -f -L 2110:mail.example.com:110 user@ssh-server.example.com</code></strong>
+user@ssh-server.example.com's password: <strong class="userinput"><code>******</code></strong></pre><p>当这个通道连上时， 您可以把 POP3 请求发到
+	    <code class="systemitem">localhost</code> 端口 2110。
+	    这个连接将通过通道安全地转发到
+	    <code class="systemitem">mail.example.com</code>。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78020816"></a>14.10.8.1.2. 绕过严厉的防火墙</h5></div></div></div><p>一些大脑长包的网络管理员会使用一些极端的防火墙策略，
+	    不仅过滤进入的连接， 而且也过滤连出的连接。
+	    一些时候您可能只能连接远程机器 22 端口，以及 80 端口用来进行
+	    SSH 和网页浏览。</p><p>您可能希望访问一些其它的 (也许与工作无关的) 服务，
+	    例如提供音乐的 Ogg Vorbis 流媒体服务器。
+	    如果 Ogg Vorbis server 在 22 或 80 端口以外的端口播放音乐，
+	    则您将无法访问它。</p><p>解决方法是建立一个到您的网络的防火墙之外的网络上的 SSH
+	    服务器， 并通过它提供的通道连接到 Ogg Vorbis 服务器上。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ssh -2 -N -f -L 8888:music.example.com:8000 user@unfirewalled-system.example.org</code></strong>
+user@unfirewalled-system.example.org's password: <strong class="userinput"><code>*******</code></strong></pre><p>现在您可以把客户程序指定到
+	    <code class="systemitem">localhost</code> 的 8888 端口， 它将把请求转发给
+	    <code class="systemitem">music.example.com</code> 的 8000
+	    端口， 从而绕过防火墙。</p></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78029648"></a>14.10.9. 允许用户登录 <code class="varname">AllowUsers</code> 选项</h3></div></div></div><p>通常限制哪些用户能够登录， 以及从何处登录会是好主意。
+        采用 <code class="literal">AllowUsers</code> 选项能够方便地达到这一目的。
+        例如， 想要只允许 <code class="systemitem">root</code> 用户从
+        <code class="systemitem">192.168.1.32</code> 登录， 就可以在
+        <code class="filename">/etc/ssh/sshd_config</code> 文件中加入下述设置：</p><pre class="programlisting">AllowUsers root@192.168.1.32</pre><p>要允许用户 <code class="systemitem">admin</code> 从任何地方登录，
+        则只需列出用户名：</p><pre class="programlisting">AllowUsers admin</pre><p>可以在同一行指定多个用户， 例如：</p><pre class="programlisting">AllowUsers root@192.168.1.32 admin</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">列出需要登录机器的用户很重要； 否则他们将被锁在外面。</p></div><p>在完成对
+         <code class="filename">/etc/ssh/sshd_config</code> 的修改之后您必须告诉
+         <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a> 重新加载其配置文件， 方法是执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/sshd reload</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78042960"></a>14.10.10. 进一步的资料</h3></div></div></div><p><a class="link" href="http://www.openssh.com/" target="_top">OpenSSH</a></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scp</span>(1)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-keygen&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-keygen</span>(1)</span></a>
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-agent&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-agent</span>(1)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh-add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh-add</span>(1)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh_config&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ssh_config</span>(5)</span></a></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sftp-server&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sftp-server</span>(8)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd_config&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">sshd_config</span>(5)</span></a></p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ipsec.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="fs-acl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.9. IPsec 上的 VPN </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.11. 文件系统访问控制表</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

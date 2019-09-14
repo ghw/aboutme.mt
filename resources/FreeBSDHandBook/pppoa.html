@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>26.6. 使用 ATM 上的 PPP (PPPoA)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ppp-and-slip.html" title="Chapter 26. PPP 和 SLIP" /><link rel="prev" href="pppoe.html" title="26.5. 使用基于以太网的PPP(PPPoE)" /><link rel="next" href="slip.html" title="26.7. 使用SLIP" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">26.6. 使用 ATM 上的 <span class="application">PPP</span> (PPPoA)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="pppoe.html">Prev</a> </td><th width="60%" align="center">Chapter 26. PPP 和 SLIP</th><td width="20%" align="right"> <a accesskey="n" href="slip.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="pppoa"></a>26.6. 使用 ATM 上的 <span class="application">PPP</span> (PPPoA)</h2></div></div></div><a id="idp84988240" class="indexterm"></a><a id="idp84989520" class="indexterm"></a><p>以下将介绍如何设置基于ATM的PPP(PPPoA)。
+      PPPoA是欧洲DSL提供商的普遍选择。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84991056"></a>26.6.1. 使用 Alcatel <span class="trademark">SpeedTouch</span>™USB 的 PPPoA</h3></div></div></div><p>针对这一设备的 PPPoA 支持， 在
+	FreeBSD 中是作为 port 提供的， 因为其固件使用了 <a class="link" href="http://www.speedtouchdsl.com/disclaimer_lx.htm" target="_top">阿尔卡特许可协议</a>，
+	因而不能与 FreeBSD 的基本系统一起免费地再发布。</p><p>使用 <a class="link" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">Ports 套件</a> 可以非常方便地安装
+	<span class="package">net/pppoa</span> port，
+	之后按照它提供的指示操作就可以了。</p><p>和许多 USB 设备类似， 阿尔卡特的 <span class="trademark">SpeedTouch</span>™ USB
+        需要从主机上下载固件才能够正常工作。 在 FreeBSD 中您可以将此操作自动化，
+        在有设备插到某个 USB 口的时候自动下载固件。 可以在
+        <code class="filename">/etc/usbd.conf</code>
+        文件中加入下面的信息来让它自动完成固件的传送。 注意， 必须以
+        <code class="systemitem">root</code> 用户的身份编辑它。</p><pre class="programlisting">device "Alcatel SpeedTouch USB"
+    devname "ugen[0-9]+"
+    vendor 0x06b9
+    product 0x4061
+    attach "/usr/local/sbin/modem_run -f /usr/local/libdata/mgmt.o"</pre><p>要启动USB守护进程<span class="application">usbd</span>，
+       在<code class="filename">/etc/rc.conf</code>加入以下行：</p><pre class="programlisting">usbd_enable="YES"</pre><p>也可以将<span class="application">ppp</span>设置成启动时拨号。 向
+       <code class="filename">/etc/rc.conf</code>加入以下这几行。
+       同样地您需要以<code class="systemitem">root</code>用户登录。</p><pre class="programlisting">ppp_enable="YES"
+ppp_mode="ddial"
+ppp_profile="adsl"</pre><p>为了使其正常工作， 您需要使用<span class="package">net/pppoa</span>
+     port提供的<code class="filename">ppp.conf</code>样例。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85005520"></a>26.6.2. 使用mpd</h3></div></div></div><p>可以使用 <span class="application">mpd</span> 来连接多种类型的服务，
+        特别是 PPTP 服务。 您可以在 Ports Collection 中找到
+        <span class="application">mpd</span>， 它的位置是
+        <span class="package">net/mpd</span>。 许多 ADSL modem
+        需要在 modem 和计算机之间建立一条 PPTP 隧道，
+        而阿尔卡特 <span class="trademark">SpeedTouch</span>™ Home 正是其中的一种。</p><p>首先需要从 port 完成安装，
+        然后才能配置 <span class="application">mpd</span> 来满足您的需要，
+        并完成服务商的配置。 port 会把一系列包括了详细注解的配置文件实例放到
+        <code class="filename">PREFIX/etc/mpd/</code>。
+        注意， 这里的 <em class="replaceable"><code>PREFIX</code></em> 表示 ports
+        安装的目录， 默认情况下， 应该是
+        <code class="filename">/usr/local/</code>。
+        关于配置 <span class="application">mpd</span> 的完整说明， 会以
+        HTML 格式随 port 一起安装。 这些文件将放在
+        <code class="filename">PREFIX/share/doc/mpd/</code>。
+        下面是通过 <span class="application">mpd</span> 连接 ADSL
+        服务的一个简单例子。 配置被分别放到了两个文件中， 第一个是
+        <code class="filename">mpd.conf</code>：</p><pre class="programlisting">default:
+    load adsl
+
+adsl:
+    new -i ng0 adsl adsl
+    set bundle authname <em class="replaceable"><code>username</code></em> <a id="co-mpd-ex-user"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+    set bundle password <em class="replaceable"><code>password</code></em> <a id="co-mpd-ex-pass"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+    set bundle disable multilink
+
+    set link no pap acfcomp protocomp
+    set link disable chap
+    set link accept chap
+    set link keep-alive 30 10
+
+    set ipcp no vjcomp
+    set ipcp ranges 0.0.0.0/0 0.0.0.0/0
+
+    set iface route default
+    set iface disable on-demand
+    set iface enable proxy-arp
+    set iface idle 0
+
+    open</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-mpd-ex-user"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>username用来向您的ISP进行验证。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-mpd-ex-pass"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p> password用来向您的ISP进行验证。</p></td></tr></table></div><p><code class="filename">mpd.links</code>包含连接的信息：</p><pre class="programlisting">adsl:
+    set link type pptp
+    set pptp mode active
+    set pptp enable originate outcall
+    set pptp self <em class="replaceable"><code>10.0.0.1</code></em> <a id="co-mpd-ex-self"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+    set pptp peer <em class="replaceable"><code>10.0.0.138</code></em> <a id="co-mpd-ex-peer"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-mpd-ex-self"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>运行<span class="application">mpd</span>的主机的IP地址。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-mpd-ex-peer"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>ADSL modem的IP地址。 Alcatel
+	  <span class="trademark">SpeedTouch</span>™ Home 默认的是 <code class="systemitem">10.0.0.138</code>。</p></td></tr></table></div><p>初始化连接：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mpd -b adsl</code></strong></pre><p>您可以通过以下命令查看连接状态：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ifconfig ng0</code></strong>
+ng0: flags=88d1&lt;UP,POINTOPOINT,RUNNING,NOARP,SIMPLEX,MULTICAST&gt; mtu 1500
+     inet 216.136.204.117 --&gt; 204.152.186.171 netmask 0xffffffff</pre><p>使用<span class="application">mpd</span>连接ADSL服务是推荐的方式。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85046096"></a>26.6.3. 使用pptpclient</h3></div></div></div><p>也可以使用<span class="package">net/pptpclient</span>连接其它的
+      PPPoA。</p><p>要使用 <span class="package">net/pptpclient</span> 连接
+	 DSL 服务， 需要安装 port 或 package 并编辑
+	 <code class="filename">/etc/ppp/ppp.conf</code>。 您需要有
+	 <code class="systemitem">root</code> 权限才能完成这两项操作。
+	 以下是 <code class="filename">ppp.conf</code> 中的一个示例项。
+	 参考 <span class="application">ppp</span> 的联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ppp</span>(8)</span></a>，
+	 以了解更多有关 <code class="filename">ppp.conf</code> 选项的信息。</p><pre class="programlisting">adsl:
+ set log phase chat lcp ipcp ccp tun command
+ set timeout 0
+ enable dns
+ set authname <em class="replaceable"><code>username</code></em> <a id="co-pptp-ex-user"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+ set authkey <em class="replaceable"><code>password</code></em> <a id="co-pptp-ex-pass"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+ set ifaddr 0 0
+ add default HISADDR</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-pptp-ex-user"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>您在 DSL 服务提供商那里的用户名</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-pptp-ex-pass"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>您帐户的口令。</p></td></tr></table></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">由于您必须将帐号密码以明文的方式放入<code class="filename">ppp.conf</code>
+	 您应该确保没有任何人能看到此文件的内容。 以下一系列命令将会确保此文件只对
+	 <code class="systemitem">root</code>用户可读。
+	 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chmod</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chown&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chown</span>(8)</span></a> 的联机手册以了解有关如何操作的进一步信息。</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chown root:wheel /etc/ppp/ppp.conf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>chmod 600 /etc/ppp/ppp.conf</code></strong></pre></div><p>以下将为到 DSL 路由器的会话打开一个 tunnel。
+	以太网DSL modem有一个设置的局域网IP地址。 以 Alcatel <span class="trademark">SpeedTouch</span>™ Home
+	为例， 这个地址是 <code class="systemitem">10.0.0.138</code>。
+	路由器的文档应该会告诉您它使用的地址。
+	执行以下命令以打开 tunnel 并开始会话：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pptp address adsl</code></strong></pre><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">您应该在命令的最后加上(<span class="quote">“<span class="quote">&amp;</span>”</span>)号， 否则 <span class="application">pptp</span>
+	无法返回到命令行提示符。</p></div><p>要创建一个 <code class="filename">tun</code>虚拟设备用于进程<span class="application">pptp</span>
+	和<span class="application">ppp</span> 之间的交互。 一旦您回到了命令行，
+	或者 <span class="application">pptp</span>
+	进程确认了一个连接， 您可以这样检查tunnel设备：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ifconfig tun0</code></strong>
+tun0: flags=8051&lt;UP,POINTOPOINT,RUNNING,MULTICAST&gt; mtu 1500
+        inet 216.136.204.21 --&gt; 204.152.186.171 netmask 0xffffff00
+        Opened by PID 918</pre><p>如果您无法连接， 一般可以通过<span class="application">telnet</span>或者web浏览器检查路由器(modem)的配置。
+      如果依旧无法连接， 您应该检查<code class="command">pptp</code>的输出及<span class="application">ppp</span>的日志文件
+	<code class="filename">/var/log/ppp.log</code> 以获得线索。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="pppoe.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ppp-and-slip.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="slip.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">26.5. 使用基于以太网的PPP(PPPoE) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 26.7. 使用SLIP</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

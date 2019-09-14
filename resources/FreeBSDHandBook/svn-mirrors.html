@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>A.6. Subversion 镜像站</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mirrors.html" title="Appendix A. 获取 FreeBSD" /><link rel="prev" href="svn.html" title="A.5. 使用 Subversion" /><link rel="next" href="cvsup.html" title="A.7. 使用 CVSup （已取消）" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">A.6. <span class="application">Subversion</span> 镜像站</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="svn.html">Prev</a> </td><th width="60%" align="center">Appendix A. 获取 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="cvsup.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="svn-mirrors"></a>A.6. <span class="application">Subversion</span> 镜像站</h2></div></div></div><a id="idp91326288" class="indexterm"></a><p>全部的镜像站与全部的仓库。</p><p>主 FreeBSD <span class="application">Subversion</span> 服务器， <code class="systemitem">svn.FreeBSD.org</code> ，
+        它是公开的，只读的。 不过未来可能有所改变， 所以推荐用户使用官方的镜像。
+        要通过浏览器查看 FreeBSD <span class="application">Subversion</span> 仓库，
+        访问： <a class="link" href="http://svnweb.FreeBSD.org/" target="_top">http://svnweb.FreeBSD.org/</a> 。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">FreeBSD svn 镜像网络还处于建设初期， 可能会有变动， 这个名单不是永久不变的。
+            特别是服务器 SSL 证书可能会在未来某个时刻发生变动。</p></div><div class="informaltable"><table border="1"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th>服务器名称</th><th>支持的协议</th><th>服务器所在地</th><th>SSL 指纹</th></tr></thead><tbody><tr><td><code class="systemitem">svn0.us-west.FreeBSD.org</code></td><td>svn, <a class="link" href="http://svn0.us-west.FreeBSD.org/" target="_top">http</a>,
+	      <a class="link" href="https://svn0.us-west.FreeBSD.org/" target="_top">https</a></td><td>美国， 加利福尼亚州</td><td>SHA1
+	      <code class="literal">1C:BD:85:95:11:9F:EB:75:A5:4B:C8:A3:FE:08:E4:02:73:06:1E:61</code></td></tr><tr><td><code class="systemitem">svn0.us-east.FreeBSD.org</code></td><td>svn, <a class="link" href="http://svn0.us-east.FreeBSD.org/" target="_top">http</a>,
+	      <a class="link" href="https://svn0.us-east.FreeBSD.org/" target="_top">https</a>, rsync</td><td>美国， 新泽西州</td><td>SHA1
+	      <code class="literal">1C:BD:85:95:11:9F:EB:75:A5:4B:C8:A3:FE:08:E4:02:73:06:1E:61</code></td></tr><tr><td><code class="systemitem">svn0.eu.FreeBSD.org</code></td><td>svn, <a class="link" href="http://svn0.eu.FreeBSD.org/" target="_top">http</a>,
+	      <a class="link" href="https://svn0.eu.FreeBSD.org/" target="_top">https</a>, rsync</td><td>欧洲， 英国</td><td>SHA1
+	      <code class="literal">39:B0:53:35:CE:60:C7:BB:00:54:96:96:71:10:94:BB:CE:1C:07:A7</code></td></tr></tbody></table></div><p>首选协议应该选 <acronym class="acronym">HTTPS</acronym> ，它提供额外的保护， 防止其它计算机冒充 FreeBSD 镜像服务器 （通常称为 <span class="quote">“<span class="quote">中间人</span>”</span> 攻击），
+        或其它方式试图发送不良信息给最终用户。</p><p>第一次连接 <acronym class="acronym">HTTPS</acronym> 镜像的时候会要求用户校验服务器 <span class="emphasis"><em>指纹</em></span> 。</p><pre class="screen">Error validating server certificate for 'https://svn0.us-west.freebsd.org:443':
+ - The certificate is not issued by a trusted authority. Use the
+   fingerprint to validate the certificate manually!
+ - The certificate hostname does not match.
+Certificate information:
+ - Hostname: svnmir.ysv.FreeBSD.org
+ - Valid: from Jul 29 22:01:21 2013 GMT until Dec 13 22:01:21 2040 GMT
+ - Issuer: clusteradm, FreeBSD.org, (null), CA, US (clusteradm@FreeBSD.org)
+ - Fingerprint: 1C:BD:85:95:11:9F:EB:75:A5:4B:C8:A3:FE:08:E4:02:73:06:1E:61
+(R)eject, accept (t)emporarily or accept (p)ermanently?</pre><p>对比显示的与上表中列出的指纹。 如果指纹匹配， 则服务器的安全证书可以暂时或永久地被接受。
+        暂时接受证书的将会在服务器的单个会话结束后，认证信息将过期， 下一次连接时将要重新验证步骤。
+        永久接受证书会把认证证书存储在 <code class="filename">~/.subversion/auth/</code> 里去， 用户江不会再次要求验证指纹，
+        直至证书过期。</p><p>如果 <acronym class="acronym">HTTPS</acronym> 由于防火墙或其它原因导致不能连接， <code class="literal">SVN</code> 协议将是第二选择，
+        传输速度先对快些。 如果还是不能连接，只能使用 <acronym class="acronym">HTTP</acronym> 协议了。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="svn.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mirrors.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="cvsup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">A.5. 使用 <span class="application">Subversion</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> A.7. 使用 CVSup （已取消）</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

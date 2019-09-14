@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.4. 开始安装</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-pre.html" title="3.3. 安装前的准备工作" /><link rel="next" href="using-sysinstall.html" title="3.5. 介绍 Sysinstall" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.4. 开始安装</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-pre.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="using-sysinstall.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-start"></a>3.4. 开始安装</h2></div></div></div><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">默认情况下, 安装过程并不会改变任何您硬盘中的数据，
+	除非您看到下面的讯息：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="literallayout">Last Chance: Are you SURE you want continue the installation?
+
+If you're running this on a disk with data you wish to save then WE
+STRONGLY ENCOURAGE YOU TO MAKE PROPER BACKUPS before proceeding!
+
+We can take no responsibility for lost disk contents!</pre><p xmlns="http://www.w3.org/1999/xhtml">在看到这最后的警告讯息前您都可以随时离开，
+	安装程序界面不会变更您的硬盘。如果您发现有任何设定错误，
+	这时您可以直接将电源关掉而不会造成任何伤害。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-starting"></a>3.4.1. 开机启动</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-starting-i386"></a>3.4.1.1. 引导 <span class="trademark">i386</span>™ 系统</h4></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>从电脑尚未开机开始说起</p></li><li class="step"><p>将电脑电源打开。刚开始的时候它应该会显示进入系统设置菜单或
+	    BIOS 要按哪个键，常见的是 <span class="keycap"><strong>F2</strong></span>、
+	    <span class="keycap"><strong>F10</strong></span>、<span class="keycap"><strong>Del</strong></span> 或
+	    <span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>S</strong></span>。不论是要按哪个键，请按它进入 BIOS 设置画面。
+	    有时您的计算机可能会显示一个图形画面，典型的做法是按
+	    <span class="keycap"><strong>Esc</strong></span> 将关掉这个图形画面，
+	    以使您能够看到必要的设置信息。</p></li><li class="step"><p>找到设置开机顺序的选项，它的标记为 <span class="quote">“<span class="quote">Boot Order</span>”</span>
+	    通常会列出一些设备让您选择，例如：<code class="literal">Floppy</code>、
+	    <code class="literal">CDROM</code>、<code class="literal">First Hard Disk</code>
+	    等等。</p><p>如果您要用光盘安装，请选择 CDROM。 如果使用 USB 盘，
+	    或者软盘来引导系统， 也应类似地确认选择了正确的引导设备。
+	    如有疑问， 请参考您的主板说明手册。</p><p>储存设定并离开，系统应该会重新启动。</p></li><li class="step"><p>如果您根据
+	    <a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a> 制作了 <span class="quote">“<span class="quote">可引导</span>”</span> 的 USB 记忆棒，
+	    在开机前将其插到计算机上。</p><p>如果您是从光盘安装， 那么开机后请立即将
+	    FreeBSD 光盘放入光驱中。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">对于 FreeBSD 7.3 和更早的版本， 可以使用软盘引导，
+	      这些软盘可以根据 <a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a> 来制作。 其中，
+	      <code class="filename">boot.flp</code> 是启动盘。
+	      引导系统时应使用这张软盘。</p></div><p>如果您开机后发现计算机引导了先前已经装好的其他操作系统， 请检查：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>是不是软盘或光盘太晚放入而错失开机引导时间。 如果是，
+		请将它们放入后重新开机。</p></li><li class="listitem"><p>BIOS 设定不对，请重新检查 BIOS 的设定。</p></li><li class="listitem"><p>您的 BIOS 不支持从这些安装介质引导。</p></li></ol></div></li><li class="step"><p>FreeBSD 即将启动。如果您是从光盘引导，
+	    您会见到类似下面的画面：</p><pre class="screen">Booting from CD-Rom...
+645MB medium detected
+CD Loader 1.2
+
+Building the boot loader arguments
+Looking up /BOOT/LOADER... Found
+Relocating the loader and the BTX
+Starting the BTX loader
+
+BTX loader 1.00 BTX version is 1.02
+Consoles: internal video/keyboard
+BIOS CD is cd0
+BIOS drive C: is disk0
+BIOS drive D: is disk1
+BIOS 636kB/261056kB available memory
+
+FreeBSD/i386 bootstrap loader, Revision 1.1
+
+Loading /boot/defaults/loader.conf
+/boot/kernel/kernel text=0x64daa0 data=0xa4e80+0xa9e40 syms=[0x4+0x6cac0+0x4+0x88e9d]
+\</pre><p>如果您从软盘启动， 则应看到类似下面的画面：</p><pre class="screen">Booting from Floppy...
+Uncompressing ... done
+
+BTX loader 1.00  BTX version is 1.01
+Console: internal video/keyboard
+BIOS drive A: is disk0
+BIOS drive C: is disk1
+BIOS 639kB/261120kB available memory
+
+FreeBSD/i386 bootstrap loader, Revision 1.1
+
+Loading /boot/defaults/loader.conf
+/kernel text=0x277391 data=0x3268c+0x332a8 |
+
+Insert disk labelled "Kernel floppy 1" and press any key...</pre><p>请根据提示将
+	    <code class="filename">boot.flp</code> 软盘取出， 插入
+	    <code class="filename">kern1.flp</code> 这张盘， 然后按
+	    <span class="keycap"><strong>Enter</strong></span>。 您只需从第一张软盘启动，
+	    然后再需要时根据提示插入其他软盘就可以了。</p></li><li class="step"><p>不论是从光盘、 USB 记忆棒或软盘引导， 接下来都会进入 FreeBSD
+	    引导加载器菜单：</p><div class="figure"><a id="boot-loader-menu"></a><div class="figure-title">Figure 3.1. FreeBSD Boot Loader Menu</div><div class="figure-contents"><div class="mediaobject"><img src="install/boot-loader-menu.png" alt="FreeBSD Boot Loader Menu" /></div></div></div><br class="figure-break" /><p>您可以等待十秒， 或按 <span class="keycap"><strong>Enter</strong></span>。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp66710096"></a>3.4.1.2. 引导 <span class="trademark">SPARC64</span>®</h4></div></div></div><p>多数 <span class="trademark">SPARC64</span>® 系统均配置为从硬盘自动引导。
+	  如果希望安装 FreeBSD，就需要从网络或 CDROM 启动了，
+	  这需要首先进入 PROM (OpenFirmware)。</p><p>要完成这项工作，首先需要重启系统，并等待出现引导消息。
+	  具体的信息取决于您使用的型号，不过它应该会是类似下面这样：</p><pre class="screen">Sun Blade 100 (UltraSPARC-IIe), Keyboard Present
+Copyright 1998-2001 Sun Microsystems, Inc.  All rights reserved.
+OpenBoot 4.2, 128 MB memory installed, Serial #51090132.
+Ethernet address 0:3:ba:b:92:d4, Host ID: 830b92d4.</pre><p>如果您的系统此时开始了从硬盘引导的过程，则需要按下
+	  <span class="keycap"><strong>L1</strong></span>+<span class="keycap"><strong>A</strong></span>
+	  或
+	  <span class="keycap"><strong>Stop</strong></span>+<span class="keycap"><strong>A</strong></span>，
+	  或者在串口控制台上发送 <code class="command">BREAK</code>
+	  (例如， 在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tip</span>(1)</span></a> 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cu&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cu</span>(1)</span></a> 中是
+	  <code class="command">~#</code>) 以便进入 PROM 提示符。
+	  它应该是类似下面这样：</p><pre class="screen"><code class="prompt">ok     </code><a id="prompt-single"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+<code class="prompt">ok {0} </code><a id="prompt-smp"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#prompt-single"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这是在只有一颗
+		CPU 的系统上的提示。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#prompt-smp"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这是用于 SMP 系统的选项， 这里的数字，
+		是系统中可用的 CPU 数量。</p></td></tr></table></div><p>这时， 将 CDROM 插入驱动器， 并在 PROM 提示符后面，
+	  输入 <code class="command">boot cdrom</code>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="view-probe"></a>3.4.2. 查看设备探测的结果</h3></div></div></div><p>前面屏幕显示的最后几百行字会存在缓冲区中以便您查阅。</p><p>要浏览缓冲区，您可以按下 <span class="keycap"><strong>Scroll Lock</strong></span> 键，
+	这会开启画面的卷动功能。然后您就可以使用方向键或
+	<span class="keycap"><strong>PageUp</strong></span> 、<span class="keycap"><strong>PageDown</strong></span> 键来上下翻阅。
+	再按一次 <span class="keycap"><strong>Scroll Lock</strong></span> 键将停止画面卷动。</p><p>在您浏览的时候会看到类似
+	<a class="xref" href="install-start.html#install-dev-probe" title="Figure 3.2. 典型的设备探测结果">Figure 3.2, “典型的设备探测结果”</a>的画面。
+	  真正的结果依照您的电脑装置而有所不同。</p><div class="figure"><a id="install-dev-probe"></a><div class="figure-title">Figure 3.2. 典型的设备探测结果</div><div class="figure-contents"><pre class="screen">avail memory = 253050880 (247120K bytes)
+Preloaded elf kernel "kernel" at 0xc0817000.
+Preloaded mfs_root "/mfsroot" at 0xc0817084.
+md0: Preloaded image &lt;/mfsroot&gt; 4423680 bytes at 0xc03ddcd4
+
+md1: Malloc disk
+Using $PIR table, 4 entries at 0xc00fde60
+npx0: &lt;math processor&gt; on motherboard
+npx0: INT 16 interface
+pcib0: &lt;Host to PCI bridge&gt; on motherboard
+pci0: &lt;PCI bus&gt; on pcib0
+pcib1:&lt;VIA 82C598MVP (Apollo MVP3) PCI-PCI (AGP) bridge&gt; at device 1.0 on pci0
+pci1: &lt;PCI bus&gt; on pcib1
+pci1: &lt;Matrox MGA G200 AGP graphics accelerator&gt; at 0.0 irq 11
+isab0: &lt;VIA 82C586 PCI-ISA bridge&gt; at device 7.0 on pci0
+isa0: &lt;iSA bus&gt; on isab0
+atapci0: &lt;VIA 82C586 ATA33 controller&gt; port 0xe000-0xe00f at device 7.1 on pci0
+ata0: at 0x1f0 irq 14 on atapci0
+ata1: at 0x170 irq 15 on atapci0
+uhci0 &lt;VIA 83C572 USB controller&gt; port 0xe400-0xe41f irq 10 at device 7.2 on pci
+0
+usb0: &lt;VIA 83572 USB controller&gt; on uhci0
+usb0: USB revision 1.0
+uhub0: VIA UHCI root hub, class 9/0, rev 1.00/1.00, addr1
+uhub0: 2 ports with 2 removable, self powered
+pci0: &lt;unknown card&gt; (vendor=0x1106, dev=0x3040) at 7.3
+dc0: &lt;ADMtek AN985 10/100BaseTX&gt; port 0xe800-0xe8ff mem 0xdb000000-0xeb0003ff ir
+q 11 at device 8.0 on pci0
+dc0: Ethernet address: 00:04:5a:74:6b:b5
+miibus0: &lt;MII bus&gt; on dc0
+ukphy0: &lt;Generic IEEE 802.3u media interface&gt; on miibus0
+ukphy0: 10baseT, 10baseT-FDX, 100baseTX, 100baseTX-FDX, auto
+ed0: &lt;NE2000 PCI Ethernet (RealTek 8029)&gt; port 0xec00-0xec1f irq 9 at device 10.
+0 on pci0
+ed0 address 52:54:05:de:73:1b, type NE2000 (16 bit)
+isa0: too many dependant configs (8)
+isa0: unexpected small tag 14
+orm0: &lt;Option ROM&gt; at iomem 0xc0000-0xc7fff on isa0
+fdc0: &lt;NEC 72065B or clone&gt; at port 0x3f0-0x3f5,0x3f7 irq 6 drq2 on isa0
+fdc0: FIFO enabled, 8 bytes threshold
+fd0: &lt;1440-KB 3.5” drive&gt; on fdc0 drive 0
+atkbdc0: &lt;Keyboard controller (i8042)&gt; at port 0x60,0x64 on isa0
+atkbd0: &lt;AT Keyboard&gt; flags 0x1 irq1 on atkbdc0
+kbd0 at atkbd0
+psm0: &lt;PS/2 Mouse&gt; irq 12 on atkbdc0
+psm0: model Generic PS/@ mouse, device ID 0
+vga0: &lt;Generic ISA VGA&gt; at port 0x3c0-0x3df iomem 0xa0000-0xbffff on isa0
+sc0: &lt;System console&gt; at flags 0x100 on isa0
+sc0: VGA &lt;16 virtual consoles, flags=0x300&gt;
+sio0 at port 0x3f8-0x3ff irq 4 flags 0x10 on isa0
+sio0: type 16550A
+sio1 at port 0x2f8-0x2ff irq 3 on isa0
+sio1: type 16550A
+ppc0: &lt;Parallel port&gt; at port 0x378-0x37f irq 7 on isa0
+pppc0: SMC-like chipset (ECP/EPP/PS2/NIBBLE) in COMPATIBLE mode
+ppc0: FIFO with 16/16/15 bytes threshold
+plip0: &lt;PLIP network interface&gt; on ppbus0
+ad0: 8063MB &lt;IBM-DHEA-38451&gt; [16383/16/63] at ata0-master UDMA33
+acd0: CD-RW &lt;LITE-ON LTR-1210B&gt; at ata1-slave PIO4
+Mounting root from ufs:/dev/md0c
+/stand/sysinstall running as init on vty0</pre></div></div><br class="figure-break" /><p>请仔细检查探测结果以确定 FreeBSD 找到所有您期望出现的设备。
+	如果系统没有找到设备， 则不会将其列出。
+	<a class="link" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">定制内核</a>
+	能够让您为系统添加默认的
+	<code class="filename">GENERIC</code> 内核所不支持的设备， 如声卡等。</p><p>在 FreeBSD 6.2 和更高版本中， 在探测完系统设备之后，
+	将显示 <a class="xref" href="install-start.html#config-country" title="Figure 3.3. 选择国家及地区菜单">Figure 3.3, “选择国家及地区菜单”</a>。
+	  请使用光标键来选择国家或地区。 接着按	<span class="keycap"><strong>Enter</strong></span>，
+	  系统将自动设置地区。 您也可以很容易地退出
+	  <span class="application">sysinstall</span> 程序并从头来过。</p><div class="figure"><a id="config-country"></a><div class="figure-title">Figure 3.3. 选择国家及地区菜单</div><div class="figure-contents"><div class="mediaobject"><img src="install/config-country.png" alt="选择国家及地区菜单" /></div></div></div><br class="figure-break" /><p>如果您在国家及地区菜单中选择了 <span class="guimenuitem">United States</span> (美国)，
+	则系统会使用标准的美国键盘映射； 如果选择了不同的国家，
+	则会显示下面的菜单。 使用光标键选择正确的键盘映射，
+	然后按 <span class="keycap"><strong>Enter</strong></span> 来确认。</p><div class="figure"><a id="config-keymap"></a><div class="figure-title">Figure 3.4. 选择键盘菜单</div><div class="figure-contents"><div class="mediaobject"><img src="install/config-keymap.png" alt="选择键盘菜单" /></div></div></div><br class="figure-break" /><div class="figure"><a id="sysinstall-exit"></a><div class="figure-title">Figure 3.5. 选择离开 Sysinstall</div><div class="figure-contents"><div class="mediaobject"><img src="install/sysinstall-exit.png" alt="选择离开 Sysinstall" /></div></div></div><br class="figure-break" /><p>在主界面使用方向键选择 <span class="guimenuitem">Exit Install</span> 您会看到
+	如下的信息：</p><pre class="screen">                      User Confirmation Requested
+         Are you sure you wish to exit? The system will reboot
+
+                            [ Yes ]    No</pre><p>如果此处选择了
+	<span class="guibutton">[ Yes ]</span> 但 CDROM 还留在光驱里， 则会再次进入安装程序。</p><p>如果您是从软盘启动， 则在重启系统之前，
+	需要将 <code class="filename">boot.flp</code> 软盘取出。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-pre.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="using-sysinstall.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.3. 安装前的准备工作 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.5. 介绍 Sysinstall</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

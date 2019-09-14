@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.7. Apache HTTP 服务器</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-dns.html" title="28.6. 域名系统 (DNS)" /><link rel="next" href="network-ftp.html" title="28.8. 文件传输协议 (FTP)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.7. Apache HTTP 服务器</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-dns.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-ftp.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-apache"></a>28.7. Apache HTTP 服务器</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp87271120" class="indexterm"></a><a id="idp87272016" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87272528"></a>28.7.1. 纵览</h3></div></div></div><p>FreeBSD 被用于运行许多全球最为繁忙的 web 站点。
+        大多数 Internet 上的 web 服务器，
+        都使用 <span class="application">Apache HTTP 服务器</span>。
+        <span class="application">Apache</span> 软件包可以在您的 FreeBSD
+        安装盘上找到。 如果没有在首次安装时附带安装
+        <span class="application">Apache</span>， 则可以通过 <span class="package">www/apache13</span> 或 <span class="package">www/apache22</span> port 来安装。</p><p>一旦成功地安装了 <span class="application">Apache</span>，
+        就必须对其进行配置。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这一节介绍了 1.3.X 版本的
+        <span class="application">Apache HTTP 服务器</span> 的配置，
+        因为它是随 FreeBSD 一同使用的最多的版本。
+        <span class="application">Apache</span> 2.X 引入了很多新技术，
+        但在此并不讨论。 要了解关于 <span class="application">Apache</span> 2.X
+        的更多资料， 请参见 <code class="uri"><a class="uri" href="http://httpd.apache.org/" target="_top">http://httpd.apache.org/</a></code>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87286864"></a>28.7.2. 配置</h3></div></div></div><a id="idp87287504" class="indexterm"></a><p>主要的 <span class="application">Apache HTTP Server</span> 配置文件，
+	在 FreeBSD 上会安装为
+	<code class="filename">/usr/local/etc/apache/httpd.conf</code>。
+	这是一个典型的 <span class="trademark">UNIX</span>® 文本配置文件， 它使用 <code class="literal">#</code>
+	作为注释符。 关于全部配置选项的详尽介绍超出了本书的范围，
+	这里将只介绍最常被修改的那些。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">ServerRoot "/usr/local"</code></span></dt><dd><p>这指定了 <span class="application">Apache</span>
+	    安装的顶级目录。 执行文件被放到服务器根目录 (server root) 的
+	    <code class="filename">bin</code> 和
+	    <code class="filename">sbin</code> 子目录中，
+	    而配置文件则位于
+	    <code class="filename">etc/apache</code>。</p></dd><dt><span class="term"><code class="literal">ServerAdmin you@your.address</code></span></dt><dd><p>这个地址是在服务器发生问题时应发送电子邮件的地址，
+	      它会出现在服务器生成的页面上， 例如错误页面。</p></dd><dt><span class="term"><code class="literal">ServerName www.example.com</code></span></dt><dd><p><code class="literal">ServerName</code> 允许您配置发送回客户端的主机名，
+	      如果您的服务器被用户以别的名字访问 (例如， 使用 <code class="systemitem">www</code>
+	      而不是主机本身的真实名字)。</p></dd><dt><span class="term"><code class="literal">DocumentRoot "/usr/local/www/data"</code></span></dt><dd><p><code class="literal">DocumentRoot</code>： 这个目录是您的文档所在的目录。
+	      默认情况下， 所有的请求都会从这个位置去获取，
+	      但也可以通过符号连接和别名指定其它的位置。</p></dd></dl></div><p>在修改配置之前备份
+	<span class="application">Apache</span> 的配置文件永远是一个好习惯。
+	一旦对初始配置满意了， 就可以开始运行 <span class="application">Apache</span> 了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87306320"></a>28.7.3. 运行 <span class="application">Apache</span></h3></div></div></div><a id="idp87307216" class="indexterm"></a><p>与许多其它网络服务不同， <span class="application">Apache</span> 并不依赖
+        <span class="application">inetd</span> 超级服务器来运行。
+        一般情况下会把它配置为一个独立的服务器， 以期在客户的 web
+        浏览器连入 HTTP 请求时， 能够获得更好的性能。 它提供了一个 shell
+        脚本来使启动、 停止和重新启动服务器变得尽可能地简单。
+        首次启动 <span class="application">Apache</span>，
+        只需执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/sbin/apachectl start</code></strong></pre><p>可以在任何时候使用下面的命令来停止服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/sbin/apachectl stop</code></strong></pre><p>当由于某种原因修改了配置文件之后， 需要重启服务器：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/sbin/apachectl restart</code></strong></pre><p>要在重启 <span class="application">Apache</span> 服务器时不中断当前的连接，
+	则应运行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/sbin/apachectl graceful</code></strong></pre><p>更多的信息， 可以在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=apachectl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">apachectl</span>(8)</span></a> 联机手册中找到。</p><p>要在系统启动时启动 <span class="application">Apache</span>， 则应在
+        <code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">apache_enable="YES"</pre><p>或者对于<span class="application">Apache</span> 2.2：</p><pre class="programlisting">apache22_enable="YES"</pre><p>如果您希望在系统引导时启动 <span class="application">Apache</span>
+	<code class="command">httpd</code> 程序并指定其它一些选项，
+	则可以把下面的行加到
+	<code class="filename">rc.conf</code>：</p><pre class="programlisting">apache_flags=""</pre><p>现在 web 服务器就开始运行了， 您可以使用 web 浏览器打开
+        <code class="literal">http://localhost/</code>。 默认显示的 web 页面是
+        <code class="filename">/usr/local/www/data/index.html</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87326416"></a>28.7.4. 虚拟主机</h3></div></div></div><p><span class="application">Apache</span> 支持两种不同类型的虚拟主机。
+	第一种方法是基于名字的虚拟主机。 基于名字的虚拟主机使用客户机发来的
+	HTTP/1.1 头来辨别主机名。 这使得不同的域得以共享同一个 IP 地址。</p><p>要配置 <span class="application">Apache</span> 来使用基于名字的虚拟主机，
+        需要把类似下面的项加到您的 <code class="filename">httpd.conf</code> 中：</p><pre class="programlisting">NameVirtualHost *</pre><p>如果您的 web 服务器的名字是 <code class="systemitem">www.domain.tld</code>，
+        而您希望建立一个
+        <code class="systemitem">www.someotherdomain.tld</code> 的虚拟域，
+        则应在
+        <code class="filename">httpd.conf</code> 中加入：</p><pre class="screen">&lt;VirtualHost *&gt;
+ServerName www.domain.tld
+DocumentRoot /www/domain.tld
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *&gt;
+ServerName www.someotherdomain.tld
+DocumentRoot /www/someotherdomain.tld
+&lt;/VirtualHost&gt;</pre><p>您需要把上面的地址和文档路径改为所使用的那些。</p><p>要了解关于虚拟主机的更多信息，
+        请参考官方的 <span class="application">Apache</span> 文档， 这些文档可以在 <code class="uri"><a class="uri" href="http://httpd.apache.org/docs/vhosts/" target="_top">http://httpd.apache.org/docs/vhosts/</a></code> 找到。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87370192"></a>28.7.5. Apache 模块</h3></div></div></div><a id="idp87370832" class="indexterm"></a><p>有许多不同的 <span class="application">Apache</span> 模块，
+        它们可以在基本的服务器基础上提供许多附加的功能。 FreeBSD 的
+        Ports Collection 为安装
+        <span class="application">Apache</span>
+        和常用的附加模块提供了非常方便的方法。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87372880"></a>28.7.5.1. mod_ssl</h4></div></div></div><a id="idp87373520" class="indexterm"></a><a id="idp87374416" class="indexterm"></a><a id="idp87374928" class="indexterm"></a><p><span class="application">mod_ssl</span> 这个模块使用 OpenSSL 库，
+          来提供通过 安全套接字层 (SSL v2/v3) 和 传输层安全 (TLS v1)
+          协议的强加密能力。
+          这个模块提供了从某一受信的证书签署机构申请签名证书所需的所有工具，
+          您可以藉此在 FreeBSD 上运行安全的 web 服务器。</p><p>如果您未曾安装
+	  <span class="application">Apache</span>， 也可以直接安装一份包含了
+	  <span class="application">mod_ssl</span> 的版本的
+	  <span class="application">Apache</span>
+	  1.3.X， 其方法是通过 <span class="package">www/apache13-modssl</span> port 来进行。 SSL
+	  支持已经作为 <span class="application">Apache</span> 2.X 的一部分提供，
+	  您可以通过
+	  <span class="package">www/apache22</span> port 来安装后者。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87383888"></a>28.7.5.2. 语言绑定</h4></div></div></div><p>Apache对于一些主要的脚本语言都有相应的模块。
+	  这些模块使得完全使用某种脚本语言来写
+	  <span class="application">Apache</span> 模块成为可能。
+	  他们通常也被嵌入到服务器作为一个常驻内存的解释器，
+	  以避免启动一个外部解释器对于下一节将描述的动态网站所需时间和资源上的开销。
+	</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87385552"></a>28.7.6. 动态网站</h3></div></div></div><a id="idp87386192" class="indexterm"></a><p>在过去的十年里，越来越多的企业为了增加收益和暴光率而转向了互联网。
+	这也同时增进了对于互动网页内容的需求。有些公司，比如 <span class="trademark">Microsoft</span>®
+	推出了基于他们专有产品的解决方案，开源社区也做出了积极的回应。
+	比较时尚的选择包括 Django，Ruby on Rails，
+        <span class="application">mod_perl</span>, and
+        <span class="application">mod_php</span>.</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87397072"></a>28.7.6.1. Django</h4></div></div></div><a id="idp87397712" class="indexterm"></a><a id="idp87398224" class="indexterm"></a><p>Django 是一个以 BSD 许可证发布的 framework，
+	  能让开发者快速写出高性能高品质的 web 应用程序。
+	  它提供给一个对象关系映射组件，数据类型可以被当 Python
+	  中的对象，和一组丰富的动态数据库访问 API，
+	  使开发者避免了写 SQL 语句。它同时还提供了可扩展的模板系统，
+	  让应用程序的逻辑部分与 HTML 的表现层分离。</p><p>Django 依赖与 <span class="application">mod_python</span>，
+	  <span class="application">Apache</span>, 和一个可选的 SQL
+	  数据库引擎。 在设置了一些恰当的标志后，FreeBSD 的 Port
+	  系统将会帮助你安装这些必需的依赖库。</p><div class="example"><a id="network-www-django-install"></a><div class="example-title">Example 28.3. 安装 Django，Apache2， mod_python3，和 PostgreSQL</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/www/py-django; make all install clean -DWITH_MOD_PYTHON3 -DWITH_POSTGRESQL</code></strong></pre></div></div><br class="example-break" /><p>在安装了 Django 和那些依赖的软件之后，
+	  你需要创建一个 Django 项目的目录，然后配置
+	  Apache，当有对于你网站上应用程序的某些指定的 URL
+	  时调用内嵌的 Python 解释器。</p><div class="example"><a id="network-www-django-apache-config"></a><div class="example-title">Example 28.4. Django/mod_python 有关 Apache 部分的配置</div><div class="example-contents"><p>你需要在 Apache 的配置文件
+	    <code class="filename">httpd.conf</code> 加入以下这几行，
+	    把对某些 URL 的请求传给你的 web 应用程序：</p><pre class="screen">&lt;Location "/"&gt;
+    SetHandler python-program
+    PythonPath "['/dir/to/your/django/packages/'] + sys.path"
+    PythonHandler django.core.handlers.modpython
+    SetEnv DJANGO_SETTINGS_MODULE mysite.settings
+    PythonAutoReload On
+    PythonDebug On
+&lt;/Location&gt;</pre></div></div><br class="example-break" /></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87404624"></a>28.7.6.2. Ruby on Rails</h4></div></div></div><a id="idp87405392" class="indexterm"></a><p>Ruby on Rails 是另外一个开源的 web framework，
+	  提供了一个全面的开发框架，能帮助 web
+	  开发者工作更有成效和快速写出强大的应用。
+	  它能非常容易的从 posts 系统安装。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/www/rubygem-rails; make all install clean</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87407312"></a>28.7.6.3. mod_perl</h4></div></div></div><a id="idp87407952" class="indexterm"></a><p><span class="application">Apache</span>/Perl 集成计划， 将 Perl
+	  程序设计语言的强大功能， 与 <span class="application">Apache
+	  HTTP 服务器</span> 紧密地结合到了一起。
+	  通过 <span class="application">mod_perl</span> 模块，
+	  可以完全使用 Perl 来撰写 <span class="application">Apache</span> 模块。
+	  此外， 服务器中嵌入的持久性解释器， 消除了由于启动外部的解释器为 Perl
+	  脚本的启动所造成的性能损失。</p><p><span class="application">mod_perl</span> 通过多种方式提供。
+            要使用 <span class="application">mod_perl</span>，
+            应该注意 <span class="application">mod_perl</span> 1.0
+            只能配合 <span class="application">Apache</span> 1.3 而
+            <span class="application">mod_perl</span> 2.0 只能配合
+            <span class="application">Apache</span> 2.X 使用。
+            <span class="application">mod_perl</span> 1.0 可以通过
+            <span class="package">www/mod_perl</span> 安装，
+            而以静态方式联编的版本， 则可以通过
+            <span class="package">www/apache13-modperl</span>
+            来安装。
+            <span class="application">mod_perl</span> 2.0 则可以通过
+            <span class="package">www/mod_perl2</span> 安装。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87444304"></a>28.7.6.4. mod_php</h4></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp87446736" class="indexterm"></a><p><acronym class="acronym">PHP</acronym>， 也称为 <span class="quote">“<span class="quote">PHP:
+          Hypertext Preprocessor</span>”</span>，
+          是一种特别适合于 Web 开发的通用脚本语言。
+	  它能够很容易地嵌入到 <acronym class="acronym">HTML</acronym> 之中，
+	  其语法接近于  C、 <span class="trademark">Java</span>™， 以及 Perl， 以期让 web
+	  开发人员的一迅速撰写动态生成的页面。</p><p>要获得用于
+	  <span class="application">Apache</span> web 服务器的
+	  <acronym class="acronym">PHP</acronym>5 支持， 可以从安装
+	  <span class="package">lang/php5</span>
+	  port 开始。</p><p>在首次安装 <span class="package">lang/php5</span> port
+	  的时候， 系统会自动显示可用的一系列
+	  <code class="literal">OPTIONS</code> (配置选项)。 如果您没有看到菜单，
+	  例如由于过去曾经安装过 <span class="package">lang/php5</span> port 等等，
+	  可以用下面的命令再次显示配置菜单， 在 port 的目录中执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make config</code></strong></pre><p>在配置选项对话框中， 选中
+	  <code class="literal">APACHE</code> 这一项， 就可以联编出用于与
+	  <span class="application">Apache</span> web 服务器配合使用的可动态加载的
+	  <span class="application">mod_php5</span> 模块了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">由于各式各样的原因 (例如， 出于已经部署的 web 应用的兼容性考虑)，
+	    许多网站仍在使用 <acronym class="acronym">PHP</acronym>4。 如果您需要
+	    <span class="application">mod_php4</span> 而不是
+	    <span class="application">mod_php5</span>， 请使用
+	    <span class="package">lang/php4</span> port。
+	    <span class="package">lang/php4</span> port 也支持许多
+	    <span class="package">lang/php5</span> port 提供的配置和编译时选项。</p></div><p>前面我们已经成功地安装并配置了用于支持动态 <acronym class="acronym">PHP</acronym> 应用所需的模块。
+          请检查并确认您已将下述配置加入到了
+	  <code class="filename">/usr/local/etc/apache/httpd.conf</code> 中：</p><pre class="programlisting">LoadModule php5_module        libexec/apache/libphp5.so</pre><pre class="programlisting">AddModule mod_php5.c
+    &lt;IfModule mod_php5.c&gt;
+        DirectoryIndex index.php index.html
+    &lt;/IfModule&gt;
+    &lt;IfModule mod_php5.c&gt;
+        AddType application/x-httpd-php .php
+        AddType application/x-httpd-php-source .phps
+    &lt;/IfModule&gt;</pre><p>这些工作完成之后， 还需要使用
+            <code class="command">apachectl</code> 命令来完成一次 graceful
+            restart 以便加载 <acronym class="acronym">PHP</acronym> 模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>apachectl graceful</code></strong></pre><p>在未来您升级 <acronym class="acronym">PHP</acronym> 时，
+	  <code class="command">make config</code> 这步操作就不再是必需的了；
+	  您所选择的 <code class="literal">OPTIONS</code> 会由 FreeBSD
+	  的 Ports 框架自动保存。</p><p>在 FreeBSD 中的 <acronym class="acronym">PHP</acronym> 支持是高度模块化的，
+            因此基本安装的功能十分有限。 增加其他功能的支持非常简单， 只需通过
+            <span class="package">lang/php5-extensions</span> port
+            即可完成。 这个 port 提供了一个菜单驱动的界面来帮助完成
+            <acronym class="acronym">PHP</acronym> 扩展的安装。 另外， 也可以通过对应的 port
+            来单独安装扩展。</p><p>例如， 要将对于
+	  <span class="application">MySQL</span> 数据库服务器的支持加入
+	  <acronym class="acronym">PHP</acronym>5， 只需简单地安装
+          <code class="filename">databases/php5-mysql</code>。</p><p>安装完扩展之后， 必须重新启动
+            <span class="application">Apache</span> 服务器，
+              来令其适应新的配置变更：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>apachectl graceful</code></strong></pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-dns.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-ftp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.6. 域名系统 (<acronym class="acronym">DNS</acronym>) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.8. 文件传输协议 (FTP)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

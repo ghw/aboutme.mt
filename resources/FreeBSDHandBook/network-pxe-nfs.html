@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.8. 从 PXE 启动一个 NFS 根文件系统</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-diskless.html" title="30.7. 无盘操作" /><link rel="next" href="network-isdn.html" title="30.9. ISDN" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.8. 从 PXE 启动一个 NFS 根文件系统</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-diskless.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-isdn.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-pxe-nfs"></a>30.8. 从 PXE 启动一个 NFS 根文件系统</h2></div><div><span class="authorgroup">原作者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Craig</span> <span class="surname">Rodrigues</span></span>. </span></div></div></div><p><span class="trademark">Intel</span>® 预启动执行环境 （<acronym class="acronym">PXE</acronym>）
+      能让操作系统从网络启动。 通常由近代主板的 <acronym class="acronym">BIOS</acronym>
+      提供 <acronym class="acronym">PXE</acronym> 支持，它可以通过在 <acronym class="acronym">BIOS</acronym>
+      设置里选择从网络启动开启。 一个功能完整的 <acronym class="acronym">PXE</acronym>
+      配置还需要正确地设置 <acronym class="acronym">DHCP</acronym> 和 <acronym class="acronym">TFTP</acronym>
+      服务。</p><p>当计算机启动的时候， 通过 <acronym class="acronym">DHCP</acronym> 获取关于
+      从 <acronym class="acronym">TFTP</acronym> 得到引导加载器（boot loader）的信息。 
+      在计算机接受此信息以后， 便通过 <acronym class="acronym">TFTP</acronym>
+      下载并执行引导加载器。 这些记载于
+      <a class="link" href="http://download.intel.com/design/archives/wfm/downloads/pxespec.pdf" target="_top">
+        预启动执行环境 (PXE) 规范</a> 的 2.2.1 章节中。
+      在 FreeBSD 中， 在 <acronym class="acronym">PXE</acronym> 过程中获取的引导加载器为
+      <code class="filename">/boot/pxeboot</code>。 在 <code class="filename">/boot/pxeboot</code>
+      执行之后， FreeBSD 的内核被加载， 接着是其他的 FreeBSD 相关引导部分依次被执行。
+      更多关于 FreeBSD 启动过程的详细信息请参阅 <a class="xref" href="boot.html" title="Chapter 13. The FreeBSD 引导过程">Chapter 13, <em>The FreeBSD 引导过程</em></a>。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90033616"></a>30.8.1. 配置用于 NFS 根文件系统的 <code class="command">chroot</code> 环境</h3></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>Choose a directory which will have a FreeBSD installation
+	      which will be NFS mountable.  For example, a directory such
+	      as <code class="filename">/b/tftpboot/FreeBSD/install</code> can be used.</p><p>选择一个可被用户 NFS 挂载并安装有 FreeBSD 的目录。
+              比如可以使用像 <code class="filename">/b/tftpboot/FreeBSD/install</code>
+              这样的一个目录。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>export NFSROOTDIR=/b/tftpboot/FreeBSD/install</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir -p ${NFSROOTDIR}</code></strong></pre></li><li class="step"><p>使用如下的命令开启 NFS 服务
+	      <a class="xref" href="network-nfs.html#network-configuring-nfs" title="28.3.2. 配置NFS">Section 28.3.2, “配置<acronym class="acronym">NFS</acronym>”</a>.</p></li><li class="step"><p>将下面这行加入 <code class="filename">/etc/exports</code>
+              用以通过 NFS 导出此目录：</p><pre class="programlisting">/b -ro -alldirs</pre></li><li class="step"><p>重起 NFS 服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/nfsd restart</code></strong></pre></li><li class="step"><p>按照 <a class="xref" href="network-inetd.html#network-inetd-settings" title="28.2.2. 设置">Section 28.2.2, “设置”</a>
+                中标明的步骤启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a>。</p></li><li class="step"><p>将如下这行加入到
+	      <code class="filename">/etc/inetd.conf</code>：</p><pre class="programlisting">tftp dgram udp wait root /usr/libexec/tftpd tftpd -l -s /b/tftpboot</pre></li><li class="step"><p>重启 inetd：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/inetd restart</code></strong></pre></li><li class="step"><p><a class="link" href="makeworld.html" title="23.7. 重新编译 “world”">重新编译 FreeBSD 内核和用户态</a>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make buildworld</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make buildkernel</code></strong></pre></li><li class="step"><p>把 FreeBSD 安装到 <acronym class="acronym">NFS</acronym> 挂载目录：</p><pre class="screen">
+<code class="prompt">#</code> <strong class="userinput"><code>make installworld DESTDIR=${NFSROOTDIR}</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make installkernel DESTDIR=${NFSROOTDIR}</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make distribution DESTDIR=${NFSROOTDIR}</code></strong>
+	    </pre></li><li class="step"><p>测试 <acronym class="acronym">TFTP</acronym> 服务是否能下载将从
+              <acronym class="acronym">PXE</acronym> 获取的引导加载器：</p><pre class="screen">
+<code class="prompt">#</code> <strong class="userinput"><code>tftp localhost</code></strong>
+tftp&gt; <strong class="userinput"><code>get FreeBSD/install/boot/pxeboot</code></strong>
+Received 264951 bytes in 0.1 seconds
+	    </pre></li><li class="step"><p>编辑 <code class="filename">${NFSROOTDIR}/etc/fstab</code>
+              并加入以下这行挂载 NFS 根文件系统：</p><pre class="programlisting">
+# Device                                         Mountpoint    FSType   Options  Dump Pass
+myhost.example.com:/b/tftpboot/FreeBSD/install       /         nfs      ro        0    0
+	    </pre><p>用你的 <acronym class="acronym">NFS</acronym> 服务器主机名或者 IP 地址替换
+              <em class="replaceable"><code>myhost.example.com</code></em>。 在此例中，
+              根文件系统是以“只读”的方式挂载用来防止 <acronym class="acronym">NFS</acronym>
+              客户端可能意外删除根文件系统上的文件。</p></li><li class="step"><p>设置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 环境中的 root 密码。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chroot ${NFSROOTDIR}</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>passwd</code></strong></pre><p>此为设置从 <acronym class="acronym">PXE</acronym>
+                启动的客户机的 root 密码。</p></li><li class="step"><p>允许 ssh root 登录从 <acronym class="acronym">PXE</acronym> 启动的客户机，
+              编辑 <code class="filename">${NFSROOTDIR}/etc/ssh/sshd_config</code>
+              并开启 <code class="literal">PermitRootLogin</code> 选项。
+              关于此选项的说明请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd_config&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">sshd_config</span>(5)</span></a>。</p></li><li class="step"><p>对 ${NFSROOTDIR} 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 环境做些其他的定制。
+              这可以是像使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_add</span>(1)</span></a> 安装二进制包，
+              使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vipw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">vipw</span>(8)</span></a> 修改密码， 或者编辑 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=amd.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">amd.conf</span>(5)</span></a>
+              映射自动挂载等。例如：</p><pre class="screen">
+<code class="prompt">#</code> <strong class="userinput"><code>chroot ${NFSROOTDIR}</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>pkg_add -r bash</code></strong></pre></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90107728"></a>30.8.2. 配置 <code class="filename">/etc/rc.initdiskless</code> 中用到的内存文件系统</h3></div></div></div><p>如果你从一个 NFS 根卷启动，
+	  <code class="filename">/etc/rc</code>
+          如果检测到是从 NFS 启动便会运行
+	  <code class="filename">/etc/rc.initdiskless</code> 脚本。
+          请阅读此脚本中的注释部分以便了解到底发生了什么。
+          我们需要把 <code class="filename">/etc</code> 和
+	  <code class="filename">/var</code>
+          做成内存文件系统的原因是这些目录需要能被写入，
+          但 NFS 根文件系统是只读的。</p><pre class="screen">
+<code class="prompt">#</code> <strong class="userinput"><code>chroot ${NFSROOTDIR}</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir -p conf/base</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tar -c -v -f conf/base/etc.cpio.gz --format cpio --gzip etc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tar -c -v -f conf/base/var.cpio.gz --format cpio --gzip var</code></strong></pre><p>当系统启动的时候， <code class="filename">/etc</code> 和
+          <code class="filename">/var</code> 内存文件系统就会被创建并挂载，
+          <code class="filename">cpio.gz</code> 就会被复制进去。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90116048"></a>30.8.3. 配置 DHCP 服务</h3></div></div></div><p>PXE 需要配置一个 <acronym class="acronym">TFTP</acronym> 服务器和一个
+          <acronym class="acronym">DHCP</acronym> 服务器。 <acronym class="acronym">DHCP</acronym>
+          服务并不要求与 <acronym class="acronym">TFTP</acronym> 服务在同一台机器上，
+          但是必须能够从你的网络访问到它。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>按照此文档处 <a class="xref" href="network-dhcp.html#network-dhcp-server" title="28.5.7. 安装和配置 DHCP 服务器">Section 28.5.7, “安装和配置 DHCP 服务器”</a>
+                方法安装 <acronym class="acronym">DHCP</acronym> 服务。
+                确保 <code class="filename">/etc/rc.conf</code> 和
+                <code class="filename">/usr/local/etc/dhcpd.conf</code>
+                都配置正确。</p></li><li class="step"><p>在 <code class="filename">/usr/local/etc/dhcpd.conf</code> 中配置
+              <code class="literal">next-server</code>， <code class="literal">filename</code>，
+              <code class="literal">option root-path</code> 选项指向你的
+              <acronym class="acronym">TFTP</acronym> 服务器的 IP 地址，
+              以及 <acronym class="acronym">TFTP</acronym> 上 <code class="filename">/boot/pxeboot</code>
+              文件的路径， 和 <acronym class="acronym">NFS</acronym> 根文件系统的路径。
+              这里一份 <code class="filename">dhcpd.conf</code> 实例：</p><pre class="programlisting">
+subnet 192.168.0.0 netmask 255.255.255.0 {
+   range 192.168.0.2 192.168.0.3 ;
+   option subnet-mask 255.255.255.0 ;
+   option routers 192.168.0.1 ;
+   option broadcast-address 192.168.0.255 ;
+   option domain-name-server 192.168.35.35, 192.168.35.36 ;
+   option domain-name "example.com";
+
+   # IP address of TFTP server
+   next-server 192.168.0.1 ;
+
+   # path of boot loader obtained
+   # via tftp
+   filename "FreeBSD/install/boot/pxeboot" ;
+
+   # pxeboot boot loader will try to NFS mount this directory for root FS
+   option root-path "192.168.0.1:/b/tftpboot/FreeBSD/install/" ;
+
+}
+	    </pre></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90134608"></a>30.8.4. 配置 PXE 客户端与调试连接问题</h3></div></div></div><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>当客户端启动的时候， 进入 <acronym class="acronym">BIOS</acronym>
+              配置菜单。 设置 <acronym class="acronym">BIOS</acronym> 从网络启动。
+              如果之前你所有的配置步骤都正确的话， 那么所有部分应该能
+              "正常工作"。</p></li><li class="step"><p>使用 <span class="package">net/wireshark</span>
+              port 查看 <acronym class="acronym">DHCP</acronym> 和 <acronym class="acronym">TFTP</acronym>
+              的网络流量来调试各种问题。</p></li><li class="step"><p>确保 <code class="filename">pxeboot</code> 能从
+              <acronym class="acronym">TFTP</acronym> 获取。
+              在你的 <acronym class="acronym">TFTP</acronym> 服务器上检查
+              <code class="filename">/var/log/xferlog</code> 日志确保
+              <code class="filename">pxeboot</code> 被从正确的位置获取。
+              可以这样测试上面例子 <code class="filename">dhcpd.conf</code>
+              中所设置的：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tftp 192.168.0.1</code></strong>
+tftp&gt; <strong class="userinput"><code>get FreeBSD/install/boot/pxeboot</code></strong>
+Received 264951 bytes in 0.1 seconds</pre><p>请阅读 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tftpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tftpd</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tftp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tftp</span>(1)</span></a>。
+            其中的 <code class="literal">BUGS</code> 列出了
+            <acronym class="acronym">TFTP</acronym> 的一些限制。</p></li><li class="step"><p>确保根文件系统能够从 <acronym class="acronym">NFS</acronym> 挂载。
+            可以这样测试上面例子 <code class="filename">dhcpd.conf</code>
+            中所设置的：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t nfs 192.168.0.1:/b/tftpboot/FreeBSD/install /mnt</code></strong></pre></li><li class="step"><p>阅读 <code class="filename">src/sys/boot/i386/libi386/pxe.c</code>
+            中的代码以了解 <code class="filename">pxeboot</code> 加载器如何设置诸如
+            <code class="literal">boot.nfsroot.server</code> 和
+            <code class="literal">boot.nfsroot.path</code> 之类的变量。
+            这些变量被用在了
+            <code class="filename">src/sys/nfsclient/nfs_diskless.c</code>
+            的 NFS 无盘根挂载代码中。</p></li><li class="step"><p>Read <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a> and <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a>.</p></li></ol></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-diskless.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-isdn.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.7. 无盘操作 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.9. ISDN</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

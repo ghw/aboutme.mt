@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.2. 硬件需求</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="next" href="install-pre.html" title="3.3. 安装前的准备工作" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.2. 硬件需求</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-pre.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-hardware"></a>3.2. 硬件需求</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-hardware-minimal"></a>3.2.1. 最小配置</h3></div></div></div><p>安装 FreeBSD 所需的最小硬件配置， 随
+	FreeBSD 版本和硬件架构不同而有所不同。</p><p>在接下来的几节中，
+	给出了这些信息的一些总结。随您安装 FreeBSD 的方式不同，
+	可能需要使用软驱或为 FreeBSD 支持的 CDROM 驱动器，
+	有时候也可能需要的是一块网卡。 这将在 <a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a> 中进行介绍。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67952592"></a>3.2.1.1. FreeBSD/i386 和 FreeBSD/pc98</h4></div></div></div><p>FreeBSD/i386 和 FreeBSD/pc98 版本，
+	  都需要 486 或更高的处理器，以及至少 24 MB 的 RAM。
+	  您需要至少 150 MB 的空闲硬盘空间，
+	  才能完成最小的安装配置。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">对于老旧的硬件而言， 多数时候，
+	    装配更多的 RAM 和腾出更多的硬盘空间，
+	    要比使用更快的处理器更有用。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67954640"></a>3.2.1.2. FreeBSD/amd64</h4></div></div></div><p>有两类处理器同时能够支持运行
+	  FreeBSD/amd64。 第一种是 AMD64 处理器，
+	  包括 <span class="trademark">AMD Athlon</span>™64、
+	  <span class="trademark">AMD Athlon</span>™64-FX、 <span class="trademark">AMD Opteron</span>™ 以及更高级别的处理器。</p><p>能够使用
+	  FreeBSD/amd64 的另一种处理器是包含了采用 <span class="trademark">Intel</span>® EM64T
+	  架构支持的处理器。 这类处理器包括
+	  <span class="trademark">Intel</span>® <span class="trademark">Core</span>™ 2 Duo、 Quad、 以及 Extreme 系列处理器，
+	  以及 <span class="trademark">Intel</span>® <span class="trademark">Xeon</span>™ 3000、 5000、 和 7000
+	  系列处理器。</p><p>如果您的计算机使用 nVidia nForce3
+	  Pro-150， 则 <span class="emphasis"><em>必须</em></span> 使用 BIOS 配置，
+	  禁用 IO APIC。 如果您没有找到这样的选项，
+	  可能就只能转而禁用 ACPI 了。 Pro-150 芯片组存在一个 bug，
+	  目前我们还没有找到绕过这一问题的方法。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67960528"></a>3.2.1.3. FreeBSD/sparc64</h4></div></div></div><p>要安装 FreeBSD/sparc64， 必须使用它支持的平台 (参见 <a class="xref" href="install-hardware.html#install-hardware-supported" title="3.2.2. 支持的硬件">Section 3.2.2, “支持的硬件”</a>)。</p><p>FreeBSD/sparc64 需要独占一块磁盘。
+	  目前还没有办法与其它操作系统共享一块磁盘。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-hardware-supported"></a>3.2.2. 支持的硬件</h3></div></div></div><p>支持的硬件列表， 会作为 FreeBSD 发行版本的 FreeBSD 兼容硬件说明提供。
+	这个文档通常可以在 CDROM 或 FTP 安装文件的顶级目录找到，
+	它的名字是 <code class="filename">HARDWARE.TXT</code>， 此外， 在
+	<span class="application">sysinstall</span> 的 documentation
+	菜单也可以找到。它针对特定的硬件架构列出了 FreeBSD 已知支持的硬件。
+	不同发行版本和架构上的硬件支持列表，可以在 FreeBSD 网站的 <a class="link" href="http://www.FreeBSD.org/releases/index.html" target="_top">发行版信息</a>
+	页面上找到。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-pre.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 3. 安装 FreeBSD </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.3. 安装前的准备工作</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

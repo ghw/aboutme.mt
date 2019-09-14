@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>6.8. 故障排除</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="x11.html" title="Chapter 6. X Window 系统" /><link rel="prev" href="x11-wm.html" title="6.7. 桌面环境" /><link rel="next" href="common-tasks.html" title="Part II. 常用任务" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.8. 故障排除</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="x11-wm.html">Prev</a> </td><th width="60%" align="center">Chapter 6. X Window 系统</th><td width="20%" align="right"> <a accesskey="n" href="common-tasks.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="x11-understanding"></a>6.8. 故障排除</h2></div></div></div><p>如果鼠标无法正常工作，您将需要在继续深入配置之前， 先配置它。
+        参阅  FreeBSD 安装一章中的 <a class="xref" href="install-post.html#mouse" title="3.10.10. 配置鼠标">Section 3.10.10, “配置鼠标”</a> 。另外，
+        新版 <span class="application">Xorg</span> 将会忽略 <code class="filename">xorg.conf</code> 中的 <code class="literal">InputDevice</code> 部分，
+        这有助于自动检测硬件设备。 如果需要恢复旧的模式， 可以在这个文件中的 <code class="literal">ServerLayout</code> 或 <code class="literal">ServerFlags</code> 部分加入一下选项：</p><pre class="programlisting">Option "AutoAddDevices" "false"</pre><p>输入设备连同其他需要的选项 (比如， 键盘布局切换) 就可以像以前版本那样配置了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">正如前面所提到的， 默认情况下 <span class="application">hald</span>  守护进程会自动检测你的键盘可能检测出你的键盘布局或型号有差异，
+              在桌面环境中， 比如 <span class="application">GNOME</span> ，<span class="application">KDE</span> 或 <span class="application">Xfce</span> 提供了工具来配置键盘。
+              另外， 也可在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setxkbmap&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">setxkbmap</span>(1)</span></a> 工具的帮助下或者通过 <span class="application">hald</span> 的配置文件来直接设置键盘的属性。</p><p xmlns="http://www.w3.org/1999/xhtml">举个例， 如果某人想要使用一个 PC 102 键的键盘，
+              我们就需要为 <span class="application">hald</span> 创建一个名为  <code class="filename">x11-input.fdi</code> 的配置文件，
+              并保存到 <code class="filename">/usr/local/etc/hal/fdi/policy</code> 目录中。文件需包含如下内容：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+&lt;deviceinfo version="0.2"&gt;
+  &lt;device&gt;
+    &lt;match key="info.capabilities" contains="input.keyboard"&gt;
+	  &lt;merge key="input.x11_options.XkbModel" type="string"&gt;pc102&lt;/merge&gt;
+	  &lt;merge key="input.x11_options.XkbLayout" type="string"&gt;fr&lt;/merge&gt;
+    &lt;/match&gt;
+  &lt;/device&gt;
+&lt;/deviceinfo&gt;</pre><p xmlns="http://www.w3.org/1999/xhtml">如果这个文件已经存在， 只要把键盘配置相关的部分拷贝加入即可。</p><p xmlns="http://www.w3.org/1999/xhtml">您需要重启您的计算机， 使 <span class="application">hald</span> 读入此文件。</p><p xmlns="http://www.w3.org/1999/xhtml">也可以在 X 模拟终端或一个脚本中使用以下的命令达到相同的效果：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">%</code> <strong class="userinput"><code>setxkbmap -model pc102 -layout fr</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml"><code class="filename">/usr/local/share/X11/xkb/rules/base.lst</code> 列出了各种不同的键盘， 布局和可用的选项。</p></div><a id="idp71530576" class="indexterm"></a><p>接下来是调整 <code class="filename">xorg.conf.new</code> 配置文件并作测试。使用文本编辑器如  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=emacs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">emacs</span>(1)</span></a> 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ee&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ee</span>(1)</span></a>  打开这个文件。
+          如果是不支持自动检测刷新率的比较旧或者不常见的显示器，
+          需要在 <code class="filename">xorg.conf.new</code> 文件的 <code class="literal">"Monitor"</code> 部分指定分辨率：</p><pre class="programlisting">Section "Monitor"
+	Identifier   "Monitor0"
+	VendorName   "Monitor Vendor"
+	ModelName    "Monitor Model"
+	HorizSync    30-107
+	VertRefresh  48-120
+EndSection</pre><p>由于大多数显示器支持自动检测同步频率， 使得手动输入这些值变得很不必要。
+          对于那些不支持自动检测的显示器， 推荐使用制造商提供的值， 避免对显示器潜在的损伤。</p><p>X 能够使用显示器所支持的 DPMS (能源之星) 功能。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=xset&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">xset</span>(1)</span></a> 程序可以控制超时时间，
+          并强制待机、 挂起或关机。 如果希望启用显示器的 DPMS 功能， 则需要把以下设置内容添加到 monitor 部分：</p><pre class="programlisting">Option       "DPMS"</pre><a id="idp71537104" class="indexterm"></a><p>关闭 <code class="filename">xorg.conf.new</code> 之前还应该选择默认的分辨率和色深。
+          这是在 <code class="literal">"Screen"</code> 部分中定义的：</p><pre class="programlisting">Section "Screen"
+	Identifier "Screen0"
+	Device     "Card0"
+	Monitor    "Monitor0"
+	DefaultDepth 24
+	SubSection "Display"
+		Viewport  0 0
+		Depth     24
+		Modes     "1024x768"
+	EndSubSection
+EndSection</pre><p><code class="literal">DefaultDepth</code> 关键字描述了要运行的默认色深。 这可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=Xorg&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">Xorg</span>(1)</span></a> 的 <code class="option">-depth</code> 命令行开关来替代配置文件中的设置。
+          <code class="literal">Modes</code> 关键字描述了给定颜色深度下屏幕的分辨率。 需要说明的是， 目标系统的图形硬件只支持由 VESA 定义的标准模式。
+          前面的例子中， 默认色深是使用 24位色。 在采用这个色深时， 允许的分辨率是 1024x768。</p><p>最后就是将配置文件存盘， 并使用前面介绍的测试模式测试一下。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在发现并解决问题的过程中，
+              包含了与 <span class="application">Xorg</span> 服务器相关的各个设备的信息的 <span class="application">Xorg</span> 日志文件会为您发现和排除问题有所帮助。
+              <span class="application">Xorg</span> 日志的文件名是 <code class="filename">/var/log/Xorg.0.log</code> 这样的格式。
+              实际的日志文件名可能是 <code class="filename">Xorg.0.log</code> 到 <code class="filename">Xorg.8.log</code> 等等。</p></div><p>如果一切准备妥当， 就可以把配置文件复制到指定目录中。 您可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=Xorg&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">Xorg</span>(1)</span></a> 的联机手册里找到具体位置。
+            这个位置通常是 <code class="filename">/etc/X11/xorg.conf</code> 或是 <code class="filename">/usr/local/etc/X11/xorg.conf</code> 。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cp xorg.conf.new /etc/X11/xorg.conf</code></strong></pre><p><span class="application">Xorg</span> 的配置过程已经完成。 现在可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=startx&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">startx</span>(1)</span></a> 启动 <span class="application">Xorg</span> ，
+          也可以配合  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=xdm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">xdm</span>(1)</span></a> 来启动 <span class="application">Xorg</span> 服务器。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp71560144"></a>6.8.1. 配置 <span class="trademark">Intel</span>® <code class="literal">i810</code> 显示芯片组</h3></div></div></div><a id="idp71561680" class="indexterm"></a><p>配置 <span class="trademark">Intel</span>® i810 芯片组的显示卡需要有针对 <span class="application">Xorg</span> 的能够用来驱动显卡的 <code class="filename">agpgart</code> AGP 程序接口。
+        请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=agp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">agp</span>(4)</span></a> 驱动程序的联机手册了解更多细节。</p><p>这也适用于其他的图形卡硬件配置。 注意如果系统没有将 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=agp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">agp</span>(4)</span></a> 驱动程序编译进内核，
+        尝试用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 加载模块是无效的。 这个驱动程序必须编译进内核或者使用 <code class="filename">/boot/loader.conf</code> 在启动时加载进入内核。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp71567440"></a>6.8.2. 添加宽屏平板显示器</h3></div></div></div><a id="idp71568080" class="indexterm"></a><p>这一节假定您了解一些关于高级配置的知识。 如果使用前面的标准配置工具不能产生可用的配置，
+        则在日志文件中提供的信息应该足以修正配置使其正常工作。 如果需要的话，您应使用一个文本编辑器来完成这项工作。</p><p>目前的宽屏（WSXGA、WSXGA+、WUXGA、WXGA、WXGA+，等等）支持 16:10 和 10:9 或一些支持不太好的显示比例。 常见的一些 16:10 比例的分辨率包括：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>2560x1600</p></li><li class="listitem"><p>1920x1200</p></li><li class="listitem"><p>1680x1050</p></li><li class="listitem"><p>1440x900</p></li><li class="listitem"><p>1280x800</p></li></ul></div><p>有时， 可以简单地把这些分辨率作为 <code class="literal">Section "Screen"</code> 中的<code class="literal">Mode</code> 来
+        进行配置， 像下面这样：</p><pre class="programlisting">Section "Screen"
+Identifier "Screen0"
+Device     "Card0"
+Monitor    "Monitor0"
+DefaultDepth 24
+SubSection "Display"
+	Viewport  0 0
+	Depth     24
+	Modes     "1680x1050"
+EndSubSection
+EndSection</pre><p><span class="application">Xorg</span> 能够自动地通过 I2C/DDC 信息来自动获取宽屏显示器的分辨率信息，并处理显示器支持的频率和分辨率。</p><p>如果驱动程序没有找到对应的 <code class="literal">ModeLines</code> ， 就需要给 <span class="application">Xorg</span> 一些提示了。
+        使用 <code class="filename">/var/log/Xorg.0.log</code>  能够提取足够的信息， 就可以写一个可用的 <code class="literal">ModeLine</code> 了。 这类信息如下所示：</p><pre class="programlisting">(II) MGA(0): Supported additional Video Mode:
+(II) MGA(0): clock: 146.2 MHz   Image Size:  433 x 271 mm
+(II) MGA(0): h_active: 1680  h_sync: 1784  h_sync_end 1960 h_blank_end 2240 h_border: 0
+(II) MGA(0): v_active: 1050  v_sync: 1053  v_sync_end 1059 v_blanking: 1089 v_border: 0
+(II) MGA(0): Ranges: V min: 48  V max: 85 Hz, H min: 30  H max: 94 kHz, PixClock max 170 MHz</pre><p>这些信息称为 EDID 信息。 从中建立 <code class="literal">ModeLine</code> 只是把这些数据重新排列顺序而已：</p><pre class="programlisting">ModeLine &lt;name&gt; &lt;clock&gt; &lt;4 horiz. timings&gt; &lt;4 vert. timings&gt;</pre><p>如此， 本例中 <code class="literal">Section "Monitor"</code> 中的 <code class="literal">ModeLine</code> 应似下面的形式：</p><pre class="programlisting">Section "Monitor"
+Identifier      "Monitor1"
+VendorName      "Bigname"
+ModelName       "BestModel"
+ModeLine        "1680x1050" 146.2 1680 1784 1960 2240 1050 1053 1059 1089
+Option          "DPMS"
+EndSection</pre><p>经过简单的编辑步骤之后， X 就可以在您的宽屏显示器上启动了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="x11-wm.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="x11.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="common-tasks.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">6.7. 桌面环境 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Part II. 常用任务</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

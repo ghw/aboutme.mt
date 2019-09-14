@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>25.5. 拨出设备</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="prev" href="dialup.html" title="25.4. 拨入服务" /><link rel="next" href="serialconsole-setup.html" title="25.6. 设置串口控制台" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.5. 拨出设备</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dialup.html">Prev</a> </td><th width="60%" align="center">Chapter 25. 串口通讯</th><td width="20%" align="right"> <a accesskey="n" href="serialconsole-setup.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="dialout"></a>25.5. 拨出设备</h2></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， 用于串口的设备节点从
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>；
+	从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户需要根据实际情况对这份文档中的例子进行必要的调整。</p></div><a id="idp84072400" class="indexterm"></a><p>下面将让您的主机通过 modem 连接到另一台计算机上。
+      这只要适当地建立一个终端作为远程主机就可以。</p><p>这可以用来登录进一个BBS。</p><p>如果您用 PPP 有问题， 那这种连接可以用来从 Internet
+      上下载一个文件。 如果您必须 FTP 一些东西， 而 PPP 断了，
+      使用终端会话来 FTP 它们。 然后使用 zmodem 来把它们传输到您的机器上。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="hayes-unsupported"></a>25.5.1. 我的Stock Hayes Modem不被支持，我该怎么办?</h3></div></div></div><p>事实上， 联机手册对于这个的描述已经过时了。 一个通用的
+	Hayes拨号已经内建其中。 只要在您的 <code class="filename">/etc/remote</code>
+	文件中使用 <code class="literal">at=hayes</code>。</p><p>Hayes 驱动不够 <span class="quote">“<span class="quote">聪明</span>”</span> 只能认出一些比较新的 modem
+	的高级特性 ── 如 <code class="literal">BUSY</code>、
+	<code class="literal">NO DIALTONE</code>， 或 <code class="literal">CONNECT 115200</code>
+	的信息将被搞乱。 当您使用的时候， 您必须把这些信息关掉。(通过
+	<code class="command">ATX0&amp;W</code>)。</p><p>另外，拨号的延迟是 60 秒。 您的 modem
+	可能使用另外的时间或提示认为有其他的通讯问题。
+	试试 <code class="command">ATS7=45&amp;W</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="direct-at"></a>25.5.2. 我如何输入这些 AT 命令?</h3></div></div></div><a id="idp84084176" class="indexterm"></a><p>在
+	<code class="filename">/etc/remote</code> 文件中增加一个 <span class="quote">“<span class="quote">direct</span>”</span> 项。
+	举例而言， 如果您的调制解调器挂在第一个串口， 即 <code class="filename">/dev/cuau0</code> 上，
+	则应添加下面这行：</p><pre class="programlisting">cuau0:dv=/dev/cuau0:br#19200:pa=none</pre><p>此处应使用您的 modem 所支持的最高 br bps 速率。
+	接下来， 输入 <code class="command">tip cuau0</code> 就可以连到 modem 上了。</p><p>此外， 也可以 <code class="systemitem">root</code> 身份执行 <code class="command">cu</code>
+	命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu -lline -sspeed</code></strong></pre><p><em class="replaceable"><code>line</code></em> 是串口
+	(例如 <code class="filename">/dev/cuau0</code>) 而
+	<em class="replaceable"><code>speed</code></em> 则是速率
+	(如 <code class="literal">57600</code>)。 当您输入完 AT
+	之后， 按 <code class="command">~.</code> 即可退出。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="gt-failure"></a>25.5.3. 现在pn <code class="literal">@</code>标记不能工作？</h3></div></div></div><p>在电话号码中的 <code class="literal">@</code> 标记告诉计算机在
+	<code class="filename">/etc/phones</code> 文件中查找一个电话号码。 但
+	<code class="literal">@</code> 标记也是一个在像 <code class="filename">/etc/remote</code>
+	这样的可用文件中的特殊字符。 用一个反斜线符号退出：</p><pre class="programlisting">pn=\@</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="dial-command-line"></a>25.5.4. 我如何在命令行拨电话号码?</h3></div></div></div><p>在您的 <code class="filename">/etc/remote</code> 文件中通常放着一个叫做
+	<span class="quote">“<span class="quote">generic</span>”</span> 的记录。 例如：</p><pre class="programlisting">tip115200|Dial any phone number at 115200 bps:\
+        :dv=/dev/cuau0:br#115200:at=hayes:pa=none:du:
+tip57600|Dial any phone number at 57600 bps:\
+        :dv=/dev/cuau0:br#57600:at=hayes:pa=none:du:</pre><p>然后， 可以执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tip -115200 5551234</code></strong></pre><p>如果您更喜欢<code class="command">cu</code>而不是<code class="command">tip</code>，使用一个通用的<code class="literal">cu</code>记录：</p><pre class="programlisting">cu115200|Use cu to dial any number at 115200bps:\
+        :dv=/dev/cuau1:br#57600:at=hayes:pa=none:du:</pre><p>然后键入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu 5551234 -s 115200</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="set-bps"></a>25.5.5. 这么做时是否每次都需要重新输入 bps 速率?</h3></div></div></div><p>添加一项 <code class="literal">tip1200</code> 或
+	<code class="literal">cu1200</code>， 并将 bps 速率换成更合适的值。
+	<code class="command">tip</code> 的默认值是1200  bps， 也就是为什么会有
+	<code class="literal">tip1200</code> 这条记录的原因。
+	虽然您并不需要使用 1200 bps。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="terminal-server"></a>25.5.6. 我通过一个终端服务器访问了很多主机。</h3></div></div></div><p>除非每次都要等到您连接到主机然后键入
+	<code class="command">CONNECT host</code>，
+        否则使用 <code class="command">tip</code> 的 <code class="literal">cm</code> 功能。
+	例如， 在 <code class="filename">/etc/remote</code> 中的这些记录：</p><pre class="programlisting">pain|pain.deep13.com|Forrester's machine:\
+        :cm=CONNECT pain\n:tc=deep13:
+muffin|muffin.deep13.com|Frank's machine:\
+        :cm=CONNECT muffin\n:tc=deep13:
+deep13:Gizmonics Institute terminal server:\
+        :dv=/dev/cuau2:br#38400:at=hayes:du:pa=none:pn=5551234:</pre><p>将让您键入 <code class="command">tip pain</code> 或 <code class="command">tip
+	  muffin</code> 连接到主机 <code class="systemitem">pain</code> 或
+        <code class="systemitem">muffin</code>， 和 <code class="command">tip deep13</code>
+        连接到终端服务器。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="tip-multiline"></a>25.5.7. <code class="command">tip</code>能为每个站点试用多个线路吗？</h3></div></div></div><p>经常有一个问题， 一个大学有几个modem线路， 几千个学生设法使用它们。</p><p>在 <code class="filename">/etc/remote</code> 中为您的大学添加一个记录，
+	然后为 <code class="literal">pn</code> 功能使用 <code class="literal">@</code> 标记：</p><pre class="programlisting">big-university:\
+        :pn=\@:tc=dialout
+dialout:\
+        :dv=/dev/cuau3:br#9600:at=courier:du:pa=none:</pre><p>接着， 在 <code class="filename">/etc/phones</code>
+	中列出大学的电话号码：</p><pre class="programlisting">big-university 5551111
+big-university 5551112
+big-university 5551113
+big-university 5551114</pre><p><code class="command">tip</code> 将按顺序试用每一个，然后就停止。
+	如果想继续测试， 隔一段时间再运行 <code class="command">tip</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="multi-controlp"></a>25.5.8. 为什么我必须键入
+        <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span>
+        两次才能发出
+        <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span>
+        一次?</h3></div></div></div><p><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span>
+        是默认的<span class="quote">“<span class="quote">强制</span>”</span>字符，被用来告诉 <code class="command">tip</code>
+        下一个字符是文字的数据。您可以用 <code class="command">~s</code>
+        给任何其他的字符设置强制字符，这意思是 <span class="quote">“<span class="quote">设置一个变量</span>”</span>。</p><p>在新的一行键入 <code class="command">~sforce=single-char</code>。
+	<em class="replaceable"><code>single-char</code></em> 是任何简单的字符。 如果您遗漏了
+	<em class="replaceable"><code>single-char</code></em>， 那强制字符就是空字符，
+	这可以键入
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>2</strong></span>
+	或
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Space</strong></span>来完成。 更好的 <em class="replaceable"><code>single-char</code></em>
+	是
+	<span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>6</strong></span>， 这只用在一些终端服务器上。</p><p>通过在您的 <code class="filename">$HOME/.tiprc</code>
+	文件中指定下面这行， 就可以得到您想要的任何强制字符：</p><pre class="programlisting">force=<em class="replaceable"><code>single-char</code></em></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="uppercase"></a>25.5.9. 突然我键入的每一样东西都变成了大写??</h3></div></div></div><p>您一定是键入了
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>A</strong></span>， 即 <code class="command">tip</code>
+	的 <span class="quote">“<span class="quote">raise character</span>”</span>，
+	会临时地指定成坏掉的 caps-lock键。 使用上面的
+	<code class="command">~s</code> 来合理地设置各种
+	<code class="literal">raisechar</code>。 事实上，
+	如果您不想使用这些特性的话，您可以用同样的方法设置强制字符。</p><p>这儿有一个很好的示例 <code class="filename">.tiprc 文件</code>，对
+        <span class="application">Emacs</span>用户来说，需要经常按
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>2</strong></span>
+	和
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>A</strong></span>：</p><pre class="programlisting">force=^^
+raisechar=^^</pre><p><code class="literal">^^</code> 是
+	<span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>6</strong></span>.</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="tip-filetransfer"></a>25.5.10. 如何用 <code class="command">tip</code> 做文件传输？</h3></div></div></div><p>如果您正在与另一台 <span class="trademark">UNIX</span>® 系统对话， 您可以用
+	<code class="command">~p</code>(put) 和 <code class="command">~t</code> (take)
+	发送和接收文件。 这些命令可以在远程系统上运行 <code class="command">cat</code>
+	和 <code class="command">echo</code> 来接收和发送文件。 语法是这样的：</p><div class="cmdsynopsis"><p><code class="command">~p</code>  local-file  [remote-file]</p></div><div class="cmdsynopsis"><p><code class="command">~t</code>  remote-file  [local-file]</p></div><p>由于没有错误校验， 所以您需要使用其他协议， 如 zmodem。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="zmodem-tip"></a>25.5.11. 我如何用<code class="command">tip</code>运行zmodem？</h3></div></div></div><p>要接收这些文件，可以在远程终端启动发送程序。然后，键入
+	<code class="command">~C rz</code> 在本地开始接收它们。 要发送文件，
+	可以在远程终端启动接收程序。 然后， 键入 <code class="command">~C sz
+	files</code>
+	把它们发送到远程系统。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dialup.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="serialcomms.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="serialconsole-setup.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">25.4. 拨入服务 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 25.6. 设置串口控制台</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

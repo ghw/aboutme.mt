@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.7. Kerberos5</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="tcpwrappers.html" title="14.6. TCP Wrappers" /><link rel="next" href="openssl.html" title="14.8. OpenSSL" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.7. <span class="application">Kerberos5</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="tcpwrappers.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="openssl.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="kerberos5"></a>14.7. <span class="application">Kerberos5</span></h2></div><div><span class="authorgroup">撰写者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tillman</span> <span class="surname">Hodgson</span></span>. </span></div><div><span class="authorgroup">原文来自 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Mark</span> <span class="surname">Murray</span></span>. </span></div></div></div><p><span class="application">Kerberos</span> 是一组附加的网络系统/协议，
+      用以让用户通过一台安全服务器提供的服务来验证身份。
+      包括远程登录、远程复制、在系统间安全地复制文件，
+      以及其它高危险性的操作， 由于其存在而显著地提高了安全型并且更加可控。</p><p><span class="application">Kerberos</span> 可以理解为一种身份验证代理系统。
+      它也被描述为一种以受信第三方为主导的身份验证系统。
+      <span class="application">Kerberos</span> 只提供一种功能
+      ── 在网络上安全地完成用户的身份验证。
+      它并不提供授权功能 (也就是说用户能够做什么操作)
+      或审计功能 (记录用户作了什么操作)。
+      一旦客户和服务器都使用了
+      <span class="application">Kerberos</span> 来证明各自的身份之后，
+      他们还可以加密全部的通讯以保证业务数据的私密性和完整性。</p><p>因此， 强烈建议将
+      <span class="application">Kerberos</span> 同其它提供授权和审计服务的安全手段联用。</p><p>接下来的说明可以用来指导如何安装 FreeBSD 所附带的
+      <span class="application">Kerberos</span>。
+      不过， 您仍然需要参考相应的联机手册以获得完整的描述。</p><p>为了展示 <span class="application">Kerberos</span>
+      的安装过程， 我们约定：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><acronym class="acronym">DNS</acronym> 域 (<span class="quote">“<span class="quote">zone</span>”</span>)
+	  为 example.org。</p></li><li class="listitem"><p><span class="application">Kerberos</span> 领域是
+	  EXAMPLE.ORG。</p></li></ul></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在安装
+	<span class="application">Kerberos</span> 时请使用实际的域名即使您只是想在内部网上用一用。
+	这可以避免 <acronym class="acronym">DNS</acronym> 问题并保证了同其它
+	<span class="application">Kerberos</span> 之间的互操作性。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77419472"></a>14.7.1. 历史</h3></div></div></div><a id="idp77420112" class="indexterm"></a><p><span class="application">Kerberos</span> 最早由
+	<acronym class="acronym">MIT</acronym> 作为解决网络安全问题的一个方案提出。
+	<span class="application">Kerberos</span> 协议采用了强加密，
+	因此客户能够在不安全的网络上向服务器
+	(以及相反地) 验证自己的身份。</p><p><span class="application">Kerberos</span> 是网络验证协议名字，
+	同时也是用以表达实现了它的程序的形容词。
+	(例如 <span class="application">Kerberos</span> telnet)。
+	目前最新的协议版本是 5，在
+	<acronym class="acronym">RFC</acronym> 1510 中有所描述。</p><p>该协议有许多免费的实现， 这些实现涵盖了许多种不同的操作系统。
+	最初研制 <span class="application">Kerberos</span> 的麻省理工学院
+	(<acronym class="acronym">MIT</acronym>) 也仍然在继续开发他们的 <span class="application">Kerberos</span>
+	软件包。 在 <acronym class="acronym">US</acronym> 它被作为一种加密产品使用，
+	因而历史上曾经受到 <acronym class="acronym">US</acronym> 出口管制。
+	<acronym class="acronym">MIT</acronym> <span class="application">Kerberos</span>
+	可以通过 port (<span class="package">security/krb5</span>)
+	来安装和使用。 Heimdal
+	<span class="application">Kerberos</span> 是另一种第 5 版实现，
+	并且明确地在
+	<acronym class="acronym">US</acronym> 之外的地区开发， 以避免出口管制
+	(因此在许多非商业的类 <span class="trademark">UNIX</span>® 系统中非常常用。
+	Heimdal <span class="application">Kerberos</span> 软件包可以通过
+	port
+	(<span class="package">security/heimdal</span>) 安装，
+	最新的 FreeBSD 的最小安装也会包含它。</p><p>为使尽可能多的读者从中受益， 这份说明以 FreeBSD 附带的
+	Heimdal 软件包为准。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77438544"></a>14.7.2. 配置 Heimdal <acronym class="acronym">KDC</acronym></h3></div></div></div><a id="idp77443664" class="indexterm"></a><p>密钥分发中心 (<acronym class="acronym">KDC</acronym>) 是
+	<span class="application">Kerberos</span> 提供的集中式验证服务 ── 它是签发
+	<span class="application">Kerberos</span> tickets 的那台计算机。
+	<acronym class="acronym">KDC</acronym> 在 <span class="application">Kerberos</span>
+	领域中的其它机器看来是 <span class="quote">“<span class="quote">受信的</span>”</span>，
+	因此必须格外注意其安全性。</p><p>需要说明 <span class="application">Kerberos</span> 服务器只需要非常少的计算资源，
+	尽管如此， 基于安全理由仍然推荐使用独占的机器来扮演 <acronym class="acronym">KDC</acronym>
+	的角色。</p><p>要开始配置 <acronym class="acronym">KDC</acronym>， 首先请确认您的
+	<code class="filename">/etc/rc.conf</code> 文件包含了作为一个
+	<acronym class="acronym">KDC</acronym> 所需的设置 (您可能需要适当地调整路径以适应自己系统的情况)：</p><pre class="programlisting">kerberos5_server_enable="YES"
+kadmind5_server_enable="YES"</pre><p>接下来需要修改 <span class="application">Kerberos</span>
+	的配置文件， <code class="filename">/etc/krb5.conf</code>：</p><pre class="programlisting">[libdefaults]
+    default_realm = EXAMPLE.ORG
+[realms]
+    EXAMPLE.ORG = {
+        kdc = kerberos.example.org
+        admin_server = kerberos.example.org
+    }
+[domain_realm]
+    .example.org = EXAMPLE.ORG</pre><p>请注意这个 <code class="filename">/etc/krb5.conf</code> 文件假定您的
+	<acronym class="acronym">KDC</acronym> 有一个完整的主机名，
+	即 <code class="systemitem">kerberos.example.org</code>。
+	如果您的 <acronym class="acronym">KDC</acronym> 主机名与它不同，
+	则应添加一条 CNAME (别名) 项到 zone 中去。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">对于有正确地配置过的
+	  <acronym class="acronym">BIND</acronym> <acronym class="acronym">DNS</acronym> 服务器的大型网络，
+	  上述例子可以精简为：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">[libdefaults]
+      default_realm = EXAMPLE.ORG</pre><p xmlns="http://www.w3.org/1999/xhtml">将下面的内容加入到
+	  <code class="systemitem">example.org</code> zone 数据文件中：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">_kerberos._udp      IN  SRV     01 00 88 kerberos.example.org.
+_kerberos._tcp      IN  SRV     01 00 88 kerberos.example.org.
+_kpasswd._udp       IN  SRV     01 00 464 kerberos.example.org.
+_kerberos-adm._tcp  IN  SRV     01 00 749 kerberos.example.org.
+_kerberos           IN  TXT     EXAMPLE.ORG</pre></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">要让客户机能够找到
+          <span class="application">Kerberos</span> 服务， 就
+          <span class="emphasis"><em>必须</em></span> 首先配置完整或最小配置的
+          <code class="filename">/etc/krb5.conf</code> <span class="emphasis"><em>并且</em></span>
+          正确地配置 DNS 服务器。</p></div><p>接下来需要创建 <span class="application">Kerberos</span> 数据库。
+	这个数据库包括了使用主密码加密的所有实体的密钥。
+	您并不需要记住这个密码， 它会保存在一个文件
+	(<code class="filename">/var/heimdal/m-key</code>) 中。
+	要创建主密钥，
+	需要执行 <code class="command">kstash</code> 并输入一个口令。</p><p>主密钥一旦建立， 您就可以用
+	<code class="command">kadmin</code> 程序的
+	<code class="literal">-l</code> 参数 (表示 <span class="quote">“<span class="quote">local</span>”</span>) 来初始化数据库了。
+	这个选项让 <code class="command">kadmin</code> 直接地修改数据库文件而不是通过
+	<code class="command">kadmind</code> 的网络服务。 这解决了在数据库创建之前连接它的鸡生蛋的问题。
+	进入 <code class="command">kadmin</code> 提示符之后， 用
+	<code class="command">init</code> 命令来创建领域的初始数据库。</p><p>最后， 仍然在 <code class="command">kadmin</code> 中， 使用
+	<code class="command">add</code> 命令来创建第一个 principal。
+	暂时使用全部的默认设置， 随后可以在任何时候使用
+	<code class="command">modify</code> 命令来修改这些设置。
+	另外， 也可以用 <code class="literal">?</code> 命令来了解可用的选项。</p><p>典型的数据库创建过程如下：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kstash</code></strong>
+Master key: <strong class="userinput"><code>xxxxxxxx</code></strong>
+Verifying password - Master key: <strong class="userinput"><code>xxxxxxxx</code></strong>
+
+<code class="prompt">#</code> <strong class="userinput"><code>kadmin -l</code></strong>
+kadmin&gt; <strong class="userinput"><code>init EXAMPLE.ORG</code></strong>
+Realm max ticket life [unlimited]:
+kadmin&gt; <strong class="userinput"><code>add tillman</code></strong>
+Max ticket life [unlimited]:
+Max renewable life [unlimited]:
+Attributes []:
+Password: <strong class="userinput"><code>xxxxxxxx</code></strong>
+Verifying password - Password: <strong class="userinput"><code>xxxxxxxx</code></strong></pre><p>现在是启动 <acronym class="acronym">KDC</acronym> 服务的时候了。
+	运行 <code class="command">/etc/rc.d/kerberos start</code> 以及
+	<code class="command">/etc/rc.d/kadmind start</code> 来启动这些服务。
+	尽管此时还没有任何正在运行的 Kerberos 服务， 但您仍然可以通过获取并列出您刚刚创建的那个
+	principal (用户) 的 ticket 来验证
+	<acronym class="acronym">KDC</acronym> 确实在正常工作， 使用
+	<acronym class="acronym">KDC</acronym> 本身的功能：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>kinit tillman</code></strong>
+tillman@EXAMPLE.ORG's Password:
+
+<code class="prompt">%</code> <strong class="userinput"><code>klist</code></strong>
+Credentials cache: FILE:<code class="filename">/tmp/krb5cc_500</code>
+	Principal: tillman@EXAMPLE.ORG
+
+  Issued           Expires          Principal
+Aug 27 15:37:58  Aug 28 01:37:58  krbtgt/EXAMPLE.ORG@EXAMPLE.ORG</pre><p>完成所需的操作之后， 可以撤消这一 ticket：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>kdestroy</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77493456"></a>14.7.3. 为 <span class="application">Kerberos</span> 启用
+	  Heimdal 服务</h3></div></div></div><a id="idp77494480" class="indexterm"></a><p>首先我们需要一份 <span class="application">Kerberos</span> 配置文件
+	  <code class="filename">/etc/krb5.conf</code> 的副本。 只需简单地用安全的方式
+	  (使用类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scp&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scp</span>(1)</span></a> 的网络工具， 或通过软盘) 复制
+	  <acronym class="acronym">KDC</acronym> 上的版本， 并覆盖掉客户机上的对应文件就可以了。</p><p>接下来需要一个 <code class="filename">/etc/krb5.keytab</code> 文件。
+	  这是提供
+	  <span class="application">Kerberos</span> 服务的服务器和工作站的一个主要区别
+	  ── 服务器必须有
+	  <code class="filename">keytab</code> 文件。 这个文件包括了服务器的主机密钥，
+	  这使得
+	  <acronym class="acronym">KDC</acronym> 得以验证它们的身份。
+	  此文件必须以安全的方式传到服务器上，
+	  因为如果密钥被公之于众， 则安全也就毁于一旦。
+	  也就是说， 通过明文的通道， 例如 <acronym class="acronym">FTP</acronym> 是非常糟糕的想法。</p><p>一般来说， 您会希望使用 <code class="command">kadmin</code> 程序来把
+	  <code class="filename">keytab</code> 传到服务器上。
+	  由于也需要使用 <code class="command">kadmin</code> 来为主机建立 principal
+	  (<acronym class="acronym">KDC</acronym> 一端的
+	  <code class="filename">krb5.keytab</code>)， 因此这并不复杂。</p><p>注意您必须已经获得了一个 ticket 而且这个 ticket 必须许可使用
+	  <code class="filename">kadmind.acl</code> 中的 <code class="command">kadmin</code>
+	  接口。 请参考 Heimdal info 中的 <span class="quote">“<span class="quote">Remote administration(远程管理)</span>”</span>
+	  一节 (<code class="command">info heimdal</code>) 以了解如何设计访问控制表。
+	  如果不希望启用远程的
+	  <code class="command">kadmin</code> 操作， 则可以简单地采用安全的方式连接
+	  <acronym class="acronym">KDC</acronym> (通过本机控制台，
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> 或 <span class="application">Kerberos</span>
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=telnet&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">telnet</span>(1)</span></a>) 并使用 <code class="command">kadmin -l</code> 在本地执行管理操作。</p><p>安装了 <code class="filename">/etc/krb5.conf</code> 文件之后，
+	  您就可以使用 <span class="application">Kerberos</span> 上的
+	  <code class="command">kadmin</code> 了。
+	  <code class="command">add --random-key</code> 命令可以用于添加主机 principal，
+	  而 <code class="command">ext</code> 命令则允许导出服务器的主机 principal 到它的
+	  keytab 中。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kadmin</code></strong>
+kadmin&gt;<strong class="userinput"><code> add --random-key host/myserver.example.org</code></strong>
+Max ticket life [unlimited]:
+Max renewable life [unlimited]:
+Attributes []:
+kadmin&gt;<strong class="userinput"><code> ext host/myserver.example.org</code></strong>
+kadmin&gt;<strong class="userinput"><code> exit</code></strong></pre><p>注意 <code class="command">ext</code> 命令 (这是
+	  <span class="quote">“<span class="quote">extract</span>”</span> 的简写) 默认会把导出的密钥放到
+	  <code class="filename">/etc/krb5.keytab</code> 中。</p><p>如果您由于没有在 <acronym class="acronym">KDC</acronym> 上运行
+	  <code class="command">kadmind</code> (例如基于安全理由) 因而无法远程地使用
+	  <code class="command">kadmin</code> 您可以直接在 <acronym class="acronym">KDC</acronym>
+	  上添加主机 principal
+	  (<code class="systemitem">host/myserver.EXAMPLE.ORG</code>) 随后将其导出到一个临时文件中
+	  (以免覆盖 <acronym class="acronym">KDC</acronym> 上的 <code class="filename">/etc/krb5.keytab</code>)，
+	  方法是使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kadmin</code></strong>
+kadmin&gt;<strong class="userinput"><code> ext --keytab=/tmp/example.keytab host/myserver.example.org</code></strong>
+kadmin&gt;<strong class="userinput"><code> exit</code></strong></pre><p>随后需要把 keytab 复制到服务器上
+	  (例如使用 <code class="command">scp</code> 或软盘)。
+	  一定要指定一个不同于默认的 keytab 名字以免覆盖
+	  <acronym class="acronym">KDC</acronym> 上的 keytab。</p><p>到现在您的服务器已经可以同
+	  <acronym class="acronym">KDC</acronym> 通讯了 (因为已经配置了 <code class="filename">krb5.conf</code>
+	  文件)， 而且它还能够证明自己的身份 (由于配置了
+	  <code class="filename">krb5.keytab</code> 文件)。 现在可以启用一些
+	  <span class="application">Kerberos</span> 服务。
+	  在这个例子中， 我们将在 <code class="filename">/etc/inetd.conf</code>
+	  中添加下面的行来启用 <code class="command">telnet</code>
+	  服务， 随后用 <code class="command">/etc/rc.d/inetd restart</code> 重启
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 服务来使设置生效：</p><pre class="programlisting">telnet    stream  tcp     nowait  root    /usr/libexec/telnetd  telnetd -a user</pre><p>关键的部分是 <code class="command">-a</code>
+	  (表示验证) 类型设置为用户 (user)。 请参考
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=telnetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">telnetd</span>(8)</span></a> 联机手册以了解细节。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77538512"></a>14.7.4. 使用 Heimdal 来启用客户端 <span class="application">Kerberos</span></h3></div></div></div><a id="idp77539408" class="indexterm"></a><p>设置客户机是非常简单的。 在正确配置了
+	  <span class="application">Kerberos</span> 的网络中，
+	  只需要将位于 <code class="filename">/etc/krb5.conf</code> 的配置文件进行一下设置就可以了。
+	  这一步骤可以简单地通过安全的方式将文件从
+	  <acronym class="acronym">KDC</acronym> 复制到客户机上来完成。</p><p>尝试在客户机上执行
+	  <code class="command">kinit</code>、 <code class="command">klist</code>， 以及
+	  <code class="command">kdestroy</code> 来测试获取、 显示并删除
+	  刚刚为 principal 建立的 ticket 是否能够正常进行， 如果能，
+	  则用其它的 <span class="application">Kerberos</span> 应用程序来连接启用了
+	  <span class="application">Kerberos</span> 的服务。 如果应用程序不能正常工作而获取
+	  ticket 正常， 则通常是服务本身， 而非客户机或 <acronym class="acronym">KDC</acronym>
+	  有问题。</p><p>在测试类似 <code class="command">telnet</code> 的应用程序时，
+	  应考虑使用抓包程序 (例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tcpdump&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tcpdump</span>(1)</span></a>)
+	  来确认您的口令没有以明文方式传输。
+	  尝试使用 <code class="command">telnet</code> 的 <code class="literal">-x</code>
+	  参数， 它将加密整个数据流 (类似
+	  <code class="command">ssh</code>)。</p><p>许多非核心的 <span class="application">Kerberos</span> 客户应用程序也是默认安装的。
+	  在 Hemidal 的 <span class="quote">“<span class="quote">最小</span>”</span> 安装理念下，
+	  <code class="command">telnet</code> 是唯一一个采用了
+	  <span class="application">Kerberos</span> 的服务。</p><p>Heimdal port 则提供了一些默认不安装的客户应用程序， 例如启用了
+	  <span class="application">Kerberos</span> 版本的
+	  <code class="command">ftp</code>、 <code class="command">rsh</code>、
+	  <code class="command">rcp</code>、 <code class="command">rlogin</code> 以及一些更不常用的程序。
+	  <acronym class="acronym">MIT</acronym> port 也包括了一整套 <span class="application">Kerberos</span>
+	  客户应用程序。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77552976"></a>14.7.5. 用户配置文件： <code class="filename">.k5login</code> 和 <code class="filename">.k5users</code></h3></div></div></div><a id="idp77554384" class="indexterm"></a><a id="idp77555280" class="indexterm"></a><p>在某个领域中的用户往往都有自己的
+	  <span class="application">Kerberos</span> principal (例如
+	  <code class="systemitem">tillman@EXAMPLE.ORG</code>) 并映射到本机用户帐户
+	  (例如本机上名为 <code class="systemitem">tillman</code> 的帐户)。
+	  客户端应用程序， 如
+	  <code class="command">telnet</code> 通常并不需要用户名或 principal。</p><p>不过, 有时您可能会需要赋予某些没有匹配 <span class="application">Kerberos</span> principal
+	  的人使用本地用户帐户的权限。 例如
+	  <code class="systemitem">tillman@EXAMPLE.ORG</code> 可能需要访问本地的
+	  <code class="systemitem">webdevelopers</code> 用户帐号。 其它
+	  principal 可能也会需要访问这个本地帐号。</p><p>用户 home 目录中的 <code class="filename">.k5login</code> 和
+	  <code class="filename">.k5users</code> 这两个文件可以配合
+	  <code class="filename">.hosts</code> 和 <code class="filename">.rhosts</code>
+	  来有效地解决这个问题。 例如， 如果
+	  <code class="filename">.k5login</code> 中有如下内容：</p><pre class="screen">tillman@example.org
+jdoe@example.org</pre><p>并放到了本地用户
+	  <code class="systemitem">webdevelopers</code> 的 home 目录中， 则列出的两个 principals
+	  都可以使用那个帐号， 而无须共享口令。</p><p>建议您在开始实施之前首先阅读这些命令的联机帮助。
+	  特别地， <code class="command">ksu</code> 的联机手册包括了
+	  <code class="filename">.k5users</code> 的相关内容。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77565392"></a>14.7.6. <span class="application">Kerberos</span> 提示、技巧和故障排除</h3></div></div></div><a id="idp77566288" class="indexterm"></a><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>当使用 Heimdal 或 <acronym class="acronym">MIT</acronym>
+	      <span class="application">Kerberos</span> ports 时， 需要确认
+	      <code class="envar">PATH</code> 环境变量把 <span class="application">Kerberos</span>
+	      客户应用列在系统自带的版本之前。</p></li><li class="listitem"><p>同一领域内的所有计算机的时间设置是否同步？
+	      如果不是的话， 则身份验证可能会失败。
+	      <a class="xref" href="network-ntp.html" title="28.10. 通过 NTP 进行时钟同步">Section 28.10, “通过 NTP 进行时钟同步”</a> 描述了如何使用
+	      <acronym class="acronym">NTP</acronym> 来同步时钟。</p></li><li class="listitem"><p><acronym class="acronym">MIT</acronym> 和 Heimdal 能够很好地互操作。
+	      一个例外是 <code class="command">kadmin</code>， 因为这个协议没有被标准化。</p></li><li class="listitem"><p>如果您改变了主机名， 您还需要修改您的
+	      <code class="systemitem">host/</code> principal 并更新 keytab。
+	      这一规律也适用于类似 Apache 的 <span class="package">www/mod_auth_kerb</span>
+	      所使用的 <code class="systemitem">www/</code> principal 这样的特殊
+	      keytab 项。</p></li><li class="listitem"><p>您的领域中的每一台主机必须在 <acronym class="acronym">DNS</acronym>
+	      (或至少在 <code class="filename">/etc/hosts</code> 中) 可以解析
+	      (同时包括正向和反向)。
+	      CNAME 能够正常使用，
+	      但必须有正确的对应 A 和 PTR 记录。
+	      此时给出的错误信息可能很让人困惑：
+	      <span class="errorname">Kerberos5 refuses authentication because Read req
+	      failed: Key table entry not found</span>。</p></li><li class="listitem"><p>某些作为客户使用您的 <acronym class="acronym">KDC</acronym> 的操作系统可能没有将
+	      <code class="command">ksu</code> 设置为 setuid
+	      <code class="systemitem">root</code> 的权限。 这意味着
+	      <code class="command">ksu</code> 将不能够正常工作，
+	      从安全角度说这是一个不错的主意，
+	      但可能令人烦恼。
+	      这类问题并不是
+	      <acronym class="acronym">KDC</acronym> 的错误。</p></li><li class="listitem"><p>使用 <acronym class="acronym">MIT</acronym>
+	      <span class="application">Kerberos</span> 时， 如果希望允许一个
+	      principal 拥有超过默认的十小时有效期的 ticket 则必须使用
+	      <code class="command">kadmin</code> 中的 <code class="command">modify_principal</code>
+	      来修改 principal 本身以及 <code class="systemitem">krbtgt</code>
+	      的 maxlife(最大有效期)。
+	      此后， principal 可以使用 <code class="command">kinit</code> 的
+	      <code class="literal">-l</code> 参数来请求一个有更长有效期的 ticket。</p></li><li class="listitem"><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果在 <acronym class="acronym">KDC</acronym> 上运行了听包程序，
+	      并在工作站上执行 <code class="command">kinit</code>，
+	      您可能会注意到 <acronym class="acronym">TGT</acronym> 是在
+	      <code class="command">kinit</code> 一开始执行的时候就发出了的 ──
+	      甚至在您输入口令之前！ 关于这个现象的解释是
+	      <span class="application">Kerberos</span> 服务器可以无限制地收发
+	      <acronym class="acronym">TGT</acronym> (Ticket Granting
+	      Ticket) 给任何未经授权的请求； 但是， 每一个
+	      <acronym class="acronym">TGT</acronym> 都是使用用户的口令派生出来的密钥进行加密的。
+	      因此， 当用户输入口令时它并不会发送给 <acronym class="acronym">KDC</acronym>，
+	      而是直接用于解密 <code class="command">kinit</code> 所拿到的 <acronym class="acronym">TGT</acronym>。
+	      如果解密过程得到了一个包含合法的时间戳的有效 ticket，
+	      则说明用户的 <span class="application">Kerberos</span> 凭据有效。
+	      这些凭据包含了一个会话密钥用以在随后建立
+	      <span class="application">Kerberos</span> 服务器的加密通讯，
+	      传递由服务器自己的私钥加密的实际的 ticket-granting ticket。
+	      这个第二层加密对于用户来说是看不到的， 但它使得
+	      <span class="application">Kerberos</span> 服务器能够验证每一个
+	      <acronym class="acronym">TGT</acronym> 的真实性。</p></div></li><li class="listitem"><p>如果需要有效期更长的 ticket (例如一周)
+	      而且您使用 <span class="application">OpenSSH</span>
+	      连接保存您的 ticket 的机器，
+	      请确认 <code class="filename">sshd_config</code> 中的
+	      <span class="application">Kerberos</span>
+	      <code class="option">TicketCleanup</code> 被设置为 <code class="literal">no</code>
+	      否则在注销时会自动删除所有的 ticket。</p></li><li class="listitem"><p>切记主机的 principals 的 ticket 有效期一定要比用户的长。
+	      如果您的用户 principal 的有效期是一周，
+	      而所连接的主机的有效期是九个小时，
+	      则缓存的主机 principal 将先行过期，
+	      结果是 ticket 缓存无法正常工作。</p></li><li class="listitem"><p>当配置 <code class="filename">krb5.dict</code> 文件来防止使用特定的简单口令
+	    (<code class="command">kadmind</code> 的联机手册中简要介绍了它)，
+	    请切记只有指定了口令策略的 principals 才会使用它们。
+	    <code class="filename">krb5.dict</code> 文件的格式很简单：
+	    每个串占一行。 创建一个到 <code class="filename">/usr/share/dict/words</code>
+	    的符号连接会很有用。</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77604944"></a>14.7.7. 与 <acronym class="acronym">MIT</acronym> port 的区别</h3></div></div></div><p><acronym class="acronym">MIT</acronym> 和
+	  Heimdal 主要的区别在于 <code class="command">kadmin</code>
+	  程序使用不同 (尽管等价) 的命令和协议。 如果您的
+	  <acronym class="acronym">KDC</acronym> 是 <acronym class="acronym">MIT</acronym> 的，
+	  则其影响是不能使用 Heimdal 的 <code class="command">kadmin</code>
+	  程序来远程管理 <acronym class="acronym">KDC</acronym>
+	  (或相反)。</p><p>完成同样工作的命令可能会有些许的不同。 推荐按照
+	  <acronym class="acronym">MIT</acronym>
+	  <span class="application">Kerberos</span> 的网站
+	  (<code class="uri"><a class="uri" href="http://web.mit.edu/Kerberos/www/" target="_top">http://web.mit.edu/Kerberos/www/</a></code>)
+	  上的说明来操作。 请小心关于路径的问题，
+	  <acronym class="acronym">MIT</acronym> port 会默认安装到
+	  <code class="filename">/usr/local/</code>， 您因此可能会执行
+	  <span class="quote">“<span class="quote">普通的</span>”</span> 系统应用程序而非
+	  <acronym class="acronym">MIT</acronym>, 如果您的 <code class="envar">PATH</code> 环境变量把
+	  把系统目录放在前面的话。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果使用 FreeBSD 提供的 <acronym class="acronym">MIT</acronym>
+	  <span class="package">security/krb5</span> port，
+	  一定要仔细阅读 port 所安装的
+	  <code class="filename">/usr/local/share/doc/krb5/README.FreeBSD</code>，
+	  如果您想知道为什么通过
+	  <code class="command">telnetd</code> 和 <code class="command">klogind</code>
+	  登录时会出现一些诡异的现象的话。 最重要地，
+	  <span class="quote">“<span class="quote">incorrect permissions on cache file(缓存文件权限不正确)</span>”</span>
+	  行为需要使用 <code class="command">login.krb5</code> 来进行验证，
+	  才能够正确地修改转发凭据的属主。</p></div><p>除此之外， 还应修改 <code class="filename">rc.conf</code> 并加入下列配置：</p><pre class="programlisting">kerberos5_server="/usr/local/sbin/krb5kdc"
+kadmind5_server="/usr/local/sbin/kadmind"
+kerberos5_server_enable="YES"
+kadmind5_server_enable="YES"</pre><p>这样做的原因是，
+	  <acronym class="acronym">MIT</acronym> kerberos 会将可执行文件装到
+	  <code class="filename">/usr/local</code>
+	  之下。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77622096"></a>14.7.8. 缓解 <span class="application">Kerberos</span> 的限制</h3></div></div></div><a id="idp77623120" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77632592"></a>14.7.8.1. <span class="application">Kerberos</span> 是一种 all-or-nothing 方式</h4></div></div></div><p>在网络上启用的每个服务都必须进行修改以便让其能够配合
+	    <span class="application">Kerberos</span> 工作
+	    (否则就只能使用其它方法来保护它们不受网络攻击的侵害)，
+	    如果不是这样， 则用户的凭据就有可能被窃取并再次使用。
+	    一个例子是对所有的远程 shell (例如通过
+	    <code class="command">rsh</code> 和 <code class="command">telnet</code>)
+	    启用了
+	    <span class="application">Kerberos</span>
+	    但没有将使用明文验证的 <acronym class="acronym">POP3</acronym> 邮件服务器 Kerberos化。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77635920"></a>14.7.8.2. <span class="application">Kerberos</span> 是为单用户工作站设计的</h4></div></div></div><p>在多用户环境中
+	    <span class="application">Kerberos</span> 的安全性会被削弱。
+	    这是因为它把 ticket 保存到 <code class="filename">/tmp</code> 目录中， 而这个目录可以被任何用户读取。
+	    如果有用户与其它人同时共享一台计算机 (也就是 multi-user)，
+	    则这个用户的 ticket 就可能被其它用户窃取 (复制)。</p><p>可以通过使用 <code class="literal">-c</code> 文件名 这样的命令行选项，
+	    或者(推荐的)改变 <code class="envar">KRB5CCNAME</code> 环境变量来避免这个问题，
+	    但很少有人这么做。原则上， 将 ticket 保存到用户的 home
+	    目录并简单地设置权限就能够缓解这个问题。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77639248"></a>14.7.8.3. KDC 会成为单点崩溃故障点</h4></div></div></div><p>根据设计， <acronym class="acronym">KDC</acronym> 必须是安全的，
+	    因为主密码数据库保存在它上面。 决不应该在
+	    <acronym class="acronym">KDC</acronym>上面运行其它服务，
+	    而且还应确保它的物理安全。
+	    由于 <span class="application">Kerberos</span>
+	    使用同一个密钥 (传说中的那个
+	    <span class="quote">“<span class="quote">主</span>”</span> 密钥) 来加密所有的密码， 而将这个文件保存在
+	    <acronym class="acronym">KDC</acronym>， 因此其安全尤为重要</p><p>不过， 主密钥的泄露并没有想象中的那么可怕。
+	    主密钥只用来加密 <span class="application">Kerberos</span>
+	    数据库以及产生随机数发生器的种子。
+	    只要 <acronym class="acronym">KDC</acronym> 是安全的，
+	    即使攻击者拿到了主密钥也做不了什么。</p><p>另外， 如果 <acronym class="acronym">KDC</acronym> 不可用
+	    (例如由于拒绝服务攻击或网络故障)
+	    则网络服务将由于验证服务无法进行而不能使用，
+	    从而导致更大范围的拒绝服务攻击。
+	    通过部署多个 <acronym class="acronym">KDC</acronym> (一个主服务器，
+	    配合一个或多个从服务器) 并采用经过仔细设计和实现的备用验证方式可以避免这种问题
+	    (<acronym class="acronym">PAM</acronym> 是一个不错的选择)。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77649232"></a>14.7.8.4. <span class="application">Kerberos</span> 的不足</h4></div></div></div><p><span class="application">Kerberos</span> 允许用户、主机和服务之间进行相互认证。
+	    但它并没有提供机制来向用户、主机或服务验证 <acronym class="acronym">KDC</acronym>。
+	    这意味着种过木马的程序，例如
+	    <code class="command">kinit</code> 有可能记录用户所有的用户名和密码。
+	    尽管如此， 可以用类似
+	    <span class="package">security/tripwire</span>
+	    这样的文件系统完整性检查工具来避免此类情况的发生。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77652176"></a>14.7.9. 相关资源和其它资料</h3></div></div></div><a id="idp77677520" class="indexterm"></a><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="http://www.faqs.org/faqs/Kerberos-faq/general/preamble.html" target="_top">
+	    The <span class="application">Kerberos</span> FAQ</a></p></li><li class="listitem"><p><a class="link" href="http://web.mit.edu/Kerberos/www/dialogue.html" target="_top">Designing
+	    an Authentication System: a Dialog in Four Scenes</a></p></li><li class="listitem"><p><a class="link" href="http://www.ietf.org/rfc/rfc1510.txt?number=1510" target="_top">RFC 1510,
+	    The <span class="application">Kerberos</span> Network Authentication Service
+	    (V5)</a></p></li><li class="listitem"><p><a class="link" href="http://web.mit.edu/Kerberos/www/" target="_top"><acronym class="acronym">MIT</acronym>
+	    <span class="application">Kerberos</span> home page</a></p></li><li class="listitem"><p><a class="link" href="http://www.pdc.kth.se/heimdal/" target="_top">Heimdal
+	  <span class="application">Kerberos</span> home page</a></p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="tcpwrappers.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="openssl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.6. TCP Wrappers </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.8. OpenSSL</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

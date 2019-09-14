@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.5. 疑难解答</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="mail-changingmta.html" title="27.4. 改变您的邮件传输代理程序" /><link rel="next" href="mail-advanced.html" title="27.6. 高级主题" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.5. 疑难解答</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mail-changingmta.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="mail-advanced.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mail-trouble"></a>27.5. 疑难解答</h2></div></div></div><a id="idp85560784" class="indexterm"></a><div class="qandaset"><a id="idp85562064"></a><dl><dt>27.5.1. <a href="mail-trouble.html#idp85562320">为什么必须在我的站点的主机上使用 FQDN？</a></dt><dt>27.5.2. <a href="mail-trouble.html#idp85588688">sendmail 提示信息 mail
+	  loops back to myself</a></dt><dt>27.5.3. <a href="mail-trouble.html#idp85594448">我如何在一个拨号主机上运行一个邮件服务？</a></dt><dt>27.5.4. <a href="mail-trouble.html#idp85639376">为什么当我发送邮件到其它主机总是有 Relaying
+	    Denied 出错信息？</a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%" /><col /></colgroup><tbody><tr class="question"><td align="left" valign="top"><a id="idp85562320"></a><a id="idp85562576"></a><p><strong>27.5.1.</strong></p></td><td align="left" valign="top"><p>为什么必须在我的站点的主机上使用 FQDN？</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>您可能会发现主机实际上是在另外一个域里面，
+	  例如，如果您是在
+	  <code class="systemitem">foo.bar.edu</code> 里，而您要找一台叫
+	  <code class="systemitem">mumble</code> 的主机，它在
+	  <code class="systemitem">bar.edu</code> 域里，您就必须用完整的域名
+	  <code class="systemitem">mumble.bar.edu</code>，而不是用
+	  <code class="systemitem">mumble</code>。</p><p>传统上，这在 BSD BIND<a id="idp85566544" class="indexterm"></a> resolvers 中是可行的。
+	  然而目前随 FreeBSD 附带的 <span class="application">BIND</span>
+	  已不为同一域外提供缩写服务。所以，这个不完整的主机名
+	  <code class="systemitem">mumble</code> 必须以 <code class="systemitem">mumble.foo.bar.edu</code> 这种形式才能被找到，
+	  或者将在根域中搜索它。</p><p>这跟以前的处理是不同的，以前版本将会继续寻找
+	  <code class="systemitem">mumble.bar.edu</code> 和
+	  <code class="systemitem">mumble.edu</code>。
+	  如果您想要了解这种方式是否是好，或者它有什么安全方面的漏洞，
+	  请参阅 RFC 1535 文档。</p><p>如果您想要一个好的工作环境，您可以使用如下行：
+
+          </p><pre class="programlisting">search foo.bar.edu bar.edu</pre><p>
+
+          替换先前旧的版本：
+
+          </p><pre class="programlisting">domain foo.bar.edu</pre><p>
+
+          把这行放在您的 <code class="filename">/etc/resolv.conf</code>
+	  文件中。然而，请一定要确定这样的搜寻顺序不会造成 RFC 1535
+	  里提到的<span class="quote">“<span class="quote">boundary between local and public administration</span>”</span>
+	  问题。</p></td></tr><tr class="question"><td align="left" valign="top"><a id="idp85588688"></a><a id="idp85588944"></a><p><strong>27.5.2.</strong></p></td><td align="left" valign="top"><p><span class="application">sendmail</span> 提示信息 <span class="errorname">mail
+	  loops back to myself</span></p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>下面是
+	<span class="application">sendmail</span> FAQ 中的回答：</p><pre class="programlisting">我得到了如下的信息：
+
+553 MX list for domain.net points back to relay.domain.net
+554 &lt;user@domain.net&gt;... Local configuration error
+
+我如何解决这个问题？
+
+您已经通过 MX 记录指定把发送给特定的域 (例如，domain.net)
+的邮件被转寄到指定的主机 (在这个例子中，relay.domain.net)，
+而这台机器并不认为它自己是 domain.net。请把 domain.net 添加到
+/etc/mail/local-host-names 文件中 [在 8.10 版之前是 /etc/sendmail.cw]
+(如果您使用 FEATURE(use_cw_file) 的话) 或者在 /etc/mail/sendmail.cf
+中添加<span class="quote">“<span class="quote">Cw domain.net</span>”</span>。<a id="idp85591888" class="indexterm"></a></pre><p><span class="application">sendmail</span> 的 FAQ 可以在
+	  <code class="uri"><a class="uri" href="http://www.sendmail.org/faq/" target="_top">http://www.sendmail.org/faq/</a></code> 找到，
+	  如果您想要对您的邮件做任何的<span class="quote">“<span class="quote">调整</span>”</span>，
+	  则推荐首先看一看它。</p></td></tr><tr class="question"><td align="left" valign="top"><a id="idp85594448"></a><a id="idp85623504"></a><p><strong>27.5.3.</strong></p></td><td align="left" valign="top"><p>我如何在一个拨号主机上运行一个邮件服务？<a id="idp85624016" class="indexterm"></a></p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>您想要把局域网上的 FreeBSD 主机连接到互连网上，而这台
+	  FreeBSD 主机将会成为这个局域网的邮件网关，
+	  这个拨号连接不必一直保持在连接状态。</p><p>最少有两种方法可以满足您的要求。一种方法就是使用 UUCP<a id="idp85625680" class="indexterm"></a>。</p><p>另一种方法是找到一个专职的服务器来为您的域提供副 MX 主机服务。
+	  例如，如果您公司的域名是
+	  <code class="systemitem">example.com</code>，您的互连网服务提供者把
+	  <code class="systemitem">example.net</code> 作为您域的副 MX 服务：</p><pre class="programlisting">example.com.          MX        10      example.com.
+                      MX        20      example.net.</pre><p>只有一台主机被指定当做您的最终收信主机
+	  (在 <code class="systemitem">example.com</code> 主机的
+	  <code class="filename">/etc/mail/sendmail.cf</code> 文件中添加
+	  <code class="literal">Cw example.com</code>)。</p><p>当 <code class="command">sendmail</code> 试图分发邮件的时候，
+	  它会尝试通过 modem 连接到您 (<code class="systemitem">example.com</code>)。
+	  因为您并不在线，所以总是会得到一个超时的错误。
+	  <span class="application">sendmail</span> 将会把邮件发送到副
+	  MX<a id="idp85631568" class="indexterm"></a> 主机，也就是说，您的互连网服务提供者
+	  (<code class="systemitem">example.net</code>)。副
+	  MX 主机将周期性的尝试连接并发送邮件到您的主机
+	  (<code class="systemitem">example.com</code>)。</p><p>您也许想要使用下面的这个登录脚本：</p><pre class="programlisting">#!/bin/sh
+# Put me in /usr/local/bin/pppmyisp
+( sleep 60 ; /usr/sbin/sendmail -q ) &amp;
+/usr/sbin/ppp -direct pppmyisp</pre><p>如果您想要为一个用户建立一个分开登录的脚本，
+	  您可以使用 <code class="command">sendmail -qRexample.com</code>
+	  替换上面的脚本。这样将使所有的邮件按照您的
+	  <code class="systemitem">example.com</code>
+	  队列立即被处理。</p><p>更深入的方法可以参考下面这段：</p><p>这段信息是从 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-isp" target="_top">FreeBSD Internet 服务提供商的邮件列表</a> 拿来的。</p><pre class="programlisting">&gt; 我们为用户提供副 MX 主机服务。用户每天都会上线好几次
+&gt; 并且自动把信件取回主 MX 主机
+&gt; (当有他们的邮件时我们并没有通知他们)。
+&gt; 我们的 mailqueue 程序每 30 分钟清一次邮件队列。那段时间他们
+&gt; 就必须上线 30 分钟以确保他们的信件送达他们的主 MX 主机。
+&gt;
+&gt; 有任何指令可以用 sendmail 寄出所有邮件么？
+&gt; 普通用户在我们的机器上当然没有 root 权限。
+
+在 sendmail.cf 的<span class="quote">“<span class="quote">privacy flags</span>”</span>部分，有这样的设定
+Opgoaway,restrictqrun
+
+移除 restrictqrun 可以让非 root 用户启动队列处理的程序。
+您可能也要重新安排您的 MX 设定。我们是用户的 MX 主机，
+而且我们还设定了这个：
+
+# If we are the best MX for a host, try directly instead of generating # local config error.
+OwTrue
+
+这样的话远程机器会直接把信送给您，而不会尝试连接您的用户的机器。
+然后您就可以把邮件发送到您的用户。这个设定只对
+<span class="quote">“<span class="quote">主机</span>”</span>有效，所以您必须要让您的用户在 DNS 中把他们的邮件主机设置为
+<span class="quote">“<span class="quote">customer.com</span>”</span>或者
+<span class="quote">“<span class="quote">hostname.customer.com</span>”</span>。只要为<span class="quote">“<span class="quote">customer.com</span>”</span>在 DNS
+里添加一个 A 记录就可以了。</pre></td></tr><tr class="question"><td align="left" valign="top"><a id="idp85639376"></a><a id="idp85639760"></a><p><strong>27.5.4.</strong></p></td><td align="left" valign="top"><p>为什么当我发送邮件到其它主机总是有 <span class="errorname">Relaying
+	    Denied</span> 出错信息？</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>默认的 FreeBSD 安装中，
+ 	    <span class="application">sendmail</span> 会配置为只发送来自它所在主机上的邮件。
+ 	    例如，如果有可用的 <acronym class="acronym">POP</acronym> 服务器，则用户将可以从学校、
+ 	    公司或其他什么别的地方检查邮件，但他们仍然无法从远程直接发送邮件。
+	    通常，在几次尝试之后，
+	    <span class="application">MAILER-DAEMON</span> 将发出一封包含
+	    <span class="errorname">5.7 Relaying Denied</span> 错误信息的邮件。</p><p>有很多方法可以避免这种现象。
+ 	    最直截了当的方法是把您的 ISP 的地址放到
+	    <code class="filename">/etc/mail/relay-domains</code> 文件中。
+ 	    完成这项工作的简单的方法是：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo "your.isp.example.com" &gt; /etc/mail/relay-domains</code></strong></pre><p>建立或编辑这个文件以后您必须重新启动
+	    <span class="application">sendmail</span>。
+	    如果您是一个管理员并且不希望在本地发送邮件，
+	    或者想要在其它的机器甚至其它的 ISP 上使用一个客户端系统，
+	    这个方法是很方便的。如果您仅有一到两个邮件帐户它也非常的有用。
+	    如果有大量的地址需要添加，
+	    您可以很简单的使用您喜欢的文本编辑器打开这个文件添加域名，
+	    每行一个：</p><pre class="programlisting">your.isp.example.com
+other.isp.example.net
+users-isp.example.org
+www.example.org</pre><p>现在邮件可以通过您的系统传送，
+	    这个列表中存在的主机 (前提是用户在您的系统上已经有一个帐户)
+	    将可以成功的发送。这是一个允许正常的远程用户从您的系统发送邮件，
+	    并且阻止其它非法用户通过您系统发送垃圾邮件的好方法。</p></td></tr></tbody></table></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mail-changingmta.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mail-advanced.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.4. 改变您的邮件传输代理程序 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.6. 高级主题</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

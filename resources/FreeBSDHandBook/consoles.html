@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.2. 虚拟控制台及终端</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="next" href="permissions.html" title="4.3. 权限" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.2. 虚拟控制台及终端</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="basics.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="permissions.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="consoles"></a>4.2. 虚拟控制台及终端</h2></div></div></div><a id="idp69549008" class="indexterm"></a><a id="idp69549776" class="indexterm"></a><a id="idp69550544" class="indexterm"></a><p>如果没有 FreeBSD 配置为在启动时自动开启图形界面环境，
+      系统在完成引导之后就会给出类似下面这样的命令行登录提示：</p><pre class="screen">FreeBSD/amd64 (pc3.example.org) (ttyv0)
+
+login:</pre><p>其中， 第一行包含了一些关于本机系统的信息。
+      其中的 <code class="literal">amd64</code> 表示示例中的系统运行的是 64-位
+      版本的 FreeBSD。 系统的主机名 (hostname) 是
+      <code class="systemitem">pc3.example.org</code>， 而使用的
+      <span class="quote">“<span class="quote">系统控制台</span>”</span> 则是
+      <code class="filename">ttyv0</code>。 第二行则是真正的登录提示符。</p><p>FreeBSD 是多用户系统， 因此需要设法识别不同的用户。
+      这是通过要求每个用户在使用系统中的程序之前首先完成登录操作来实现的。
+      每个用户都有与之对应， 并在系统范围内唯一的名字：
+      <span class="quote">“<span class="quote">用户名</span>”</span> (username)， 以及配合使用的个人
+      <span class="quote">“<span class="quote">密码</span>”</span> (password)。</p><p>要登录系统控制台， 首先要输入在
+      <a class="xref" href="bsdinstall-post.html#bsdinstall-addusers" title="2.9.6. 添加用户">Section 2.9.6, “添加用户”</a> 中介绍的系统安装阶段时配置的用户名，
+      然后按下
+      <span class="keycap"><strong>Enter</strong></span>。 接下来， 则要输入与这一用户名对应的密码，
+      然后按 <span class="keycap"><strong>Enter</strong></span>。 出于安全考虑，
+      输入密码时是 <span class="emphasis"><em>不回显</em></span> 的。</p><p>在输入了正确的口令之后， 系统会显示今日消息
+      (message of the day, <acronym class="acronym">MOTD</acronym>)，
+      之后是命令提示符。 随您选择的命令行界面不同， 这个提示符可能会是
+      <code class="literal">#</code>、 <code class="literal">$</code>， 或者
+      <code class="literal">%</code> 字符。 提示符表示用户已经登录到了 FreeBSD
+      系统中， 并且可以开始尝试使用可用的命令了。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="consoles-virtual"></a>4.2.1. 虚拟控制台</h3></div></div></div><p>虽然用户可以在系统控制台上与系统互动，
+	但使用键盘操作 FreeBSD 命令行的用户通常会登录到某个虚拟控制台。
+	这是因为系统控制台在默认配置中还用于显示一些系统级的消息，
+	这些消息可能会覆盖屏幕上您正在使用的命令输出，
+	或是正在编辑的文件， 从而给集中精力进行手边的工作带来一些困扰。</p><p>FreeBSD 已经预设使用多个虚拟控制台来接受用户输入的命令。
+	每个虚拟控制台有自己的登录提示符和命令行界面，
+	并可以很容易地在这些虚拟控制台之间进行切换。
+	这种设计类似于在图形界面中同时使用多个命令行窗口来进行操作。</p><p>组合键
+	<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F1</strong></span> 一直到
+	<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F8</strong></span>
+	由 FreeBSD 系统保留， 用于在虚拟控制台之间切换。 您可以用
+	<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F1</strong></span>
+	切换到系统控制台
+	(<code class="filename">ttyv0</code>)、
+	<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F2</strong></span>
+	切换到第一个虚拟控制台
+	(<code class="filename">ttyv1</code>)、
+	<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F3</strong></span>
+	切换到第二个系统控制台
+	(<code class="filename">ttyv2</code>)， 等等。</p><p>当从某个控制台切换到另外的控制台时， FreeBSD
+	会根据需要保存正在使用的屏幕内容， 并恢复将要使用的屏幕内容。
+	用户会因此产生拥有多个可以输入和运行 FreeBSD 命令的虚拟屏幕和键盘的感觉。
+	在用户切换到其它控制台时， 在先前的虚拟控制台上运行的程序仍会继续运行。</p><p>请参阅联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syscons&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">syscons</span>(4)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atkbd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">atkbd</span>(4)</span></a>、
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vidcontrol&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vidcontrol</span>(1)</span></a> 以及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kbdcontrol&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">kbdcontrol</span>(1)</span></a>， 以了解更多关于 FreeBSD
+	控制台及键盘驱动的技术说明。</p><p>在 FreeBSD 中， 虚拟控制台的数量是在
+	<code class="filename">/etc/ttys</code> 中配置的：</p><pre class="programlisting"># name    getty                         type  status comments
+#
+ttyv0   "/usr/libexec/getty Pc"         cons25  on  secure
+# Virtual terminals
+ttyv1   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv2   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv3   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv4   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv5   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv6   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv7   "/usr/libexec/getty Pc"         cons25  on  secure
+ttyv8   "/usr/X11R6/bin/xdm -nodaemon"  xterm   off secure</pre><p>您可以通过在行首添加注释符
+	(<code class="literal">#</code>) 来禁用虚拟控制台。 举例来说，
+	假如希望将可用的虚拟控制台从 8 个减少到 4 个， 您需要做的便是在代表
+	<code class="filename">ttyv5</code>
+	到 <code class="filename">ttyv8</code> 的这最后四行前面加上
+	<code class="literal">#</code>。 需要注意的是，
+	<span class="emphasis"><em>不要</em></span> 把系统控制台 <code class="filename">ttyv0</code>
+	注释掉。 另外， 最后一个虚拟控制台 (<code class="filename">ttyv8</code>)
+	是在系统中安装了 <span class="application">Xorg</span>
+	并需要访问图形控制台时使用的， 其配置可参阅
+	<a class="xref" href="x11.html" title="Chapter 6. X Window 系统">Chapter 6, <em>X Window 系统</em></a>。</p><p>关于这个文件中每一列的详细介绍， 以及配合虚拟控制台使用的参数选项，
+	请参阅
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ttys&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ttys</span>(5)</span></a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="consoles-singleuser"></a>4.2.2. 单用户模式的控制台</h3></div></div></div><p>关于 <span class="quote">“<span class="quote">单用户模式</span>”</span> 详细介绍在 <a class="xref" href="boot-init.html#boot-singleuser" title="13.6.2. 单用户模式">Section 13.6.2, “单用户模式”</a>
+	这里可以找到。 当您运行单用户模式时只能使用一个控制台，
+	没有多个虚拟控制台可使用。 单用户模式的控制台同也可以在
+	<code class="filename">/etc/ttys</code> 文件设置，
+	可在这行找到要启动的<code class="literal">控制台</code>：</p><pre class="programlisting"># name  getty                           type    status          comments
+#
+# If console is marked "insecure", then init will ask for the root password
+# when going to single-user mode.
+console none                            unknown off secure</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这个 <code class="literal">console</code> 已经注释掉,
+        您可编辑这行把 <code class="literal">secure</code> 改为
+	  <code class="literal">insecure</code>。 这样，
+	  当用单用户进入 FreeBSD 时， 它仍然要求提供
+	  <code class="systemitem">root</code> 用户的密码。</p><p xmlns="http://www.w3.org/1999/xhtml"><span class="emphasis"><em>在把这个选项改为
+	  <code class="literal">insecure</code></em></span> 的时候一定要小心，
+	  如果您忘记了
+	  <code class="systemitem">root</code>用户的密码， 进入单用户会有点麻烦。
+	  尽管仍然能进入单用户模式， 但如果您不熟悉它就会非常令人头疼。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="consoles-vidcontrol"></a>4.2.3. 改变控制台的显示模式</h3></div></div></div><p>FreeBSD 控制台默认的显示模式可以被调整为 1024x768， 1280x1024，
+	或者任何你的显卡芯片和显示器所支持的其他尺寸。
+	要使用一个不同的显示模式，
+	你必须首先重新编译内核并包含以下2个选项：</p><pre class="programlisting">options VESA
+options SC_PIXEL_MODE</pre><p>在内核用这2个选项编译完成后，你就可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vidcontrol&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vidcontrol</span>(1)</span></a>
+	工具来测定你的硬件支持何种显示模式了。 以 root
+	身份在控制台键入以下命令来获得一份所支持的显示模式列表。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>vidcontrol -i mode</code></strong></pre><p>这个命令的输出是一份你的硬件所支持的显示模式列表。
+	你可以在以 root	身份在控制台上键入 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vidcontrol&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vidcontrol</span>(1)</span></a>
+	命令来改变显示模式：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>vidcontrol MODE_279</code></strong></pre><p>如果你对于新的显示模式满意，那么可以把它加入到
+	<code class="filename">/etc/rc.conf</code> 使机器在每次启动的时候都能生效，
+	我们使用了上一个例子中的模式：</p><pre class="programlisting">allscreens_flags="MODE_279"</pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="basics.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="permissions.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. UNIX 基础 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.3. 权限</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

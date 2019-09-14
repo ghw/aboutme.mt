@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.2. 网关和路由</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="next" href="network-wireless.html" title="30.3. 无线网络" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.2. 网关和路由</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="advanced-networking.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-wireless.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-routing"></a>30.2. 网关和路由</h2></div><div><span class="authorgroup">贡献者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Coranth</span> <span class="surname">Gryphon</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">袁</span> <span class="surname">苏义</span></span>. </span></div></div></div><a id="idp88663760" class="indexterm"></a><a id="idp88664272" class="indexterm"></a><a id="idp88664784" class="indexterm"></a><p>要让网络上的两台计算机能够相互通讯，
+      就必须有一种能够描述如何从一台计算机到另一台计算机的机制， 这一机制称作
+      <em class="firstterm">路由选择(routing)</em>。
+      <span class="quote">“<span class="quote">路由项</span>”</span> 是一对预先定义的地址：
+      <span class="quote">“<span class="quote">目的地(destination)</span>”</span> 和 <span class="quote">“<span class="quote">网关(gateway)</span>”</span>。
+      这个地址对所表达的意义是， 通过 <span class="emphasis"><em>网关</em></span>
+      能够完成与 <span class="emphasis"><em>目的地</em></span> 的通信。
+      有三种类型的目的地址： 单个主机、 子网、 以及 <span class="quote">“<span class="quote">默认</span>”</span>。
+      如果没有可用的其它路由， 就会使用 <span class="quote">“<span class="quote">默认路由</span>”</span>，
+      有关默认路由的内容， 将在稍后的章节中进行讨论。 网关也有三种类型：
+      单个主机， 网络接口 (也叫 <span class="quote">“<span class="quote">链路 (links)</span>”</span>)
+      和以太网硬件地址 (MAC 地址)。
+    </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88669136"></a>30.2.1. 实例</h3></div></div></div><p>为了说明路由选择的各个部分， 首先来看看下面的例子。
+	这是 <code class="command">netstat</code> 命令的输出：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>netstat -r</code></strong>
+Routing tables
+
+Destination      Gateway            Flags     Refs     Use     Netif Expire
+
+default          outside-gw         UGSc       37      418      ppp0
+localhost        localhost          UH          0      181       lo0
+test0            0:e0:b5:36:cf:4f   UHLW        5    63288       ed0     77
+10.20.30.255     link#1             UHLW        1     2421
+example.com      link#1             UC          0        0
+host1            0:e0:a8:37:8:1e    UHLW        3     4601       lo0
+host2            0:e0:a8:37:8:1e    UHLW        0        5       lo0 =&gt;
+host2.example.com link#1             UC          0        0
+224              link#1             UC          0        0</pre><a id="idp88688080" class="indexterm"></a><p>头两行给出了当前配置中的默认路由 (将在 <a class="link" href="network-routing.html#network-routing-default" title="30.2.2. 默认路由">下一节</a> 中进行介绍)
+	和 <code class="systemitem">localhost (本机)</code> 路由。</p><a id="idp88689872" class="indexterm"></a><p>这里的路由表中给出的用于 <code class="literal">localhost</code> 的接口
+	(<code class="literal">Netif</code> 列) 是 <code class="filename">lo0</code>，
+	也就是大家熟知的 <span class="quote">“<span class="quote">回环设备</span>”</span>。
+	它表示所有以此为 <span class="quote">“<span class="quote">目的地</span>”</span> 的通信都留在本机，
+	而不通过 LAN 发出， 因为这些流量最终会回到起点。</p><a id="idp88692688" class="indexterm"></a><p>接着出现的是以 <code class="systemitem">0:e0:</code>
+	开头的地址。这些是以太网硬件地址，也称为 MAC 地址。
+	FreeBSD 会自动识别在同一个以太网中的任何主机 (如
+	<code class="systemitem">test0</code>)， 并为其新增一个路由，
+	并通过那个以太网接口 ── <code class="filename">ed0</code>
+	直接与它通讯 (译者注：那台主机)。与这类路由表相关的也有一个超时项
+	(<code class="literal">Expire</code>列)，当我们在指定时间内没有收到从那个主机发来的信息，
+	这项就派上用场了。这种情况下，到这个主机的路由就会被自动删除。
+	这些主机被使用一种叫做RIP(路由信息协议--Routing Information
+	Protocol)的机制所识别，这种机制利用基于<span class="quote">“<span class="quote">最短路径选择
+	(shortest path determination)</span>”</span>的办法计算出到本地主机的路由。</p><a id="idp88696400" class="indexterm"></a><p>FreeBSD 也会为本地子网添加子网路由(<code class="systemitem">10.20.30.255</code> 是子网
+	<code class="systemitem">10.20.30</code> 的广播地址，而 <code class="systemitem">example.com</code> 是这个子网相联的域名)。
+	名称 <code class="literal">link#1</code> 代表主机上的第一块以太网卡。
+	您会发现，对于它们没有指定另外的接口。</p><p>这两个组(本地网络主机和本地子网)的路由是由守护进程
+	<span class="application">routed</span> 自动配置的。如果它没有运行，
+	那就只有被静态定义 (例如，明确输入的) 的路由才存在了。</p><p><code class="literal">host1</code> 行代表我们的主机，它通过以太网地址来识别。
+	因为我们是发送端，FreeBSD知道使用回环接口 (<code class="filename">lo0</code>)
+	而不是通过以太网接口来进行发送。</p><p>两个 <code class="literal">host2</code> 行是我们使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a>
+	别名 (请看关于以太网的那部分就会知道我们为什么这么做)
+	时产生的一个实例。在 <code class="filename">lo0</code>
+	接口之后的 <code class="literal">=&gt;</code> 符号表明我们不仅使用了回环
+	(因为这个地址也涉及了本地主机)，而且明确指出它是个别名。
+	这类路由只有在支持别名的主机上才能显现出来。
+	所有本地网上的其它的主机对于这类路由只会简单拥有
+	<code class="literal">link#1</code>。</p><p>最后一行 (目标子网<code class="systemitem">224</code>)
+	用于处理多播――它会覆盖到其它的区域。</p><p>最后，每个路由的不同属性可以在 <code class="literal">Flags</code>
+	列中看到。下边是个关于这些标志和它们的含义的一个简表：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><tbody><tr><td>U</td><td>Up: 路由处于活动状态。</td></tr><tr><td>H</td><td>Host: 路由目标是单个主机。</td></tr><tr><td>G</td><td>Gateway: 所有发到目的地的网络传到这一远程系统上，
+		并由它决定最后发到哪里。</td></tr><tr><td>S</td><td>Static: 这个路由是手工配置的，不是由系统自动生成的。</td></tr><tr><td>C</td><td>Clone: 生成一个新的路由，
+		通过这个路由我们可以连接上这些机子。
+		这种类型的路由通常用于本地网络。</td></tr><tr><td>W</td><td>WasCloned: 指明一个路由――它是基于本地区域网络
+		(克隆) 路由自动配置的。</td></tr><tr><td>L</td><td>Link: 路由涉及到了以太网硬件。</td></tr></tbody></table></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-routing-default"></a>30.2.2. 默认路由</h3></div></div></div><a id="idp88729296" class="indexterm"></a><p>当本地系统需要与远程主机建立连接时，
+	它会检查路由表以决定是否有已知的路径存在。
+	如果远程主机属于一个我们已知如何到达 (克隆的路由)
+	的子网内，那么系统会检查看沿着那个接口是否能够连接。</p><p>如果所有已知路径都失败，系统还有最后一个选择：
+	<span class="quote">“<span class="quote">默认</span>”</span>路由。这个路由是特殊类型的网关路由
+	(通常只有一个存在于系统里)，并且总是在标志栏使用一个
+	<code class="literal">c</code>来进行标识。对于本地区域网络里的主机，
+	这个网关被设置到任何与外界有直接连接的机子里 (无论是通过
+	PPP、DSL、cable modem、T1 或其它的网络接口连接)。</p><p>如果您正为某台本身就做为网关连接外界的机子配置默认路由的话，
+	那么该默认路由应该是您的<span class="quote">“<span class="quote">互联网服务商
+	(ISP)</span>”</span>那方的网关机子。</p><p>让我们来看一个关于默认路由的例子。这是个很普遍的配置：</p><div class="mediaobject"><img src="advanced-networking/net-routing.png" /></div><p>主机 <code class="systemitem">Local1</code> 和 <code class="systemitem">Local2</code>
+	在您那边。<code class="systemitem">Local1</code> 通过 PPP 拨号连接到了 ISP。这个
+	PPP 服务器通过一个局域网连接到另一台网关机子――它又通过一个外部接口连接到
+	ISP 提供的互联网上。</p><p>您的每一台机子的默认路由应该是：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>Host</th><th>Default Gateway</th><th>Interface</th></tr></thead><tbody><tr><td>Local2</td><td>Local1</td><td>Ethernet</td></tr><tr><td>Local1</td><td>T1-GW</td><td>PPP</td></tr></tbody></table></div><p>一个常见的问题是<span class="quote">“<span class="quote">我们为什么 (或怎样)
+	能将 <code class="systemitem">T1-GW</code> 设置成为 <code class="systemitem">Local1</code>
+	默认网关，而不是它所连接 ISP 服务器？</span>”</span></p><p>记住，因为 PPP 接口使用的一个地址是在 ISP
+	的局域网里的，用于您那边的连接，对于 ISP
+	的局域网里的其它机子，其路由会自动产生。
+	因此，您就已经知道了如何到达机子 <code class="systemitem">T1-GW</code>，
+	那么也就没必要中间那一步了――发送通信给 ISP 服务器。</p><p>通常使用地址 <code class="systemitem">X.X.X.1</code> 做为一个局域网的网关。
+	因此 (使用相同的例子)，如果您本地的 C 类地址空间是
+	<code class="systemitem">10.20.30</code>，而您的 ISP
+	使用的是 <code class="systemitem">10.9.9</code>，
+	那么默认路由表将是：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>Host</th><th>Default Route</th></tr></thead><tbody><tr><td>Local2 (10.20.30.2)</td><td>Local1 (10.20.30.1)</td></tr><tr><td>Local1 (10.20.30.1, 10.9.9.30)</td><td>T1-GW (10.9.9.1)</td></tr></tbody></table></div><p>您可以很轻易地通过 <code class="filename">/etc/rc.conf</code>
+	文件设定默认路由。在我们的实例里，在主机 <code class="systemitem">Local2</code>
+	里，我们在文件 <code class="filename">/etc/rc.conf</code>
+	里增加了下边内容：</p><pre class="programlisting">defaultrouter="10.20.30.1"</pre><p>也可以直接在命令行使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=route&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">route</span>(8)</span></a> 命令:</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>route add default 10.20.30.1</code></strong></pre><p>要了解关于如何手工维护网络路由表的进一步细节， 请参考
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=route&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">route</span>(8)</span></a> 联机手册。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-dual-homed-hosts"></a>30.2.3. 重宿主机(Dual Homed Hosts)</h3></div></div></div><a id="idp88767312" class="indexterm"></a><p>还有一种其它的类型的配置是我们要提及的，
+	这就是一个主机处于两个不同的网络。技术上，任何作为网关
+	(上边的实例中，使用了 PPP 连接) 的机子就算作是重宿主机。
+	但这个词实际上仅用来指那种处于两个局域网之中的机子。</p><p>有一种情形，一台机子有两个网卡，
+	对于各个子网都有各自的一个地址。另一种情况，
+	这台机子仅有一张网卡，但使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a>
+	做了别名。如果有两个独立的以太网在使用的情形就使用前者，
+	如果只有一个物理网段，但逻辑上分成了两个独立的子网，
+	就使用后者。</p><p>每种情况都要设置路由表以便两子网都知道这台主机是到其它子网的网关――入站路由
+	(inbound route)。将一台主机配置成两个子网间的路由器，
+	这种配置经常在我们需要实现单向或双向的包过滤或防火墙时被用到。</p><p>如果想让主机在两个接口间转发数据包，您需要激活
+	FreBSD 的这项功能。至于怎么做，请看下一部分了解更多。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-dedicated-router"></a>30.2.4. 建立路由器</h3></div></div></div><a id="idp88771024" class="indexterm"></a><p>网络路由器只是一个将数据包从一个接口转发到另一个接口的系统。
+	互联网标准和良好的工程实践阻止了 FreeBSD 计划在 FreeBSD
+	中把它置成默认值。您在可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 中改变下列变量的值为
+	<code class="literal">YES</code>，使这个功能生效：</p><pre class="programlisting">gateway_enable="YES"          # Set to YES if this host will be a gateway</pre><p>这个选项会把<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a>
+	变量――<code class="varname">net.inet.ip.forwarding</code>
+	设置成 <code class="literal">1</code>。如果您要临时地停止路由，
+	您可以把它重设为 <code class="literal">0</code>。</p><a id="idp88775888" class="indexterm"></a><a id="idp88776400" class="indexterm"></a><a id="idp88776912" class="indexterm"></a><p>新的路由器需要有路由才知道将数据传向何处。
+	如果网络够简单，您可以使用静态路由。FreeBSD
+	也自带一个标准的BSD路由选择守护进程 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=routed&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">routed</span>(8)</span></a>，
+	称之为 RIP ( version 1和 version 2) 和 IRDP。对 BGP v4，OSPF v2
+	和其它复杂路由选择协议的支持可以从
+	<span class="package">net/zebra</span> 包中得到。
+	像 <span class="application"><span class="trademark">GateD</span>®</span>
+	一样的商业产品也提供了更复杂的网络路由解决方案。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-static-routes"></a>30.2.5. 设置静态路由</h3></div><div><span class="authorgroup">贡献者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Coranth</span> <span class="surname">Gryphon</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">袁</span> <span class="surname">苏义</span></span>. </span></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88789968"></a>30.2.5.1. 手动配置</h4></div></div></div><p>假设如下这样一个网络：</p><div class="mediaobject"><img src="advanced-networking/static-routes.png" /></div><p>在这里，<code class="systemitem">RouterA</code> 是我们的 FreeBSD
+	  机子，它充当连接到互联网其它部分的路由器的角色。
+	  默认路由设置为<code class="systemitem">10.0.0.1</code>，
+	  它就允许与外界连接。我们假定已经正确配置了
+	  <code class="systemitem">RouterB</code>，并且知道如何连接到想去的任何地方。
+	  (在这个图里很简单。只须在 <code class="systemitem">RouterB</code>
+	  上增加默认路由，使用 <code class="systemitem">192.168.1.1</code> 做为网关。)</p><p>如果我们查看一下<code class="systemitem">RouterA</code>的路由表，
+	  我们就会看到如下一些内容：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>netstat -nr</code></strong>
+Routing tables
+
+Internet:
+Destination        Gateway            Flags    Refs      Use  Netif  Expire
+default            10.0.0.1           UGS         0    49378    xl0
+127.0.0.1          127.0.0.1          UH          0        6    lo0
+10.0.0.0/24        link#1             UC          0        0    xl0
+192.168.1.0/24     link#2             UC          0        0    xl1</pre><p>使用当前的路由表，<code class="systemitem">RouterA</code>
+	  是不能到达我们的内网――Internal Net 2 的。它没有到 <code class="systemitem">192.168.2.0/24</code> 的路由。
+	  一种可以接受的方法是手工增加这条路由。以下的命令会把
+	  Internal Net 2 网络加入到 <code class="systemitem">RouterA</code> 的路由表中，使用<code class="systemitem">192.168.1.2</code> 做为下一个跳跃：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>route add -net 192.168.2.0/24 192.168.1.2</code></strong></pre><p>现在 <code class="systemitem">RouterA</code>
+	  就可以到达 <code class="systemitem">192.168.2.0/24</code>
+	  网络上的任何主机了。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88806096"></a>30.2.5.2. 永久配置</h4></div></div></div><p>上面的实例对于运行着的系统来说配置静态路由是相当不错了。
+	  只是，有一个问题――如果您重启您的 FreeBSD 机子，路由信息就会消失。
+	  处理附加的静态路由的方法是把它放到您的
+	  <code class="filename">/etc/rc.conf</code> 文件里去。</p><pre class="programlisting"># Add Internal Net 2 as a static route
+static_routes="internalnet2"
+route_internalnet2="-net 192.168.2.0/24 192.168.1.2"</pre><p>配置变量 <code class="literal">static_routes</code>
+	  是一串以空格隔开的字符串。每一串表示一个路由名字。
+	  在上面的例子中我们中有一个串在 <code class="literal">static_routes</code>
+	  里。这个字符串中 <em class="replaceable"><code>internalnet2</code></em>。
+	  然后我们新增一个配置变量
+	  <code class="literal">route_internalnet2</code>，
+	  这里我们把所有传给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=route&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">route</span>(8)</span></a>命令的参数拿了过来。
+	  在上面的实例中的我使用的命令是：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>route add -net 192.168.2.0/24 192.168.1.2</code></strong></pre><p>因此，我们需要的是 <code class="literal">"-net 192.168.2.0/24 192.168.1.2"</code>。</p><p>前边已经提到， 可以把多个静态路由的名称， 放到
+	  <code class="literal">static_routes</code> 里边。
+	  接着我们就来建立多个静态路由。 下面几行所展示的，
+	  是在一个假想的路由器上增加 <code class="systemitem">192.168.0.0/24</code> 和 <code class="systemitem">192.168.1.0/24</code>
+	  之间静态路由的例子：</p><pre class="programlisting">static_routes="net1 net2"
+route_net1="-net 192.168.0.0/24 192.168.0.1"
+route_net2="-net 192.168.1.0/24 192.168.1.1"</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-routing-propagation"></a>30.2.6. 路由传播</h3></div></div></div><a id="idp88815824" class="indexterm"></a><p>我们已经讨论了如何定义通向外界的路由，
+	但未谈及外界是如何找到我们的。</p><p>我们已经知道可以设置路由表，
+	这样任何指向特定地址空间 (在我们的例子中是一个
+	C 类子网) 的数据都会被送往网络上特定的主机，
+	然后由这台主机向地址空间内部转发数据。</p><p>当您得到一个分配给您的网络的地址空间时，
+	ISP(网络服务商)会设置它们的路由表，
+	这样指向您子网的数据就会通过 PPP 连接下传到您的网络。
+	但是其它跨越国界的网络是如何知道将数据传给您的
+	ISP 的呢？</p><p>有一个系统(很像分布式 DNS 信息系统)，
+	它一直跟踪被分配的地址空间，
+	并说明它们连接到互联网骨干(Internet backbone)的点。
+	<span class="quote">“<span class="quote">骨干(Backbone)</span>”</span> 指的是负责全世界和跨国的传输的主要干线。
+	每一台骨干主机(backbone machine)有一份主要表集的副本，
+	它将发送给特定网络的数据导向相应的骨干载体上(backbone carrier)，
+	从结点往下遍历服务提供商链，直到数据到达您的网络。</p><p>服务提供商的任务是向骨干网络广播，以声明它们就是通向您的网点的连接结点
+	(以及进入的路径)。这就是路由传播。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-routing-troubleshooting"></a>30.2.7. 问题解答</h3></div></div></div><a id="idp88819536" class="indexterm"></a><p>有时候，路由传播会有一个问题，一些网络无法与您连接。
+	或许能帮您找出路由是在哪里中断的最有用的命令就是
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=traceroute&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">traceroute</span>(8)</span></a>了。当您无法与远程主机连接时，
+	这个命令一样有用(例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ping&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ping</span>(8)</span></a> 失败)。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=traceroute&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">traceroute</span>(8)</span></a> 命令将以您想连接的主机的名字作为参数执行。
+	不管是到达了目标，还是因为没有连接而终止，
+	它都会显示所经过的所有网关主机。</p><p>想了解更多的信息，查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=traceroute&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">traceroute</span>(8)</span></a> 的手册。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-routing-multicast"></a>30.2.8. 多播路由</h3></div></div></div><a id="idp88829648" class="indexterm"></a><a id="idp88830416" class="indexterm"></a><p>FreeBSD 一开始就支持多播应用软件和多播路由选择。
+	多播程序并不要求FreeBSD的任何特殊的配置，
+	就可以工作得很好。多播路由需要支持被编译入内核：</p><pre class="programlisting">options MROUTING</pre><p>另外，多播路由守护进程――<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mrouted&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mrouted</span>(8)</span></a>
+	必须通过 <code class="filename">/etc/mrouted.conf</code>
+	配置来开启通道和 <acronym class="acronym">DVMRP</acronym>。
+	更多关于多播路由配置的信息可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mrouted&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mrouted</span>(8)</span></a>
+	的手册里找到。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">多播路由服务 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mrouted&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mrouted</span>(8)</span></a> 实现了
+	  <acronym class="acronym">DVMRP</acronym> 多播路由协议，
+	  在许多采用多播的场合，
+	  它已被 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pim&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pim</span>(4)</span></a> 取代。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mrouted&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mrouted</span>(8)</span></a> 以及相关的
+          <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=map-mbone&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">map-mbone</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mrinfo&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mrinfo</span>(8)</span></a> 工具可以在 FreeBSD 的 Ports Collection
+          <span class="package">net/mrouted</span> 中找到。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="advanced-networking.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-wireless.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 30. 高级网络 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.3. 无线网络</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

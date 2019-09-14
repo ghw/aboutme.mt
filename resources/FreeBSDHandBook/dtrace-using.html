@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>24.4. 使用 DTrace</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="dtrace.html" title="Chapter 24. DTrace" /><link rel="prev" href="dtrace-enable.html" title="24.3. 启用 DTrace 支持" /><link rel="next" href="dtrace-language.html" title="24.5. D 语言" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">24.4. 使用 DTrace</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dtrace-enable.html">Prev</a> </td><th width="60%" align="center">Chapter 24. DTrace</th><td width="20%" align="right"> <a accesskey="n" href="dtrace-language.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="dtrace-using"></a>24.4. 使用 DTrace</h2></div></div></div><p>在使用 DTrace 的功能之前，DTrace 设备必须存在。
+      使用如下的命令装载此设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload dtraceall</code></strong></pre><p>DTrace 支持现在应该可以使用了。
+      管理员现在可以使用如下的命令查看所有的探测器：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dtrace -l | more</code></strong></pre><p>所有的输出都传递给 <code class="command">more</code> 工具，
+      因为它们会很快超出屏幕的显示区域。此时，DTrace
+      应该被认为是能够正常工作的了。现在是该考察工具包的时候了。</p><p>工具包是实现写好的一堆脚本，与 DTrace 一起运行来收集系统信息。
+      有脚本用来检查已打开的文件，内存，<acronym class="acronym">CPU</acronym>
+      使用率和许多东西。使用如下的命令解开脚本：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gunzip -c DTraceToolkit* | tar xvf -</code></strong></pre><p>使用 <code class="command">cd</code> 命令切换到那个目录，
+      并修改所有文件的可执行权限，把那些名字小写的文件权限改为
+      <code class="literal">755</code>。</p><p>所有这些脚本都需要修改它们的内容。那些指向
+      <code class="filename">/usr/bin/ksh</code> 需要修改成
+      <code class="filename">/usr/local/bin/ksh</code>，另外使用
+      <code class="filename">/usr/bin/sh</code> 需要变更为
+      <code class="filename">/bin/sh</code>，最后还有使用
+      <code class="filename">/usr/bin/perl</code> 的需要变更为
+      <code class="filename">/usr/local/bin/perl</code>。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">此刻还需谨慎提醒一下读者 FreeBSD 的 DTrace 支持仍是
+        <span class="emphasis"><em>不完整的</em></span> 和 <span class="emphasis"><em>试验性</em></span> 的。
+        这些脚本中的大多数都无法运行，因为它们过于针对 <span class="trademark">Solaris</span>™
+        或者使用了目前还不支持的探测器。</p></div><p>在撰写这篇文章的时候，DTrace 工具包中只有两个脚本在
+      FreeBSD 上是完全支持的：
+      <code class="filename">hotkernel</code> 和 <code class="filename">procsystime</code>
+      脚本。这两个脚本便是我们下一部分将要探讨的：</p><p><code class="filename">hotkernel</code>
+      被设计成验明哪个函数占用了内核时间。
+      正常运行的话，它将生成类似以下的输出：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/share/dtrace/toolkit</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>./hotkernel</code></strong>
+Sampling... Hit Ctrl-C to end.</pre><p>系统管理员必须使用
+      <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span> 组合键停止这个进程。
+      紧接着中止之后，脚本便会一张内核函数与测定时间的列表，
+      使用增量排序输出：</p><pre class="screen">kernel`_thread_lock_flags                                   2   0.0%
+0xc1097063                                                  2   0.0%
+kernel`sched_userret                                        2   0.0%
+kernel`kern_select                                          2   0.0%
+kernel`generic_copyin                                       3   0.0%
+kernel`_mtx_assert                                          3   0.0%
+kernel`vm_fault                                             3   0.0%
+kernel`sopoll_generic                                       3   0.0%
+kernel`fixup_filename                                       4   0.0%
+kernel`_isitmyx                                             4   0.0%
+kernel`find_instance                                        4   0.0%
+kernel`_mtx_unlock_flags                                    5   0.0%
+kernel`syscall                                              5   0.0%
+kernel`DELAY                                                5   0.0%
+0xc108a253                                                  6   0.0%
+kernel`witness_lock                                         7   0.0%
+kernel`read_aux_data_no_wait                                7   0.0%
+kernel`Xint0x80_syscall                                     7   0.0%
+kernel`witness_checkorder                                   7   0.0%
+kernel`sse2_pagezero                                        8   0.0%
+kernel`strncmp                                              9   0.0%
+kernel`spinlock_exit                                       10   0.0%
+kernel`_mtx_lock_flags                                     11   0.0%
+kernel`witness_unlock                                      15   0.0%
+kernel`sched_idletd                                       137   0.3%
+0xc10981a5                                              42139  99.3%</pre><p>这个脚本也能与内核模块一起工作。要使用此特性，
+      用 <code class="option">-m</code> 标志运行脚本：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>./hotkernel -m</code></strong>
+Sampling... Hit Ctrl-C to end.
+^C
+MODULE                                                  COUNT   PCNT
+0xc107882e                                                  1   0.0%
+0xc10e6aa4                                                  1   0.0%
+0xc1076983                                                  1   0.0%
+0xc109708a                                                  1   0.0%
+0xc1075a5d                                                  1   0.0%
+0xc1077325                                                  1   0.0%
+0xc108a245                                                  1   0.0%
+0xc107730d                                                  1   0.0%
+0xc1097063                                                  2   0.0%
+0xc108a253                                                 73   0.0%
+kernel                                                    874   0.4%
+0xc10981a5                                             213781  99.6%</pre><p><code class="filename">procsystime</code>
+      脚本捕捉并打印给定 <acronym class="acronym">PID</acronym> 的系统调用时间。
+      在下面的例子中，新生成了一个 <code class="filename">/bin/csh</code>
+      实例。<code class="filename">procsystime</code> 执行后则等待在新运行的
+      <code class="command">csh</code> 上键入一些命令。 这是测试的结果：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>./procsystime -n csh</code></strong>
+Tracing... Hit Ctrl-C to end...
+^C
+
+Elapsed Times for processes csh,
+
+         SYSCALL          TIME (ns)
+          getpid               6131
+       sigreturn               8121
+           close              19127
+           fcntl              19959
+             dup              26955
+         setpgid              28070
+            stat              31899
+       setitimer              40938
+           wait4              62717
+       sigaction              67372
+     sigprocmask             119091
+    gettimeofday             183710
+           write             263242
+          execve             492547
+           ioctl             770073
+           vfork            3258923
+      sigsuspend            6985124
+            read         3988049784</pre><p>正如显示的那样，<code class="function">read</code>
+      系统调用似乎使用了最多的纳秒单位时间，
+      <code class="function">getpid()</code> 系统调用使用了最少的时间。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dtrace-enable.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="dtrace.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dtrace-language.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">24.3. 启用 DTrace 支持 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 24.5. D 语言</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

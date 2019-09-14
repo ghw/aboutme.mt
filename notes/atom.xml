@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>等一个晴天</title>
+  <subtitle>记录 &amp; 监督</subtitle>
+  <link href="/notes/atom.xml" rel="self"/>
+  
+  <link href="https://www.gehaowu.com/"/>
+  <updated>2016-11-26T07:08:58.000Z</updated>
+  <id>https://www.gehaowu.com/</id>
+  
+  <author>
+    <name>葛豪武</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>抽空把 Daemon.xin 新版上线</title>
+    <link href="https://www.gehaowu.com/2016/11/daemon-xin/"/>
+    <id>https://www.gehaowu.com/2016/11/daemon-xin/</id>
+    <published>2016-11-26T04:33:28.000Z</published>
+    <updated>2016-11-26T07:08:58.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>去年 11 月 11 日买的，一直半成品，没搞完就放那了，</p>
+<p>今年 11 11 续了费顺便把页面弄弄完整了。</p>
+<p>欢迎访问 <a href="https://www.daemon.xin/" target="_blank" rel="external">遇见你，遇见最美时光 | Daemon.xin</a></p>
+<p>Daemon 的词语解释 ： “n. （希腊神话中）半人半神的精灵； 守护神； [计]守护进程；”</p>
+<p>同时 Daemon 也是 FreeBSD 的吉祥物的名字。</p>
+<p><img src="//static.gehaowu.com/notes/2016/11/daemon.xin.full.png" alt="Daemon.xin 新版"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;去年 11 月 11 日买的，一直半成品，没搞完就放那了，&lt;/p&gt;
+&lt;p&gt;今年 11 11 续了费顺便把页面弄弄完整了。&lt;/p&gt;
+&lt;p&gt;欢迎访问 &lt;a href=&quot;https://www.daemon.xin/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>税收减免账务处理</title>
+    <link href="https://www.gehaowu.com/2016/05/To-reduce-the-VAT-accounting-treatment/"/>
+    <id>https://www.gehaowu.com/2016/05/To-reduce-the-VAT-accounting-treatment/</id>
+    <published>2016-05-27T12:25:03.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>从2016年2月1日起，月销售额不超过10万元的增值税小规模纳税人，免征教育费附加和地方教育附加。</p>
+<h3 id="相关会计处理分录："><a href="#相关会计处理分录：" class="headerlink" title="相关会计处理分录："></a>相关会计处理分录：</h3><figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">1、计提增值税时</div><div class="line">　　借:	银行存款 2060</div><div class="line">　　	贷:	主营业务收入 2000</div><div class="line">			应交税费 - 应交增值税 60</div><div class="line"></div><div class="line">2、根据规定减免时</div><div class="line">　　借:	应交税费 - 应交增值税 60</div><div class="line">　　	贷:	营业外收入 - 减免税额 60</div><div class="line"></div><div class="line">3、附加税减免处理</div><div class="line">	应纳增值税为<span class="number"> 0 </span>，附加税也为<span class="number"> 0 </span>。</div></pre></td></tr></table></figure>
+<h3 id="大众创业，万众创新"><a href="#大众创业，万众创新" class="headerlink" title="大众创业，万众创新"></a>大众创业，万众创新</h3><p>感谢政府。。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;从2016年2月1日起，月销售额不超过10万元的增值税小规模纳税人，免征教育费附加和地方教育附加。&lt;/p&gt;
+&lt;h3 id=&quot;相关会计处理分录：&quot;&gt;&lt;a href=&quot;#相关会计处理分录：&quot; class=&quot;headerlink&quot; title=&quot;相关会计处理分录：&quot;&gt;&lt;/a&gt;相关
+    
+    </summary>
+    
+      <category term="财务会计" scheme="https://www.gehaowu.com/categories/%E8%B4%A2%E5%8A%A1%E4%BC%9A%E8%AE%A1/"/>
+    
+    
+      <category term="财务会计" scheme="https://www.gehaowu.com/tags/%E8%B4%A2%E5%8A%A1%E4%BC%9A%E8%AE%A1/"/>
+    
+      <category term="增值税" scheme="https://www.gehaowu.com/tags/%E5%A2%9E%E5%80%BC%E7%A8%8E/"/>
+    
+      <category term="附加税" scheme="https://www.gehaowu.com/tags/%E9%99%84%E5%8A%A0%E7%A8%8E/"/>
+    
+      <category term="教育费附加" scheme="https://www.gehaowu.com/tags/%E6%95%99%E8%82%B2%E8%B4%B9%E9%99%84%E5%8A%A0/"/>
+    
+      <category term="地方教育费附加" scheme="https://www.gehaowu.com/tags/%E5%9C%B0%E6%96%B9%E6%95%99%E8%82%B2%E8%B4%B9%E9%99%84%E5%8A%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>VLOOKUP 与 透视表</title>
+    <link href="https://www.gehaowu.com/2016/05/VLOOKUPPivotTable/"/>
+    <id>https://www.gehaowu.com/2016/05/VLOOKUPPivotTable/</id>
+    <published>2016-05-14T14:47:40.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近。。。Excel，，的 VLOOKUP 跟 透视表玩的那个叫 6666666666666 啊</p>
+<p>##我能说我之前一直不会的麽。。。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近。。。Excel，，的 VLOOKUP 跟 透视表玩的那个叫 6666666666666 啊&lt;/p&gt;
+&lt;p&gt;##我能说我之前一直不会的麽。。。&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="Excel" scheme="https://www.gehaowu.com/categories/Excel/"/>
+    
+    
+      <category term="Excel" scheme="https://www.gehaowu.com/tags/Excel/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>似乎，又一年，你好 2016 ！</title>
+    <link href="https://www.gehaowu.com/2016/03/another-year/"/>
+    <id>https://www.gehaowu.com/2016/03/another-year/</id>
+    <published>2016-03-03T12:54:01.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>似乎，又一年，你好 2016 ！</p>
+<p>新的一年。。又换了一个工作，11 年毕业后在第一家企业干了三年。</p>
+<p>因为轮岗制度很难执行。。弄了三年。。基本上没学会啥，</p>
+<p>14 年逼自己换了一个工作，直接混商业企业的主办会计。。</p>
+<p>一年后，准备回家。。家里没待几天。。家里就开始催。。。。。。。。。。</p>
+<p>然后在隔壁市的一家工业企业确认的 offer 后直接就去了。。</p>
+<p>工业会计真的好复杂。。。</p>
+<p>最后感慨一下。。直属领导如果不待见你的情况下。。。做事会很难。。。就算特么的大 BOSS 是你后台也白搭。。</p>
+<p>XDDD</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;似乎，又一年，你好 2016 ！&lt;/p&gt;
+&lt;p&gt;新的一年。。又换了一个工作，11 年毕业后在第一家企业干了三年。&lt;/p&gt;
+&lt;p&gt;因为轮岗制度很难执行。。弄了三年。。基本上没学会啥，&lt;/p&gt;
+&lt;p&gt;14 年逼自己换了一个工作，直接混商业企业的主办会计。。&lt;/p&gt;
+&lt;p&gt;一年后
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+      <category term="主办会计" scheme="https://www.gehaowu.com/tags/%E4%B8%BB%E5%8A%9E%E4%BC%9A%E8%AE%A1/"/>
+    
+      <category term="工业" scheme="https://www.gehaowu.com/tags/%E5%B7%A5%E4%B8%9A/"/>
+    
+      <category term="商业" scheme="https://www.gehaowu.com/tags/%E5%95%86%E4%B8%9A/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>为域名添加 DNSSEC 记录</title>
+    <link href="https://www.gehaowu.com/2015/12/Add-DNSSEC-for-Domain/"/>
+    <id>https://www.gehaowu.com/2015/12/Add-DNSSEC-for-Domain/</id>
+    <published>2015-12-08T11:36:11.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>为域名添加 DNSSEC 功能，前几天收到 CloudFlare 的广告邮件，说 CloudFlare 已经支持 DNSSEC 功能了，<br>乘着有空把 DNS 从 DNSPod 切到了 CloudFlare ，目前国内没找到合适的，支持 DNSSEC 的 DNS 服务商，<br>自己建太麻烦，想想就切换到 CloudFlare 上去了。</p>
+<p>添加 DNSSEC 功能需要注册商支持， 比如我的域名注册商 <a href="/go/namesilo">NameSilo</a> 很早就已经支持 DNSSEC 功能了。</p>
+<h3 id="获取-DNSSEC-的-DS-记录相关值"><a href="#获取-DNSSEC-的-DS-记录相关值" class="headerlink" title="获取 DNSSEC 的 DS 记录相关值"></a>获取 DNSSEC 的 DS 记录相关值</h3><p>登陆 CloudFlare ，（如果之前每天加过，请先添加）</p>
+<p>选择你需要添加 DNSSEC 的域名，接着选择 DNS 功能，拉倒页面最下边，会有一个 [Enable DNSSEC] 按钮，</p>
+<p>点击后会显示相关参数，例如：<br><img src="https://static.gehaowu.com/notes/2015/12/CloudFlare1.png" alt="How to enable DNSSEC"><br><a id="more"></a></p>
+<h3 id="NameSilo-后台添加-DNSSEC-记录"><a href="#NameSilo-后台添加-DNSSEC-记录" class="headerlink" title="NameSilo 后台添加 DNSSEC 记录"></a><a href="/go/namesilo">NameSilo</a> 后台添加 DNSSEC 记录</h3><p>登陆 NameSilo，根据一下流程操作就行了。。。NameSilo 界面真难看。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/12/namesilo1.png" alt="Domain manager"><br><img src="https://static.gehaowu.com/notes/2015/12/namesilo2.png" alt="Domain manager"><br><img src="https://static.gehaowu.com/notes/2015/12/namesilo3.png" alt="DS"><br><img src="https://static.gehaowu.com/notes/2015/12/namesilo4.png" alt="DNSSEC"></p>
+<p>添加完记得将域名 nameserver 改成 CloudFlare 的 域名服务器。。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">algin<span class="selector-class">.ns</span><span class="selector-class">.cloudflare</span><span class="selector-class">.com</span></div><div class="line">zelda<span class="selector-class">.ns</span><span class="selector-class">.cloudflare</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure>
+<p>完成后 CloudFlare 会显示完成<br><figure class="highlight oxygene"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">DNSSEC protects against forged DNS answers. DNSSEC <span class="keyword">protected</span> zones are digitally signed <span class="keyword">to</span> <span class="keyword">ensure</span> the DNS records received are identical <span class="keyword">to</span> the DNS records <span class="keyword">published</span> <span class="keyword">by</span> the zone owner.</div><div class="line"></div><div class="line">Success! gehaowu.com <span class="keyword">is</span> <span class="keyword">protected</span> <span class="keyword">with</span> DNSSEC.</div></pre></td></tr></table></figure></p>
+<p><img src="https://static.gehaowu.com/notes/2015/12/CloudFlare2.png" alt="Success! gehaowu.com is protected with DNSSEC."></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;为域名添加 DNSSEC 功能，前几天收到 CloudFlare 的广告邮件，说 CloudFlare 已经支持 DNSSEC 功能了，&lt;br&gt;乘着有空把 DNS 从 DNSPod 切到了 CloudFlare ，目前国内没找到合适的，支持 DNSSEC 的 DNS 服务商，&lt;br&gt;自己建太麻烦，想想就切换到 CloudFlare 上去了。&lt;/p&gt;
+&lt;p&gt;添加 DNSSEC 功能需要注册商支持， 比如我的域名注册商 &lt;a href=&quot;/go/namesilo&quot;&gt;NameSilo&lt;/a&gt; 很早就已经支持 DNSSEC 功能了。&lt;/p&gt;
+&lt;h3 id=&quot;获取-DNSSEC-的-DS-记录相关值&quot;&gt;&lt;a href=&quot;#获取-DNSSEC-的-DS-记录相关值&quot; class=&quot;headerlink&quot; title=&quot;获取 DNSSEC 的 DS 记录相关值&quot;&gt;&lt;/a&gt;获取 DNSSEC 的 DS 记录相关值&lt;/h3&gt;&lt;p&gt;登陆 CloudFlare ，（如果之前每天加过，请先添加）&lt;/p&gt;
+&lt;p&gt;选择你需要添加 DNSSEC 的域名，接着选择 DNS 功能，拉倒页面最下边，会有一个 [Enable DNSSEC] 按钮，&lt;/p&gt;
+&lt;p&gt;点击后会显示相关参数，例如：&lt;br&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/12/CloudFlare1.png&quot; alt=&quot;How to enable DNSSEC&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="安全" scheme="https://www.gehaowu.com/tags/%E5%AE%89%E5%85%A8/"/>
+    
+      <category term="DNSSEC" scheme="https://www.gehaowu.com/tags/DNSSEC/"/>
+    
+      <category term="DNS" scheme="https://www.gehaowu.com/tags/DNS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>【流氓方案】 FreeBSD 系统的强行跨版本更新</title>
+    <link href="https://www.gehaowu.com/2015/11/freebsd-upgrade/"/>
+    <id>https://www.gehaowu.com/2015/11/freebsd-upgrade/</id>
+    <published>2015-11-11T11:10:53.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="下载需要的镜像"><a href="#下载需要的镜像" class="headerlink" title="下载需要的镜像"></a>下载需要的镜像</h4><p>准备工作，下载你希望升级到 FreeBSD 版本，如 10.2，它在官方FTP的存储的目录为：<br><a href="http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/" target="_blank" rel="external">http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/</a><br>你需要将 FreeBSD 基本系统跟内核包下载下来备用 （base.txz,kernel.txz）<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fetch http:<span class="regexp">//</span>ftp.freebsd.org<span class="regexp">/pub/</span>FreeBSD<span class="regexp">/releases/</span>amd64<span class="regexp">/10.2-RELEASE/</span>base.txz</div><div class="line">fetch http:<span class="regexp">//</span>ftp.freebsd.org<span class="regexp">/pub/</span>FreeBSD<span class="regexp">/releases/</span>amd64<span class="regexp">/10.2-RELEASE/</span>kernel.txz</div></pre></td></tr></table></figure></p>
+<h4 id="备份旧系统"><a href="#备份旧系统" class="headerlink" title="备份旧系统"></a>备份旧系统</h4><p>切换到 / ，将静态编译的工具包 rescue 改名为 r<br>创建存放旧系统的 old 目录，并把所有跟新系统冲突的文件移动到 old 目录<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">cd /</div><div class="line">mv <span class="keyword">rescue</span> r</div><div class="line">mkdir old</div><div class="line">/r/mv .profile .rnd .cshrc COPYRIGHT entropy \</div><div class="line">bin etc media root usr boot home mnt \</div><div class="line">sbin var <span class="class"><span class="keyword">lib</span> <span class="title">sys</span> <span class="title">libexec</span> <span class="title">tmp</span> <span class="title">old</span></span></div></pre></td></tr></table></figure></p>
+<p>执行完毕后可以使用 /r/ls 查看目录下文件是否已全部正常的转移了<br><a id="more"></a><br>正常情况下 / 下应该还存在<br>.snap .sujournal dev proc r 这几个目录，<br>它们文件系统或者系统虚拟设备相关的，无需理会。</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root<span class="variable">@daemon</span><span class="symbol">:/</span> <span class="comment"># /r/ls -a</span></div><div class="line">.       ..      dev     old     proc    r</div><div class="line">root<span class="variable">@daemon</span><span class="symbol">:/</span> <span class="comment">#</span></div></pre></td></tr></table></figure>
+<h4 id="释放新系统-安装新系统"><a href="#释放新系统-安装新系统" class="headerlink" title="释放新系统/安装新系统"></a>释放新系统/安装新系统</h4><p>上面那一步已经完成旧系统的转移工作，也可以得瑟的说算是备份吧。</p>
+<p>释放新系统，并拷贝必要系统配置文件回新系统，<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">/r/tar -xvf /old/root/base<span class="selector-class">.txz</span> -C /</div><div class="line">/r/tar -xvf /old/root/kernel<span class="selector-class">.txz</span> -C /</div><div class="line">cp -<span class="selector-tag">a</span> /old/boot/loader<span class="selector-class">.conf</span> /boot/</div><div class="line">cp -<span class="selector-tag">a</span> /old/etc/rc<span class="selector-class">.conf</span> /etc/</div><div class="line">cp -<span class="selector-tag">a</span> /old/etc/fstab /etc/</div><div class="line">cp -<span class="selector-tag">a</span> /old/etc/resolv<span class="selector-class">.conf</span> /etc/</div><div class="line">cp -<span class="selector-tag">a</span> /old/root/<span class="selector-class">.ssh</span> /root</div><div class="line">cp -<span class="selector-tag">a</span> /old/boot/zfs /boot/</div><div class="line">sync &amp;&amp;sync &amp;&amp;sync</div></pre></td></tr></table></figure></p>
+<p>需要拷回来的文件自己看着办就可以了。。不过loader.conf,rc.conf,fstab这三个文件，如果你旧系统上存在，则必须拷贝回来，如果你是根分区是ZFS，则zfs目录也必须拷回来</p>
+<h4 id="重启完成新系统切换"><a href="#重启完成新系统切换" class="headerlink" title="重启完成新系统切换"></a>重启完成新系统切换</h4><p>只要系统间隔不是太大，重启，强制升级就完工了。。。，<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">shutdown</span> -r now</div></pre></td></tr></table></figure></p>
+<h4 id="清理旧系统"><a href="#清理旧系统" class="headerlink" title="清理旧系统"></a>清理旧系统</h4><p><strong>小贴士：重启完成后 /r 目录就可以删掉了， /old 目录下的看着有用的自己捡回来就是了，没要的了直接全部删掉就好了</strong><br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chflags -R noschg <span class="regexp">/r /</span>old</div><div class="line">rm -rf <span class="regexp">/r /</span>old</div></pre></td></tr></table></figure></p>
+<p>最后。。。。。。。。。。。。 XD</p>
+<h4 id="警告：请勿在生产系统上测试-实施"><a href="#警告：请勿在生产系统上测试-实施" class="headerlink" title="警告：请勿在生产系统上测试/实施"></a>警告：请勿在生产系统上测试/实施</h4>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;下载需要的镜像&quot;&gt;&lt;a href=&quot;#下载需要的镜像&quot; class=&quot;headerlink&quot; title=&quot;下载需要的镜像&quot;&gt;&lt;/a&gt;下载需要的镜像&lt;/h4&gt;&lt;p&gt;准备工作，下载你希望升级到 FreeBSD 版本，如 10.2，它在官方FTP的存储的目录为：&lt;br&gt;&lt;a href=&quot;http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/&quot;&gt;http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/&lt;/a&gt;&lt;br&gt;你需要将 FreeBSD 基本系统跟内核包下载下来备用 （base.txz,kernel.txz）&lt;br&gt;&lt;figure class=&quot;highlight awk&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;fetch http:&lt;span class=&quot;regexp&quot;&gt;//&lt;/span&gt;ftp.freebsd.org&lt;span class=&quot;regexp&quot;&gt;/pub/&lt;/span&gt;FreeBSD&lt;span class=&quot;regexp&quot;&gt;/releases/&lt;/span&gt;amd64&lt;span class=&quot;regexp&quot;&gt;/10.2-RELEASE/&lt;/span&gt;base.txz&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;fetch http:&lt;span class=&quot;regexp&quot;&gt;//&lt;/span&gt;ftp.freebsd.org&lt;span class=&quot;regexp&quot;&gt;/pub/&lt;/span&gt;FreeBSD&lt;span class=&quot;regexp&quot;&gt;/releases/&lt;/span&gt;amd64&lt;span class=&quot;regexp&quot;&gt;/10.2-RELEASE/&lt;/span&gt;kernel.txz&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&quot;备份旧系统&quot;&gt;&lt;a href=&quot;#备份旧系统&quot; class=&quot;headerlink&quot; title=&quot;备份旧系统&quot;&gt;&lt;/a&gt;备份旧系统&lt;/h4&gt;&lt;p&gt;切换到 / ，将静态编译的工具包 rescue 改名为 r&lt;br&gt;创建存放旧系统的 old 目录，并把所有跟新系统冲突的文件移动到 old 目录&lt;br&gt;&lt;figure class=&quot;highlight crystal&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;cd /&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;mv &lt;span class=&quot;keyword&quot;&gt;rescue&lt;/span&gt; r&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;mkdir old&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;/r/mv .profile .rnd .cshrc COPYRIGHT entropy \&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;bin etc media root usr boot home mnt \&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;sbin var &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;lib&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;sys&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;libexec&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;tmp&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;old&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;执行完毕后可以使用 /r/ls 查看目录下文件是否已全部正常的转移了&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="FreeBSD" scheme="https://www.gehaowu.com/tags/FreeBSD/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>更新我的 NGINX 配置文件</title>
+    <link href="https://www.gehaowu.com/2015/09/nginx-https-config/"/>
+    <id>https://www.gehaowu.com/2015/09/nginx-https-config/</id>
+    <published>2015-09-27T05:59:13.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最新版配置文件：<a href="https://github.com/ghw/nginx_config" target="_blank" rel="external">My-NGINX-Config</a></p>
+<h2 id="不需要多创建两个虚拟机了。。。简洁多了，哈哈哈"><a href="#不需要多创建两个虚拟机了。。。简洁多了，哈哈哈" class="headerlink" title="不需要多创建两个虚拟机了。。。简洁多了，哈哈哈"></a>不需要多创建两个虚拟机了。。。简洁多了，哈哈哈</h2><p>2015，11，01，懒得管配置文件了。。。直接去我的</p>
+<p>—&gt;&gt;&gt; <a href="https://github.com/ghw/nginx_config" target="_blank" rel="external">NGINX 配置文件仓库</a></p>
+<p>sites/gehaowu.com.conf<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">server &#123;</div><div class="line">    server_name				gehaowu.com www.gehaowu.com;</div><div class="line">    include						includes/listen_full.template;</div><div class="line">    include						includes/header_add.template;</div><div class="line">    include						includes/headers_set_more.template;</div><div class="line">    include						sites/rewrite.gehaowu.com.template;</div><div class="line">    ssl_certificate				keys/www.gehaowu.com.crt;</div><div class="line">    ssl_certificate_key			keys/www.gehaowu.com.key;</div><div class="line">    ssl_trusted_certificate			keys/startcom_ssl_trusted_certificate.crt;</div><div class="line">    ssl_dhparam				keys/dhparam.pem;</div><div class="line">    ssl_ecdh_curve				secp384r1;</div><div class="line">    include						includes/ssl.template;</div><div class="line">    include						includes/ssl_stapling.template;</div><div class="line">    <span class="built_in">set</span>						<span class="variable">$rewriterule</span> https;</div><div class="line">    <span class="keyword">if</span>							(<span class="variable">$scheme</span> = https) &#123;</div><div class="line">    <span class="built_in">set</span>						<span class="variable">$rewriterule</span> <span class="string">"<span class="variable">$&#123;rewriterule&#125;</span>1"</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>							(<span class="variable">$host</span> ~* ^www.) &#123;</div><div class="line">    <span class="built_in">set</span>						<span class="variable">$rewriterule</span> <span class="string">"<span class="variable">$&#123;rewriterule&#125;</span>2"</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>							(<span class="variable">$rewriterule</span> != <span class="string">"https12"</span>) &#123;</div><div class="line">    <span class="built_in">return</span>						301 https://www.gehaowu.com<span class="variable">$request_uri</span>;</div><div class="line">    &#125;</div><div class="line">    include						includes/block_files.template;</div><div class="line">    include						includes/expires.template;</div><div class="line">    index						index.html index.htm;</div><div class="line">    root						/usr/home/wwwroot/www.gehaowu.com;</div><div class="line">    error_page					404 /404.html;</div><div class="line">    error_page					403 /403.html;</div><div class="line">    error_page					500 502 503 504 /50x.html;</div><div class="line">    access_log					/usr/home/wwwroot/logs/gehaowu.com.access.log;</div><div class="line">    error_log					/usr/home/wwwroot/logs/gehaowu.com.error.log;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最新版配置文件：&lt;a href=&quot;https://github.com/ghw/nginx_config&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;My-NGINX-Config&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;不需要多创建两个虚拟机了。。。简洁多了，
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="FreeBSD" scheme="https://www.gehaowu.com/tags/FreeBSD/"/>
+    
+      <category term="NGINX" scheme="https://www.gehaowu.com/tags/NGINX/"/>
+    
+      <category term="SSL" scheme="https://www.gehaowu.com/tags/SSL/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>强制拉取 Github 仓库内容</title>
+    <link href="https://www.gehaowu.com/2015/09/forcibly-pull-github-repository/"/>
+    <id>https://www.gehaowu.com/2015/09/forcibly-pull-github-repository/</id>
+    <published>2015-09-26T13:31:19.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="让-anonymouscoward-君给帮忙写了个-github-同步脚本。。哈哈哈"><a href="#让-anonymouscoward-君给帮忙写了个-github-同步脚本。。哈哈哈" class="headerlink" title="让 anonymouscoward 君给帮忙写了个 github 同步脚本。。哈哈哈"></a>让 anonymouscoward 君给帮忙写了个 github 同步脚本。。哈哈哈</h2><h2 id="完美解决-github-同步的麻烦问题了"><a href="#完美解决-github-同步的麻烦问题了" class="headerlink" title="完美解决 github 同步的麻烦问题了"></a>完美解决 github 同步的麻烦问题了</h2><h2 id="将脚本加入-cron-定时执行就可以了，"><a href="#将脚本加入-cron-定时执行就可以了，" class="headerlink" title="将脚本加入 cron 定时执行就可以了，"></a>将脚本加入 cron 定时执行就可以了，</h2><h2 id="———————————————"><a href="#———————————————" class="headerlink" title="———————————————"></a>———————————————</h2><h2 id="如果出现代码需要合并啥的不正常-git-pull-情况，"><a href="#如果出现代码需要合并啥的不正常-git-pull-情况，" class="headerlink" title="如果出现代码需要合并啥的不正常 git pull 情况，"></a>如果出现代码需要合并啥的不正常 git pull 情况，</h2><h2 id="则执行脚本会直接删除仓库，然后重新-git-clone-仓库回来。。"><a href="#则执行脚本会直接删除仓库，然后重新-git-clone-仓库回来。。" class="headerlink" title="则执行脚本会直接删除仓库，然后重新 git clone 仓库回来。。"></a>则执行脚本会直接删除仓库，然后重新 git clone 仓库回来。。</h2><h2 id="———————————————-1"><a href="#———————————————-1" class="headerlink" title="———————————————"></a>———————————————</h2><p>(￣︶￣)↗ 飕装逼了~~~</p>
+<a id="more"></a>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"><span class="comment">#############################################################</span></div><div class="line"><span class="comment">###              《 Github 仓库同步脚本 》</span></div><div class="line"><span class="comment">### 同步远程 Github 仓库代码，如果出现异常，则直接删除后重来</span></div><div class="line"><span class="comment">### Created by: anonymouscoward &lt;root@anonymous744wjcx.onion&gt;</span></div><div class="line"><span class="comment">### Created Date: Sat Sep 26 12:21:00 CST 2015</span></div><div class="line"><span class="comment">#############################################################</span></div><div class="line"></div><div class="line">GITHUB=<span class="string">"https://github.com"</span></div><div class="line">DSTDIR=<span class="string">"/home/ghw/wwwroot"</span></div><div class="line"></div><div class="line">REPOS=<span class="string">"gehaowu/gehaowu.github.io master www.gehaowu.com</span></div><div class="line">gehaowu/zh-Hans gh-pages www.gehaowu.com/zh-Hans</div><div class="line">gehaowu/notes gh-pages www.gehaowu.com/notes</div><div class="line">gehaowu/albums gh-pages www.gehaowu.com/albums</div><div class="line">gehaowu/resume gh-pages www.gehaowu.com/resume</div><div class="line">gehaowu/data gh-pages www.gehaowu.com/data</div><div class="line">gehaowu/Resources gh-pages www.gehaowu.com/Resources"</div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="built_in">read</span> repo branch dir</div><div class="line"><span class="keyword">do</span></div><div class="line">    (<span class="built_in">cd</span> <span class="string">"<span class="variable">$&#123;DSTDIR&#125;</span>/<span class="variable">$&#123;dir&#125;</span>"</span> &amp;&amp; git pull)</div><div class="line">    <span class="keyword">if</span> [ <span class="string">"$?"</span> <span class="_">-ne</span> 0 ]; <span class="keyword">then</span></div><div class="line">        rm -fr <span class="string">"<span class="variable">$&#123;DSTDIR&#125;</span>/<span class="variable">$&#123;dir&#125;</span>"</span></div><div class="line">        git <span class="built_in">clone</span> --depth 1 -b <span class="string">"<span class="variable">$&#123;branch&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;GITHUB&#125;</span>/<span class="variable">$&#123;repo&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;DSTDIR&#125;</span>/<span class="variable">$&#123;dir&#125;</span>"</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line"><span class="keyword">done</span> &lt;&lt;-EOF</div><div class="line"><span class="variable">$&#123;REPOS&#125;</span></div><div class="line">EOF</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;让-anonymouscoward-君给帮忙写了个-github-同步脚本。。哈哈哈&quot;&gt;&lt;a href=&quot;#让-anonymouscoward-君给帮忙写了个-github-同步脚本。。哈哈哈&quot; class=&quot;headerlink&quot; title=&quot;让 anonymouscoward 君给帮忙写了个 github 同步脚本。。哈哈哈&quot;&gt;&lt;/a&gt;让 anonymouscoward 君给帮忙写了个 github 同步脚本。。哈哈哈&lt;/h2&gt;&lt;h2 id=&quot;完美解决-github-同步的麻烦问题了&quot;&gt;&lt;a href=&quot;#完美解决-github-同步的麻烦问题了&quot; class=&quot;headerlink&quot; title=&quot;完美解决 github 同步的麻烦问题了&quot;&gt;&lt;/a&gt;完美解决 github 同步的麻烦问题了&lt;/h2&gt;&lt;h2 id=&quot;将脚本加入-cron-定时执行就可以了，&quot;&gt;&lt;a href=&quot;#将脚本加入-cron-定时执行就可以了，&quot; class=&quot;headerlink&quot; title=&quot;将脚本加入 cron 定时执行就可以了，&quot;&gt;&lt;/a&gt;将脚本加入 cron 定时执行就可以了，&lt;/h2&gt;&lt;h2 id=&quot;———————————————&quot;&gt;&lt;a href=&quot;#———————————————&quot; class=&quot;headerlink&quot; title=&quot;———————————————&quot;&gt;&lt;/a&gt;———————————————&lt;/h2&gt;&lt;h2 id=&quot;如果出现代码需要合并啥的不正常-git-pull-情况，&quot;&gt;&lt;a href=&quot;#如果出现代码需要合并啥的不正常-git-pull-情况，&quot; class=&quot;headerlink&quot; title=&quot;如果出现代码需要合并啥的不正常 git pull 情况，&quot;&gt;&lt;/a&gt;如果出现代码需要合并啥的不正常 git pull 情况，&lt;/h2&gt;&lt;h2 id=&quot;则执行脚本会直接删除仓库，然后重新-git-clone-仓库回来。。&quot;&gt;&lt;a href=&quot;#则执行脚本会直接删除仓库，然后重新-git-clone-仓库回来。。&quot; class=&quot;headerlink&quot; title=&quot;则执行脚本会直接删除仓库，然后重新 git clone 仓库回来。。&quot;&gt;&lt;/a&gt;则执行脚本会直接删除仓库，然后重新 git clone 仓库回来。。&lt;/h2&gt;&lt;h2 id=&quot;———————————————-1&quot;&gt;&lt;a href=&quot;#———————————————-1&quot; class=&quot;headerlink&quot; title=&quot;———————————————&quot;&gt;&lt;/a&gt;———————————————&lt;/h2&gt;&lt;p&gt;(￣︶￣)↗ 飕装逼了~~~&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="Github" scheme="https://www.gehaowu.com/tags/Github/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>静态资源临时重定向到CDN实现网站加速</title>
+    <link href="https://www.gehaowu.com/2015/09/CDN-to-accelerate-static-resources/"/>
+    <id>https://www.gehaowu.com/2015/09/CDN-to-accelerate-static-resources/</id>
+    <published>2015-09-22T13:16:40.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>把图片啥的，直接重定向到七牛上了。。还是302方便</p>
+<p><img src="https://static.gehaowu.com/notes/2015/09/IMAGES302CDN.png" alt="302"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">location                            ~* \.(gif|jpeg|jpg|png|bmp|svg|otf|woff|eot|ttf|woff2)$ &#123;</div><div class="line">rewrite                             ^/(.*) https://dn-gehaowu-com.qbox.me/<span class="variable">$1</span> redirect;</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;把图片啥的，直接重定向到七牛上了。。还是302方便&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/09/IMAGES302CDN.png&quot; alt=&quot;302&quot;&gt;&lt;/p&gt;
+&lt;figure class=&quot;highl
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="NGINX" scheme="https://www.gehaowu.com/tags/NGINX/"/>
+    
+      <category term="SSL" scheme="https://www.gehaowu.com/tags/SSL/"/>
+    
+      <category term="HTTPS" scheme="https://www.gehaowu.com/tags/HTTPS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MINGW64环境更新HEXO到Github提示TTY错误</title>
+    <link href="https://www.gehaowu.com/2015/09/MINGW64-HEXO-TTY-ERROR/"/>
+    <id>https://www.gehaowu.com/2015/09/MINGW64-HEXO-TTY-ERROR/</id>
+    <published>2015-09-20T12:24:20.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近碰到好多朋友使用 MINGW64 使用 Github + HEXO 搭建博客的时候提示下列错误，</p>
+<h2 id="ERROR-INFO"><a href="#ERROR-INFO" class="headerlink" title="ERROR INFO"></a>ERROR INFO</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Star</span></div><div class="line">The file will have its original line endings <span class="keyword">in</span> your working directory.</div><div class="line">bash: /dev/tty: No such device or address</div><div class="line">error: failed to execute prompt script (<span class="built_in">exit</span> code 1)</div><div class="line">fatal: could not <span class="built_in">read</span> Username <span class="keyword">for</span> <span class="string">'https://github.com'</span>: Invalid argument</div><div class="line">FATAL Something<span class="string">'s wrong. Maybe you can find the solution here: http://hexo.io/docs/troubleshooting.html</span></div><div class="line">Error: bash: /dev/tty: No such device or address</div><div class="line">error: failed to execute prompt script (exit code 1)</div><div class="line">fatal: could not read Username for 'https://github.com<span class="string">': Invalid argument</span></div><div class="line"> #Code End</div></pre></td></tr></table></figure>
+<p>目测是 <em>终端</em> 哪个地方出问题，<br><a id="more"></a></p>
+<p>偷懒的做法是换 Github 客户端自带的 SHELL ，</p>
+<h2 id="Github-Shell"><a href="#Github-Shell" class="headerlink" title="Github Shell"></a>Github Shell</h2><p><img src="https://static.gehaowu.com/notes/2015/09/githubshell.png" alt="Github Shell"></p>
+<p>就像酱紫。。</p>
+<p><a href="https://desktop.github.com/" target="_blank" rel="external">GitHub Desktop</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近碰到好多朋友使用 MINGW64 使用 Github + HEXO 搭建博客的时候提示下列错误，&lt;/p&gt;
+&lt;h2 id=&quot;ERROR-INFO&quot;&gt;&lt;a href=&quot;#ERROR-INFO&quot; class=&quot;headerlink&quot; title=&quot;ERROR INFO&quot;&gt;&lt;/a&gt;ERROR INFO&lt;/h2&gt;&lt;figure class=&quot;highlight sh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt; &lt;span class=&quot;comment&quot;&gt;#Code Star&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;The file will have its original line endings &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; your working directory.&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;bash: /dev/tty: No such device or address&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;error: failed to execute prompt script (&lt;span class=&quot;built_in&quot;&gt;exit&lt;/span&gt; code 1)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;fatal: could not &lt;span class=&quot;built_in&quot;&gt;read&lt;/span&gt; Username &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;https://github.com&#39;&lt;/span&gt;: Invalid argument&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;FATAL Something&lt;span class=&quot;string&quot;&gt;&#39;s wrong. Maybe you can find the solution here: http://hexo.io/docs/troubleshooting.html&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;Error: bash: /dev/tty: No such device or address&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;error: failed to execute prompt script (exit code 1)&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;fatal: could not read Username for &#39;&lt;/span&gt;https://github.com&lt;span class=&quot;string&quot;&gt;&#39;: Invalid argument&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; #Code End&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;目测是 &lt;em&gt;终端&lt;/em&gt; 哪个地方出问题，&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="Github" scheme="https://www.gehaowu.com/tags/Github/"/>
+    
+      <category term="HEXO" scheme="https://www.gehaowu.com/tags/HEXO/"/>
+    
+      <category term="TTY" scheme="https://www.gehaowu.com/tags/TTY/"/>
+    
+      <category term="MINGW64" scheme="https://www.gehaowu.com/tags/MINGW64/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>构建 VPN 网络服务</title>
+    <link href="https://www.gehaowu.com/2015/09/Building-VPN-network/"/>
+    <id>https://www.gehaowu.com/2015/09/Building-VPN-network/</id>
+    <published>2015-09-20T02:14:50.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p><strong>朋友公司希望启用远程办公，所以稍微考虑考虑，就准备搞个 VPN 来实现登陆内部网络</strong></p>
+<p>关于更多远程办公相关信息请 Google <a href="https://www.google.com/?gws_rd=cr,ssl#safe=strict&amp;q=VPN+%E8%BF%9C%E7%A8%8B%E5%8A%9E%E5%85%AC" target="_blank" rel="external">VPN 远程办公</a></p>
+<h2 id="在-FreeBSD-上用-mpd5-构建-PPTP-VPN"><a href="#在-FreeBSD-上用-mpd5-构建-PPTP-VPN" class="headerlink" title="在 FreeBSD 上用 mpd5 构建 PPTP VPN"></a>在 FreeBSD 上用 mpd5 构建 PPTP VPN</h2><h3 id="安装-PPTP-服务："><a href="#安装-PPTP-服务：" class="headerlink" title="安装 PPTP 服务："></a>安装 PPTP 服务：</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Star</span></div><div class="line">portsnap fetch update					<span class="comment">#更新ports</span></div><div class="line"><span class="built_in">cd</span> /usr/ports/net/mpd5					<span class="comment">#or pkg install -y mpd5</span></div><div class="line">make install clean</div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="设置随机启动服务"><a href="#设置随机启动服务" class="headerlink" title="设置随机启动服务"></a>设置随机启动服务</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Star</span></div><div class="line"><span class="comment"># PPTP 服务</span></div><div class="line">mpd_enable=<span class="string">"YES"</span>					<span class="comment"># 开启 VPN 服务</span></div><div class="line">gateway_enable=<span class="string">"YES"</span>					<span class="comment"># 网关转发</span></div><div class="line">firewall_enable=<span class="string">"YES"</span>					<span class="comment"># 防火墙</span></div><div class="line">firewall_type=<span class="string">"OPEN"</span></div><div class="line">firewall_logging_enable=<span class="string">"YES"</span></div><div class="line">natd_enable=<span class="string">"YES"</span>					<span class="comment"># 开启 NAT 服务</span></div><div class="line">natd_interface=<span class="string">"vtnet0"</span>					<span class="comment"># NAT 使用的网卡接口</span></div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<h3 id="设置-mpd5-主体配置文件"><a href="#设置-mpd5-主体配置文件" class="headerlink" title="设置 mpd5 主体配置文件"></a>设置 mpd5 主体配置文件</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Start</span></div><div class="line">cat /usr/<span class="built_in">local</span>/etc/mpd5/mpd.conf</div><div class="line"><span class="comment">#################################################################</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#       MPD configuration file</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># This file defines the configuration for mpd: what the</span></div><div class="line"><span class="comment"># bundles are, what the links are in those bundles, how</span></div><div class="line"><span class="comment"># the interface should be configured, various PPP parameters,</span></div><div class="line"><span class="comment"># etc. It contains commands just as you would type them</span></div><div class="line"><span class="comment"># in at the console. Lines without padding are labels. Lines</span></div><div class="line"><span class="comment"># starting with a "#" are comments.</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># $Id: mpd.conf.sample,v 1.47 2012/12/18 15:39:47 dmitryluhtionov Exp $</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment">#################################################################</span></div><div class="line"></div><div class="line">startup:</div><div class="line">        <span class="comment"># configure mpd users</span></div><div class="line">        <span class="built_in">set</span> user foo bar admin</div><div class="line">        <span class="built_in">set</span> user foo1 bar1</div><div class="line">        <span class="comment"># configure the console</span></div><div class="line">        <span class="built_in">set</span> console self 127.0.0.1 5005</div><div class="line">        <span class="built_in">set</span> console open</div><div class="line">        <span class="comment"># configure the web server</span></div><div class="line">        <span class="built_in">set</span> web self 0.0.0.0 5006</div><div class="line">        <span class="built_in">set</span> web open</div><div class="line"></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Default configuration is "dialup"</span></div><div class="line"></div><div class="line">default:</div><div class="line">	<span class="comment">#load dialup</span></div><div class="line">    load pptp_server					<span class="comment"># 修改为 PPTP 模式</span></div><div class="line"></div><div class="line">pptp_server:</div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Mpd as a PPTP server compatible with Microsoft Dial-Up Networking clients.</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Suppose you have a private Office LAN numbered 192.168.1.0/24 and the</span></div><div class="line"><span class="comment"># machine running mpd is at 192.168.1.1, and also has an externally visible</span></div><div class="line"><span class="comment"># IP address of 1.2.3.4.</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># We want to allow a client to connect to 1.2.3.4 from out on the Internet</span></div><div class="line"><span class="comment"># via PPTP.  We will assign that client the address 192.168.1.50 and proxy-ARP</span></div><div class="line"><span class="comment"># for that address, so the virtual PPP link will be numbered 192.168.1.1 local</span></div><div class="line"><span class="comment"># and 192.168.1.50 remote.  From the client machine's perspective, it will</span></div><div class="line"><span class="comment"># appear as if it is actually on the 192.168.1.0/24 network, even though in</span></div><div class="line"><span class="comment"># reality it is somewhere far away out on the Internet.</span></div><div class="line"><span class="comment">#</span></div><div class="line"><span class="comment"># Our DNS server is at 192.168.1.3 and our NBNS (WINS server) is at 192.168.1.4.</span></div><div class="line"><span class="comment"># If you don't have an NBNS server, leave that line out.</span></div><div class="line"><span class="comment">#</span></div><div class="line"></div><div class="line"><span class="comment"># Define dynamic IP address pool.</span></div><div class="line">        <span class="built_in">set</span> ippool add pool1 192.168.7.2 192.168.7.254	<span class="comment"># VPN 分配的 IP 范围</span></div><div class="line"></div><div class="line"><span class="comment"># Create clonable bundle template named B</span></div><div class="line">        create bundle template B</div><div class="line">        <span class="built_in">set</span> iface <span class="built_in">enable</span> proxy-arp</div><div class="line">        <span class="built_in">set</span> iface idle 1800</div><div class="line">        <span class="built_in">set</span> iface <span class="built_in">enable</span> tcpmssfix</div><div class="line">        <span class="built_in">set</span> ipcp yes vjcomp</div><div class="line"><span class="comment"># Specify IP address pool for dynamic assigment.</span></div><div class="line">        <span class="built_in">set</span> ipcp ranges 192.168.1.1/32 ippool pool1</div><div class="line">        <span class="built_in">set</span> ipcp dns 119.29.29.29			<span class="comment"># 腾讯 DNS 服务</span></div><div class="line">        <span class="comment">#set ipcp nbns 192.168.1.4</span></div><div class="line"><span class="comment"># The five lines below enable Microsoft Point-to-Point encryption</span></div><div class="line"><span class="comment"># (MPPE) using the ng_mppc(8) netgraph node type.</span></div><div class="line">        <span class="built_in">set</span> bundle <span class="built_in">enable</span> compression</div><div class="line">        <span class="built_in">set</span> ccp yes mppc</div><div class="line">        <span class="built_in">set</span> mppc yes e40</div><div class="line">        <span class="built_in">set</span> mppc yes e128</div><div class="line">        <span class="built_in">set</span> mppc yes stateless</div><div class="line"></div><div class="line"><span class="comment"># Create clonable link template named L</span></div><div class="line">        create link template L pptp</div><div class="line"><span class="comment"># Set bundle template to use</span></div><div class="line">        <span class="built_in">set</span> link action bundle B</div><div class="line"><span class="comment"># Multilink adds some overhead, but gives full 1500 MTU.</span></div><div class="line">        <span class="built_in">set</span> link <span class="built_in">enable</span> multilink</div><div class="line">        <span class="built_in">set</span> link yes acfcomp protocomp</div><div class="line">        <span class="built_in">set</span> link no pap chap eap</div><div class="line">        <span class="built_in">set</span> link <span class="built_in">enable</span> chap</div><div class="line"><span class="comment"># We can use use RADIUS authentication/accounting by including</span></div><div class="line"><span class="comment"># another config section with label 'radius'.</span></div><div class="line"><span class="comment">#       load radius</span></div><div class="line">        <span class="built_in">set</span> link keep-alive 10 60</div><div class="line"><span class="comment"># We reducing link mtu to avoid GRE packet fragmentation.</span></div><div class="line">        <span class="built_in">set</span> link mtu 1460</div><div class="line"><span class="comment"># Configure PPTP</span></div><div class="line">        <span class="built_in">set</span> pptp self 162.243.135.5			<span class="comment"># 服务器 IP</span></div><div class="line"><span class="comment"># Allow to accept calls</span></div><div class="line">        <span class="built_in">set</span> link <span class="built_in">enable</span> incoming</div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<h3 id="添加-VPN-服务的登陆帐号密码"><a href="#添加-VPN-服务的登陆帐号密码" class="headerlink" title="添加 VPN 服务的登陆帐号密码"></a>添加 VPN 服务的登陆帐号密码</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Start</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"ghw ghwpass"</span> &gt;/usr/<span class="built_in">local</span>/etc/mpd5/mpd.secret	<span class="comment">#设置帐号，用户 + 空格 +密码，一行一个</span></div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<h3 id="添加转发规则，让登陆上VPN的客户端也能连接外网"><a href="#添加转发规则，让登陆上VPN的客户端也能连接外网" class="headerlink" title="添加转发规则，让登陆上VPN的客户端也能连接外网"></a>添加转发规则，让登陆上VPN的客户端也能连接外网</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Start</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"ipfw add allow all from any to any"</span> &gt;/etc/ipfw.rules	<span class="comment">#设置防火墙规则</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"ipfw add divert natd ip from any to any via vtnet0"</span> &gt;&gt; &gt;/etc/ipfw.rules</div><div class="line"><span class="built_in">echo</span> <span class="string">"net.inet.ip.forwarding=1"</span> &gt;&gt;/etc/sysctl.conf	<span class="comment">#修改syctl配置，下次启动依旧有效</span></div><div class="line">sysctl net.inet.ip.forwarding=1 			<span class="comment">#让sysctl立即生效</span></div><div class="line">service ipfw start					<span class="comment">#重启防火墙</span></div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<h3 id="配置完成，重启服务"><a href="#配置完成，重启服务" class="headerlink" title="配置完成，重启服务"></a>配置完成，重启服务</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">#Code Start</span></div><div class="line">service mpd5 restart</div><div class="line"> <span class="comment">#Code End</span></div></pre></td></tr></table></figure>
+<p>重启后就能正常使用了。</p>
+<h2 id="发几个-KDE5-的图片，哈哈哈"><a href="#发几个-KDE5-的图片，哈哈哈" class="headerlink" title="发几个 KDE5 的图片，哈哈哈"></a>发几个 KDE5 的图片，哈哈哈</h2><p><img src="https://static.gehaowu.com/notes/2015/09/kde5_1.jpg" alt="KDE 桌面 - 一切自由"><br><img src="https://static.gehaowu.com/notes/2015/09/kde5_2.jpg" alt="KDE 提交错误报告"><br><img src="https://static.gehaowu.com/notes/2015/09/kde5_3.png" alt="KDE Login"><br><img src="https://static.gehaowu.com/notes/2015/09/kde5_4.png" alt="SLIM Login"><br><img src="https://static.gehaowu.com/notes/2015/09/kde5_5.png" alt="KDE 关于"></p>
+<p>文章原版来自 FreeBSDChina Wiki：<a href="https://wiki.freebsdchina.org/howto/m/mpd5_setup" target="_blank" rel="external">在 FreeBSD 上用 mpd5 构建 PPTP VPN</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;写在前面&quot;&gt;&lt;a href=&quot;#写在前面&quot; class=&quot;headerlink&quot; title=&quot;写在前面&quot;&gt;&lt;/a&gt;写在前面&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;朋友公司希望启用远程办公，所以稍微考虑考虑，就准备搞个 VPN 来实现登陆内部网络&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;关于更多远程办公相关信息请 Google &lt;a href=&quot;https://www.google.com/?gws_rd=cr,ssl#safe=strict&amp;amp;q=VPN+%E8%BF%9C%E7%A8%8B%E5%8A%9E%E5%85%AC&quot;&gt;VPN 远程办公&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;在-FreeBSD-上用-mpd5-构建-PPTP-VPN&quot;&gt;&lt;a href=&quot;#在-FreeBSD-上用-mpd5-构建-PPTP-VPN&quot; class=&quot;headerlink&quot; title=&quot;在 FreeBSD 上用 mpd5 构建 PPTP VPN&quot;&gt;&lt;/a&gt;在 FreeBSD 上用 mpd5 构建 PPTP VPN&lt;/h2&gt;&lt;h3 id=&quot;安装-PPTP-服务：&quot;&gt;&lt;a href=&quot;#安装-PPTP-服务：&quot; class=&quot;headerlink&quot; title=&quot;安装 PPTP 服务：&quot;&gt;&lt;/a&gt;安装 PPTP 服务：&lt;/h3&gt;&lt;figure class=&quot;highlight sh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt; &lt;span class=&quot;comment&quot;&gt;#Code Star&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;portsnap fetch update					&lt;span class=&quot;comment&quot;&gt;#更新ports&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; /usr/ports/net/mpd5					&lt;span class=&quot;comment&quot;&gt;#or pkg install -y mpd5&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;make install clean&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; &lt;span class=&quot;comment&quot;&gt;#Code End&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="FreeBSD" scheme="https://www.gehaowu.com/tags/FreeBSD/"/>
+    
+      <category term="VPN" scheme="https://www.gehaowu.com/tags/VPN/"/>
+    
+      <category term="Linux" scheme="https://www.gehaowu.com/tags/Linux/"/>
+    
+      <category term="PPTP" scheme="https://www.gehaowu.com/tags/PPTP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>升级 DigitalOcean VPS 里的 FreeBSD</title>
+    <link href="https://www.gehaowu.com/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/"/>
+    <id>https://www.gehaowu.com/2015/09/Upgrade-VPS-FreeBSD-DigitalOcean/</id>
+    <published>2015-09-13T07:49:26.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>猜猜怎么升级的。。哈哈哈。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/09/freebsdr.png" alt="FreeBSD"></p>
+<a id="more"></a>
+<p><img src="https://static.gehaowu.com/notes/2015/09/DOVPS.png" alt="DigitalOcean"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[ghw@haomwei.pts/1] ~ % dmesg <span class="_">-a</span> | grep CPU</div><div class="line">CPU: Intel(R) Xeon(R) CPU E5-2630L v2 @ 2.40GHz (2400.09-MHz K8-class CPU)</div><div class="line">cpu0: &lt;ACPI CPU&gt; on acpi0</div><div class="line">[ghw@haomwei.pts/1] ~ % dmesg <span class="_">-a</span> | grep mem</div><div class="line">real memory  = 536870912 (512 MB)</div><div class="line">avail memory = 490225664 (467 MB)</div><div class="line">hpet0: &lt;High Precision Event Timer&gt; iomem 0xfed00000-0xfed003ff on acpi0</div><div class="line">vgapci0: &lt;VGA-compatible display&gt; mem 0xfc000000-0xfdffffff,0xfebf0000-0xfebf0fff at device 2.0 on pci0</div><div class="line">virtio_pci0: &lt;VirtIO PCI Network adapter&gt; port 0xc060-0xc07f mem 0xfebf1000-0xfebf1fff irq 11 at device 3.0 on pci0</div><div class="line">virtio_pci1: &lt;VirtIO PCI Network adapter&gt; port 0xc080-0xc09f mem 0xfebf2000-0xfebf2fff irq 11 at device 4.0 on pci0</div><div class="line">virtio_pci2: &lt;VirtIO PCI Block adapter&gt; port 0xc000-0xc03f mem 0xfebf3000-0xfebf3fff irq 10 at device 5.0 on pci0</div><div class="line">orm0: &lt;ISA Option ROMs&gt; at iomem 0xc0000-0xc8fff,0xeb800-0xeffff on isa0</div><div class="line">vga0: &lt;Generic ISA VGA&gt; at port 0x3c0-0x3df iomem 0xa0000-0xbffff on isa0</div><div class="line">[ghw@haomwei.pts/1] ~ % freebsd-version -ku</div><div class="line">u10.2-RELEASE</div><div class="line">10.2-RELEASE-p2</div><div class="line">[ghw@haomwei.pts/1] ~ % uname <span class="_">-a</span></div><div class="line">FreeBSD haomwei.com 10.2-RELEASE FreeBSD 10.2-RELEASE <span class="comment">#0 r286666: Wed Aug 12 15:26:37 UTC 2015     root@releng1.nyi.freebsd.org:/usr/obj/usr/src/sys/GENERIC  amd64</span></div><div class="line">[ghw@haomwei.pts/1] ~ %</div></pre></td></tr></table></figure>
+<p>彻底清理掉旧系统。。。全新安装，，，</p>
+<p>→<em>→ →</em>→ →<em>→ →</em>→ →_→</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;猜猜怎么升级的。。哈哈哈。。。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/09/freebsdr.png&quot; alt=&quot;FreeBSD&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="FreeBSD" scheme="https://www.gehaowu.com/tags/FreeBSD/"/>
+    
+      <category term="DigitalOcean" scheme="https://www.gehaowu.com/tags/DigitalOcean/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hostker 主机的优化配置</title>
+    <link href="https://www.gehaowu.com/2015/09/Hostker-forced-HTTPS/"/>
+    <id>https://www.gehaowu.com/2015/09/Hostker-forced-HTTPS/</id>
+    <published>2015-09-12T02:20:05.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>有点贝壳，捣腾了几天 Hostker 玩，，，哈哈哈</p>
+<p>写个 .htaccess 来强制 HTTPS 跳转了</p>
+<h2 id="没有-HTTPS-如何装逼。。。"><a href="#没有-HTTPS-如何装逼。。。" class="headerlink" title="没有 HTTPS 如何装逼。。。"></a>没有 HTTPS 如何<em>装逼</em>。。。<img src="https://static.gehaowu.com/notes/2015/09/HTTPS.png" alt="HTTPS"></h2><h2 id="htaccess-配置文件："><a href="#htaccess-配置文件：" class="headerlink" title=".htaccess 配置文件："></a>.htaccess 配置文件：</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">### 我的 Hostker 主机 .htaccess 配置</span></div><div class="line"><span class="comment">## 启用地址重写模块</span></div><div class="line">RewriteEngine On</div><div class="line"><span class="comment"># 针对 Hostker 主机的 SSL 监听方案</span></div><div class="line">RewriteCond %&#123;HTTP:KERSSL&#125; !on</div><div class="line"><span class="comment"># 全局 HTTPS 并强制跳转带 www. 域名模式</span></div><div class="line">RewriteRule .* https://www.gehaowu.com/<span class="variable">$1</span> [R=301,L]</div><div class="line"><span class="comment">## 设置出错页面</span></div><div class="line"><span class="comment"># 设置404 页</span></div><div class="line">ErrorDocument 404 /404.html</div><div class="line"><span class="comment">## 设置缓存策略</span></div><div class="line"><span class="comment"># 启用缓存功能</span></div><div class="line">ExpiresActive On</div><div class="line"><span class="comment"># 默认全局缓存时间为3天</span></div><div class="line">ExpiresDefault <span class="string">"access plus 3 days"</span></div><div class="line"><span class="comment"># 指定文件缓存5天</span></div><div class="line">&lt;FilesMatch <span class="string">"\.(css|gif|jpeg|jpg|js|png|ico|bmp|svg|doc|pdf|mp3|ogg|mp4|mpeg|webm|eot|ttf|woff)$"</span>&gt;</div><div class="line">ExpiresDefault <span class="string">"access plus 5 days"</span></div><div class="line">&lt;/FilesMatch&gt;</div><div class="line"><span class="comment"># 指定文本文件缓存1天</span></div><div class="line">&lt;FilesMatch <span class="string">"\.(htm|html|xhtml|shtml|xml|rss|atom|txt)$"</span>&gt;</div><div class="line">ExpiresDefault <span class="string">"access plus 1 days"</span></div><div class="line">&lt;/FilesMatch</div></pre></td></tr></table></figure>
+<p>参考：<a href="https://www.keinx.com/2015/ssl.html" target="_blank" rel="external">博客启用SSL访问数据更安全</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;有点贝壳，捣腾了几天 Hostker 玩，，，哈哈哈&lt;/p&gt;
+&lt;p&gt;写个 .htaccess 来强制 HTTPS 跳转了&lt;/p&gt;
+&lt;h2 id=&quot;没有-HTTPS-如何装逼。。。&quot;&gt;&lt;a href=&quot;#没有-HTTPS-如何装逼。。。&quot; class=&quot;headerlink&quot;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="SSL" scheme="https://www.gehaowu.com/tags/SSL/"/>
+    
+      <category term="HTTPS" scheme="https://www.gehaowu.com/tags/HTTPS/"/>
+    
+      <category term="Hostker" scheme="https://www.gehaowu.com/tags/Hostker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>为 NGINX 开启 HTTP2 功能</title>
+    <link href="https://www.gehaowu.com/2015/08/NGINXHTTP2/"/>
+    <id>https://www.gehaowu.com/2015/08/NGINXHTTP2/</id>
+    <published>2015-08-31T12:44:45.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://static.gehaowu.com/notes/2015/08/FIREFOXHTTP2.png" alt="FireFox HTTP/2"></p>
+<h2 id="安装-NGINX-时启用-HTTP-2-支持"><a href="#安装-NGINX-时启用-HTTP-2-支持" class="headerlink" title="安装 NGINX 时启用 HTTP/2 支持"></a>安装 NGINX 时启用 HTTP/2 支持</h2><p>意外从 <a href="https://www.fifiblog.com" target="_blank" rel="external">LittleGreyGrey 君</a>那了解到，NGINX-1.9 已经支持 HTTP/2 ，</p>
+<p>如果您使用的是 FreeBSD 操作系统，那么您只需使用 Ports 里的 /usr/ports/www/nginx-devel 包就可以完美支持HTTP2了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">portsnap fetch update </div><div class="line"><span class="built_in">cd</span> /usr/ports/www/nginx-devel &amp;&amp;make config</div></pre></td></tr></table></figure>
+<p>选中 HTTPV2就OK了，记得关闭 SDPY 协议，然后安装就可以了<br><a id="more"></a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make install clean</div></pre></td></tr></table></figure>
+<p><img src="https://static.gehaowu.com/notes/2015/08/NGINXHTTP2.png" alt="HTTPV2"></p>
+<h2 id="为-NGINX-配置-HTTP-2-支持"><a href="#为-NGINX-配置-HTTP-2-支持" class="headerlink" title="为 NGINX 配置 HTTP/2 支持"></a>为 NGINX 配置 HTTP/2 支持</h2><p>安装完成后，为配置文件添加 http2 参数就 OK 了</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">listen	443 ssl http2;</div><div class="line">listen	[::]:443 ssl http2 ipv6only=on;</div></pre></td></tr></table></figure>
+<p>就像酱紫：<br><img src="https://static.gehaowu.com/notes/2015/08/NGINXCONFHTTP2.png" alt="HTTPV2"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/08/FIREFOXHTTP2.png&quot; alt=&quot;FireFox HTTP/2&quot;&gt;&lt;/p&gt;
+&lt;h2 id=&quot;安装-NGINX-时启用-HTTP-2-支持&quot;&gt;&lt;a href=&quot;#安装-NGINX-时启用-HTTP-2-支持&quot; class=&quot;headerlink&quot; title=&quot;安装 NGINX 时启用 HTTP/2 支持&quot;&gt;&lt;/a&gt;安装 NGINX 时启用 HTTP/2 支持&lt;/h2&gt;&lt;p&gt;意外从 &lt;a href=&quot;https://www.fifiblog.com&quot;&gt;LittleGreyGrey 君&lt;/a&gt;那了解到，NGINX-1.9 已经支持 HTTP/2 ，&lt;/p&gt;
+&lt;p&gt;如果您使用的是 FreeBSD 操作系统，那么您只需使用 Ports 里的 /usr/ports/www/nginx-devel 包就可以完美支持HTTP2了&lt;/p&gt;
+&lt;figure class=&quot;highlight sh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;portsnap fetch update &lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; /usr/ports/www/nginx-devel &amp;amp;&amp;amp;make config&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;选中 HTTPV2就OK了，记得关闭 SDPY 协议，然后安装就可以了&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="NGINX" scheme="https://www.gehaowu.com/tags/NGINX/"/>
+    
+      <category term="SSL" scheme="https://www.gehaowu.com/tags/SSL/"/>
+    
+      <category term="HTTPS" scheme="https://www.gehaowu.com/tags/HTTPS/"/>
+    
+      <category term="HTTP2" scheme="https://www.gehaowu.com/tags/HTTP2/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>通过 VeryCloud 为个人网站实现 HTTPS 功能</title>
+    <link href="https://www.gehaowu.com/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/"/>
+    <id>https://www.gehaowu.com/2015/08/Implement-HTTPS-feature-through-VeryCloud-personal-website/</id>
+    <published>2015-08-02T08:36:34.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h2><p>提高国内用户的访问体验，并实现 HTTPS 功能。</p>
+<h2 id="必备条件"><a href="#必备条件" class="headerlink" title="必备条件"></a>必备条件</h2><p>1，你要有个域名<br>2，你要有备案号<br>3，你要有备案号<br>4，你要有备案号</p>
+<p>重要的事情说三遍 →_→<br><a id="more"></a></p>
+<h2 id="闲扯一下"><a href="#闲扯一下" class="headerlink" title="闲扯一下"></a>闲扯一下</h2><p>主机在国外的情况下，由于距离远与长城防火墙的存在，导致挂在国外的网站打开速度十分缓慢，</p>
+<p>所以想到套一层国内 CDN 来提高网站速度，同时出于装逼需要，<br>最终选择了 <a href="https://www.verycloud.cn/" target="_blank" rel="external">VeryCloud</a> 作为 CDN 加速商 （我需要 HTTPS 功能）</p>
+<p><strong>网站源站可以使用任何一个你顺手的网络空间，如： <a href="https://www.github.io/" target="_blank" rel="external">Github.io</a>， <a href="https://www.gitcafe.io/" target="_blank" rel="external">GitCafe.io</a></strong></p>
+<h2 id="开始捣腾"><a href="#开始捣腾" class="headerlink" title="开始捣腾"></a>开始捣腾</h2><h3 id="选取主机服务提供商"><a href="#选取主机服务提供商" class="headerlink" title="选取主机服务提供商"></a>选取主机服务提供商</h3><p>直接把个人网站托管到 github 跟 gitcafe 就可以了，一个主站，另外一个做备份站。<br>像仓库添加 CNAME 文件后托管商会自动给你做绑定，<br>更多信息请自行 Google</p>
+<h3 id="申请-HTTPS-网站证书"><a href="#申请-HTTPS-网站证书" class="headerlink" title="申请 HTTPS 网站证书"></a>申请 HTTPS 网站证书</h3><p>去沃通申请一个证书 <a href="https://buy.wosign.com/free/" target="_blank" rel="external">沃通数字证书在线申请</a></p>
+<h3 id="配置-VeryCloud-加速"><a href="#配置-VeryCloud-加速" class="headerlink" title="配置 VeryCloud 加速"></a>配置 VeryCloud 加速</h3><p>到 VeryCloud 注册你的帐号<br>将申请到的 SSL 证书添加到 VeryCloud 中去<br>进入 VeryCloud 控制台，<br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloudSSL0.png" alt="VeryCloud 控制台"><br>选择 <em>云分发</em> -&gt; <em>证书管理</em> -&gt; <em>新建</em><br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloudSSL1.png" alt="新建证书"><br>证书名称随便填，自己知道是哪一份就可以了<br>授权证书就是 CA 签发给你的证书<br>证书密钥。。。<br>CA 机构证书就是证书链，证书商会提供，可选选项<br>证书添加完成后就可以添加域名了<br>这里<strong>推荐使用二级域名</strong>，因为 VeryCloud 使用 CNAME CDN 方案，如果裸域名使用 CNAME 会破坏当前域上的其它 DNS 记录。<br>选择 <em>云分发</em> -&gt; <em>频道管理</em> -&gt; <em>新建</em><br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloudAdd1.png" alt="基础设置"><br>频道选择你需要加速的二级域名，我使用 <em>www.gehaowu.com</em><br>ICP 备案号会自动获取<br>加速类型选择云分发<br>源站填 <em>gehaowu.github.io</em> ，端口80<br>接着选择下一步<br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloudAdd2.png" alt="策略设置"><br>策略选择 <em>遵循源站</em> 就可以了，你也可以选择自定义，<br>接着再下一步<br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloudAdd3.png" alt="高级设置"><br>备份源站填 <em>gitcafe.io</em> ，端口80<br>证书选择之前添加的证书<br>创建，等官方审核通过。</p>
+<h3 id="配置-DNS-记录"><a href="#配置-DNS-记录" class="headerlink" title="配置 DNS 记录"></a>配置 DNS 记录</h3><p>审核通过后修改 DNS 记录<br>修改 DNS 记录后台，为 <em>www</em> 添加 <em>CNAME</em> 记录值 <em>www.gehaowu.com.verygslb.com</em><br><img src="https://static.gehaowu.com/notes/2015/08/DNSPod.png" alt="DNSPod添加www记录"><br>并将裸域名解析到 github.io 所在 IP （这里由 Github 实现 <a href="http://gehaowu.com" target="_blank" rel="external">http://gehaowu.com</a> 跳转到 <a href="http://www.gehaowu.com）" target="_blank" rel="external">http://www.gehaowu.com）</a></p>
+<h2 id="收官，开始装逼吧"><a href="#收官，开始装逼吧" class="headerlink" title="收官，开始装逼吧~~"></a>收官，开始装逼吧~~</h2><p>最终的效果（忽悠朋友也开了VeryCloud的）<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">% curl -I https://www.ioliu.cn</div><div class="line">HTTP/1.1 200 OK</div><div class="line">Server: GitHub.com</div><div class="line">Content-Type: text/html; charset=utf-8</div><div class="line">Last-Modified: Sat, 01 Aug 2015 15:37:36 GMT</div><div class="line">Access-Control-Allow-Origin: *</div><div class="line">Expires: Sun, 02 Aug 2015 10:05:56 GMT</div><div class="line">Cache-Control: max-age=600</div><div class="line">Content-Length: 32799</div><div class="line">Accept-Ranges: bytes</div><div class="line">Date: Sun, 02 Aug 2015 09:55:56 GMT</div><div class="line">Via: 1.1 varnish</div><div class="line">Age: 17</div><div class="line">X-Served-By: cache-nrt6131-NRT</div><div class="line">X-Cache: MISS</div><div class="line">X-Cache-Hits: 0</div><div class="line">X-Timer: S1438509356.272132,VS0,VE325</div><div class="line">Vary: Accept-Encoding</div><div class="line">Strict-Transport-Security: max-age=15552000</div><div class="line">Powered-By-VeryCDN: MISS from ctc-dy-2-1-c1761, STALE from utn-cz-1-4-c17a1</div><div class="line">Connection: keep-alive</div><div class="line"></div><div class="line">%</div></pre></td></tr></table></figure></p>
+<p><img src="https://static.gehaowu.com/notes/2015/08/VeryCloud1.png" alt="我的后台选项"><br>我的源站并没有使用Github，直接挂在朋友的VPS上的<br><img src="https://static.gehaowu.com/notes/2015/08/VeryCloud2.png" alt="CURL"><br>我是高级装逼工程师，我是巨硬爱好者，，，哈哈哈</p>
+<hr>
+<p><strong>版权声明</strong></p>
+<p><a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank" rel="external"><img src="https://static.gehaowu.com/notes/other/CC-BY-SA-ND.png" alt="署名-非商业性使用-禁止演绎 创意共享4.0国际许可证"></a></p>
+<p><a href="//www.gehaowu.com/">Ge Haowu’s Personal Website</a> by <a href="//www.gehaowu.com/aboutme/">Haowu Ge</a> is licensed under a <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank" rel="external">CC BY-NC-ND 4.0 International</a> License.<br>由 <a href="//www.gehaowu.com/aboutme/">葛豪武</a> 创作并维护在<a href="//www.gehaowu.com/">葛豪武的个人网站</a> 采用 <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank" rel="external">署名-非商业性使用-禁止演绎 创意共享 4.0 国际</a> 许可证。</p>
+<p>本文首发于 <a href="//www.gehaowu.com/">葛豪武的个人网站！· Ge Haowu’s Personal Website!</a> ，版权所有，侵权必究。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;需求&quot;&gt;&lt;a href=&quot;#需求&quot; class=&quot;headerlink&quot; title=&quot;需求&quot;&gt;&lt;/a&gt;需求&lt;/h2&gt;&lt;p&gt;提高国内用户的访问体验，并实现 HTTPS 功能。&lt;/p&gt;
+&lt;h2 id=&quot;必备条件&quot;&gt;&lt;a href=&quot;#必备条件&quot; class=&quot;headerlink&quot; title=&quot;必备条件&quot;&gt;&lt;/a&gt;必备条件&lt;/h2&gt;&lt;p&gt;1，你要有个域名&lt;br&gt;2，你要有备案号&lt;br&gt;3，你要有备案号&lt;br&gt;4，你要有备案号&lt;/p&gt;
+&lt;p&gt;重要的事情说三遍 →_→&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="SSL" scheme="https://www.gehaowu.com/tags/SSL/"/>
+    
+      <category term="Github" scheme="https://www.gehaowu.com/tags/Github/"/>
+    
+      <category term="VeryCloud" scheme="https://www.gehaowu.com/tags/VeryCloud/"/>
+    
+      <category term="HTTPS" scheme="https://www.gehaowu.com/tags/HTTPS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>GitHub.io 301 重定向</title>
+    <link href="https://www.gehaowu.com/2015/07/GITHUBCNAME301/"/>
+    <id>https://www.gehaowu.com/2015/07/GITHUBCNAME301/</id>
+    <published>2015-07-29T14:11:07.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>本来准备使用 Github 作为主机的，结果发现 301 永久定向会导致多跳一次。。<br>（原因是Github自定义域名的情况下是不支持HTTPS的，所以Github会把跳转头搞成http的）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">curl -I https://www.gehaowu.com/notes</div><div class="line">curl -I https://www.gehaowu.com/notes/</div><div class="line">curl -IL https://www.gehaowu.com/notes</div></pre></td></tr></table></figure>
+<p><img src="https://static.gehaowu.com/notes/2015/07/githubcname1.png" alt="Github提供的301"><br><a id="more"></a><br><img src="https://static.gehaowu.com/notes/2015/07/githubcname2.png" alt="Github源模式，带/直接能获取数据"><br><img src="https://static.gehaowu.com/notes/2015/07/githubcname3.png" alt="自己的NGINX配置的情况下，让跳转直接走https://www."></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本来准备使用 Github 作为主机的，结果发现 301 永久定向会导致多跳一次。。&lt;br&gt;（原因是Github自定义域名的情况下是不支持HTTPS的，所以Github会把跳转头搞成http的）&lt;/p&gt;
+&lt;figure class=&quot;highlight sh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;curl -I https://www.gehaowu.com/notes&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;curl -I https://www.gehaowu.com/notes/&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;curl -IL https://www.gehaowu.com/notes&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/07/githubcname1.png&quot; alt=&quot;Github提供的301&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/categories/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="信息技术" scheme="https://www.gehaowu.com/tags/%E4%BF%A1%E6%81%AF%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="开源" scheme="https://www.gehaowu.com/tags/%E5%BC%80%E6%BA%90/"/>
+    
+      <category term="Github" scheme="https://www.gehaowu.com/tags/Github/"/>
+    
+      <category term="301" scheme="https://www.gehaowu.com/tags/301/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>我读书少，你不要骗我</title>
+    <link href="https://www.gehaowu.com/2015/07/%E6%88%91%E8%AF%BB%E4%B9%A6%E5%B0%91%EF%BC%8C%E4%BD%A0%E4%B8%8D%E8%A6%81%E9%AA%97%E6%88%91/"/>
+    <id>https://www.gehaowu.com/2015/07/我读书少，你不要骗我/</id>
+    <published>2015-07-21T12:30:59.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>找了好久，终于翻出来了，哈哈哈</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/wodushushaonibuyaopianwo.gif" alt="我读书少，你不要骗我"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;找了好久，终于翻出来了，哈哈哈&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/07/wodushushaonibuyaopianwo.gif&quot; alt=&quot;我读书少，你不要骗我&quot;&gt;&lt;/p&gt;
+
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+      <category term="网络" scheme="https://www.gehaowu.com/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>修复IE下显示br换行符显示方块问题</title>
+    <link href="https://www.gehaowu.com/2015/07/repair-box-br/"/>
+    <id>https://www.gehaowu.com/2015/07/repair-box-br/</id>
+    <published>2015-07-17T16:48:25.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>发现 IE 下竟然</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/br1.png" alt="IE 下显示的尾部"></p>
+<p>会显示一个方块。。。</p>
+<p>然后。。。定位发现是 br 换行符导致的，直接取消掉 br 换行符，换成 p 就可以了，哈哈哈</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/br2.png" alt="取消 BR 换行符"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;发现 IE 下竟然&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/07/br1.png&quot; alt=&quot;IE 下显示的尾部&quot;&gt;&lt;/p&gt;
+&lt;p&gt;会显示一个方块。。。&lt;/p&gt;
+&lt;p&gt;然后。。。定位发现是 br 换行符导
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+      <category term="网络" scheme="https://www.gehaowu.com/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+      <category term="IE" scheme="https://www.gehaowu.com/tags/IE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>打酱油</title>
+    <link href="https://www.gehaowu.com/2015/07/soysauce/"/>
+    <id>https://www.gehaowu.com/2015/07/soysauce/</id>
+    <published>2015-07-15T11:39:20.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>打酱油。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150711_120142.jpg" alt="打酱油"><br><a id="more"></a><br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150711_120354.jpg" alt="打酱油"><br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150711_120259.jpg" alt="打酱油"></p>
+<p>增值税发票的防伪措施。。。那两根线。。。<br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150714_154329.jpg" alt="打酱油"></p>
+<p>税务局这样要交版权费麽。。。MSN。。。<br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150714_161638.jpg" alt="打酱油"></p>
+<p>突然而至的大雨<br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150713_180558.jpg" alt="打酱油"></p>
+<p>前几天的台风。。<br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150710_173729.jpg" alt="打酱油"></p>
+<p>标志。。。<br><img src="https://static.gehaowu.com/notes/2015/07/IMG_20150702_224118.jpg" alt="打酱油"></p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/2015/07/zwjs.png" alt="别人的个人简介"></p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/2015/07/wocao.jpg" alt="打酱油">看到别人的个人介绍，，，我当时就醉了</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;打酱油。。。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/07/IMG_20150711_120142.jpg&quot; alt=&quot;打酱油&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+      <category term="网络" scheme="https://www.gehaowu.com/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>十年了</title>
+    <link href="https://www.gehaowu.com/2015/07/ten-years/"/>
+    <id>https://www.gehaowu.com/2015/07/ten-years/</id>
+    <published>2015-07-10T11:39:20.000Z</published>
+    <updated>2016-11-26T02:41:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>转眼我的网易邮箱。。。注册了十年了。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/126.png" alt="网易邮箱注册十年了"><br><a id="more"></a></p>
+<p>竟然。。。注册过世纪佳缘。。。还是好几年前的。。。</p>
+<p><img src="https://static.gehaowu.com/notes/2015/07/sjjy.png" alt="世纪佳缘"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;转眼我的网易邮箱。。。注册了十年了。。。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://static.gehaowu.com/notes/2015/07/126.png&quot; alt=&quot;网易邮箱注册十年了&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/categories/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+    
+      <category term="碎碎念" scheme="https://www.gehaowu.com/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/"/>
+    
+      <category term="网络" scheme="https://www.gehaowu.com/tags/%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+</feed>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>26.4. PPP 连接故障排除</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ppp-and-slip.html" title="Chapter 26. PPP 和 SLIP" /><link rel="prev" href="ppp.html" title="26.3. 使用内核级PPP" /><link rel="next" href="pppoe.html" title="26.5. 使用基于以太网的PPP(PPPoE)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">26.4. <acronym class="acronym">PPP</acronym> 连接故障排除</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ppp.html">Prev</a> </td><th width="60%" align="center">Chapter 26. PPP 和 SLIP</th><td width="20%" align="right"> <a accesskey="n" href="pppoe.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="ppp-troubleshoot"></a>26.4. <acronym class="acronym">PPP</acronym> 连接故障排除</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp84835536" class="indexterm"></a><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uart&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">uart</span>(4)</span></a> 驱动取代了
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a> 驱动。 用以表示串口的设备节点由分别
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>，
+	并从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户在升级时需要因应之对配置文件进行必要的更改。</p></div><p>本节将讲述通过modem连接使用PPP时可能出现的问题。
+	例如， 您可能需要确切地知道您拨入的系统会出现一个怎样的命令行提示符。
+	有些 <acronym class="acronym">ISP</acronym> 会提供 <code class="literal">ssword</code>提示符，
+	而其它的可能会出现 <code class="literal">password</code>；
+	如果没有根据情况的不同相应地编写 <code class="command">ppp</code>
+	脚本， 登录就会失败。 诊断 <code class="command">ppp</code>
+	最常用的方法是手动进行连接。 以下的信息会一步一步地带您完成手动连接。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84847056"></a>26.4.1. 检查设备节点</h3></div></div></div><p>如果使用的是定制内核， 确认在其编译配置中包含下列配置：</p><pre class="programlisting">device   uart</pre><p>默认的 <code class="literal">GENERIC</code> 内核中包含了
+	  <code class="filename">uart</code> 设备， 因此如果您使用的是它的话，
+	  就不需要担心了。 只要查看 <code class="command">dmesg</code> 输出中是否有 modem
+	  设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dmesg | grep uart</code></strong></pre><p>您应该找到与 <code class="filename">uart</code> 设备有关的输出。
+	  这些就是我们需要的 COM 端口。 如果您的 modem 按照标准串行端口工作，
+	  您就会在 <code class="filename">uart1</code> 或 <code class="filename">COM2</code>
+	  上找到它。 如果 modem 设备连接在 <code class="filename">uart1</code>
+	  接口 (在 DOS 中称为<code class="filename">COM2</code>)，
+	  那么您的 modem 将会是 <code class="filename">/dev/cuau1</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84857936"></a>26.4.2. 手动连接</h3></div></div></div><p>通过手动控制<code class="command">ppp</code>来连接Internet
+      是诊断连接及获知<acronym class="acronym">ISP</acronym>处理<span class="application">PPP</span>客户端方式的一个快速， 简单的方法。
+	让我们从<span class="application">PPP</span> 命令行开始， 在所有的例子中我们使用
+	<span class="emphasis"><em>example</em></span> 表示运行 <span class="application">PPP</span>
+	服务的主机名。 键入<code class="command">ppp</code>
+	命令打开 <code class="command">ppp</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ppp</code></strong></pre><p>现在我们已经打开了<code class="command">ppp</code>。</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>set device /dev/cuau1</code></strong></pre><p>设置modem设备， 在本例子中是
+	<code class="filename">cuau1</code>。</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>set speed 115200</code></strong></pre><p>设置连接速度， 在本例中我们使用15,200 <acronym class="acronym">kbps</acronym>。</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>enable dns</code></strong></pre><p>使<code class="command">ppp</code>配置域名服务，
+	在文件<code class="filename">/etc/resolv.conf</code>中添加域名服务器行。
+	如果 <code class="command">ppp</code>不能确定我们的主机名， 可以在稍后设置。</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>term</code></strong></pre><p>切换到 <span class="quote">“<span class="quote">终端</span>”</span>样我们就能手动地控制这台 modem 的模式。</p><pre class="programlisting">deflink: Entering terminal mode on <code class="filename">/dev/cuau1</code>
+type '~h' for help</pre><pre class="screen"><strong class="userinput"><code>at</code></strong>
+OK
+<strong class="userinput"><code>atdt123456789</code></strong></pre><p>使用命令<code class="command">at</code>初始化modem，
+	然后使用<code class="command">atdt</code>和<acronym class="acronym">ISP</acronym>给您的号码进行拨号。</p><pre class="screen">CONNECT</pre><p>连接配置， 如果我们遇到了与硬件无关的连接问题， 可以在这里尝试解决。</p><pre class="screen">ISP Login:<strong class="userinput"><code>myusername</code></strong></pre><p>这里提示您输入用户名， 输入<acronym class="acronym">ISP</acronym>提供的用户名然后按回车。</p><pre class="screen">ISP Pass:<strong class="userinput"><code>mypassword</code></strong></pre><p>这时提示我们输入密码， 输入
+	<acronym class="acronym">ISP</acronym>提供的密码。
+	如同登录入FreeBSD， 密码不会显示。</p><pre class="screen">Shell or PPP:<strong class="userinput"><code>ppp</code></strong></pre><p>由于<acronym class="acronym">ISP</acronym>的不同， 这个提示符可能不会出现。
+	这里我们需要考虑： 是使用运行于提供商端的 Shell，
+	还是启动 <code class="command">ppp</code>？ 这本例中，
+	我们选择使用 <code class="command">ppp</code>， 因为我们希望得到 Internet 连接。</p><pre class="screen">Ppp ON example&gt;</pre><p>注意在这个例子中， 第一个 <code class="option">p</code>已经大写。
+	这表示我们已经成功地连接上了 <acronym class="acronym">ISP</acronym>。</p><pre class="screen">PPp ON example&gt;</pre><p>我们已经成功通过了
+	<acronym class="acronym">ISP</acronym>的验证， 正在等待分配<acronym class="acronym">IP</acronym>地址。</p><pre class="screen">PPP ON example&gt;</pre><p>我们得到了一个 <acronym class="acronym">IP</acronym>
+	地址， 成功地完成了连接。</p><pre class="screen">PPP ON example&gt;<strong class="userinput"><code>add default HISADDR</code></strong></pre><p>这样就完成了添加默认路由所需的配置。 这是与外界通信所必需的。
+	因为之前我们只是与服务器端建立了连接。 如果由于已存在的路由而导致操作失败，
+	您可以在 <code class="option">add</code> 前加 <code class="literal">!</code>号。
+	除此之外， 您也可以在真正连接之前设置这些 (指 add default HISADDR)，
+	ppp 会根据这项设定协商取得新的路由。</p><p>如果一切顺利， 现在我们应该能得到一个活动的 Internet 连接，
+	可以使用 <span class="keycap"><strong>CTRL</strong></span>+<span class="keycap"><strong>z</strong></span> 使其转入后台。 如果您发现
+	<code class="command">PPP</code>重新变为 <code class="command">ppp</code>，
+	则表示连接被断开。 大写的 P 表明建立了到 <acronym class="acronym">ISP</acronym> 的连接，
+	而小写的 p 则表示连接由于某种原因被断开， 这有助于帮助我们了解连接的状态。
+	<code class="command">ppp</code> 只有这两个状态。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84900688"></a>26.4.2.1. 诊断排错</h4></div></div></div><p>如果您有一根直连线且似乎不能建立连接， 要使用<code class="option">set
+	  ctsrts off</code>以关闭字节流的<acronym class="acronym">CTS/RTS</acronym>。
+	  这种情况一般发生在连接兼容 <span class="application">PPP</span> 的终端服务器时。
+	  当它向通信连接写入数据时， <span class="application">PPP</span>就会挂起，
+	  一直等待一个<acronym class="acronym">CTS</acronym>，
+	  或者一个不可能出现的 Clear to Send 信号。 如果使用了这个选项， 您还应使用
+	  <code class="option">set accmap</code>选项，
+	  某些存在缺陷的硬件在完成端对端发送特定字符， 特别是
+	  XON/XOFF 时可能会遇到困难。 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ppp</span>(8)</span></a>
+	  联机手册以了解关于可用选项的更多细节， 以及如何使用它们。</p><p>如果您的 modem 比较旧， 就需要使用
+	  <code class="option">set parity even</code> 了。 奇偶校验的默认设置是 none，
+	  但在旧式的 (当流量大量增加时) 调制解调器和某些
+	  <acronym class="acronym">ISP</acronym> 被用来纠错。 您需要使用这个选项才能使用
+	  Compuserve <acronym class="acronym">ISP</acronym>。</p><p><span class="application">PPP</span> 可能并不返回命令模式，
+	  这通常是 <acronym class="acronym">ISP</acronym> 等待您这一端发起协商时发生了错误。
+	  此时， 使用 <code class="command">~p</code> 命令将强制 ppp 开始发送配置信息。</p><p>如果您没有看到登录提示， 则很可能需要使用
+	  <acronym class="acronym">PAP</acronym> 或
+	  <acronym class="acronym">CHAP</acronym> 验证来代替前面例子中的
+	  <span class="trademark">UNIX</span>® 风格验证。 要使用
+	  <acronym class="acronym">PAP</acronym> 或 <acronym class="acronym">CHAP</acronym>
+	  只需在进入终端模式之前把下面的选项加入
+	  <span class="application">PPP</span>：</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>set authname myusername</code></strong></pre><p>此处 <em class="replaceable"><code>myusername</code></em> 应改为您的
+	  <acronym class="acronym">ISP</acronym> 分配给您的用户名。</p><pre class="screen">ppp ON example&gt; <strong class="userinput"><code>set authkey mypassword</code></strong></pre><p>此处 <em class="replaceable"><code>mypassword</code></em> 应该为您的
+	  <acronym class="acronym">ISP</acronym> 分配给您的口令。</p><p>如果连接正常， 但无法查找域名， 请尝试
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ping&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ping</span>(8)</span></a> 某个 <acronym class="acronym">IP</acronym>
+	  地址来看看是否返回了信息。 如果您发现百分之百 (100%) 丢包，
+	  那么您很可能没有分配默认路由。 请仔细检查选项
+	  <code class="option">add default HISADDR</code>
+	  是否在连接时被设置了。 如果您能连接到远程的
+	  <acronym class="acronym">IP</acronym> 地址则有可能域名解析服务器的地址没有被加入到
+	  <code class="filename">/etc/resolv.conf</code>。 这个文件应该是下面的样子：</p><pre class="programlisting">domain <em class="replaceable"><code>example.com</code></em>
+nameserver <em class="replaceable"><code>x.x.x.x</code></em>
+nameserver <em class="replaceable"><code>y.y.y.y</code></em></pre><p>此处 <em class="replaceable"><code>x.x.x.x</code></em> 和
+	  <em class="replaceable"><code>y.y.y.y</code></em> 应该改为您的
+	  <acronym class="acronym">ISP</acronym> 的 DNS 服务器的
+	  <acronym class="acronym">IP</acronym> 地址。
+	  这一信息在您注册时可能会提供给您，
+	  不过通常只需给 <acronym class="acronym">ISP</acronym> 打个电话就能知道了。</p><p>您还可以让 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">syslog</span>(3)</span></a> 为您的 <span class="application">PPP</span>
+	  连接提供日志。 只需增加：</p><pre class="programlisting">!ppp
+*.*     /var/log/ppp.log</pre><p>到 <code class="filename">/etc/syslog.conf</code> 中。 绝大多数情况下，
+	  这个功能默认已经打开了。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ppp.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ppp-and-slip.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="pppoe.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">26.3. 使用内核级PPP </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 26.5. 使用基于以太网的PPP(PPPoE)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

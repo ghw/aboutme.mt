@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.10. MAC portacl 模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-ifoff.html" title="16.9. MAC ifoff 模块" /><link rel="next" href="mac-partition.html" title="16.11. MAC partition (分区) 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.10. MAC portacl 模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-ifoff.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-partition.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-portacl"></a>16.10. MAC portacl 模块</h2></div></div></div><a id="idp78818640" class="indexterm"></a><p>模块名： <code class="filename">mac_portacl.ko</code></p><p>对应的内核配置：
+      <code class="literal">MAC_PORTACL</code></p><p>引导选项： <code class="literal">mac_portacl_load="YES"</code></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 模块可以用来通过一系列 <code class="command">sysctl</code>
+      变量来限制绑定本地的 <acronym class="acronym">TCP</acronym> 和 <acronym class="acronym">UDP</acronym>
+      端口。 本质上 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 使得
+      非-<code class="systemitem">root</code> 用户能够绑定到它所指定的特权端口，
+      也就是那些编号小于 1024 的端口。</p><p>在加载之后， 这个模块将在所有的 socket 上启用
+      <acronym class="acronym">MAC</acronym> 策略。 可以调整下列一些配置：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">security.mac.portacl.enabled</code> 将完全
+	  启用/禁用 策略。</p></li><li class="listitem"><p><code class="literal">security.mac.portacl.port_high</code>
+	  将设置为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 所保护的最高端口号。</p></li><li class="listitem"><p><code class="literal">security.mac.portacl.suser_exempt</code>
+	  如果设置为非零值， 表示将
+	  <code class="systemitem">root</code> 用户排除在策略之外。</p></li><li class="listitem"><p><code class="literal">security.mac.portacl.rules</code>
+	  将指定实际的 mac_portacl 策略； 请参见下文。</p></li></ul></div><p>实际的 <code class="literal">mac_portacl</code> 策略，
+      是在 <code class="literal">security.mac.portacl.rules</code>
+      sysctl 所指定的一个下列形式的字符串：
+      <code class="literal">rule[,rule,...]</code> 其中可以给出任意多个规则。
+      每一个规则的形式都是：
+      <code class="literal">idtype:id:protocol:port</code>。 这里的
+      <em class="parameter"><code>idtype</code></em> 参数可以是
+      <code class="literal">uid</code> 或 <code class="literal">gid</code>，
+      分别表示将 <em class="parameter"><code>id</code></em> 参数解释为用户 id 或组 id。
+      <em class="parameter"><code>protocol</code></em> 参数可以用来确定希望应用到
+      <acronym class="acronym">TCP</acronym> 或
+      <acronym class="acronym">UDP</acronym> 协议上， 方法是把这一参数设置为
+      <code class="literal">tcp</code> 或 <code class="literal">udp</code>。 最后的
+      <em class="parameter"><code>port</code></em>
+      参数则给出了所指定的用户或组能够绑定的端口号。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">由于规则集会直接由内核加以解释， 因此只能以数字形式表示用户 ID、
+	组 ID， 以及端口等参数。 换言之， 您不能使用用户、 组，
+	或端口服务的名字来指定它们。</p></div><p>默认情况下， 在 类-<span class="trademark">UNIX</span>® 系统中， 编号小于 1024
+      的端口只能为特权进程使用或绑定， 也就是那些以 <code class="systemitem">root</code>
+      身份运行的进程。 为了让
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 能够允许非特权进程绑定低于 1024 的端口，
+      就必须首先禁用标准的 <span class="trademark">UNIX</span>® 限制。 这可以通过把 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a>
+      变量 <code class="literal">net.inet.ip.portrange.reservedlow</code> 和
+      <code class="literal">net.inet.ip.portrange.reservedhigh</code>
+      设置为 0 来实现。</p><p>请参见下面的例子， 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 联机手册中的说明，
+      以了解进一步的信息。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78851920"></a>16.10.1. 例子</h3></div></div></div><p>下面的例子更好地展示了前面讨论的内容：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl security.mac.portacl.port_high=1023</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>sysctl net.inet.ip.portrange.reservedlow=0 net.inet.ip.portrange.reservedhigh=0</code></strong></pre><p>首先我们需要设置使 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 管理标准的特权端口，
+	并禁用普通的 <span class="trademark">UNIX</span>® 绑定限制。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl security.mac.portacl.suser_exempt=1</code></strong></pre><p>您的 <code class="systemitem">root</code> 用户不应因此策略而失去特权，　因此请把
+	<code class="literal">security.mac.portacl.suser_exempt</code> 设置为一个非零的值。
+	现在您已经成功地配置了　<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a> 模块，
+	并使其默认与 类-<span class="trademark">UNIX</span>® 系统一样运行了。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl security.mac.portacl.rules=uid:80:tcp:80</code></strong></pre><p>允许 <acronym class="acronym">UID</acronym> 为 80 的用户 (正常情况下，
+	应该是 <code class="systemitem">www</code> 用户) 绑定到 80 端口。
+	这样 <code class="systemitem">www</code> 用户就能够运行 web 服务器， 而不需要使用
+	<code class="systemitem">root</code> 权限了。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl security.mac.portacl.rules=uid:1001:tcp:110,uid:1001:tcp:995</code></strong></pre><p>允许 <acronym class="acronym">UID</acronym> 为
+	1001 的用户绑定 <acronym class="acronym">TCP</acronym> 端口 110
+	(<span class="quote">“<span class="quote">pop3</span>”</span>) 和 995 (<span class="quote">“<span class="quote">pop3s</span>”</span>)。
+	这样用户就能够启动接受来发到 110 和 995 的连接请求的服务了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-ifoff.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-partition.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.9. MAC ifoff 模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.11. MAC partition (分区) 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

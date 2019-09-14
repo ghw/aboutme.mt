@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.11. 常见问题</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-post.html" title="3.10. 安装后的配置" /><link rel="next" href="install-advanced.html" title="3.12. 高级安装指南" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.11. 常见问题</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-post.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-advanced.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-trouble"></a>3.11. 常见问题</h2></div></div></div><a id="idp69185104" class="indexterm"></a><p>下面将介绍一些在安装过程中常见的问题，像如何报告发生的问题，
+      如何双重启动 FreeBSD 和 <span class="trademark">MS-DOS</span>® 或 <span class="trademark">Windows</span>®。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69187664"></a>3.11.1. 当您遇到错误时，应该怎么做？</h3></div></div></div><p>由于 PC 结构的限制， 硬件检测不可能 100% 地可靠，
+        但是有些问题是您可以自己解决的。</p><p>首先检查一下您使用的 FreeBSD 版本的 <a class="link" href="http://www.FreeBSD.org/releases/index.html" target="_top">硬件兼容说明
+	</a> 文档看看您使用的是否是被支持的硬件。</p><p>如果您使用的硬件是系统支持的，但仍然遇到了死机或其他问题，
+	则需要联编 <a class="link" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">定制的内核</a>。
+	这能够支持默认的 <code class="filename">GENERIC</code> 内核所不支持的设备。
+	在引导盘上的内核假定绝大多数的硬件，均为按出厂设置的方式配置了
+	IRQ、 IO 地址和 DMA 通道。 如果您的硬件重新进行了配置，
+	则可能需要编辑内核配置， 并重新编译内核， 以便告诉
+	FreeBSD 到哪里去查找设备。</p><p>除此之外，也可能遇到这种情况吗，即探测某种并不存在的设备时，
+        会干扰到其他设备的检测并使其失败。
+	这种情况吗下应禁止驱动程序检测可能导致冲突的设备。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">有些安装问题可以借助更新硬件的程序来解决，特别是主板的
+          <acronym class="acronym">BIOS</acronym> 。
+	  大部分的主板制造商都会提供网站给用户下载新的 BIOS
+	  以及提供如何更新的说明。</p><p xmlns="http://www.w3.org/1999/xhtml">也有许多制造商强烈建议，除非必要否则不要轻易更新
+          <acronym class="acronym">BIOS</acronym> 。因为更新的过程 <span class="emphasis"><em>可能</em></span>
+	  会发生问题，进而损害 <acronym class="acronym">BIOS</acronym> 芯片。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69198416"></a>3.11.2. 使用 <span class="trademark">MS-DOS</span>® 和 <span class="trademark">Windows</span>® 文件系统</h3></div></div></div><p>目前， FreeBSD 尚不支持通过
+	<span class="application">Double Space™</span> 程序压缩的文件系统。
+	因此，如果希望 FreeBSD 访问数据， 则应首先解压缩这些文件系统。
+	这项工作，可以通过位于 <span class="guimenuitem">Start</span>&gt;
+	<span class="guimenuitem">Programs</span> &gt;
+	<span class="guimenuitem">System Tools</span> 菜单的
+	<span class="application">Compression Agent</span> 来完成。</p><p>FreeBSD 可以支持基于 <span class="trademark">MS-DOS</span>® 的文件系统 （有时被称为 FAT
+	文件系统）。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_msdosfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_msdosfs</span>(8)</span></a>
+	命令能够把这样的文件系统挂接到现有的目录结构中，
+	并允许访问 FAT 文件系统上的内容。 通常我们并不直接使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_msdosfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_msdosfs</span>(8)</span></a> 程序，它一般会在 <code class="filename">/etc/fstab</code>
+	中的某一行被调用或者被 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 工具并配合适当的参数来调用。</p><p><code class="filename">/etc/fstab</code>中一个典型的例子：</p><pre class="programlisting">/dev/ad0sN  /dos  msdosfs rw  0	0</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="filename">/dos</code> 目录必须事先存在。
+	  更多关于 <code class="filename">/etc/fstab</code> 的细节，
+	  请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fstab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">fstab</span>(5)</span></a>。</p></div><p>一个使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 挂载 <span class="trademark">MS-DOS</span>® 文件系统的例子：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t msdosfs /dev/ad0s1 /mnt</code></strong></pre><p>在此例子中， <span class="trademark">MS-DOS</span>® 文件系统位于主硬盘的第一个分区。
+	您的情况可能与引不同，查看命令 <code class="command">dmesg</code> 和
+	<code class="command">mount</code> 的输出。
+	它们应该可以让您得到足够的分区信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">FreeBSD 可能使用和其他操作系统不同计数方法来标记磁盘 slices，
+	  特别需要指出的是， <span class="trademark">MS-DOS</span>®
+	  的扩展分区通常会比 <span class="trademark">MS-DOS</span>® 主分区被标记为更高的数值。
+	  可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fdisk&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fdisk</span>(8)</span></a> 工具来帮助测定哪些 slices 属于 FreeBSD
+	  哪些是属于其他的操作系统。</p></div><p>NTFS 分区也可以通过类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_ntfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_ntfs</span>(8)</span></a>
+	命令挂接在FreeBSD上。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69221328"></a>3.11.3. 排除故障时的常见问题和解决方法</h3></div></div></div><div class="qandaset"><a id="idp69221968"></a><dl><dt>3.11.3.1. <a href="install-trouble.html#idp69222224">我的系统在引导到探测硬件时发生了死机、 安装过程中行为异常，
+	      或没有检测到软驱。</a></dt><dt>3.11.3.2. <a href="install-trouble.html#idp69235024">在硬盘安装 FreeBSD 之后的首次启动时， 内核加载并检测了硬件，
+	      但给出下列消息并停止运行：</a></dt><dt>3.11.3.3. <a href="install-trouble.html#idp69245136">在硬盘安装 FreeBSD 之后的首次启动时， Boot Manager
+	      只是给出了 F? 的菜单提示，
+	      但并不继续引导过程。</a></dt><dt>3.11.3.4. <a href="install-trouble.html#idp69249616">系统找到了 ed(4) 网卡，
+	      但总是报设备超时 (device timeout) 错误。</a></dt><dt>3.11.3.5. <a href="install-trouble.html#idp69264080">当在 X11 终端中运行 sysinstall
+              的时候， 黄色的字体相对于浅灰色的背景变得难以阅读。
+              有没有什么能让这个应用程序提供高对比度的方法？</a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%" /><col /></colgroup><tbody><tr class="question"><td align="left" valign="top"><a id="idp69222224"></a><a id="idp69222480"></a><p><strong>3.11.3.1.</strong></p></td><td align="left" valign="top"><p>我的系统在引导到探测硬件时发生了死机、 安装过程中行为异常，
+	      或没有检测到软驱。</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>FreeBSD 在启动过程中广泛使用了 i386、
+	      amd64 及 ia64 平台提供的 ACPI 服务来检测系统配置。
+	      不幸的是， 在 ACPI 驱动和主板 BIOS 中存在一些 bug。
+	      如果遇到这种情况， 可以在系统引导时禁用 ACPI，
+	      其方法是在第三阶段引导加载器时使用 hint
+	      <code class="literal">hint.acpi.0.disabled</code>：</p><pre class="screen"><strong class="userinput"><code>set hint.acpi.0.disabled="1"</code></strong></pre><p>这一设置会在系统重启之后失效，因此，如果需要的话，您应在
+	      <code class="filename">/boot/loader.conf</code> 文件中增加
+	      <code class="literal">hint.acpi.0.disabled="1"</code>。
+	      关于引导加载器的进一步详情， 请参见
+	      <a class="xref" href="boot.html#boot-synopsis" title="13.1. 概述">Section 13.1, “概述”</a>。</p></td></tr><tr class="question"><td align="left" valign="top"><a id="idp69235024"></a><a id="idp69235280"></a><p><strong>3.11.3.2.</strong></p></td><td align="left" valign="top"><p>在硬盘安装 FreeBSD 之后的首次启动时， 内核加载并检测了硬件，
+	      但给出下列消息并停止运行：</p><pre class="screen">changing root device to ad1s1a panic: cannot mount root</pre><p>这是怎么回事？ 我该怎么做？</p><p>另外引导帮助信息里提到的
+	      <code class="literal">bios_drive:interface(unit,partition)kernel_name</code>
+	      是什么？</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>系统在处理引导盘非系统中的第一块盘时有一个由来已久的问题。
+	      BIOS 采用的编号方式有时和 FreeBSD 不一致，
+	      而设法将其变为一样则很难正确地实现。</p><p>因而， 在发生这种情况时，FreeBSD
+	      可能会需要一些帮助才能找到磁盘。有两种常见的情况，
+	      在这些情况下您都需要手工告诉 FreeBSD 根文件系统模块的位置。
+	      这是通过告诉引导加载器 BIOS 磁盘编号、磁盘类型以及 FreeBSD
+	      中的该种磁盘的编号来实现的。</p><p>第一种情况是有两块 IDE 硬盘， 分别配置为对应 IDE
+	      总线上的主 (master) 设备， 并希望 FreeBSD 从第二块硬盘上启动。
+	      BIOS 将两块硬盘识别为磁盘 0 和磁盘 1， 而 FreeBSD
+	      则将其分别叫做 <code class="filename">ad0</code> 和
+	      <code class="filename">ad2</code>。</p><p>FreeBSD 位于 BIOS 磁盘 1， 其类型是
+	      <code class="literal">ad</code> 而 FreeBSD 磁盘编号则是 2，
+	      因此， 您应输入：</p><pre class="screen"><strong class="userinput"><code>1:ad(2,a)kernel</code></strong></pre><p>注意， 如果您的主总线上有从设备，
+	      则这一配置是不必要的 (因为这样配置是错的)。</p><p>第二种情况是从 SCSI 磁盘启动，但系统中安装了一个或多个 IDE
+	      硬盘。这时，FreeBSD 磁盘编号会比
+	      BIOS 磁盘编号小。如果您有两块 IDE 硬盘，
+	      以及一块 SCSI 硬盘，则 SCSI 硬盘将会是 BIOS 磁盘 2，
+	      类型为 <code class="literal">da</code> 而 FreeBSD 磁盘编号是 0，
+	      因此， 您应输入：</p><pre class="screen"><strong class="userinput"><code>2:da(0,a)kernel</code></strong></pre><p>来告诉 FreeBSD 您希望从 BIOS 磁盘 2 引导，
+	      而它是系统中的第一块 SCSI 硬盘。 假如只有一块 IDE 硬盘，
+	      则应以 <code class="literal">1:</code> 代替。</p><p>一旦您确定了应选用的正确配置，
+	      就可以用标准的文本编辑器把它写到
+	      <code class="filename">/boot.config</code> 文件中了。
+	      除非另行指定， FreeBSD 将使用这个文件的内容，
+	      作为对 <code class="literal">boot:</code> 提示的默认回应。</p></td></tr><tr class="question"><td align="left" valign="top"><a id="idp69245136"></a><a id="idp69245392"></a><p><strong>3.11.3.3.</strong></p></td><td align="left" valign="top"><p>在硬盘安装 FreeBSD 之后的首次启动时， Boot Manager
+	      只是给出了 <code class="literal">F?</code> 的菜单提示，
+	      但并不继续引导过程。</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>在您安装 FreeBSD 进行到分区编辑器时所设置的磁盘尺寸信息不对。
+	      请回到分区编辑器并指定正确的磁盘尺寸。
+	      这种情况必须重新安装 FreeBSD。</p><p>如果您无法确定在您机器上的正确尺寸信息，可以用一个小技巧：
+	      在磁盘开始的地方安装一个小的 DOS 分区，
+	      并在其后安装 FreeBSD。 安装程序能够看到这个 DOS 分区，
+	      并利用它推测磁盘的尺寸信息， 这通常会有所帮助。</p><p>下面的技巧不再推荐使用，
+	      在这里仅供参考：</p><div class="blockquote"><blockquote class="blockquote"><p>如果您正准备建立只运行 FreeBSD
+		的服务器或工作站， 而无需考虑
+		(之后) 与 DOS、 Linux 或其他操作系统的兼容性，
+		也可以使用整个硬盘 (分区编辑器中的 <span class="guimenuitem">A</span>)，
+		选择 FreeBSD 独占整个硬盘每一个扇区的非标准选项。
+		这会扫除关于磁盘尺寸的一切烦恼，
+		但会限制您以后运行 FreeBSD 以外的其他操作系统的能力。</p></blockquote></div></td></tr><tr class="question"><td align="left" valign="top"><a id="idp69249616"></a><a id="idp69249872"></a><p><strong>3.11.3.4.</strong></p></td><td align="left" valign="top"><p>系统找到了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ed&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ed</span>(4)</span></a> 网卡，
+	      但总是报设备超时 (device timeout) 错误。</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>您的网卡可能使用了与 <code class="filename">/boot/device.hints</code>
+	      文件中指定的 IRQ 不同的中断请求号。
+	      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ed&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ed</span>(4)</span></a> 驱动默认情况下并不支持 <span class="quote">“<span class="quote">软</span>”</span> 配置
+	      (在 DOS 中使用 EZSETUP 配置的值)，
+	      但如果您在网卡的 hints 中指定 <code class="literal">-1</code>，
+	      便会使用软配置。</p><p>您应使用网卡的跳线进行硬配置 (根据需要修改内核设置)
+	      或通过 hint <code class="literal">hint.ed.0.irq="-1"</code>
+	      将 IRQ 指定为 <code class="literal">-1</code>。
+	      这会告诉内核使用软配置。</p><p>另一个可能是您的网卡使用 IRQ 9，
+	      这会与 IRQ 2 共用同一中断请求线，
+	      同时也是导致问题的一个常见原因 (特别是 VGA 卡使用 IRQ
+	      2 的时候！)。 您应尽量避免使用 IRQ 2 或 9。</p></td></tr><tr class="question"><td align="left" valign="top"><a id="idp69264080"></a><a id="idp69264336"></a><p><strong>3.11.3.5.</strong></p></td><td align="left" valign="top"><p>当在 X11 终端中运行 <span class="application">sysinstall</span>
+              的时候， 黄色的字体相对于浅灰色的背景变得难以阅读。
+              有没有什么能让这个应用程序提供高对比度的方法？<a id="idp69265232" class="indexterm"></a></p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>如果你已经安装了 X11 并且 <span class="application">sysinstall</span>
+              在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=xterm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">xterm</span>(1)</span></a> 或者 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rxvt&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rxvt</span>(1)</span></a> 中默认的颜色使得文字难以辩认，
+              可以在你的 <code class="filename">~.Xdefaults</code> 中加入
+              <code class="literal">XTerm*color7: #c0c0c0</code>
+              获得深灰色的背景。</p></td></tr></tbody></table></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-post.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-advanced.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.10. 安装后的配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.12. 高级安装指南</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

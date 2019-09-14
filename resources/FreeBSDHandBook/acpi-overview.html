@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.15. 电源和资源管理</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="adding-swap-space.html" title="12.14. 添加交换空间" /><link rel="next" href="ACPI-debug.html" title="12.16. 使用和调试 FreeBSD ACPI" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.15. 电源和资源管理</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="adding-swap-space.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="ACPI-debug.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="acpi-overview"></a>12.15. 电源和资源管理</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Hiten</span> <span class="surname">Pandya</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>
+
+
+      <acronym class="acronym">BIOS</acronym> 接口管理，例如<span class="emphasis"><em>可插拔 BIOS
+      (PNPBIOS)</em></span>或者<span class="emphasis"><em>高级电源管理(APM)</em></span>
+      等等。电源和资源管理是现代操作系统的关键组成部分。
+      例如您可能当系统温度过高的时候让您的操作系统能监视到
+      (并且可能提醒您)。
+    </p><p>以有效的方式利用硬件资源是非常重要的。 在引入 <acronym class="acronym">ACPI</acronym>
+      之前， 管理电源使用和系统散热对操作系统是很困难的。 硬件由 <acronym class="acronym">BIOS</acronym>
+      进行管理， 因而用户对电源管理配置的控制和查看都比较困难。 一些系统通过
+      <span class="emphasis"><em>高级电源管理 (APM)</em></span> 提供了有限的配置能力。
+      电源和资源管理是现代操作系统的一个关键组件。 例如， 您可能希望操作系统监视系统的一些限制，
+      例如系统的温度是否超出了预期的增长速度 (并在需要时发出警告)。</p><p>在 FreeBSD 使用手册的这一章节，我们将提供 <acronym class="acronym">ACPI</acronym>
+      全面的信息。 参考资料会在末尾给出。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="acpi-intro"></a>12.15.1. 什么是 ACPI？</h3></div></div></div><a id="idp76305872" class="indexterm"></a><a id="idp76306640" class="indexterm"></a><p>高级配置和电源接口 (<acronym class="acronym">ACPI</acronym>)
+	是一个业界标准的硬件资源和电源管理接口 (因此而得名) 。它是
+	<span class="emphasis"><em>操作系统控制的配置和电源管理(Operating System-directed
+	configuration and Power Management)</em></span>，也就是说，
+	它给操作系统(<acronym class="acronym">OS</acronym>)提供了更多的控制和弹性。
+	在引入 <acronym class="acronym">ACPI</acronym> 之前，
+	现代操作系统使得目前即插即用接口的局限性更加 <span class="quote">“<span class="quote">凸现</span>”</span> 出来。
+	<acronym class="acronym">ACPI</acronym> 是 <acronym class="acronym">APM(高级电源管理)</acronym>
+	的直接继承者。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="acpi-old-spec"></a>12.15.2. 高级电源管理 (APM) 的缺点</h3></div></div></div><p><span class="emphasis"><em>高级电源管理 (APM)</em></span>
+      是一种基于系统目前的活动控制其电源使用的机制。
+      APM BIOS 由 (系统的) 制造商提供， 并且是硬件平台专属的。
+      在 OS 中的 APM 驱动作为中介来访问 <span class="emphasis"><em>APM 软件接口</em></span>，
+      从而实现对电源使用的管理。 在 2000 年或更早的时期生产的计算机系统，
+      仍需要使用 APM。</p><p>APM 有四个主要的问题。 首先， 电源管理是通过
+      (制造商专属的) BIOS 实现的， 而 OS 则完全不了解其细节。
+      例如， 用户在 APM BIOS 中设置了硬盘驱动器的空闲等待数值，
+      当超过这一空闲时间的限制时， 它 (BIOS) 将会减慢硬盘驱动器的速度，
+      而不会征求 OS 的同意。 第二， APM 逻辑是嵌入
+      BIOS 的， 因此它是在 OS 的控制之外运转的。
+      这意味着用户只能通过通过刷新他们 ROM 中的 APM BIOS
+      才能够解决某些问题； 而这是一个很危险的操作，
+      因为它可能使系统进入一个无法恢复的状态。 第三， APM
+      是一种制造商专属的技术， 也就是说有很多第三方的
+      (重复的工作) 以及 bugs， 如果在一个制造商的 BIOS 中有，
+      也未必会在其他的产品中解决。 最后但绝不是最小的问题， APM
+      BIOS 没有为实现复杂的电源策略提供足够的余地，
+      也无法实现能够非常适合具体机器的策略。</p><p><span class="emphasis"><em>即插即用 BIOS (PNPBIOS)</em></span>
+      在很多时候都是不可靠的。 PNPBIOS 是 16-位 的技术，
+      因此 OS 不得不使用 16-位 模拟才能够与 PNPBIOS 的方法
+      <span class="quote">“<span class="quote">接口</span>”</span>。</p><p>FreeBSD <acronym class="acronym">APM</acronym> 驱动在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=apm&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">apm</span>(4)</span></a> 手册页中有描述。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="acpi-config"></a>12.15.3. 配置 <acronym class="acronym">ACPI</acronym></h3></div></div></div><p>默认情况下， <code class="filename">acpi.ko</code> 驱动，
+      会在系统引导时由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 加载， 而 <span class="emphasis"><em>不应</em></span>
+      直接联编进内核。 这样做的原因是模块操作起来更方便， 例如， 无需重新联编内核就可以切换到另一个
+      <code class="filename">acpi.ko</code> 版本。 这样可以让测试变得更简单一些。
+      另一个原因是， 许多时候在启动已经启动之后再启动 <acronym class="acronym">ACPI</acronym> 可能会有些问题。
+      如果您遇到了问题， 可以全面禁用 <acronym class="acronym">ACPI</acronym>。
+      这个驱动不应， 目前也无法卸载， 因为系统总线通过它与许多不同的硬件进行交互。
+      <acronym class="acronym">ACPI</acronym> 可以通过在
+      <code class="filename">/boot/loader.conf</code> 中配置或在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 提示符处配置
+      <code class="literal">hint.acpi.0.disabled="1"</code> 来禁用。
+      </p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><acronym class="acronym">ACPI</acronym> 和 <acronym class="acronym">APM</acronym> 不能共存，
+      相反， 它们应分开使用。 后加载的驱动如果发现系统中已经执行了其中的一个，
+      便会停止执行。</p></div><p><acronym class="acronym">ACPI</acronym> 可以用来让系统进入休眠模式，
+      方法是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpiconf&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">acpiconf</span>(8)</span></a> 的 <code class="option">-s</code>
+      参数， 加上一个 <code class="literal">1-5</code> 的数字。 多数用户会希望使用
+      <code class="literal">1</code> 或 <code class="literal">3</code> (挂起到 RAM)。
+      而 <code class="literal">5</code> 则会让系统执行与下列命令效果类似的软关机：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>halt -p</code></strong></pre><p>除此之外， 还有一些通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 提供的选项。 请参见联机手册
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpiconf&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">acpiconf</span>(8)</span></a> 以获得更多信息。
+      </p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="adding-swap-space.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ACPI-debug.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.14. 添加交换空间 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.16. 使用和调试 FreeBSD <acronym class="acronym">ACPI</acronym></td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

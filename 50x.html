@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-Hans">
+<head>
+<meta http-equiv="refresh" content="17; url=https://www.gehaowu.com/">
+<meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>50x 服务器错误</title>
+<style type="text/css">
+body {
+	background-color: #ececec;
+	color: #3c3c3c;
+	font-size: 14px;
+	font-family: "Helvetica Neue", Helvetica, "Nimbus Sans L", "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC", "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp", Arial, sans-serif;
+}
+.page p:first-child {
+	color: #fff;
+	text-align: center;
+	letter-spacing: 5px;
+	font-weight: 700;
+	font-size: 9em;
+	line-height: 75pt
+}
+.page p:first-child span {
+	text-shadow: 0 0 2px #686868,0 1px 1px #ddd,0 2px 1px #d6d6d6,0 3px 1px #ccc,0 4px 1px #c5c5c5,0 5px 1px #c1c1c1,0 6px 1px #bbb,0 7px 1px #777,0 8px 3px hsla(0,0%,39%,.4),0 9px 5px hsla(0,0%,39%,.1),0 10px 7px hsla(0,0%,39%,.15),0 11px 9px hsla(0,0%,39%,.2),0 9pt 11px hsla(0,0%,39%,.25),0 13px 15px hsla(0,0%,39%,.3);
+	cursor: pointer
+}
+.page p:first-child span,.page p:first-child span:hover {
+	-webkit-transition: all .1s linear;
+	transition: all .1s linear
+}
+.page p:first-child span:hover {
+	text-shadow: 0 0 2px #686868,0 1px 1px #fff,0 2px 1px #fff,0 3px 1px #fff,0 4px 1px #fff,0 5px 1px #fff,0 6px 1px #fff,0 7px 1px #777,0 8px 3px #fff,0 9px 5px #fff,0 10px 7px #fff,0 11px 9px #fff,0 9pt 11px #fff,0 13px 15px #fff
+}
+.page p:not(:first-child) {
+	margin-top: -50px;
+	color: #666;
+	text-align: center;
+	text-shadow: 0 1px 0 #fff;
+	letter-spacing: 1px;
+	font-size: 1.1em;
+	line-height: 2em
+}
+</style>
+<script type="text/javascript">
+function countDown(secs, surl) {
+	var jumpTo = document.getElementById('jumpTo');
+	jumpTo.innerHTML = secs;
+	if (--secs > 0) {
+		setTimeout("countDown(" + secs + ",'" + surl + "')", 1000);
+	} else {
+		location.href = surl;
+	}
+}
+</script>
+</head>
+<body>
+<div class="page">
+	<p><span>5</span><span>0</span><span>X</span></p>
+	<p>50x Internal Server Error<br>您发往服务器的请求已接收，但服务器遇到了一个错误！<br><span id="jumpTo">15</span>秒钟后自动返回首页<br>(´･ω･`)</p>
+</div>
+<script type="text/javascript">countDown(15,'https://www.gehaowu.com/');</script>
+</body>
+</html>

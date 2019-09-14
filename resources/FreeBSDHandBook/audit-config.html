@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>17.4. 对审计进行配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="audit.html" title="Chapter 17. 安全事件审计" /><link rel="prev" href="audit-install.html" title="17.3. 安装审计支持" /><link rel="next" href="audit-administration.html" title="17.5. 管理审计子系统" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.4. 对审计进行配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="audit-install.html">Prev</a> </td><th width="60%" align="center">Chapter 17. 安全事件审计</th><td width="20%" align="right"> <a accesskey="n" href="audit-administration.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="audit-config"></a>17.4. 对审计进行配置</h2></div></div></div><p>所有用于安全审计的配置文件， 都可以在
+      <code class="filename">/etc/security</code> 找到。
+      要启动审计服务， 下面这些文件必须存在：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="filename">audit_class</code> - 包含对于审计类的定义。</p></li><li class="listitem"><p><code class="filename">audit_control</code> - 控制审计子系统的特性，
+	  例如默认审计类、 在审计日志所在的卷上保留的最小空间、
+	  审计日志的最大尺寸， 等等。</p></li><li class="listitem"><p><code class="filename">audit_event</code> - 文字化的系统审计事件名称和描述，
+	  以及每个事件属于哪个类别。</p></li><li class="listitem"><p><code class="filename">audit_user</code> - 针对特定用户的审计需求，
+	  这些配置在登录时会与全局的默认值合并。</p></li><li class="listitem"><p><code class="filename">audit_warn</code> - 由 <span class="application">auditd</span> 调用的一个可定制的 shell
+	  脚本， 用于在意外情况， 如用于审计日志的空间过少， 或审计日志文件被翻转时，
+	  生成警告信息。</p></li></ul></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在编辑和维护审计配置文件时一定要小心， 因为配置文件中的错误会导致记录事件不正确。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79276752"></a>17.4.1. 事件筛选表达式</h3></div></div></div><p>在审计配置文件中的许多地方会用到筛选表达式来确定哪些事件是需要审计的。
+	表达式中需要指定要匹配的事件类型， 并使用前缀指定是否应接受或忽略匹配的事件，
+	此外， 还可以指定一个可选项指明匹配成功或失败的操作。
+	选择表达式是按从左到右的顺序计算的， 而对于两个表达式的情形，
+	则是通过将后一个追加到前一个之后来实现的。</p><p>下面列出了在 <code class="filename">audit_class</code> 中的默认事件类型：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">all</code> - <span class="emphasis"><em>all (全部)</em></span> - 表示匹配全部事件类。</p></li><li class="listitem"><p><code class="literal">ad</code> - <span class="emphasis"><em>administrative (管理)</em></span>
+	    - 所有在系统上所进行的管理性操作。</p></li><li class="listitem"><p><code class="literal">ap</code> - <span class="emphasis"><em>application (应用)</em></span> -
+	    应用程序定义的动作。</p></li><li class="listitem"><p><code class="literal">cl</code> - <span class="emphasis"><em>file close (文件关闭)</em></span> -
+	    审计对 <code class="function">close</code> 系统调用的操作。</p></li><li class="listitem"><p><code class="literal">ex</code> - <span class="emphasis"><em>exec (执行)</em></span> - 审计程序的执行。
+	    对于命令行参数和环境变量的审计是通过在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=audit_control&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">audit_control</span>(5)</span></a>
+	    中 <code class="literal">policy</code> 的 <code class="literal">argv</code> 和 <code class="literal">envv</code>
+	    参数来控制的。</p></li><li class="listitem"><p><code class="literal">fa</code> - <span class="emphasis"><em>file attribute access (造访文件属性)</em></span>
+	    - 审计访问对象属性， 例如
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=stat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">stat</span>(1)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pathconf&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">pathconf</span>(2)</span></a> 以及类似事件。</p></li><li class="listitem"><p><code class="literal">fc</code> - <span class="emphasis"><em>file create (创建文件)</em></span>
+	    - 审计创建了文件的事件。</p></li><li class="listitem"><p><code class="literal">fd</code> - <span class="emphasis"><em>file delete (删除文件)</em></span>
+	    - 审计所发生的文件删除事件。</p></li><li class="listitem"><p><code class="literal">fm</code> - <span class="emphasis"><em>file attribute modify (修改文件属性)</em></span>
+	    - 审计文件属性发生变化的事件，
+	    例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chown&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chown</span>(8)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chflags&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chflags</span>(1)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=flock&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">flock</span>(2)</span></a>，
+	    等等。</p></li><li class="listitem"><p><code class="literal">fr</code> - <span class="emphasis"><em>file read (读文件数据)</em></span>
+	    - 审计读取数据、 文件以读方式打开等事件。</p></li><li class="listitem"><p><code class="literal">fw</code> - <span class="emphasis"><em>file write (写文件数据)</em></span> -
+	    审计写入数据、 文件以写方式打开等事件。</p></li><li class="listitem"><p><code class="literal">io</code> - <span class="emphasis"><em>ioctl</em></span> -
+	    审计对 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ioctl&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">ioctl</span>(2)</span></a> 系统调用的使用。</p></li><li class="listitem"><p><code class="literal">ip</code> - <span class="emphasis"><em>ipc</em></span> - 审计各种形式的进程间通信 (IPC)，
+	    包括 POSIX 管道和 System V <acronym class="acronym">IPC</acronym> 操作。</p></li><li class="listitem"><p><code class="literal">lo</code> - <span class="emphasis"><em>login_logout</em></span> -
+	    审计系统中发生的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=login&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">login</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=logout&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">logout</span>(1)</span></a> 事件。</p></li><li class="listitem"><p><code class="literal">na</code> - <span class="emphasis"><em>non attributable (无主)</em></span> -
+	    审计无法归类的事件。</p></li><li class="listitem"><p><code class="literal">no</code> - <span class="emphasis"><em>invalid class (无效类)</em></span> -
+	    表示不匹配任何事件。</p></li><li class="listitem"><p><code class="literal">nt</code> - <span class="emphasis"><em>network (网络)</em></span> -
+	    与网络操作有关的事件， 例如
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=connect&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">connect</span>(2)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=accept&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">accept</span>(2)</span></a>。</p></li><li class="listitem"><p><code class="literal">ot</code> - <span class="emphasis"><em>other (其它)</em></span> -
+	    审计各类杂项事件。</p></li><li class="listitem"><p><code class="literal">pc</code> - <span class="emphasis"><em>process (进程)</em></span> -
+	    审计进程操作， 例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=exec&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">exec</span>(3)</span></a> 和
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=exit&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">exit</span>(3)</span></a>。</p></li></ul></div><p>这些审计事件， 可以通过修改
+	<code class="filename">audit_class</code> 和
+	<code class="filename">audit_event</code> 这两个配置文件来进行定制。</p><p>这个列表中， 每个审计类均包含一个表示匹配成功/失败操作的前缀，
+	以及这一项是否是增加或删去对事件类或类型的匹配。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>(none) 审计事件的成功和失败实例。</p></li><li class="listitem"><p><code class="literal">+</code> 审计这一类的成功事件。</p></li><li class="listitem"><p><code class="literal">-</code> 审计这一类的失败事件。</p></li><li class="listitem"><p><code class="literal">^</code> 不审计本类中的成功或失败事件。</p></li><li class="listitem"><p><code class="literal">^+</code> 不审计本类中的成功事件。</p></li><li class="listitem"><p><code class="literal">^-</code> 不审计本类中的失败事件。</p></li></ul></div><p>下面例子中的筛选字符串表示筛选成功和失败的登录/注销事件，
+	而对执行事件， 则只审计成功的：</p><pre class="programlisting">lo,+ex</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79355984"></a>17.4.2. 配置文件</h3></div></div></div><p>多数情况下， 在配置审计系统时，
+	管理员只需修改两个文件： <code class="filename">audit_control</code>
+	和 <code class="filename">audit_user</code>。 前者控制系统级的审计属性和策略，
+	而后者则用于针对具体的用户来微调。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="audit-auditcontrol"></a>17.4.2.1. <code class="filename">audit_control</code> 文件</h4></div></div></div><p><code class="filename">audit_control</code> 文件指定了一系列用于审计子系统的默认设置。
+	  通过查看这个文件， 我们可以看到下面的内容：</p><pre class="programlisting">dir:/var/audit
+flags:lo
+minfree:20
+naflags:lo
+policy:cnt
+filesz:0</pre><p>这里的 <code class="option">dir</code> 选项可以用来设置用于保存审计日志的一个或多个目录。
+	  如果指定了多个目录， 则将在填满一个之后换用下一个。 一般而言，
+	  审计通常都会配置为保存在一个专用的文件系统之下，
+	  以避免审计系统与其它子系统在文件系统满的时候所产生的冲突。
+	  </p><p><code class="option">flags</code> 字段用于为有主事件配置系统级的预选条件。
+	  在前面的例子中， 所有用户成功和失败的登录和注销都会被审计。</p><p><code class="option">minfree</code> 参数用于定义保存审计日志的文件系统上剩余空间的最小百分比。
+	  当超过这一阈值时， 将产生一个警告。 前面的例子中， 最小剩余空间比例设置成了两成。</p><p><code class="option">naflags</code> 选项表示审计类审计无主事件，
+	  例如作为登录进程和系统服务的那些进程的事件。</p><p><code class="option">policy</code> 选项用于指定一个以逗号分隔的策略标志表，
+	  以控制一系列审计行为。 默认的 <code class="literal">cnt</code> 标志表示系统应在审计失败时继续运行
+	  (强烈建议使用这个标志)。 另一个常用的标志是
+	  <code class="literal">argv</code>， 它表示在审计命令执行操作时，
+	  同时审计传给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=execve&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">execve</span>(2)</span></a> 系统调用的命令行参数。</p><p><code class="option">filesz</code> 选项指明了审计日志在自动停止记录和翻转之前允许的最大尺寸。
+	  默认值 0 表示禁用自动日志翻转。 如果配置的值不是零， 但小于最小值 512k，
+	  则这个配置会被忽略， 并在日志中记录这一消息。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="audit-audituser"></a>17.4.2.2. <code class="filename">audit_user</code> 文件</h4></div></div></div><p><code class="filename">audit_user</code> 文件允许管理员为特定用户指定进一步的审计需求。
+	  每一行使用两个字段来配置用户的审计：
+	  第一个是 <code class="literal">alwaysaudit</code> 字段， 它指明了一组对该用户总会进行审计的事件；
+	  而第二个则是 <code class="literal">neveraudit</code> 字段，
+	  它指明了一系列对该用户不审计的事件。</p><p>在下述 <code class="filename">audit_user</code> 示例文件中，
+	  审计了 <code class="systemitem">root</code> 用户的 登录/注销 事件， 以及成功的命令执行事件，
+	  此外， 还审计了 <code class="systemitem">www</code> 用户的文件创建和成功的命令执行事件。
+	  如果与前面的示范 <code class="filename">audit_control</code> 文件配合使用，
+	  则 <code class="systemitem">root</code> 的 <code class="literal">lo</code> 项就是多余的， 而对
+	  <code class="systemitem">www</code> 用户而言， 其登录/注销事件也会被审计：</p><pre class="programlisting">root:lo,+ex:no
+www:fc,+ex:no</pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="audit-install.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="audit.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="audit-administration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">17.3. 安装审计支持 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 17.5. 管理审计子系统</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.13. 准备您自己的安装介质</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-advanced.html" title="3.12. 高级安装指南" /><link rel="next" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.13. 准备您自己的安装介质</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-advanced.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="basics.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-diff-media"></a>3.13. 准备您自己的安装介质</h2></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">为了避免重复 <span class="quote">“<span class="quote">FreeBSD disc</span>”</span> 在这里指
+	FreeBSD CDROM or DVD 那即意味着您要购买或自己制做。</p></div><p>有好几个原因需要您创建自己的FreeBSD安装介质。
+      这可能是物理介质，如磁带，使用
+      <span class="application">sysinstall</span> 程序找到的安装文件，
+      FTP 站点或 <span class="trademark">MS-DOS</span>®分区。</p><p>例如：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>您有许多机器连接到本地网络，使用一个FreeBSD光盘。
+	  您要使用FreeBSD来创建一个本地FTP站点，
+	  然后使用这个FTP站点来代替连接到Internet。</p></li><li class="listitem"><p>您有一张 FreeBSD 光盘， FreeBSD 不支持您的 CD/DVD 驱动器， 但
+	  <span class="trademark">MS-DOS</span>®/<span class="trademark">Windows</span>® 支持。 您要复制安装文件到一个DOS分区，
+	  然后使用这些文件进行安装。</p></li><li class="listitem"><p>您要安装的计算机没有 CD/DVD驱动器和网卡，但您可以连接一个
+	  <span class="quote">“<span class="quote">Laplink-style</span>”</span> 串口或并口线缆到那台计算机。</p></li><li class="listitem"><p>您要通过一个磁带机来安装FreeBSD.</p></li></ul></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-cdrom"></a>3.13.1. 创建一张安装光盘</h3></div></div></div><p>FreeBSD 的每个发行版本都为每一支持的平台提供至少两张 CDROM 映像
+	(<span class="quote">“<span class="quote">ISO images</span>”</span>)。如果您有刻录机，
+	这些映像文件可以被(<span class="quote">“<span class="quote">burned</span>”</span>) 成FreeBSD的安装光盘。
+	如果没有刻录机，而上网带宽却很便宜，它也是一种很好的安装方式。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p class="title"><strong>下载正确的 ISO 映像文件</strong></p><p>每个版本的ISO映像文件都可以从
+	    <code class="filename">ftp://ftp.FreeBSD.org/pub/FreeBSD/ISO-IMAGES-架构名/版本</code>
+	    或最近的镜像站点下载。选择合适的
+	    <em class="replaceable"><code>架构</code></em> 和
+	    <em class="replaceable"><code>版本</code></em> 。</p><p>目录中包含下面一些映像文件：</p><div class="table"><a id="idp69360208"></a><div class="table-title">Table 3.4. FreeBSD 7.<em class="replaceable"><code>X</code></em> 和 8.<em class="replaceable"><code>X</code></em>
+	      ISO  映像文件名和含义</div><div class="table-contents"><table summary="FreeBSD 7.X 和 8.X&#10;&#9;      ISO  映像文件名和含义" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>文件名</th><th>包含内容</th></tr></thead><tbody><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-bootonly.iso</code></td><td>这个 CD 映像可以让您从光驱启动并进入安装过程，
+		    但它并不提供用于支持从 CD 直接安装 FreeBSD 所需的文件。
+		    在从 CD 引导之后， 您需要通过网络
+		    (例如从 FTP 服务器) 来完成安装。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-dvd1.iso.gz</code></td><td>这个 DVD 映像包括用于安装 FreeBSD
+		    操作系统基本组件、 预编译包和文档所需的全部文件。
+		    它也支持引导进入基于
+		    <span class="quote">“<span class="quote">livefs</span>”</span> 的修复模式。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-memstick.img</code></td><td>这个映像可以写进 USB 记忆棒，
+		    用于引导系统并完成安装。 它也支持引导进入基于
+		    <span class="quote">“<span class="quote">livefs</span>”</span> 的修复模式。
+		    这个版本的映像中包含了文档所需要的全部文件，
+		    但不提供其他包。 FreeBSD 7.3
+		    和更早版本中没有这个文件。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-disc1.iso</code></td><td>这个 CD 映像包含了 FreeBSD 操作系统的基本组件和文档包，
+		    但不包括其它包。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-disc2.iso</code></td><td>这个 CD 映像包含了能填满光盘的尽可能多的第三方软件包。
+		    在 FreeBSD 8.0 和更高版本中不提供这个映像。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-disc3.iso</code></td><td>另一个包含了能填满光盘的尽可能多的第三方软件包的 CD 映像。
+		    在 FreeBSD 8.0 和更高版本中不提供这个映像。</td></tr><tr><td><code class="filename">版本-RELEASE-架构-docs.iso</code></td><td>FreeBSD 文档。</td></tr><tr><td><code class="filename">FreeBSD-版本-RELEASE-架构-livefs.iso</code></td><td>这个 CD 映像包含了用以支持引导进入基于
+		    <span class="quote">“<span class="quote">livefs</span>”</span> 的修复模式，
+		    但不包括直接从 CD 安装所需的文件。</td></tr></tbody></table></div></div><br class="table-break" /><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">FreeBSD 7.X 系列在 FreeBSD 7.3 之前的版本， 以及
+	      FreeBSD 8.X 系列在 FreeBSD 8.1
+	      之前的版本使用不同的命名习惯。 它们的 ISO
+	      文件名不使用
+	      <code class="literal">FreeBSD-</code> 前缀。</p></div><p>您 <span class="emphasis"><em>必须</em></span> 下载
+	    <code class="literal">bootonly</code> ISO 映像 (如果有)
+	    或 <code class="literal">disc1</code> 的映像其中的一个。
+	    没有必要都下载， 因为 <code class="literal">disc1</code>
+	    映像包含了 <code class="literal">bootonly</code>
+	    ISO 映像中的全部内容。</p><p>如果您的 Internet 带宽很廉价，
+	    则应使用 <code class="literal">bootonly</code> ISO。
+	    它能安装 FreeBSD， 而您可以根据需要使用 ports/packages
+	    系统来下载并安装第三方软件 (参见
+	    <a class="xref" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">Chapter 5, <em>安装应用程序: Packages 和 Ports</em></a>)。</p><p>如果打算安装 FreeBSD 并安装常用的软件包，
+	    则应使用 <code class="literal">dvd1</code>。</p><p>其它的映像盘也很有用， 但不是必须的，
+	    尤其是在您有高速的网络连接时。</p></li><li class="step"><p class="title"><strong>刻录 CDs</strong></p><p>您必须把这些映像文件刻录成光盘。
+	    如果您在其它的FreeBSD系统上完成此项工作，请看
+	    <a class="xref" href="creating-cds.html" title="18.6. 创建和使用光学介质(CD)">Section 18.6, “创建和使用光学介质(CD)”</a> 得到更多的信息，（特别是
+            <a class="xref" href="creating-cds.html#burncd" title="18.6.3. burncd">Section 18.6.3, “burncd”</a> 和 <a class="xref" href="creating-cds.html#cdrecord" title="18.6.4. cdrecord">Section 18.6.4, “cdrecord”</a>）</p><p>如果您在其它的系统平台上执行，您需要相应的刻录软件。
+	    映像文件使用的是标准的ISO格式，必须被您的刻录软件所支持。</p></li></ol></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果有兴趣制作一张定制的 FreeBSD
+        版本， 请参考 <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/releng" target="_top">Release Engineering
+        Article</a>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-ftp"></a>3.13.2. 为 FreeBSD 安装盘建立局域网 FTP 站点</h3></div></div></div><a id="idp69407440" class="indexterm"></a><p>FreeBSD 光盘的布局和 FTP 站点相同。 这样，
+	建立局域网 FTP 站点来用于网络上的其它计算机安装 FreeBSD，
+	就十分的容易。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>在要作为FTP站点的那台FreeBSD机器上，
+	    确定FreeBSD磁盘放入光驱中并将它挂在
+	    <code class="filename">/cdrom</code> 目录中。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /cdrom</code></strong></pre></li><li class="step"><p>在 <code class="filename">/etc/passwd</code>
+	    文件中建立一个可匿名访问 FTP 服务器的账号。
+	    您可以利用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vipw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">vipw</span>(8)</span></a> 命令编辑
+	    <code class="filename">/etc/passwd</code> 文件，
+	    加入下面这一行叙述：</p><pre class="programlisting">ftp:*:99:99::0:0:FTP:/cdrom:/nonexistent</pre></li><li class="step"><p>确定在 <code class="filename">/etc/inetd.conf</code>
+	    配置文件中开启了FTP服务。</p></li></ol></div><p>任何本地网络中的机器在安装 FreeBSD 选择安装介质时就可以选择透过
+	FTP 站点，然后选取 <span class="quote">“<span class="quote">Other</span>”</span>	后输入
+	<strong class="userinput"><code>ftp:// 本地FTP服务器
+	</code></strong>
+	即可以透过本地的FTP站点来安装FreeBSD。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果用作 FTP 客户端的引导介质 (通常是软盘)
+	  与本地局域网的 FTP 站点上的版本不一致，
+	  <span class="application">sysinstall</span>
+	  会不允许您完成安装。 如果您使用的版本差距不很大，
+	  并且希望绕过这一判断， 则应进入 <span class="guimenu">Options</span> 菜单，
+	  并将安装包的名字改为
+	  <span class="guimenuitem">any</span>。</p></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">此方式最好使用在有防火墙保护的内部网络。
+	  如果要将此FTP服务公开给外面的网际网络（非本地用户），
+	  您的电脑必须承担被侵入或其它的风险。
+	  我们强烈建议您要有完善的安全机制才这样做。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69420112"></a>3.13.3. 创建安装软盘</h3></div></div></div><a id="idp69420752" class="indexterm"></a><p>如果您从软盘安装（我们<span class="emphasis"><em>不</em></span>推荐那样做），
+	或者是由于不支持硬件或者更简单的理由是因为您坚持要使用软盘安装。
+	您必须准备几张软盘。</p><p>至少这些软盘必须是 1.44 MB 的，用来容纳所有在
+	  <code class="filename">base</code> (基本系统) 目录下的文件。如果您在 DOS
+	  操作系统下准备就 <span class="emphasis"><em>必须</em></span> 使用 <span class="trademark">MS-DOS</span>® 的
+	  <code class="command">FORMAT</code> 命令来格式化软盘。
+	  如果您使用的是 <span class="trademark">Windows</span>® 操作系统，
+	  在资源管理器中就可以完成这个工作 (用右键单击
+	  <code class="filename">A:</code> 驱动器，并选择
+	  <span class="quote">“<span class="quote">Format</span>”</span>)。</p><p><span class="emphasis"><em>不要</em></span> 指望厂家的预先格式化！
+	  最好还是亲自进行格式化。
+	  过去用户报告的很多问题都是由于不正确地使用格式化设备所造成的，
+	  所以我们需要在这里着重提一下。</p><p>如果您在另外一台FreeBSD的机器上做了启动盘的话，
+	  进行格式化是一个不错的主意。
+	  虽然您不需要把每张盘都做成DOS文件系统。您也可以使用
+	  <code class="command">bsdlabel</code> 和 <code class="command">newfs</code>
+	  命令来创建一个UFS文件系统，具体操作按下面的顺序进行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>fdformat -f 1440 fd0.1440</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>bsdlabel -w fd0.1440 floppy3</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>newfs -t 2 -u 18 -l 1 -i 65536 /dev/fd0</code></strong></pre><p>然后您就可以像其它的文件系统一样挂上和写入这些磁盘。</p><p>格式化这些磁盘后，您必须把文件复制到磁盘中。
+	  这些发行文件被分割成刚好可存进五张 1.44 MB 软盘。
+	  检查您所有的磁盘， 找出所有可能适合的文件。
+	  直到您找到所有需要的配置并且将它们以这种方式安置。
+	  第一个配置都应该有一个子目录在磁盘上， 例如：
+	  <code class="filename">a:\base\base.aa</code>、
+	  <code class="filename">a:\base\base.ab</code>， 等等。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="filename">base.inf</code> 文件，
+	    也应放在 <code class="filename">base</code> 的第一张盘上，
+	    因为安装程序需要读取这个文件，
+	    以了解在获得发布包时需要下载多少文件。</p></div><p>一旦您进入选择安装介质的屏幕，
+	  选择 <span class="guimenuitem">Floppy</span>
+	  将会看到后面的提示符。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="install-msdos"></a>3.13.4. 从 <span class="trademark">MS-DOS</span>® 分区安装</h3></div></div></div><a id="idp69472336" class="indexterm"></a><p>如果从 <span class="trademark">MS-DOS</span>® 分区安装，
+	  您需要将发布文件复制到该分区根目录下的
+	  <code class="filename">freebsd</code> 目录中。 例如：
+	  <code class="filename">c:\freebsd</code>。 您必须复制一部分 CDROM 或 FTP
+	  上的目录结构， 因此， 如果您从光盘进行复制，
+	  建议使用 DOS 的 <code class="command">xcopy</code> 命令。
+	  下面是准备进行 FreeBSD 最小系统安装的例子：</p><pre class="screen"><code class="prompt">C:\&gt;</code> <strong class="userinput"><code>md c:\freebsd</code></strong>
+<code class="prompt">C:\&gt;</code> <strong class="userinput"><code>xcopy e:\bin c:\freebsd\bin\ /s</code></strong>
+<code class="prompt">C:\&gt;</code> <strong class="userinput"><code>xcopy e:\manpages c:\freebsd\manpages\ /s</code></strong></pre><p>假设 <code class="filename">C:</code> 盘是您的空闲空间，
+	   <code class="filename">E:</code> 盘是您挂接的 CDROM。</p><p>如果您没有光盘驱动器，您可以从以下网站下载发行包。<a class="link" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/9.2-RELEASE/" target="_top">ftp.FreeBSD.org</a>.
+	  每一个发行包都在一个目录中，例如 <span class="emphasis"><em>base</em></span>
+	  发行包可以在 <a class="link" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/9.2-RELEASE/base/" target="_top">9.2/base/</a> 目录中找到。</p><p>对很多发行包来说，如果您希望从 <span class="trademark">MS-DOS</span>®分区安装的话
+	  （您有足够的空间），安装 <code class="filename">c:\freebsd</code> ──
+	  下的每个文件－这个 <code class="literal">BIN</code>
+	  发行包只是最低限度的要求。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69495248"></a>3.13.5. 创建一个安装磁带</h3></div></div></div><a id="idp69495888" class="indexterm"></a><p>从磁带安装也许是最简单的方式， 比在线使用 FTP
+	  安装或使用 CDROM 还快。安装的程序假设是简单地被压缩在磁带上。
+	  在您得到所有配置文件后，简单地解开它们，用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /freebsd/distdir</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tar cvf /dev/rwt0 dist1 ... dist2</code></strong></pre><p>在您安装的时候，您要确定留有足够的空间给临时目录（允许您选择）
+	  来容纳磁带安装时 <span class="emphasis"><em>全部</em></span> 的内容。由于不是随机访问
+	  磁带的，所以这种安装方法需要很多临时空间。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">开始安装时，在从软盘启动 <span class="emphasis"><em>之前</em></span>，
+	    磁带机必须已经放在驱动设备中。否则，
+	    安装过程中可能会找不到它。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69501264"></a>3.13.6. 通过网络安装</h3></div></div></div><a id="idp69506128" class="indexterm"></a><a id="idp69507664" class="indexterm"></a><a id="idp69509200" class="indexterm"></a><p>可用的网络安装类型有三种。
+	  以太网 (标准的以太网控制器)、 串口
+	  (PPP) 以及 并口 (PLIP (laplink 线缆))。</p><p>如果希望以最迅速的方式完成网络安装，
+	  那么以太网适配器当然就是首选！ FreeBSD 支持绝大多数常见 PC
+	  以太网卡； 系统能够支持的网卡 (以及所需的配置)
+	  可以在 FreeBSD 发行版附带的硬件兼容说明中找到。
+	  如果您使用的是系统支持的 PCMCIA 以太网卡， 在为笔记本加电
+	  <span class="emphasis"><em>之前</em></span> 之前一定要把它插好！ 很不幸， FreeBSD
+	  目前并不支持在安装过程中热插 PCMCIA 卡。</p><p>此外， 您还需要知道自己的 IP 地址、 网络类型对应的子网掩码，
+	  以及机器名。 如果您正通过 PPP 连接安装而没有固定的静态 IP，
+	  不用怕， 这个 IP 地址会由您的 ISP 自动分配。
+	  您的系统管理员会告诉您进行网络配置所需的信息。
+	  如果您需要通过名字而不是 IP 地址来访问其他主机，
+	  则还需要配置一个域名服务器， 可能还需要一个网关地址 (在使用 PPP 时，
+	  这个地址是服务提供商的 IP 地址)。 如果您希望通过
+	  HTTP 代理服务器来完成 FTP 安装， 还需要知道代理服务器的地址。
+	  如果您不知道这些信息， 则应在进行这种安装 <span class="emphasis"><em>之前</em></span>
+	  向系统管理员或 ISP 询问。</p><p>如果您使用一个 MODEM，那您就只有 PPP
+	  这一种选择了。在您安装的过程中，
+	  要确定您能很容易地获得完整且快速的关于您服务提供商的信息。</p><p>如果您使用 PAP 或 CHAP 方式连接到您的 ISP，
+	  （换句话说，如果您不使用脚本在<span class="trademark">Windows</span>®中连接到您的ISP），
+	  那么您需要在 <span class="application">ppp</span> 提示符下输入
+	  <code class="command">dial</code> 命令。否则，当 PPP
+	  连接者只提供一种最简单的终端模拟器，您必须知道如何使用针对
+	  MODEM 的 <span class="quote">“<span class="quote">AT commands</span>”</span>拨号到您的 ISP。
+	  想知道更深入的信息可以参考
+	  <a class="link" href="userppp.html" title="26.2. 使用用户级 PPP">使用手册中的用户级PPP那节</a> 以及
+	  <a class="link" href="../../../../doc/en_US.ISO8859-1/books/faq/ppp.html" target="_top">FAQ</a> 。
+	  如果您有一些问题，可以使用 <code class="command">set log local ...</code>
+	  命令将日志显示在屏幕上。</p><p>您也可以通过并口电缆连接到另外一台
+	  FreeBSD 机器上进行安装，您可以考虑使用
+	  <span class="quote">“<span class="quote">laplink</span>”</span> 并口电缆进行安装。通过并口安装要比通过串口
+	  （最高 50 kbytes/sec）安装快得多。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69517520"></a>3.13.6.1. 通过NFS安装之前</h4></div></div></div><a id="idp69518160" class="indexterm"></a><p>NFS 安装方式是非常方便的。只需要简单地将 FreeBSD
+	    文件复制到一台服务器上，然后在安装时选择NFS介质。</p><p>如果这个服务器要 <span class="quote">“<span class="quote">特权端口</span>”</span> 才能支持
+	    （如SUN的工作站），您需要在安装前在 <span class="guimenu">Options</span>
+	    菜单中设置 <code class="literal">NFS Secure</code>。</p><p>如果你使用了一块低质量的以太网卡比较糟糕，
+	    速度很慢，则应考虑 <code class="literal">NFS Slow</code>的选项。</p><p>为了达到NFS安装的目的，这个服务器必须支持 subdir 加载。
+	    例如，如果您的 FreeBSD 9.2 目录存在：
+	    <code class="filename">ziggy:/usr/archive/stuff/FreeBSD</code>，然后
+	    <code class="systemitem">ziggy</code> 将必须允许直接挂上
+	    <code class="filename">/usr/archive/stuff/FreeBSD</code>，而不仅仅是
+	    <code class="filename">/usr</code> 或
+	    <code class="filename">/usr/archive/stuff</code>。</p><p>在 FreeBSD的 <code class="filename">/etc/exports</code> 配置文件中，
+	    是由 <code class="option">-alldirs</code> 选项来控制的。其它 NFS
+	    服务器也许有不同的方式。如果您从服务器得到
+	    <span class="errorname">permission denied</span> 这个信息，
+	    可能是因为您没有正确的启用它。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-advanced.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="basics.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.12. 高级安装指南 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 4. UNIX 基础</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

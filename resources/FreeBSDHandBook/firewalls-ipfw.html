@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>29.6. IPFW</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="firewalls.html" title="Chapter 29. 防火墙" /><link rel="prev" href="firewalls-ipf.html" title="29.5. IPFILTER (IPF) 防火墙" /><link rel="next" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">29.6. IPFW</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="firewalls-ipf.html">Prev</a> </td><th width="60%" align="center">Chapter 29. 防火墙</th><td width="20%" align="right"> <a accesskey="n" href="advanced-networking.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="firewalls-ipfw"></a>29.6. IPFW</h2></div></div></div><a id="idp88362704" class="indexterm"></a><p>IPFIREWALL (<acronym class="acronym">IPFW</acronym>) 是一个由 FreeBSD 发起的防火墙应用软件，
+      它由 FreeBSD 的志愿者成员编写和维护。
+      它使用了传统的无状态规则和规则编写方式，
+      以期达到简单状态逻辑所期望的目标。</p><p>标准的 FreeBSD 安装中， IPFW 所给出的规则集样例 (可以在
+      <code class="filename">/etc/rc.firewall</code> 和
+      <code class="filename">/etc/rc.firewall6</code> 中找到) 非常简单，
+      建议不要不加修改地直接使用。 该样例中没有使用状态过滤，
+      而该功能在大部分的配置中都是非常有用的，
+      因此这一节并不以系统自带的样例作为基础。</p><p>IPFW 的无状态规则语法， 是由一种提供复杂的选择能力的技术支持的，
+      这种技术远远超出了一般的防火墙安装人员的知识水平。
+      IPFW 是为满足专业用户，
+      以及掌握先进技术的电脑爱好者们对于高级的包选择需求而设计的。
+      要完全释放 IPFW 的规则所拥有的强大能力，
+      需要对不同的协议的细节有深入的了解，
+      并根据它们独特的包头信息来编写规则。
+      这一级别的详细阐述超出了这本手册的范围。</p><p>IPFW 由七个部分组成， 其主要组件是内核的防火墙过滤规则处理器，
+      及其集成的数据包记帐工具、 日志工具、  用以触发
+      <acronym class="acronym">NAT</acronym> 工具的 <code class="literal">divert</code> (转发) 规则、
+      高级特殊用途工具、 dummynet 流量整形机制，
+      <code class="literal">fwd rule</code> 转发工具， 桥接工具， 以及 ipstealth 工具。
+      IPFW 支持 IPv4 和 IPv6。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-enable"></a>29.6.1. 启用 IPFW</h3></div></div></div><a id="idp88376784" class="indexterm"></a><p>IPFW 是基本的 FreeBSD 安装的一部分， 以单独的可加载内核模块的形式提供。
+	如果在 <code class="filename">rc.conf</code> 中加入
+	<code class="literal">firewall_enable="YES"</code> 语句， 就会自动地加载对应的内核模块。
+	除非您打算使用由它提供的
+	<acronym class="acronym">NAT</acronym> 功能， 一般情况下并不需要把 IPFW 编进
+	FreeBSD 的内核。</p><p>如果将
+	<code class="literal">firewall_enable="YES"</code> 加入到
+	<code class="filename">rc.conf</code> 中并重新启动系统，
+	则下列信息将在启动过程中， 以高亮的白色显示出来：</p><pre class="screen">ipfw2 initialized, divert disabled, rule-based forwarding disabled, default to deny, logging disabled</pre><p>可加载内核模块在编译时加入了记录日志的能力。 要启用日志功能，
+	并配置详细日志记录的限制， 需要在
+	<code class="filename">/etc/sysctl.conf</code> 中加入一些配置。
+	这些设置将在重新启动之后生效：</p><pre class="programlisting">net.inet.ip.fw.verbose=1
+net.inet.ip.fw.verbose_limit=5</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-kernel"></a>29.6.2. 内核选项</h3></div></div></div><a id="idp88383056" class="indexterm"></a><a id="idp88384336" class="indexterm"></a><a id="idp88385488" class="indexterm"></a><a id="idp88386640" class="indexterm"></a><p>把下列选项在编译 FreeBSD 内核时就加入， 并不是启用 IPFW 所必需的，
+	除非您需要使用 <acronym class="acronym">NAT</acronym> 功能。
+	这里只是将这些选项作为背景知识来介绍。</p><pre class="programlisting">options    IPFIREWALL</pre><p>这个选项将 IPFW 作为内核的一部分来启用。</p><pre class="programlisting">options    IPFIREWALL_VERBOSE</pre><p>这个选项将启用记录通过 IPFW 的匹配了包含
+	<code class="literal">log</code> 关键字规则的每一个包的功能。</p><pre class="programlisting">options    IPFIREWALL_VERBOSE_LIMIT=5</pre><p>以每项的方式， 限制通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a> 记录的包的个数。
+	如果在比较恶劣的环境下记录防火墙的活动可能会需要这个选项。
+	它能够避免潜在的针对 syslog 的洪水式拒绝服务攻击。</p><a id="idp88392272" class="indexterm"></a><pre class="programlisting">options    IPFIREWALL_DEFAULT_TO_ACCEPT</pre><p>这个选项默认地允许所有的包通过防火墙，
+	如果您是第一次配置防火墙， 使用这个选项将是一个不错的主意。</p><a id="idp88394192" class="indexterm"></a><pre class="programlisting">options    IPDIVERT</pre><p>这一选项启用 <acronym class="acronym">NAT</acronym>
+	功能。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果内核选项中没有加入
+	  <code class="literal">IPFIREWALL_DEFAULT_TO_ACCEPT</code>，
+	  而配置使用的规则集中也没有明确地指定允许连接进入的规则，
+	  默认情况下， 发到本机和从本机发出的所有包都会被阻止。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-rc"></a>29.6.3. <code class="filename">/etc/rc.conf</code> Options</h3></div></div></div><p>启用防火墙：</p><pre class="programlisting">firewall_enable="YES"</pre><p>要选择由 FreeBSD 提供的几种防火墙类型中的一种来作为默认配置，
+	您需要阅读
+	<code class="filename">/etc/rc.firewall</code> 文件并选出合适的类型，
+	然后在 <code class="filename">/etc/rc.conf</code> 中加入类似下面的配置：</p><pre class="programlisting">firewall_type="open"</pre><p>您还可以指定下列配置规则之一：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">open</code> ── 允许所有流量通过。</p></li><li class="listitem"><p><code class="literal">client</code> ── 只保护本机。</p></li><li class="listitem"><p><code class="literal">simple</code> ── 保护整个网络。</p></li><li class="listitem"><p><code class="literal">closed</code> ── 完全禁止除回环设备之外的全部 IP
+	    流量。</p></li><li class="listitem"><p><code class="literal">UNKNOWN</code> ── 禁止加载防火墙规则。</p></li><li class="listitem"><p><code class="filename">filename</code> ── 到防火墙规则文件的绝对路径。</p></li></ul></div><p>有两种加载自定义 <span class="application">ipfw</span> 防火墙规则的方法。
+	其一是将变量 <code class="literal">firewall_type</code> 设为包含不带 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ipfw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ipfw</span>(8)</span></a>
+	命令行选项的 <span class="emphasis"><em>防火墙规则</em></span>
+	文件的完整路径。 下面是一个简单的规则集例子：</p><pre class="programlisting">add deny in
+add deny out</pre><p>除此之外， 也可以将
+	<code class="literal">firewall_script</code> 变量设为包含
+	<code class="command">ipfw</code> 命令的可执行脚本，
+	这样这个脚本会在启动时自动执行。 与前面规则集文件等价的规则脚本如下：</p><p><code class="command">ipfw</code> 命令是在防火墙运行时，
+	用于在其内部规则表中手工逐条添加或删除防火墙规则的标准工具。
+	这一方法的问题在于， 一旦您的关闭计算机或停机，
+	则所有增加或删除或修改的规则也就丢掉了。
+	把所有的规则都写到一个文件中， 并在启动时使用这个文件来加载规则，
+	或一次大批量地替换防火墙规则， 那么推荐使用这里介绍的方法。</p><p><code class="command">ipfw</code> 的另一个非常实用的功能是将所有正在运行的防火墙规则显示出来。
+	IPFW 的记账机制会为每一个规则动态地创建计数器，
+	用以记录与它们匹配的包的数量。 在测试规则的过程中，
+	列出规则及其计数器是了解它们是否工作正常的重要手段。</p><p>按顺序列出所有的规则：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw list</code></strong></pre><p>列出所有的规则， 同时给出最后一次匹配的时间戳：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw -t list</code></strong></pre><p>列出所有的记账信息、 匹配规则的包的数量， 以及规则本身。
+	第一列是规则的编号， 随后是发出包匹配的数量， 进入包的匹配数量，
+	最后是规则本身。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw -a list</code></strong></pre><p>列出所有的动态规则和静态规则：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw -d list</code></strong></pre><p>同时显示已过期的动态规则：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw -d -e list</code></strong></pre><p>将计数器清零：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw zero</code></strong></pre><p>只把规则号为
+	<em class="replaceable"><code>NUM</code></em> 的计数器清零：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw zero NUM</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-rules"></a>29.6.4. IPFW 规则集</h3></div></div></div><p>规则集是指一组编写好的依据包的值决策允许通过或阻止 IPFW 规则。
+	包的双向交换组成了一个会话交互。 防火墙规则集会作用于来自于
+	Internet 公网的包以及由系统发出来回应这些包的数据包。
+	每一个 <acronym class="acronym">TCP/IP</acronym> 服务 (例如 telnet, www,
+	邮件等等) 都由协议预先定义了其特权 (监听) 端口。
+	发到特定服务的包会从源地址使用非特权 (高编号) 端口发出，
+	并发到特定服务在目的地址的对应端口。
+	所有这些参数 (例如： 端口和地址）
+	都是可以为防火墙规则所利用的， 判别是否允许服务通过的标准。</p><a id="idp88432976" class="indexterm"></a><p>当有数据包进入防火墙时， 会从规则集里的第一个规则开始进行比较，
+	并自顶向下地进行匹配。 当包与某个选择规则参数相匹配时，
+	将会执行规则所定义的动作， 并停止规则集搜索。 这种策略，
+	通常也被称作 <span class="quote">“<span class="quote">最先匹配者获胜</span>”</span> 的搜索方法。
+	如果没有任何与包相匹配的规则， 那么它就会根据强制的 IPFW
+	默认规则， 也就是 65535 号规则截获。 一般情况下这个规则是阻止包，
+	而且不给出任何回应。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果规则定义的动作是 <code class="literal">count</code>、
+	  <code class="literal">skipto</code> 或 <code class="literal">tee</code>
+	  规则的话， 搜索会继续。</p></div><p>这里所介绍的规则， 都是使用了那些包含状态功能的，
+	也就是 <code class="literal">keep state</code>、 <code class="literal">limit</code>、 <code class="literal">in</code>、 <code class="literal">out</code>
+	以及 <code class="literal">via</code> 选项的规则。
+	这是编写明示允许防火墙规则集所需的基本框架。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在操作防火墙规则时应谨慎行事， 如果操作不当，
+	  很容易将自己反锁在外面。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-rules-syntax"></a>29.6.4.1. 规则语法</h4></div></div></div><a id="idp88449232" class="indexterm"></a><p>这里所介绍的规则语法已经经过了简化，
+	  只包括了建立标准的明示允许防火墙规则集所必需的那些。
+	  要了解完整的规则语法说明，
+	  请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ipfw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ipfw</span>(8)</span></a> 联机手册。</p><p>规则是由关键字组成的： 这些关键字必须以特定的顺序从左到右书写。
+	  下面的介绍中， 关键字使用粗体表示。 某些关键字还包括了子选项，
+	  这些子选项本身可能也是关键字， 有些还可以包含更多的子选项。</p><p><code class="literal">#</code> 用于表示开始一段注释。
+	  它可以出现在一个规则的后面， 也可以独占一行。
+	  空行会被忽略。</p><p><em class="replaceable"><code>CMD RULE_NUMBER ACTION LOGGING SELECTION
+	    STATEFUL</code></em></p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88453200"></a>29.6.4.1.1. CMD</h5></div></div></div><p>每一个新的规则都应以
+	    <em class="parameter"><code>add</code></em> 作为前缀， 它表示将规则加入内部表。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88454736"></a>29.6.4.1.2. RULE_NUMBER</h5></div></div></div><p>每一条规则都与一个范围在 1 到 65535 之间的规则编号相关联。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88455888"></a>29.6.4.1.3. ACTION</h5></div></div></div><p>每一个规则可以与下列的动作之一相关联，
+	    所指定的动作将在进入的数据包与规则所指定的选择标准相匹配时执行。</p><p><em class="parameter"><code>allow | accept | pass |
+	      permit</code></em></p><p>这些关键字都表示允许匹配规则的包通过防火墙，
+	    并停止继续搜索规则。</p><p><em class="parameter"><code>check-state</code></em></p><p>根据动态规则表检查数据包。 如果匹配，
+	    则执行规则所指定的动作， 亦即生成动态规则；
+	    否则， 转移到下一个规则。 check-state 规则没有选择标准。
+	    如果规则集中没有 check-state 规则，
+	    则会在第一个 keep-state 或 limit 规则处，
+	    对动态规则表实施检查。</p><p><em class="parameter"><code>deny | drop</code></em></p><p>这两个关键字都表示丢弃匹配规则的包。
+	    同时， 停止继续搜索规则。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88459856"></a>29.6.4.1.4. LOGGING</h5></div></div></div><p><em class="parameter"><code>log</code></em> or
+	    <em class="parameter"><code>logamount</code></em></p><p>当数据包与带 <code class="literal">log</code> 关键字的规则匹配时，
+	    将通过名为 SECURITY 的 facility 来把消息记录到 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a>。
+	    只有在记录的次数没有超过 logamount 参数所指定的次数时，
+	    才会记录日志。 如果没有指定 <code class="literal">logamount</code>，
+	    则会以 sysctl 变量
+	    <code class="literal">net.inet.ip.fw.verbose_limit</code> 所指定的限制为准。
+	    如果将这两种限制值之一指定为零， 则表示不作限制。
+	    如果达到了限制数，
+	    可以通过将规则的日志计数或包计数清零来重新启用日志，
+	    请参见 <code class="command">ipfw reset log</code> 命令来了解细节。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">日志是在所有其他匹配条件都验证成功之后，
+	      在针对包实施最终动作 (accept, deny) 之前进行的。
+	      您可以自行决定哪些规则应启用日志。</p></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88464976"></a>29.6.4.1.5. SELECTION</h5></div></div></div><p>这一节所介绍的关键字主要用来描述检查包的哪些属性，
+	    用以判断包是否与规则相匹配。
+	    下面是一些通用的用于匹配包特征的属性，
+	    它们必须按顺序使用：</p><p><em class="parameter"><code>udp | tcp | icmp</code></em></p><p>也可以指定在
+	    <code class="filename">/etc/protocols</code> 中所定义的协议。
+	    这个值定义的是匹配的协议， 在规则中必须指定它。</p><p><em class="parameter"><code>from src to dst</code></em></p><p><code class="literal">from</code> 和 <code class="literal">to</code> 关键字用于匹配 IP
+	    地址。 规则中必须 <span class="emphasis"><em>同时</em></span> 指定源和目的两个参数。
+	    如果需要匹配任意 IP 地址，
+	    可以使用特殊关键字 <code class="literal">any</code>。
+	    还有一个特殊关键字， 即 <code class="literal">me</code>，
+	    用于匹配您的 FreeBSD 系统上所有网络接口上所配置的 IP 地址，
+	    它可以用于表达网络上的其他计算机到防火墙 (也就是本机)，
+	    例如 <code class="literal">from me to any</code> 或 <code class="literal">from any to me</code> 或 <code class="literal">from 0.0.0.0/0 to any</code> 或
+	    <code class="literal">from any to 0.0.0.0/0</code> 或 <code class="literal">from 0.0.0.0 to any</code> 或 <code class="literal">from
+	    any to 0.0.0.0</code> 以及 <code class="literal">from me to 0.0.0.0</code>。 IP
+	    地址可以通过 带点的 IP 地址/掩码长度 (CIDR 记法)，
+	    或者一个带点的 IP 地址的形式来指定。
+	    这是编写规则时所必需的。 使用 <span class="package">net-mgmt/ipcalc</span> port 可以用来简化计算。
+	    关于这个工具的更多信息， 也可参考它的主页： <code class="uri"><a class="uri" href="http://jodies.de/ipcalc" target="_top">http://jodies.de/ipcalc</a></code>。</p><p><em class="parameter"><code>port number</code></em></p><p>这个参数主要用于那些支持端口号的协议 (例如
+	    <acronym class="acronym">TCP</acronym> 和 <acronym class="acronym">UDP</acronym>)。 如果要通过端口号匹配某个协议，
+	    就必须指定这个参数。 此外， 也可以通过服务的名字 (根据
+	    <code class="filename">/etc/services</code>) 来指定服务，
+	    这样会比使用数字指定端口号直观一些。</p><p><em class="parameter"><code>in | out</code></em></p><p>相应地， 匹配进入和发出的包。
+	    这里的 <code class="literal">in</code> 和 <code class="literal">out</code> 都是关键字， 在编写匹配规则时，
+	    必需作为其他条件的一部分来使用。</p><p><em class="parameter"><code>via IF</code></em></p><p>根据指定的网络接口的名称精确地匹配进出的包。
+	    这里的 <code class="literal">via</code>
+	    关键字将使得接口名称成为匹配过程的一部分。</p><p><em class="parameter"><code>setup</code></em></p><p>要匹配 <acronym class="acronym">TCP</acronym> 会话的发起请求，
+	    就必须使用它。</p><p><em class="parameter"><code>keep-state</code></em></p><p>这是一个必须使用的关键字。 在发生匹配时，
+	    防火墙将创建一个动态规则， 其默认行为是，
+	    匹配使用同一协议的、从源到目的 IP/端口 的双向网络流量。</p><p><em class="parameter"><code>limit {src-addr | src-port | dst-addr |
+	      dst-port}</code></em></p><p>防火墙只允许匹配规则时， 与指定的参数相同的
+	    <em class="replaceable"><code>N</code></em> 个连接。
+	    可以指定至少一个源或目的地址及端口。
+	    <code class="literal">limit</code> 和 <code class="literal">keep-state</code> 不能在同一规则中同时使用。
+	    <code class="literal">limit</code> 提供了与 <code class="literal">keep-state</code> 相同的功能，
+	    并增加了一些独有的能力。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88492624"></a>29.6.4.2. 状态规则选项</h4></div></div></div><a id="idp88493264" class="indexterm"></a><p>有状态过滤将网络流量当作一种双向的包交换来处理。
+	  它提供了一种额外的检查能力，
+	  用以检测会话中的包是否来自最初的发送者，
+	  并在遵循双向包交换的规则进行会话。
+	  如果包与这些规则不符， 则将自动地拒绝它们。</p><p><code class="literal">check-state</code> 用来识别在 IPFW
+	  规则集中的包是否符合动态规则机制的规则。
+	  如果匹配， 则允许包通过，
+	  此时防火墙将创建一个新的动态规则来匹配双向交换中的下一个包。
+	  如果不匹配， 则将继续尝试规则集中的下一个规则。</p><p>动态规则机制在 SYN-flood 攻击下是脆弱的，
+	  因为这种情况会产生大量的动态规则， 从而耗尽资源。
+	  为了抵抗这种攻击， 从 FreeBSD 中加入了一个叫做 <code class="literal">limit</code>
+	  的新选项。
+	  这个选项可以用来限制符合规则的会话允许的并发连接数。
+	  如果动态规则表中的规则数超过 <code class="literal">limit</code> 的限制数量，
+	  则包将被丢弃。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88496976"></a>29.6.4.3. 记录防火墙消息</h4></div></div></div><a id="idp88497616" class="indexterm"></a><p>记录日志的好处是显而易见的： 它提供了在事后检查所发生的状况的方法，
+	  例如哪些包被丢弃了， 这些包的来源和目的地，
+	  从而为您提供找到攻击者所需的证据。</p><p>即使启用了日志机制， IPFW 也不会自行生成任何规则的日志。
+	  防火墙管理员需要指定规则集中的哪些规则应该记录日志，
+	  并在这些规则上增加 <code class="literal">log</code> 动作。 一般来说， 只有
+	  deny 规则应记录日志， 例如对于进入的
+	  <acronym class="acronym">ICMP</acronym> ping 的 deny 规则。 另外，
+	  复制 <span class="quote">“<span class="quote">默认的 ipfw 终极 deny 规则</span>”</span>， 并加入 <code class="literal">log</code>
+	  动作来作为您的规则集的最后一条规则也是很常见的用法。
+	  这样， 您就能看到没有匹配任何一条规则的那些数据包。</p><p>日志是一把双刃剑， 如果不谨慎地加以利用，
+	  则可能会陷入过多的日志数据中， 并导致磁盘被日志塞满。
+	  将磁盘填满是 DoS 攻击最为老套的手法之一。
+	  由于 <span class="application">syslogd</span> 除了会将日志写入磁盘之外，
+	  还会输出到 root 的控制台屏幕上，
+	  因此有过多的日志信息是很让人恼火的事情。</p><p><code class="literal">IPFIREWALL_VERBOSE_LIMIT=5</code>
+	  内核选项将限制同一个规则发到系统日志程序 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a> 的连续消息的数量。
+	  当内核启用了这个选项时，
+	  某一特定规则所产生的连续消息的数量将封顶为这个数字。
+	  一般来说， 没有办法从连续 200 条一模一样的日志信息中获取更多有用的信息。
+	  举例来说， 如果同一个规则产生了 5 次消息并被记录到
+	  <span class="application">syslogd</span>， 余下的相同的消息将被计数，
+	  并像下面这样发给 <span class="application">syslogd</span>：</p><pre class="programlisting">last message repeated 45 times</pre><p>所有记录的数据包包消息， 默认情况下会最终写到
+	  <code class="filename">/var/log/security</code> 文件中，
+	  后者在 <code class="filename">/etc/syslog.conf</code> 文件里进行了定义。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="firewalls-ipfw-rules-script"></a>29.6.4.4. 编写规则脚本</h4></div></div></div><p>绝大多数有经验的 IPFW 用户会创建一个包含规则的文件，
+	  并且， 按能够以脚本形式运行的方式来书写。 这样做最大的一个好处是，
+	  可以大批量地刷新防火墙规则， 而无须重新启动系统就能够激活它们。
+	  这种方法在测试新规则时会非常方便，
+	  因为同一过程在需要时可以多次执行。
+	  作为脚本， 您可以使用符号替换来撰写那些经常需要使用的值，
+	  并用同一个符号在多个规则中反复地表达它。
+	  下面将给出一个例子。</p><p>这个脚本使用的语法同 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sh</span>(1)</span></a>、
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=csh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">csh</span>(1)</span></a> 以及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tcsh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tcsh</span>(1)</span></a> 脚本兼容。 符号替换字段使用美元符号 $
+	  作为前缀。 符号字段本身并不使用 $ 前缀。
+	  符号替换字段的值必须使用 "双引号" 括起来。</p><p>可以使用类似下面的规则文件：</p><pre class="programlisting">############### start of example ipfw rules script #############
+#
+ipfw -q -f flush       # Delete all rules
+# Set defaults
+oif="tun0"             # out interface
+odns="192.0.2.11"      # ISP's DNS server IP address
+cmd="ipfw -q add "     # build rule prefix
+ks="keep-state"        # just too lazy to key this each time
+$cmd 00500 check-state
+$cmd 00502 deny all from any to any frag
+$cmd 00501 deny tcp from any to any established
+$cmd 00600 allow tcp from any to any 80 out via $oif setup $ks
+$cmd 00610 allow tcp from any to $odns 53 out via $oif setup $ks
+$cmd 00611 allow udp from any to $odns 53 out via $oif $ks
+################### End of example ipfw rules script ############</pre><p>这就是所要做的全部事情了。 例子中的规则并不重要，
+	  它们主要是用来表示如何使用符号替换。</p><p>如果把上面的例子保存到
+	  <code class="filename">/etc/ipfw.rules</code> 文件中。
+	  下面的命令来会重新加载规则。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sh /etc/ipfw.rules</code></strong></pre><p><code class="filename">/etc/ipfw.rules</code> 这个文件可以放到任何位置，
+	  也可以命名为随便什么别的名字。</p><p>也可以手工执行下面的命令来达到类似的目的：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ipfw -q -f flush</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add check-state</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add deny all from any to any frag</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add deny tcp from any to any established</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add allow tcp from any to any 80 out via tun0 setup keep-state</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add allow tcp from any to 192.0.2.11 53 out via tun0 setup keep-state</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ipfw -q add 00611 allow udp from any to 192.0.2.11 53 out via tun0 keep-state</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88548176"></a>29.6.4.5. 带状态规则集</h4></div></div></div><p>以下的这组非-<acronym class="acronym">NAT</acronym> 规则集，
+	  是如何编写非常安全的 '明示允许' 防火墙的一个例子。
+	  明示允许防火墙只允许匹配了 pass 规则的包通过，
+	  而默认阻止所有的其他数据包。
+	  用来保护整个网段的防火墙， 至少需要有两个网络接口，
+	  并且其上必须配置规则， 以便让防火墙正常工作。</p><p>所有类 <span class="trademark">UNIX</span>® 操作系统， 也包括 FreeBSD，
+	  都设计为允许使用网络接口 <code class="filename">lo0</code> 和 IP
+	  地址 <code class="systemitem">127.0.0.1</code> 来完成操作系统内部的通讯。
+	  防火墙必须包含一组规则， 使这些数据包能够无障碍地收发。</p><p>接入 Internet 公网的那个网络接口上，
+	  应该配置授权和访问控制， 来限制对外的访问， 以及来自 Internet
+	  公网的访问。 这个接口很可能是您的用户态
+	  <acronym class="acronym">PPP</acronym> 接口， 例如
+	  <code class="filename">tun0</code>， 或者您接在 DSL 或电缆 modem
+	  上的网卡。</p><p>如果有至少一个网卡接入了防火墙后的内网 LAN，
+	  则必须为这些接口配置规则，
+	  以便让这些接口之间的包能够顺畅地通过。</p><p>所有的规则应被组织为三个部分， 所有应无阻碍地通过的规则，
+	  公网的发出规则， 以及公网的接收规则。</p><p>公网接口相关的规则的顺序，
+	  应该是最经常用到的放在尽可能靠前的位置，
+	  而最后一个规则， 则应该是阻止那个接口在那一方向上的包。</p><p>发出部分的规则只包含一些 <code class="literal">allow</code> 规则，
+	  允许选定的那些唯一区分协议的端口号所指定的协议通过，
+	  以允许访问 Internet 公网上的这些服务。
+	  所有的规则中都指定了 <code class="literal">proto</code>、 <code class="literal">port</code>、
+	  <code class="literal">in/out</code>、 <code class="literal">via</code> 以及 <code class="literal">keep state</code> 这些选项。 <code class="literal">proto tcp</code>
+	  规则同时指定 <code class="literal">setup</code> 选项， 来区分开始协议会话的包，
+	  以触发将包放入
+	  keep state 规则表中的动作。</p><p>接收部分则首先阻止所有不希望的包， 这样做有两个不同的原因。
+	  其一是恶意的包可能和某些允许的流量规则存在部分匹配， 而我们希望阻止，
+	  而不是让这些包仅仅与 <code class="literal">allow</code> 规则部分匹配就允许它们进入。
+	  其二是， 已经确信要阻止的包被拒绝这件事， 往往并不是我们需要关注的，
+	  因此只要简单地予以阻止即可。
+	  防火墙规则集中的每个部分的最后一条规则都是阻止并记录包，
+	  这有助于为逮捕攻击者留下法律所要求的证据。</p><p>另外一个需要注意的事情是确保系统对不希望的数据包不做回应。
+	  无效的包应被丢弃和消失。 这样， 攻击者便无法知道包是否到达了您的系统。
+	  攻击者对系统了解的越少， 其攻击的难度也就越大。 如果不知道端口号，
+	  可以查阅 <code class="filename">/etc/services/</code> 或到 <code class="uri"><a class="uri" href="http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers" target="_top">http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers</a></code>
+	  并查找一下端口号， 以了解其用途。 另外，
+	  您也可以在这个网页上了解常见木马所使用的端口： <code class="uri"><a class="uri" href="http://www.sans.org/security-resources/idfaq/oddports.php" target="_top">http://www.sans.org/security-resources/idfaq/oddports.php</a></code>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88568144"></a>29.6.4.6. 明示允许规则集的例子</h4></div></div></div><p>下面是一个非-<acronym class="acronym">NAT</acronym> 的规则集，
+	  它是一个完整的明示允许规则集。 使用它作为您的规则集不会有什么问题。
+	  只需把那些不需要的服务对应的 pass 规则注释掉就可以了。
+	  如果您在日志中看到消息， 而且不想再看到它们，
+	  只需在接收部分增加一个一个 <code class="literal">deny</code> 规则。
+	  您可能需要把 <code class="filename">dc0</code> 改为接入公网的接口的名字。
+	  对于使用用户态 <acronym class="acronym">PPP</acronym> 的用户而言， 应该是
+	  <code class="filename">tun0</code>。</p><p>这些规则遵循一定的模式。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>所有请求 Internet 公网上服务的会话开始包，
+	      都使用了 <code class="literal">keep-state</code>。</p></li><li class="listitem"><p>所有来自 Internet 的授权服务请求，
+	      都采用了 <code class="literal">limit</code> 选项来防止洪水式攻击。</p></li><li class="listitem"><p>所有的规则都使用了 <code class="literal">in</code> 或者 <code class="literal">out</code> 来说明方向。</p></li><li class="listitem"><p>所有的规则都使用了 <code class="literal">via</code> <em class="replaceable"><code>接口名</code></em>
+	      来指定应该匹配通过哪一个接口的包。</p></li></ul></div><p>这些规则都应放到
+	  <code class="filename">/etc/ipfw.rules</code>。</p><pre class="programlisting">################ Start of IPFW rules file ###############################
+# Flush out the list before we begin.
+ipfw -q -f flush
+
+# Set rules command prefix
+cmd="ipfw -q add"
+pif="dc0"     # public interface name of NIC
+              # facing the public Internet
+
+#################################################################
+# No restrictions on Inside LAN Interface for private network
+# Not needed unless you have LAN.
+# Change xl0 to your LAN NIC interface name
+#################################################################
+#$cmd 00005 allow all from any to any via xl0
+
+#################################################################
+# No restrictions on Loopback Interface
+#################################################################
+$cmd 00010 allow all from any to any via lo0
+
+#################################################################
+# Allow the packet through if it has previous been added to the
+# the "dynamic" rules table by a allow keep-state statement.
+#################################################################
+$cmd 00015 check-state
+
+#################################################################
+# Interface facing Public Internet (Outbound Section)
+# Interrogate session start requests originating from behind the
+# firewall on the private network or from this gateway server
+# destined for the public Internet.
+#################################################################
+
+# Allow out access to my ISP's Domain name server.
+# x.x.x.x must be the IP address of your ISP.s DNS
+# Dup these lines if your ISP has more than one DNS server
+# Get the IP addresses from /etc/resolv.conf file
+$cmd 00110 allow tcp from any to x.x.x.x 53 out via $pif setup keep-state
+$cmd 00111 allow udp from any to x.x.x.x 53 out via $pif keep-state
+
+# Allow out access to my ISP's DHCP server for cable/DSL configurations.
+# This rule is not needed for .user ppp. connection to the public Internet.
+# so you can delete this whole group.
+# Use the following rule and check log for IP address.
+# Then put IP address in commented out rule &amp; delete first rule
+$cmd 00120 allow log udp from any to any 67 out via $pif keep-state
+#$cmd 00120 allow udp from any to x.x.x.x 67 out via $pif keep-state
+
+# Allow out non-secure standard www function
+$cmd 00200 allow tcp from any to any 80 out via $pif setup keep-state
+
+# Allow out secure www function https over TLS SSL
+$cmd 00220 allow tcp from any to any 443 out via $pif setup keep-state
+
+# Allow out send &amp; get email function
+$cmd 00230 allow tcp from any to any 25 out via $pif setup keep-state
+$cmd 00231 allow tcp from any to any 110 out via $pif setup keep-state
+
+# Allow out FBSD (make install &amp; CVSUP) functions
+# Basically give user root "GOD" privileges.
+$cmd 00240 allow tcp from me to any out via $pif setup keep-state uid root
+
+# Allow out ping
+$cmd 00250 allow icmp from any to any out via $pif keep-state
+
+# Allow out Time
+$cmd 00260 allow tcp from any to any 37 out via $pif setup keep-state
+
+# Allow out nntp news (i.e., news groups)
+$cmd 00270 allow tcp from any to any 119 out via $pif setup keep-state
+
+# Allow out secure FTP, Telnet, and SCP
+# This function is using SSH (secure shell)
+$cmd 00280 allow tcp from any to any 22 out via $pif setup keep-state
+
+# Allow out whois
+$cmd 00290 allow tcp from any to any 43 out via $pif setup keep-state
+
+# deny and log everything else that.s trying to get out.
+# This rule enforces the block all by default logic.
+$cmd 00299 deny log all from any to any out via $pif
+
+#################################################################
+# Interface facing Public Internet (Inbound Section)
+# Check packets originating from the public Internet
+# destined for this gateway server or the private network.
+#################################################################
+
+# Deny all inbound traffic from non-routable reserved address spaces
+$cmd 00300 deny all from 192.168.0.0/16 to any in via $pif  #RFC 1918 private IP
+$cmd 00301 deny all from 172.16.0.0/12 to any in via $pif     #RFC 1918 private IP
+$cmd 00302 deny all from 10.0.0.0/8 to any in via $pif          #RFC 1918 private IP
+$cmd 00303 deny all from 127.0.0.0/8 to any in via $pif        #loopback
+$cmd 00304 deny all from 0.0.0.0/8 to any in via $pif            #loopback
+$cmd 00305 deny all from 169.254.0.0/16 to any in via $pif   #DHCP auto-config
+$cmd 00306 deny all from 192.0.2.0/24 to any in via $pif       #reserved for docs
+$cmd 00307 deny all from 204.152.64.0/23 to any in via $pif  #Sun cluster interconnect
+$cmd 00308 deny all from 224.0.0.0/3 to any in via $pif         #Class D &amp; E multicast
+
+# Deny public pings
+$cmd 00310 deny icmp from any to any in via $pif
+
+# Deny ident
+$cmd 00315 deny tcp from any to any 113 in via $pif
+
+# Deny all Netbios service. 137=name, 138=datagram, 139=session
+# Netbios is MS/Windows sharing services.
+# Block MS/Windows hosts2 name server requests 81
+$cmd 00320 deny tcp from any to any 137 in via $pif
+$cmd 00321 deny tcp from any to any 138 in via $pif
+$cmd 00322 deny tcp from any to any 139 in via $pif
+$cmd 00323 deny tcp from any to any 81 in via $pif
+
+# Deny any late arriving packets
+$cmd 00330 deny all from any to any frag in via $pif
+
+# Deny ACK packets that did not match the dynamic rule table
+$cmd 00332 deny tcp from any to any established in via $pif
+
+# Allow traffic in from ISP's DHCP server. This rule must contain
+# the IP address of your ISP.s DHCP server as it.s the only
+# authorized source to send this packet type.
+# Only necessary for cable or DSL configurations.
+# This rule is not needed for .user ppp. type connection to
+# the public Internet. This is the same IP address you captured
+# and used in the outbound section.
+#$cmd 00360 allow udp from any to x.x.x.x 67 in via $pif keep-state
+
+# Allow in standard www function because I have apache server
+$cmd 00400 allow tcp from any to me 80 in via $pif setup limit src-addr 2
+
+# Allow in secure FTP, Telnet, and SCP from public Internet
+$cmd 00410 allow tcp from any to me 22 in via $pif setup limit src-addr 2
+
+# Allow in non-secure Telnet session from public Internet
+# labeled non-secure because ID &amp; PW are passed over public
+# Internet as clear text.
+# Delete this sample group if you do not have telnet server enabled.
+$cmd 00420 allow tcp from any to me 23 in via $pif setup limit src-addr 2
+
+# Reject &amp; Log all incoming connections from the outside
+$cmd 00499 deny log all from any to any in via $pif
+
+# Everything else is denied by default
+# deny and log all packets that fell through to see what they are
+$cmd 00999 deny log all from any to any
+################ End of IPFW rules file ###############################</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88587088"></a>29.6.4.7. 一个 <acronym class="acronym">NAT</acronym> 和带状态规则集的例子</h4></div></div></div><a id="idp88588112" class="indexterm"></a><p>要使用 IPFW 的 <acronym class="acronym">NAT</acronym> 功能， 还需要进行一些额外的配置。
+	  除了其他 IPFIREWALL 语句之外，
+	  还需要在内核编译配置中加上 <code class="literal">option IPDIVERT</code> 语句。</p><p>在
+	  <code class="filename">/etc/rc.conf</code> 中， 除了普通的 IPFW 配置之外，
+	  还需要加入：</p><pre class="programlisting">natd_enable="YES"                   # Enable <acronym class="acronym">NAT</acronym>D function
+natd_interface="rl0"                # interface name of public Internet NIC
+natd_flags="-dynamic -m"            # -m = preserve port numbers if possible</pre><p>将带状态规则与 <code class="literal">divert natd</code> 规则 (网络地址转换)
+	  会使规则集的编写变得非常复杂。 <code class="literal">check-state</code> 的位置，
+	  以及 <code class="literal">divert natd</code> 规则将变得非常关键。 这样一来，
+	  就不再有简单的顺序处理逻辑流程了。 提供了一种新的动作类型， 称为
+	  <code class="literal">skipto</code>。 要使用 <code class="literal">skipto</code> 命令，
+	  就必须给每一个规则进行编号， 以确定
+	  <code class="literal">skipto</code> 规则号是您希望跳转到的位置。</p><p>下面给出了一些未加注释的例子来说明如何编写这样的规则，
+	  用以帮助您理解包处理规则集的处理顺序。</p><p>处理流程从规则文件最上边的第一个规则开始处理，
+	  并自顶向下地尝试每一个规则， 直到找到匹配的规则，
+	  且数据包从防火墙中放出为止。 请注意规则号 100 101，
+	  450， 500， 以及 510 的位置非常重要。
+	  这些规则控制发出和接收的包的地址转换过程，
+	  这样它们在 keep-state 动态表中的对应项中就能够与内网的
+	  LAN IP 地址关联。 另一个需要注意的是， 所有的 allow
+	  和 deny 规则都指定了包的方向 (也就是 outbound 或 inbound)
+	  以及网络接口。 最后， 请注意所有发出的会话请求都会请求
+	  <code class="literal">skipto rule 500</code> 以完成网络地址转换。</p><p>下面以 LAN 用户使用 web 浏览器访问一个 web 页面为例。
+	  Web 页面使用 80 来完成通讯。 当包进入防火墙时，
+	  规则 100 并不匹配， 因为它是发出而不是收到的包。
+	  它能够通过规则 101， 因为这是第一个包，
+	  因而它还没有进入动态状态保持表。
+	  包最终到达规则 125， 并匹配该规则。
+	  最终， 它会通过接入 Internet 公网的网卡发出。
+	  这之前， 包的源地址仍然是内网 IP 地址。
+	  一旦匹配这个规则， 就会触发两个动作。
+	  <code class="literal">keep-state</code> 选项会把这个规则发到 keep-state 动态规则表中，
+	  并执行所指定的动作。 动作是发到规则表中的信息的一部分。
+	  在这个例子中， 这个动作是 <code class="literal">skipto rule
+	  500</code>。 规则 500 <acronym class="acronym">NAT</acronym> 包的 IP 地址，
+	  并将其发出。 请务必牢记， 这一步非常重要。
+	  接下来， 数据包将到达目的地， 之后返回并从规则集的第一条规则开始处理。
+	  这一次， 它将与规则 100 匹配， 其目的 IP 地址将被映射回对应的内网
+	  LAN IP 地址。 其后， 它会被
+	  <code class="literal">check-state</code> 规则处理， 进而在暨存会话表中找到对应项，
+	  并发到 LAN。 数据包接下来发到了内网 LAN PC 上，
+	  而后者则会发送从远程服务器请求下一段数据的新数据包。
+	  这个包会再次由 <code class="literal">check-state</code> 规则检查， 并找到发出的表项，
+	  并执行其关联的动作， 即 <code class="literal">skipto 500</code>。 包跳转到规则 500 并被
+	  <acronym class="acronym">NAT</acronym> 后发出。</p><p>在接收一侧， 已经存在的会话的数据包会被 <code class="literal">check-state</code>
+	  规则自动地处理， 并转到 <code class="literal">divert nat</code> 规则。 我们需要解决的问题是，
+	  阻止所有的坏数据包， 而只允许授权的服务。
+	  例如在防火墙上运行了 Apache 服务， 而我们希望人们在访问 Internet
+	  公网的同时， 也能够访问本地的 web 站点。
+	  新的接入开始请求包将匹配规则 100， 而 IP
+	  地址则为防火墙所在的服务器而映射到了 LAN
+	  IP。 此后， 包会匹配所有我们希望检查的那些令人生厌的东西，
+	  并最终匹配规则 425。 一旦发生匹配， 会发生两件事。
+	  数据包会被发到 keep-state 动态表， 但此时，
+	  所有来自那个源 IP 的会话请求的数量会被限制为 2。
+	  这一做法能够挫败针对指定端口上服务的 DoS 攻击。
+	  动作同时指定了 <code class="literal">allow</code> 包应被发到 LAN 上。 包返回时，
+	  <code class="literal">check-state</code> 规则会识别出包属于某一已经存在的会话交互，
+	  并直接把它发到规则 500 做
+	  <acronym class="acronym">NAT</acronym>， 并发到发出接口。</p><p>示范规则集 #1:</p><pre class="programlisting">#!/bin/sh
+cmd="ipfw -q add"
+skip="skipto 500"
+pif=rl0
+ks="keep-state"
+good_tcpo="22,25,37,43,53,80,443,110,119"
+
+ipfw -q -f flush
+
+$cmd 002 allow all from any to any via xl0  # exclude LAN traffic
+$cmd 003 allow all from any to any via lo0  # exclude loopback traffic
+
+$cmd 100 divert natd ip from any to any in via $pif
+$cmd 101 check-state
+
+# Authorized outbound packets
+$cmd 120 $skip udp from any to xx.168.240.2 53 out via $pif $ks
+$cmd 121 $skip udp from any to xx.168.240.5 53 out via $pif $ks
+$cmd 125 $skip tcp from any to any $good_tcpo out via $pif setup $ks
+$cmd 130 $skip icmp from any to any out via $pif $ks
+$cmd 135 $skip udp from any to any 123 out via $pif $ks
+
+
+# Deny all inbound traffic from non-routable reserved address spaces
+$cmd 300 deny all from 192.168.0.0/16  to any in via $pif  #RFC 1918 private IP
+$cmd 301 deny all from 172.16.0.0/12   to any in via $pif  #RFC 1918 private IP
+$cmd 302 deny all from 10.0.0.0/8      to any in via $pif  #RFC 1918 private IP
+$cmd 303 deny all from 127.0.0.0/8     to any in via $pif  #loopback
+$cmd 304 deny all from 0.0.0.0/8       to any in via $pif  #loopback
+$cmd 305 deny all from 169.254.0.0/16  to any in via $pif  #DHCP auto-config
+$cmd 306 deny all from 192.0.2.0/24    to any in via $pif  #reserved for docs
+$cmd 307 deny all from 204.152.64.0/23 to any in via $pif  #Sun cluster
+$cmd 308 deny all from 224.0.0.0/3     to any in via $pif  #Class D &amp; E multicast
+
+# Authorized inbound packets
+$cmd 400 allow udp from xx.70.207.54 to any 68 in $ks
+$cmd 420 allow tcp from any to me 80 in via $pif setup limit src-addr 1
+
+
+$cmd 450 deny log ip from any to any
+
+# This is skipto location for outbound stateful rules
+$cmd 500 divert natd ip from any to any out via $pif
+$cmd 510 allow ip from any to any
+
+######################## end of rules  ##################</pre><p>下面的这个规则集基本上和上面一样，
+	  但使用了易于读懂的编写方式， 并给出了相当多的注解，
+	  以帮助经验较少的 IPFW 规则编写者更好地理解这些规则到底在做什么。</p><p>示范规则集 #2：</p><pre class="programlisting">#!/bin/sh
+################ Start of IPFW rules file ###############################
+# Flush out the list before we begin.
+ipfw -q -f flush
+
+# Set rules command prefix
+cmd="ipfw -q add"
+skip="skipto 800"
+pif="rl0"     # public interface name of NIC
+              # facing the public Internet
+
+#################################################################
+# No restrictions on Inside LAN Interface for private network
+# Change xl0 to your LAN NIC interface name
+#################################################################
+$cmd 005 allow all from any to any via xl0
+
+#################################################################
+# No restrictions on Loopback Interface
+#################################################################
+$cmd 010 allow all from any to any via lo0
+
+#################################################################
+# check if packet is inbound and nat address if it is
+#################################################################
+$cmd 014 divert natd ip from any to any in via $pif
+
+#################################################################
+# Allow the packet through if it has previous been added to the
+# the "dynamic" rules table by a allow keep-state statement.
+#################################################################
+$cmd 015 check-state
+
+#################################################################
+# Interface facing Public Internet (Outbound Section)
+# Check session start requests originating from behind the
+# firewall on the private network or from this gateway server
+# destined for the public Internet.
+#################################################################
+
+# Allow out access to my ISP's Domain name server.
+# x.x.x.x must be the IP address of your ISP's DNS
+# Dup these lines if your ISP has more than one DNS server
+# Get the IP addresses from /etc/resolv.conf file
+$cmd 020 $skip tcp from any to x.x.x.x 53 out via $pif setup keep-state
+
+
+# Allow out access to my ISP's DHCP server for cable/DSL configurations.
+$cmd 030 $skip udp from any to x.x.x.x 67 out via $pif keep-state
+
+# Allow out non-secure standard www function
+$cmd 040 $skip tcp from any to any 80 out via $pif setup keep-state
+
+# Allow out secure www function https over TLS SSL
+$cmd 050 $skip tcp from any to any 443 out via $pif setup keep-state
+
+# Allow out send &amp; get email function
+$cmd 060 $skip tcp from any to any 25 out via $pif setup keep-state
+$cmd 061 $skip tcp from any to any 110 out via $pif setup keep-state
+
+# Allow out FreeBSD (make install &amp; CVSUP) functions
+# Basically give user root "GOD" privileges.
+$cmd 070 $skip tcp from me to any out via $pif setup keep-state uid root
+
+# Allow out ping
+$cmd 080 $skip icmp from any to any out via $pif keep-state
+
+# Allow out Time
+$cmd 090 $skip tcp from any to any 37 out via $pif setup keep-state
+
+# Allow out nntp news (i.e., news groups)
+$cmd 100 $skip tcp from any to any 119 out via $pif setup keep-state
+
+# Allow out secure FTP, Telnet, and SCP
+# This function is using SSH (secure shell)
+$cmd 110 $skip tcp from any to any 22 out via $pif setup keep-state
+
+# Allow out whois
+$cmd 120 $skip tcp from any to any 43 out via $pif setup keep-state
+
+# Allow ntp time server
+$cmd 130 $skip udp from any to any 123 out via $pif keep-state
+
+#################################################################
+# Interface facing Public Internet (Inbound Section)
+# Check packets originating from the public Internet
+# destined for this gateway server or the private network.
+#################################################################
+
+# Deny all inbound traffic from non-routable reserved address spaces
+$cmd 300 deny all from 192.168.0.0/16  to any in via $pif  #RFC 1918 private IP
+$cmd 301 deny all from 172.16.0.0/12   to any in via $pif  #RFC 1918 private IP
+$cmd 302 deny all from 10.0.0.0/8      to any in via $pif  #RFC 1918 private IP
+$cmd 303 deny all from 127.0.0.0/8     to any in via $pif  #loopback
+$cmd 304 deny all from 0.0.0.0/8       to any in via $pif  #loopback
+$cmd 305 deny all from 169.254.0.0/16  to any in via $pif  #DHCP auto-config
+$cmd 306 deny all from 192.0.2.0/24    to any in via $pif  #reserved for docs
+$cmd 307 deny all from 204.152.64.0/23 to any in via $pif  #Sun cluster
+$cmd 308 deny all from 224.0.0.0/3     to any in via $pif  #Class D &amp; E multicast
+
+# Deny ident
+$cmd 315 deny tcp from any to any 113 in via $pif
+
+# Deny all Netbios service. 137=name, 138=datagram, 139=session
+# Netbios is MS/Windows sharing services.
+# Block MS/Windows hosts2 name server requests 81
+$cmd 320 deny tcp from any to any 137 in via $pif
+$cmd 321 deny tcp from any to any 138 in via $pif
+$cmd 322 deny tcp from any to any 139 in via $pif
+$cmd 323 deny tcp from any to any 81  in via $pif
+
+# Deny any late arriving packets
+$cmd 330 deny all from any to any frag in via $pif
+
+# Deny ACK packets that did not match the dynamic rule table
+$cmd 332 deny tcp from any to any established in via $pif
+
+# Allow traffic in from ISP's DHCP server. This rule must contain
+# the IP address of your ISP's DHCP server as it's the only
+# authorized source to send this packet type.
+# Only necessary for cable or DSL configurations.
+# This rule is not needed for 'user ppp' type connection to
+# the public Internet. This is the same IP address you captured
+# and used in the outbound section.
+$cmd 360 allow udp from x.x.x.x to any 68 in via $pif keep-state
+
+# Allow in standard www function because I have Apache server
+$cmd 370 allow tcp from any to me 80 in via $pif setup limit src-addr 2
+
+# Allow in secure FTP, Telnet, and SCP from public Internet
+$cmd 380 allow tcp from any to me 22 in via $pif setup limit src-addr 2
+
+# Allow in non-secure Telnet session from public Internet
+# labeled non-secure because ID &amp; PW are passed over public
+# Internet as clear text.
+# Delete this sample group if you do not have telnet server enabled.
+$cmd 390 allow tcp from any to me 23 in via $pif setup limit src-addr 2
+
+# Reject &amp; Log all unauthorized incoming connections from the public Internet
+$cmd 400 deny log all from any to any in via $pif
+
+# Reject &amp; Log all unauthorized out going connections to the public Internet
+$cmd 450 deny log all from any to any out via $pif
+
+# This is skipto location for outbound stateful rules
+$cmd 800 divert natd ip from any to any out via $pif
+$cmd 801 allow ip from any to any
+
+# Everything else is denied by default
+# deny and log all packets that fell through to see what they are
+$cmd 999 deny log all from any to any
+################ End of IPFW rules file ###############################</pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="firewalls-ipf.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="firewalls.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="advanced-networking.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">29.5. IPFILTER (IPF) 防火墙 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 30. 高级网络</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

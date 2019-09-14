@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.9. 为 Microsoft® Windows® 客户机提供文件和打印服务 (Samba)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-ftp.html" title="28.8. 文件传输协议 (FTP)" /><link rel="next" href="network-ntp.html" title="28.10. 通过 NTP 进行时钟同步" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.9. 为 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 客户机提供文件和打印服务 (Samba)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-ftp.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-ntp.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-samba"></a>28.9. 为 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 客户机提供文件和打印服务 (Samba)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp87520976" class="indexterm"></a><a id="idp87521488" class="indexterm"></a><a id="idp87522000" class="indexterm"></a><a id="idp87523152" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87524432"></a>28.9.1. 纵览</h3></div></div></div><p><span class="application">Samba</span> 是一个流行的开源软件包，
+        它提供了针对 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 客户机的文件和打印服务。
+        这类客户机可以连接并使用 FreeBSD 系统上的文件空间，
+        就如同使用本地的磁盘一样， 或者像使用本地打印机一样使用
+        FreeBSD 上的打印机。</p><p><span class="application">Samba</span> 软件包可以在您的 FreeBSD
+        安装盘上找到。 如果您没有在初次安装 FreeBSD
+        时安装 <span class="application">Samba</span>， 则可以通过 <span class="package">net/samba34</span> port 或 package 来安装。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87528528"></a>28.9.2. 配置</h3></div></div></div><p>默认的 <span class="application">Samba</span> 配置文件会以
+        <code class="filename">/usr/local/share/examples/samba34/smb.conf.default</code>
+	的名字安装。这个文件必须复制为
+        <code class="filename">/usr/local/etc/smb.conf</code> 并进行定制，
+        才能开始使用 <span class="application">Samba</span>。</p><p><code class="filename">smb.conf</code> 文件中包含了
+        <span class="application">Samba</span> 的运行时配置信息，
+        例如对于打印机的定义， 以及希望共享给 <span class="trademark">Windows</span>®
+        客户机的 <span class="quote">“<span class="quote">共享文件系统</span>”</span>。
+        <span class="application">Samba</span> 软件包包含了一个称为
+        <span class="application">swat</span> 的 web 管理工具，
+        后者提供了配置 <code class="filename">smb.conf</code> 文件的简单方法。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87538512"></a>28.9.2.1. 使用 Samba Web 管理工具 (SWAT)</h4></div></div></div><p>Samba Web 管理工具 (SWAT) 是一个通过
+	  <span class="application">inetd</span> 运行的服务程序。 因此，
+	  需要把 <code class="filename">/etc/inetd.conf</code> 中下面几行的注释去掉，
+	  才能够使用 <span class="application">swat</span>
+	  来配置 <span class="application">Samba</span>：</p><pre class="programlisting">swat   stream  tcp     nowait/400      root    /usr/local/sbin/swat    swat</pre><p>如 <a class="xref" href="network-inetd.html#network-inetd-reread" title="Example 28.1. 重新加载 inetd 配置文件">Example 28.1, “重新加载 <span class="application">inetd</span>
+	  配置文件”</a> 中所介绍的那样，
+          在修改了这个配置文件之后， 必须让 <span class="application">inetd</span>
+          重新加载配置， 才能使其生效。</p><p>一旦在 <code class="filename">inetd.conf</code> 中启用了
+	  <span class="application">swat</span>， 就可以用浏览器访问
+	  connect to <code class="uri"><a class="uri" href="http://localhost:901" target="_top">http://localhost:901</a></code> 了。
+	  您将首先使用系统的 <code class="systemitem">root</code>
+	  帐号登录。</p><p>只要成功地登录进了
+	  <span class="application">Samba</span> 配置页面，
+	  就可以浏览系统的文档， 或从
+	  <span class="guimenu">Globals</span>(全局) 选项卡开始配置了。
+	  <span class="guimenu">Globals</span> 小节对应于 <code class="literal">[global]</code>
+	  小节中的变量， 前者位于
+	  <code class="filename">/usr/local/etc/smb.conf</code> 中。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87555792"></a>28.9.2.2. 全局配置</h4></div></div></div><p>无论是使用 <span class="application">swat</span>，
+	  还是直接编辑 <code class="filename">/usr/local/etc/smb.conf</code>，
+	  通常首先要配置的 <span class="application">Samba</span>
+	  选项都是：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">workgroup</code></span></dt><dd><p>NT 域名或工作组名，
+	        其他计算机将通过这些名字来找到服务器。</p></dd><dt><span class="term"><code class="literal">netbios name</code></span></dt><dd><a id="idp87561040" class="indexterm"></a><p>这个选项用于设置 <span class="application">Samba</span> 服务器的
+		NetBIOS 名字。 默认情况下， 这是所在主机的 DNS 名字的第一部分。</p></dd><dt><span class="term"><code class="literal">server string</code></span></dt><dd><p>这个选项用于设置通过 <code class="command">net view</code>
+		命令， 以及某些其他网络工具可以查看到的关于服务器的说明性文字。</p></dd></dl></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87564880"></a>28.9.2.3. 安全配置</h4></div></div></div><p>在
+	  <code class="filename">/usr/local/etc/smb.conf</code> 中的两个最重要的配置，
+	  是选定的安全模型， 以及客户机上用户的口令存放后端。
+	  下面的语句控制这些选项：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">security</code></span></dt><dd><p>最常见的选项形式是
+	        <code class="literal">security = share</code> 和 <code class="literal">security
+	        = user</code>。 如果您的客户机使用用户名，
+	        并且这些用户名与您的 FreeBSD 机器一致，
+	        一般应选择用户级 (user) 安全。 这是默认的安全策略，
+	        它要求客户机首先登录， 然后才能访问共享的资源。</p><p>如果采用共享级 (share) 安全，
+	        则客户机不需要用有效的用户名和口令登录服务器，
+	        就能够连接共享的资源。 这是较早版本的
+	        <span class="application">Samba</span> 中的默认值。</p></dd><dt><span class="term"><code class="literal">passdb backend</code></span></dt><dd><a id="idp87587280" class="indexterm"></a><a id="idp87587792" class="indexterm"></a><a id="idp87588304" class="indexterm"></a><p><span class="application">Samba</span> 提供了若干种不同的验证后端模型。
+	        您可以通过 LDAP、 NIS+、 SQL 数据库， 或经过修改的口令文件，
+	        来完成客户端的身份验证。 默认的验证模式是
+	        <code class="literal">smbpasswd</code>， 这也是本章将介绍的全部内容。</p></dd></dl></div><p>假设您使用的是默认的 <code class="literal">smbpasswd</code>
+	  后端， 则必须首先创建一个
+	  <code class="filename">/usr/local/etc/samba/smbpasswd</code> 文件，
+	  来允许 <span class="application">Samba</span> 对客户进行身份验证。
+	  如果您打算让 <span class="trademark">UNIX</span>® 用户帐号能够从 <span class="trademark">Windows</span>®
+	  客户机上登录， 可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>smbpasswd -a username</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前推荐使用的后端是 <code class="literal">tdbsam</code>，
+	    您应使用下面的命令来添加用户帐号：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pdbedit -a -u username</code></strong></pre></div><p>请参考
+	  <a class="link" href="http://www.samba.org/samba/docs/man/Samba-HOWTO-Collection/" target="_top">官方的 Samba HOWTO</a>
+	  以了解关于配置选项的进一步信息。 按照前面给出的基本描述，
+	  您应该已经可以启动
+	  <span class="application">Samba</span> 了。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87601616"></a>28.9.3. 启动 <span class="application">Samba</span></h3></div></div></div><p><span class="package">net/samba34</span> port
+	会增加一个新的用于控制
+	<span class="application">Samba</span> 的启动脚本。 要启用这个脚本，
+	以便用它来完成启动、 停止或重启
+	<span class="application">Samba</span> 的任务， 需要在
+	<code class="filename">/etc/rc.conf</code> 文件中加入：</p><pre class="programlisting">samba_enable="YES"</pre><p>此外， 也可以进行更细粒度的控制：</p><pre class="programlisting">nmbd_enable="YES"</pre><pre class="programlisting">smbd_enable="YES"</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这也同时配置了在系统引导时启动 <span class="application">Samba</span>。</p></div><p>配置好之后， 就可以在任何时候通过下面的命令来启动
+	<span class="application">Samba</span> 了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/etc/rc.d/samba start</code></strong>
+Starting SAMBA: removing stale tdbs :
+Starting nmbd.
+Starting smbd.</pre><p>请参见 <a class="xref" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc">Section 12.7, “在 FreeBSD 中使用 rc”</a> 以了解关于使用 rc 脚本的进一步信息。</p><p><span class="application">Samba</span> 事实上包含了三个相互独立的服务程序。
+        您应该能够看到
+        <span class="application">nmbd</span> 和 <span class="application">smbd</span>
+        两个服务程序都是通过 <code class="filename">samba</code> 脚本启动的。 如果在
+        <code class="filename">smb.conf</code> 中启用了 winbind 名字解析服务，
+        则应该可以看到 <span class="application">winbindd</span>
+        服务被启动起来。</p><p>可以在任何时候通过下面的命令来停止运行
+        <span class="application">Samba</span>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/etc/rc.d/samba stop</code></strong></pre><p><span class="application">Samba</span> 是一个复杂的软件包，
+        它提供了用于与 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 网络进行集成的各式各样的功能。
+        要了解关于这里所介绍的基本安装以外的其它功能，
+        请访问 <code class="uri"><a class="uri" href="http://www.samba.org" target="_top">http://www.samba.org</a></code>。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-ftp.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-ntp.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.8. 文件传输协议 (FTP) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.10. 通过 NTP 进行时钟同步</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

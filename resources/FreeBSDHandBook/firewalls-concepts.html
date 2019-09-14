@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>29.2. 防火墙的概念</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="firewalls.html" title="Chapter 29. 防火墙" /><link rel="prev" href="firewalls.html" title="Chapter 29. 防火墙" /><link rel="next" href="firewalls-apps.html" title="29.3. 防火墙软件包" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">29.2. 防火墙的概念</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="firewalls.html">Prev</a> </td><th width="60%" align="center">Chapter 29. 防火墙</th><td width="20%" align="right"> <a accesskey="n" href="firewalls-apps.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="firewalls-concepts"></a>29.2. 防火墙的概念</h2></div></div></div><a id="idp87818960" class="indexterm"></a><p>建立防火墙规则集的基本方法有两种：
+      <span class="quote">“<span class="quote">明示允许 (inclusive)</span>”</span>型 或
+      <span class="quote">“<span class="quote">明示禁止 (exclusive)</span>”</span>型。 明示禁止的防火墙规则，
+      默认允许所有数据通过防火墙， 而这种规则集中定义的，
+      则是不允许通过防火墙的流量， 换言之，
+      与这些规则不匹配的数据， 全部是允许通过防火墙的。
+      明示允许的防火墙正好相反， 它只允许符合规则集中定义规则的流量通过，
+      而其他所有的流量都被阻止。</p><p>明示允许型防火墙能够提供对于传出流量更好的控制，
+      这使其更适合那些直接对 Internet 公网提供服务的系统的需要。
+      它也能够控制来自 Internet 公网到您的私有网络的访问类型。
+      所有和规则不匹配的流量都会被阻止并记录在案。
+      一般来说明示允许防火墙要比明示禁止防火墙更安全，
+      因为它们显著地减少了允许不希望的流量通过可能造成的风险。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">除非特别说明，
+	这一章的配置和示范的规则集都是创建明示允许防火墙的。</p></div><p>使用了 <span class="quote">“<span class="quote">带状态功能的防火墙 (stateful
+	firewall)</span>”</span>， 可以进一步地收紧安全机制。
+      这种防火墙能够记录通过防火墙的连接，
+      进而只允许与现有连接匹配的连接， 或创建新的连接。
+      带状态功能的防火墙的缺点是， 在很短时间内有大量的连接请求时，
+      它们可能会受到拒绝服务 (<acronym class="acronym">DoS</acronym>) 攻击。
+      绝大多数防火墙都提供了同时启用两种防火墙的能力，
+      以便为站点提供更好的保护。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="firewalls.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="firewalls.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="firewalls-apps.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 29. 防火墙 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 29.3. 防火墙软件包</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

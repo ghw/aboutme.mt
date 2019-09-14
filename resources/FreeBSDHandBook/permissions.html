@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.3. 权限</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="consoles.html" title="4.2. 虚拟控制台及终端" /><link rel="next" href="dirstructure.html" title="4.4. 目录架构" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.3. 权限</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="consoles.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="dirstructure.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="permissions"></a>4.3. 权限</h2></div></div></div><a id="idp69608144" class="indexterm"></a><p>FreeBSD，是 BSD <span class="trademark">UNIX</span>® 的延续， 并基于几个关键的 <span class="trademark">UNIX</span>® 观念。
+      从一开始就多处提到 FreeBSD 是一个多用户的操作系统，
+      它能分别处理几个同时工作的用户所分配的毫无关联任务。
+      并负责为每位用户的硬件设备、 外设、 内存和
+      CPU 处理时间作出合理安排。</p><p>因为系统有能力支持多用户， 在每一方面系统都会作出谁能读、
+      写和执行的资源权力限制。 这点权限以三个八位元的方式储存着，
+      一个是表示文件所属者， 一个是表示文件所属群组， 一个是表示其他人。
+      这些数字以下列方式表示：</p><a id="idp69610448" class="indexterm"></a><a id="idp69610960" class="indexterm"></a><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>数值</th><th>权限</th><th>目录列表</th></tr></thead><tbody><tr><td>0</td><td>不能读，不能写，不能执行</td><td><code class="literal">---</code></td></tr><tr><td>1</td><td>不能读，不能写，可执行</td><td><code class="literal">--x</code></td></tr><tr><td>2</td><td>不能读，可写，不能执行</td><td><code class="literal">-w-</code></td></tr><tr><td>3</td><td>不能读，可写，可执行</td><td><code class="literal">-wx</code></td></tr><tr><td>4</td><td>可读，不能写，不能执行</td><td><code class="literal">r--</code></td></tr><tr><td>5</td><td>可读，不能写，可执行</td><td><code class="literal">r-x</code></td></tr><tr><td>6</td><td>可读，可写，不能执行</td><td><code class="literal">rw-</code></td></tr><tr><td>7</td><td>可读，可写，可执行</td><td><code class="literal">rwx</code></td></tr></tbody></table></div><a id="idp69669840" class="indexterm"></a><a id="idp69670736" class="indexterm"></a><p>使用命令的 <code class="option">-l</code> (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a>)
+      参数可以显示出文件的所属者、 所属组和其他人等属性。
+      请看以下的例子：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ls -l</code></strong>
+total 530
+-rw-r--r--  1 root  wheel     512 Sep  5 12:31 myfile
+-rw-r--r--  1 root  wheel     512 Sep  5 12:31 otherfile
+-rw-r--r--  1 root  wheel    7680 Sep  5 12:31 email.txt
+...</pre><p>使用 <code class="command">ls -l</code> 在每行的开始出现了：</p><pre class="screen">-rw-r--r--</pre><p>从左边起的第一个字，告诉我们这个文件是一怎样的文件:
+      普通文件?目录?特殊设备?socket?或是设备文件?
+      在这个例子， <code class="literal">-</code> 表示一个普通文件。
+      接下来三个字是 <code class="literal">rw-</code> 是文件拥有者的权限。
+      再接下来的三个字是 <code class="literal">r--</code> 是文件所属群组的权限。
+      最後三个字是 <code class="literal">r--</code> 是其他人的权限。
+      以这一个文件为例，他的权限设定是拥有者可以读写这个文件、群组可以读取、
+      其他使用者也能读取这个文件。
+      根据上面的表格， 用数字表示这个文件其三部分的权限应该是
+      <code class="literal">644</code>。 </p><p>这样很好，但系统怎样对设备进行权限控制的?
+       事实上 FreeBSD 将大部份硬件设备当作一个文件看待，
+       用程序能打开、读取、写入数据就如其他的文件一样。
+       而设备文件放在 <code class="filename">/dev</code> 目录。
+       </p><p>目录也视为一种文件，也有读取、写入、执行的权限。
+         但目录的执行权限意义并不与普通文件相同，
+         实际上执行权限是进入权限。
+         当一个目录是被标示可以执行的时， 表示可以进入它，
+         或者换言之， 利用 <span class="quote">“<span class="quote">cd</span>”</span> (改变当前目录) 进入它。
+         此外， 这也表示有权进入目录的用户， 可以访问其下的已知名字的文件
+         (当然目录下的文件也受到访问限制)。</p><p>详细方面，想读取一个目录的列表就必须设为可读权限，
+     同时想删除一个已知的文件，就必须把目录下这个文件设为可写
+      <span class="emphasis"><em>和</em></span> 执行权限。
+     </p><p>还有更多权限设定，
+    但是他们大多用在特殊状况下如一个setuid的执行文件和粘贴性目录，
+    如果想要得知有关文件权限和如何设定的更多资讯，请看手册<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chmod</span>(1)</span></a>。
+     </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69685200"></a>4.3.1. 权限的符号化表示</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp69687632" class="indexterm"></a><p>权限符号，某些时候就是指符号表达式，
+      使用八进制的字符给目录或文件分配权限。
+	  权限符号的使用语法是 (谁) (作用) (权限)。
+      看看下列数值的在那些地方所起什么样的作用:</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th>选项</th><th>字母</th><th>介绍</th></tr></thead><tbody><tr><td>(谁)</td><td>u</td><td>用户</td></tr><tr><td>(谁)</td><td>g</td><td>所属群体</td></tr><tr><td>(谁)</td><td>o</td><td>其他人</td></tr><tr><td>(谁)</td><td>a</td><td>所有人 (<span class="quote">“<span class="quote">全部</span>”</span>)</td></tr><tr><td>(作用)</td><td>+</td><td>增加权限</td></tr><tr><td>(作用)</td><td>-</td><td>减少权限</td></tr><tr><td>(作用)</td><td>=</td><td>确定权限</td></tr><tr><td>(权限)</td><td>r</td><td>可读</td></tr><tr><td>(权限)</td><td>w</td><td>可写</td></tr><tr><td>(权限)</td><td>x</td><td>执行</td></tr><tr><td>(权限)</td><td>t</td><td>粘贴位</td></tr><tr><td>(权限)</td><td>s</td><td>设置 UID 或 GID</td></tr></tbody></table></div><p>这些数值 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chmod</span>(1)</span></a> 以习惯标定的。
+      举个例子，用以下命令阻止其他人访问
+      <em class="replaceable"><code>FILE</code></em>文件:</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>chmod go= FILE</code></strong></pre><p>如果需要对文件一次进行多项变动， 则可用逗号分开， 在下面的例子中，
+      将去掉 <em class="replaceable"><code>FILE</code></em> 文件的群体和 <span class="quote">“<span class="quote">全体其他用户</span>”</span> 可写权限，
+      并为所有人增加可执行权限：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>chmod go-w,a+x FILE</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69724880"></a>4.3.2. FreeBSD 文件标志</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>在前面所介绍的文件权限的基础之上， FreeBSD
+	还支持使用 <span class="quote">“<span class="quote">文件标志</span>”</span>。
+	这些标志为文件提供了进一步的安全控制机制，
+	但这些控制并不适用于目录。</p><p>这些文件标志提供了针对文件的进一步控制，
+	帮助确保即使是
+	<code class="systemitem">root</code> 用户也无法删除或修改文件。</p><p>文件标志可以通过使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chflags&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chflags</span>(1)</span></a> 工具来修改，
+	其用户界面很简单。 例如， 要在文件 <code class="filename">file1</code>
+	上应用系统禁删标志， 应使用下述命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chflags sunlink file1</code></strong></pre><p>要禁用系统禁删标志， 只需在前述命令中的
+	<code class="option">sunlink</code> 标志前加 <span class="quote">“<span class="quote">no</span>”</span>。
+	例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chflags nosunlink file1</code></strong></pre><p>要显示文件上的标志， 应使用命令 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a>
+	的 <code class="option">-lo</code> 参数：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ls -lo file1</code></strong></pre><p>输出结果应类似于：</p><pre class="programlisting">-rw-r--r--  1 trhodes  trhodes  sunlnk 0 Mar  1 05:54 file1</pre><p>许多标志只可以由
+	<code class="systemitem">root</code> 用户来增加， 而另一些，
+	则可以由文件的所有者来增加。 建议管理员仔细阅读
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chflags&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chflags</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chflags&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chflags</span>(2)</span></a> 联机手册，
+	以对其加深理解。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp69743696"></a>4.3.3. setuid、 setgid 和 sticky 权限</h3></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>除了前面已经讨论过的那些权限之外， 还有三个管理员应该知道的权限配置。
+	它们是 <code class="literal">setuid</code>、
+	<code class="literal">setgid</code> 和 <code class="literal">sticky</code>。</p><p>这些配置对于一些 <span class="trademark">UNIX</span>® 操作而言很重要，
+	因为它们能提供一些一般情况下不会授予普通用户的功能。
+	为了便于理解， 我们首先介绍真实用户 ID (real
+	user ID) 和生效用户 ID (effective user ID)。</p><p>真实用户 ID 是拥有或启动进程的用户 <acronym class="acronym">UID</acronym>。
+	生效 <acronym class="acronym">UID</acronym>
+	是进程以其身份运行的用户 ID。 举例来说，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=passwd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">passwd</span>(1)</span></a> 工具通常是以发起修改密码的用户身份启动，
+	也就是说其进程的真实用户 ID 是那个用户的 ID；
+	但是， 由于需要修改密码数据库， 它会以
+	<code class="systemitem">root</code> 用户作为生效用户 ID 的身份运行。
+	这样， 普通的非特权用户就可以修改口令， 而不是看到
+	<span class="errorname">Permission Denied</span> 错误了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 的 <code class="literal">nosuid</code>
+	  选项可以令系统在不给出任何错误提示的情况下不执行这些程序。
+	  另一方面， 这个选项并不是万无一失的， 正如
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 联机手册所提到的那样，
+	  如果系统中安装了绕过 <code class="literal">nosuid</code>
+	  的封装程序， 那么这种保护就可以被绕过了。</p></div><p>setuid 权限可以通过在普通权限前面加上一个数字四 (4)
+	来设置， 如下面的例子所示：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chmod 4755 suidexample.sh</code></strong></pre><p>这样一来，
+	<code class="filename">suidexample.sh</code>
+	的权限应该如下面这样：</p><pre class="programlisting">-rwsr-xr-x   1 trhodes  trhodes    63 Aug 29 06:36 suidexample.sh</pre><p>您会注意到， 在原先的属主执行权限的位置变成了
+	<code class="literal">s</code>。 这样， 需要提升特权的可执行文件，
+	例如 <code class="command">passwd</code> 就可以正常运行了。</p><p>可以打开两个终端来观察这一情形。 在其中一个终端里面，
+	以普通用户身份启动 <code class="command">passwd</code> 进程。
+	在它等待输入新口令时， 在另一个终端中查看进程表中关于
+	<code class="command">passwd</code> 命令的信息。</p><p>在终端 A 中：</p><pre class="screen">Changing local password for trhodes
+Old Password:</pre><p>在终端 B 中：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ps aux | grep passwd</code></strong></pre><pre class="screen">trhodes  5232  0.0  0.2  3420  1608   0  R+    2:10AM   0:00.00 grep passwd
+root     5211  0.0  0.2  3620  1724   2  I+    2:09AM   0:00.01 passwd</pre><p>正如前面所说的那样， <code class="command">passwd</code> 是以普通用户的身份启动的，
+	但其生效
+	<acronym class="acronym">UID</acronym> 是 <code class="systemitem">root</code>。</p><p>与此对应， <code class="literal">setgid</code> 权限的作用，
+	与 <code class="literal">setuid</code> 权限类似，
+	只是当应用程序配合这一设定运行时， 它会被授予拥有文件的那个组的权限。</p><p>如果需要在文件上配置 <code class="literal">setgid</code> 权限，
+	可以在权限数值前面增加数字二 (2) 来运行 <code class="command">chmod</code> 命令，
+	如下面的例子所示：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chmod 2755 sgidexample.sh</code></strong></pre><p>可以用与前面类似的方法来检视新设定的生效情况， 在组权限的地方的
+	<code class="literal">s</code> 表示这一配置已经生效：</p><pre class="screen">-rwxr-sr-x   1 trhodes  trhodes    44 Aug 31 01:49 sgidexample.sh</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在这些例子中， 尽管 shell 脚本也属于可执行文件的一种，
+	  但它们不会以您配置的 <acronym class="acronym">EUID</acronym> 或生效用户 ID 的身份运行。
+	  这是因为 shell 脚本可能无法直接呼叫
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setuid&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">setuid</span>(2)</span></a> 调用。</p></div><p>我们已经讨论了两个特殊权限位
+	(<code class="literal">setuid</code> 和 <code class="literal">setgid</code>
+	权限位)， 它们让用户在使用程序时能够用到更高的权限，
+	有时这会削弱系统的安全性。 除了这两个之外， 还有第三个特殊权限位：
+	<code class="literal">sticky bit</code>， 它能够增强安全性。</p><p>当在目录上设置了 <code class="literal">sticky bit</code> 之后，
+	其下的文件就只能由文件的所有者删除了。 这个权限设置能够防止用户删除类似
+	<code class="filename">/tmp</code> 这样的公共目录中不属于他们的文件。
+	要应用这种权限， 可以在权限设置前面加上数字一 (1)。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chmod 1777 /tmp</code></strong></pre><p>现在， 可以用
+	<code class="command">ls</code> 命令来查看效果：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ls -al / | grep tmp</code></strong></pre><pre class="screen">drwxrwxrwt  10 root  wheel         512 Aug 31 01:49 tmp</pre><p>这里的结尾的 <code class="literal">t</code> 表示了
+	<code class="literal">sticky bit</code> 权限。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="consoles.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dirstructure.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.2. 虚拟控制台及终端 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.4. 目录架构</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

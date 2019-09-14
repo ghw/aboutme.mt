@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>9.4. 内核驱动，子系统和模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="prev" href="kernelconfig-devices.html" title="9.3. 发现系统硬件" /><link rel="next" href="kernelconfig-building.html" title="9.5. 建立并安装一个定制的内核" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">9.4. 内核驱动，子系统和模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="kernelconfig-devices.html">Prev</a> </td><th width="60%" align="center">Chapter 9. 配置FreeBSD的内核</th><td width="20%" align="right"> <a accesskey="n" href="kernelconfig-building.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="kernelconfig-modules"></a>9.4. 内核驱动，子系统和模块</h2></div></div></div><a id="idp72843344" class="indexterm"></a><p>在编译一个制定的内核之前请三思一下这么做的理由，
+      如果仅是需要某个特定的硬件支持的话，
+      那么很可能已经存在一个现成的模块了。</p><p>内核模块存放在目录
+      <code class="filename">/boot/kernel</code>
+      中，并能由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 命令加载入正在运行的内核。
+      基本上所有的内核驱动都有特定的模块和手册页。比如，
+      下面提到的 <code class="filename">ath</code> 无线以太网驱动。
+      在这个设备的联机手册中有以下信息：</p><pre class="programlisting">Alternatively, to load the driver as a module at boot time, place the
+following line in <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">loader.conf</span>(5)</span></a>:
+
+    if_ath_load="YES"</pre><p>遵照示例，在 <code class="filename">/boot/loader.conf</code> 中加入
+      <code class="literal">if_ath_load="YES"</code>
+      则能在机器启动的时候动态加载这个模块。</p><p>某些情况下，则没有相关的模块。通常是一些子系统和非常重要的驱动，
+      比如，快速文件系统 (<acronym class="acronym">FFS</acronym>) 就是一个内核必需的选项。
+      同样的还有网络支持 (INET)。不幸的是，
+      分辨一个驱动是否必需的唯一方法就是检查测试以下那个模块本身。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">去除某个驱动的支持或某个选项会非常容易得到一个坏掉的内核。
+        举例来说，如果把 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ata&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ata</span>(4)</span></a> 驱动从内核配置文件中去掉，
+        那么一个使用 <acronym class="acronym">ATA</acronym>
+        磁盘设备的系统可能就变得无法引导，除非有在
+        <code class="filename">loader.conf</code> 中加载。当你无法确定的时候，
+        请检查一下那个模块并把它留在你的内核配置中。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="kernelconfig-devices.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="kernelconfig.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="kernelconfig-building.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">9.3. 发现系统硬件 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 9.5. 建立并安装一个定制的内核</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

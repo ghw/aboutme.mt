@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>20.2. Z 文件系统 (ZFS)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="filesystems.html" title="Chapter 20. 文件系统支持" /><link rel="prev" href="filesystems.html" title="Chapter 20. 文件系统支持" /><link rel="next" href="filesystem-linux.html" title="20.3. Linux 文件系统" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">20.2. Z 文件系统 (ZFS)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="filesystems.html">Prev</a> </td><th width="60%" align="center">Chapter 20. 文件系统支持</th><td width="20%" align="right"> <a accesskey="n" href="filesystem-linux.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="filesystems-zfs"></a>20.2. Z 文件系统 (ZFS)</h2></div></div></div><p>Z 文件系统最初是由 <span class="trademark">Sun</span>™ 开发的，
+      它使用基于池的存储方法，只有存储数据时才会真正消耗空间。
+      它的设计也能够最大限度地保证数据完整性，并支持数据快照、多份副本以及数据校验。
+      它使用了一种被称为 <acronym class="acronym">RAID</acronym>-Z 的软件实现的数据复写模型。
+      <acronym class="acronym">RAID</acronym>-Z 能够提供类似于硬件 <acronym class="acronym">RAID</acronym> 的冗余性, 
+      能够防止数据写入时损坏，并克服了硬件 <acronym class="acronym">RAID</acronym> 的一些限制。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81486032"></a>20.2.1. 调校 ZFS</h3></div></div></div><p><acronym class="acronym">ZFS</acronym> 所提供的某些特性需要消耗大量内存，
+        因此在内存较少的系统上，我们要调整一些参数，
+        才能充分发挥其性能。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81487440"></a>20.2.1.1. 内存</h4></div></div></div><p>如果不考虑其他应用的开销，系统的总内存不应少于 1GB。
+          理想的内存大小取决于存储池的大小和启用了哪些 ZFS 特性。
+          通行的准则是：每 1TB 存储空间需要 1GB 内存。
+          如果启用了重复数据删除（deduplication）特性，
+          那么通行的准则是：每消去 1TB 存储空间，需要 5GB 内存。
+          尽管有些用户在内存不足的机器上也能成功使用 ZFS ，
+          但是当负载较高时，系统极有可能由于内存耗尽而崩溃。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81488592"></a>20.2.1.2. 内核配置</h4></div></div></div><p>由于 <span class="trademark">i386</span>™ 平台有内存限制，
+          在 <span class="trademark">i386</span>™ 架构上使用 ZFS 的用户应当在内核配置文件中加入下列选项，
+          重新编译内核并重启机器：</p><pre class="programlisting">options 	KVA_PAGES=512</pre><p>这个选项可以扩展内核的地址空间，
+          使得 <code class="varname">vm.kvm_size</code> 能够突破 1 GB 的限制( <acronym class="acronym">PAE</acronym> 为 2 GB )。
+          为了找出这个选项最合适的值，
+          以兆(MB)为单位把所需的地址空间除以 4 即可。
+          在本例中，2 GB 地址空间则设置为 <code class="literal">512</code>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81492432"></a>20.2.1.3. Loader 可调参数</h4></div></div></div><p>在 FreeBSD 支持的所有架构上，都应该加大 <code class="filename">kmem</code> 地址空间。
+          我们在一台拥有 1 GB 物理内存的测试系统上，
+          通过修改 <code class="filename">/boot/loader.conf</code> 加入下列参数并且重启，
+          使其通过了测试。</p><pre class="programlisting">vm.kmem_size="330M"
+vm.kmem_size_max="330M"
+vfs.zfs.arc_max="40M"
+vfs.zfs.vdev.cache.size="5M"</pre><p>关于 ZFS 更详细的调校方法请参阅
+	  <code class="uri"><a class="uri" href="http://wiki.freebsd.org/ZFSTuningGuide" target="_top">http://wiki.freebsd.org/ZFSTuningGuide</a></code>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81499984"></a>20.2.2. 使用 <acronym class="acronym">ZFS</acronym></h3></div></div></div><p>FreeBSD 有一种启动机制能在系统初始化时挂载 <acronym class="acronym">ZFS</acronym> 存储池。
+        可通过以下命令设置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'zfs_enable="YES"' &gt;&gt; /etc/rc.conf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/zfs start</code></strong></pre><p>接下来本节举一个例子，假定系统中有 3 块可用的 <acronym class="acronym">SCSI</acronym> 磁盘，
+        它们的设备名分别为 <code class="filename">da0</code>，
+        <code class="filename">da1</code> 和 <code class="filename">da2</code>。
+        <acronym class="acronym">IDE</acronym> 硬件的用户可以使用
+        <code class="filename">ad</code> 代替 <acronym class="acronym">da</acronym>。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81506512"></a>20.2.2.1. 单个磁盘存储池</h4></div></div></div><p>在单个磁盘上创建一个简单的，
+          非冗余的 <acronym class="acronym">ZFS</acronym> 存储池，
+          使用 <code class="command">zpool</code> 命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool create example /dev/da0</code></strong></pre><p>通过 <code class="command">df</code> 命令的输出，
+          我们可以查看新建的存储池：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>df</code></strong>
+Filesystem  1K-blocks    Used    Avail Capacity  Mounted on
+/dev/ad0s1a   2026030  235230  1628718    13%    /
+devfs               1       1        0   100%    /dev
+/dev/ad0s1d  54098308 1032846 48737598     2%    /usr
+example      17547136       0 17547136     0%    /example</pre><p>这份输出显示 <code class="literal">example</code>
+          存储池不仅被创建成功而且被 <span class="emphasis"><em>挂载</em></span> 了。
+          我们能像访问普通的文件系统那样访问它，
+          就像以下例子中演示的那样，用户能够在上面创建文件并浏览：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /example</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ls</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>touch testfile</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ls -al</code></strong>
+total 4
+drwxr-xr-x   2 root  wheel    3 Aug 29 23:15 .
+drwxr-xr-x  21 root  wheel  512 Aug 29 23:12 ..
+-rw-r--r--   1 root  wheel    0 Aug 29 23:15 testfile</pre><p>可是这个存储池并没有用到任何
+          <acronym class="acronym">ZFS</acronym> 特性。
+          我们可以在这个存储池上创建一个文件系统，并启用压缩：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs create example/compressed</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zfs set compression=gzip example/compressed</code></strong></pre><p>现在 <code class="literal">example/compressed</code>
+          是一个启用了压缩的 <acronym class="acronym">ZFS</acronym> 文件系统了。
+          我们可以尝试复制一些大的文件到 <code class="filename">/example/compressed</code> 。</p><p>如果要禁用压缩，可以使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set compression=off example/compressed</code></strong></pre><p>如果要卸载这个文件系统，
+            则使用如下命令并用 <code class="command">df</code> 命令确认：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs umount example/compressed</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df</code></strong>
+Filesystem  1K-blocks    Used    Avail Capacity  Mounted on
+/dev/ad0s1a   2026030  235232  1628716    13%    /
+devfs               1       1        0   100%    /dev
+/dev/ad0s1d  54098308 1032864 48737580     2%    /usr
+example      17547008       0 17547008     0%    /example</pre><p>重新挂载这个文件系统，
+            并用 <code class="command">df</code> 命令确认：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs mount example/compressed</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df</code></strong>
+Filesystem         1K-blocks    Used    Avail Capacity  Mounted on
+/dev/ad0s1a          2026030  235234  1628714    13%    /
+devfs                      1       1        0   100%    /dev
+/dev/ad0s1d         54098308 1032864 48737580     2%    /usr
+example             17547008       0 17547008     0%    /example
+example/compressed  17547008       0 17547008     0%    /example/compressed</pre><p>我们也可使用 <code class="command">mount</code>
+          命令来查看存储池与文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount</code></strong>
+/dev/ad0s1a on / (ufs, local)
+devfs on /dev (devfs, local)
+/dev/ad0s1d on /usr (ufs, local, soft-updates)
+example on /example (zfs, local)
+example/data on /example/data (zfs, local)
+example/compressed on /example/compressed (zfs, local)</pre><p><acronym class="acronym">ZFS</acronym> 文件系统一旦创建，就能随意使用。
+          然而还有很多其他特性，能够在单个的文件系统上启用。
+          在下面的例子中，我们将创建一个名为 <code class="literal">data</code> 的文件系统。
+          我们将在这个文件系统上存储一些重要的文件，
+          并把它设置成为每一个数据块保存两份拷贝：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs create example/data</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zfs set copies=2 example/data</code></strong></pre><p>让我们再次使用 <code class="command">df</code>
+          命令查看数据和空间的使用状况：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>df</code></strong>
+Filesystem         1K-blocks    Used    Avail Capacity  Mounted on
+/dev/ad0s1a          2026030  235234  1628714    13%    /
+devfs                      1       1        0   100%    /dev
+/dev/ad0s1d         54098308 1032864 48737580     2%    /usr
+example             17547008       0 17547008     0%    /example
+example/compressed  17547008       0 17547008     0%    /example/compressed
+example/data        17547008       0 17547008     0%    /example/data</pre><p>请注意，同一个存储池上的所有文件系统都共享相同大小的可用空间。
+          这就是我们在上述例子中使用 <code class="command">df</code> 命令的原因，
+          这样就能看出，这些文件系统都从同一个存储池获取了它们所需的空间。
+          <acronym class="acronym">ZFS</acronym> 文件系统去掉了诸如卷和分区的概念，
+          并允许多个文件系统占用同一个存储池。</p><p>当不再需要文件系统与存储池的时候，用如下命令销毁它们：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs destroy example/compressed</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zfs destroy example/data</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zpool destroy example</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81545040"></a>20.2.2.2. <acronym class="acronym">ZFS</acronym> RAID-Z</h4></div></div></div><p>磁盘不可避免地会坏掉和停止运转。
+          为了避免因磁盘损坏而丢失数据，有一种方法是实现
+          <acronym class="acronym">RAID</acronym>。而 <acronym class="acronym">ZFS</acronym>
+          在它的存储池设计中便支持这个特性。</p><p>假设存在 3 个
+          <acronym class="acronym">SCSI</acronym> 设备，
+          <code class="filename">da0</code>， <code class="filename">da1</code>
+          和 <code class="filename">da2</code>，使用如下命令创建一个
+          <acronym class="acronym">RAID</acronym>-Z 存储池：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool create storage raidz da0 da1 da2</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><span class="trademark">Sun</span>™ 推荐在一个 <acronym class="acronym">RAID</acronym>-Z
+            配置中使用的磁盘数量为 3 至 9 块。
+            如果你要求在单独的一个存储池中使用 10 块或更多的磁盘，
+            请考虑分拆成更小 <acronym class="acronym">RAID</acronym>-z 组。
+            如果你只有 2 块磁盘， 并仍然需要冗余，
+            请考虑使用 <acronym class="acronym">ZFS</acronym> 的 mirror 特性。
+            更多细节请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=zpool&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">zpool</span>(8)</span></a> 手册页。</p></div><p>zpool <code class="literal">storage</code> 至此就创建好了。
+          可以如前文提到的那样使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=df&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">df</span>(1)</span></a> 确认。
+          如需配给更多的磁盘设备则把它们加这个列表的后面。
+          在存储池上创建一个叫 <code class="literal">home</code> 的文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs create storage/home</code></strong></pre><p>像前文中提到的那样，在这个新建的文件系统上也可以启用压缩并保存多份拷贝，
+          可通过如下的命令实现：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set copies=2 storage/home</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zfs set compression=gzip storage/home</code></strong></pre><p>把用户的数据都拷贝过来并创建一个符号链接，
+          让他们开始使用这个新的目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cp -rp /home/* /storage/home</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>rm -rf /home /usr/home</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ln -s /storage/home /home</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ln -s /storage/home /usr/home</code></strong></pre><p>现在用户的数据应该都保存在新创建的
+          <code class="filename">/storage/home</code>
+          上了。试着添加一个新用户并以新的身份登录。</p><p>尝试创建一个可日后用来回退的快照：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs snapshot storage/home@08-30-08</code></strong></pre><p>请注意，快照选项将会抓取一个真实的文件系统，
+          而不是某个用户目录或文件。<code class="literal">@</code>
+          符号是用在文件系统名或卷名后面的分隔符。
+          当用户目录损坏时，可用如下命令恢复：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs rollback storage/home@08-30-08</code></strong></pre><p>如果想查看所有可用的快照，在文件系统的
+          <code class="filename">.zfs/snapshot</code> 目录下执行
+          <code class="command">ls</code> 命令即可。
+          例如，执行如下命令来查看之前抓取的快照：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ls /storage/home/.zfs/snapshot</code></strong></pre><p>编写一个脚本定期抓取用户数据的快照是可行的，
+        但是久而久之，快照可能消耗掉大量的磁盘空间。
+        为了删除之前创建的快照，可使用以下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs destroy storage/home@08-30-08</code></strong></pre><p>完成测试后，我们可以让
+        <code class="filename">/store/home</code>
+        成为真正的
+        <code class="filename">/home</code>
+        文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set mountpoint=/home storage/home</code></strong></pre><p>使用 <code class="command">df</code> 和
+        <code class="command">mount</code>
+        命令确认我们的文件系统是否已经成了真正的
+        <code class="filename">/home</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount</code></strong>
+/dev/ad0s1a on / (ufs, local)
+devfs on /dev (devfs, local)
+/dev/ad0s1d on /usr (ufs, local, soft-updates)
+storage on /storage (zfs, local)
+storage/home on /home (zfs, local)
+<code class="prompt">#</code> <strong class="userinput"><code>df</code></strong>
+Filesystem   1K-blocks    Used    Avail Capacity  Mounted on
+/dev/ad0s1a    2026030  235240  1628708    13%    /
+devfs                1       1        0   100%    /dev
+/dev/ad0s1d   54098308 1032826 48737618     2%    /usr
+storage       26320512       0 26320512     0%    /storage
+storage/home  26320512       0 26320512     0%    /home</pre><p>这样 <acronym class="acronym">RAID</acronym>-Z
+      的配置就完成了。为了借助每晚执行的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=periodic&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">periodic</span>(8)</span></a>
+      获取文件系统的状态信息，我们进行如下配置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'daily_status_zfs_enable="YES"' &gt;&gt; /etc/periodic.conf</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81590608"></a>20.2.2.3. 修复 <acronym class="acronym">RAID</acronym>-Z</h4></div></div></div><p>每种软 <acronym class="acronym">RAID</acronym>
+          都有监测其 <code class="literal">状态</code> 的方法。
+          <acronym class="acronym">RAID</acronym>-Z 的状态可以用下列命令查看：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool status -x</code></strong></pre><p>如果所有的存储池处于健康状态并且一切正常的话，
+          将返回如下信息：</p><pre class="screen">all pools are healthy</pre><p>如果存在问题，比如某个磁盘设备下线了，
+          那么存储池的状态将看上去大概是这个样子的：</p><pre class="screen">  pool: storage
+ state: DEGRADED
+status: One or more devices has been taken offline by the administrator.
+	Sufficient replicas exist for the pool to continue functioning in a
+	degraded state.
+action: Online the device using 'zpool online' or replace the device with
+	'zpool replace'.
+ scrub: none requested
+config:
+
+	NAME        STATE     READ WRITE CKSUM
+	storage     DEGRADED     0     0     0
+	  raidz1    DEGRADED     0     0     0
+	    da0     ONLINE       0     0     0
+	    da1     OFFLINE      0     0     0
+	    da2     ONLINE       0     0     0
+
+errors: No known data errors</pre><p>上述信息表明，
+          管理员先前使用过如下命令让设备下线了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool offline storage da1</code></strong></pre><p>有时候，我们会在切断系统电源之后替换下
+          <code class="filename">da1</code> 。
+          当系统再次上线时，使用下列命令替换磁盘：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool replace storage da1</code></strong></pre><p>至此可用不带 <code class="option">-x</code>
+          选项的命令再次获取状态信息：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool status storage</code></strong>
+ pool: storage
+ state: ONLINE
+ scrub: resilver completed with 0 errors on Sat Aug 30 19:44:11 2008
+config:
+
+	NAME        STATE     READ WRITE CKSUM
+	storage     ONLINE       0     0     0
+	  raidz1    ONLINE       0     0     0
+	    da0     ONLINE       0     0     0
+	    da1     ONLINE       0     0     0
+	    da2     ONLINE       0     0     0
+
+errors: No known data errors</pre><p>在这个例子中，一切都显示正常。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81601104"></a>20.2.2.4. 数据校验</h4></div></div></div><p><acronym class="acronym">ZFS</acronym>
+          使用 <code class="literal">校验和</code>(checksum) 来验证存储数据的完整性。
+          当文件系统创建时，该特性就默认启用了，可使用以下的命令禁用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set checksum=off storage/home</code></strong></pre><p>我们强烈<span class="emphasis"><em>不</em></span>建议这么做，
+      因为校验和只占用极少的存储空间，
+      并且在 <span class="quote">“<span class="quote">scrubbing</span>”</span> 的过程中，
+      校验和将被用来验证数据的完整性。
+      可以使用以下命令验证 <code class="literal">storage</code>
+      存储池里数据的完整性：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool scrub storage</code></strong></pre><p>该过程可能会很漫长，这取决于存储的数据量。
+      而且 <acronym class="acronym">I/O</acronym> 操作非常密集，
+      所以在任何时间只能执行一个这样的操作。
+      scrub 完成之后，存储池的状态就更新了，
+      可使用如下的命令查看：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zpool status storage</code></strong>
+ pool: storage
+ state: ONLINE
+ scrub: scrub completed with 0 errors on Sat Aug 30 19:57:37 2008
+config:
+
+	NAME        STATE     READ WRITE CKSUM
+	storage     ONLINE       0     0     0
+	  raidz1    ONLINE       0     0     0
+	    da0     ONLINE       0     0     0
+	    da1     ONLINE       0     0     0
+	    da2     ONLINE       0     0     0
+
+errors: No known data errors</pre><p>上述信息显示了 scrub 完成的时间，
+      并且确保在此时间后的很长的一段时间内，数据都将是完整的。</p><p>Z 文件系统还有更多的选项，请参阅
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=zfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">zfs</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=zpool&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">zpool</span>(8)</span></a> 手册页。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81618640"></a>20.2.2.5. ZFS 配额</h4></div></div></div><p>ZFS 支持不同的配额方式，包括：引用配额、总体配额、
+      用户配额、用户组配额。本节阐述了各种配额的方式与指令。</p><p>配额限制了某个数据集及其衍生数据集所能占据的总空间，
+      为衍生数据集的文件系统和快照所能占据的空间施加了限制。
+      当需要限制某个特定用户所能使用的空间时，配额非常有用。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">配额不适用于卷，因为
+	    <code class="literal">volsize</code> 属性本身就是一种隐式的配额。</p></div><p>
+	  <code class="literal">refquota=size</code>
+      能够为数据集所能消耗的总空间施加硬性限制。
+      然而，这一硬性限制并不包括衍生数据所占的空间，
+      例如文件系统和快照。</p><p>若要为 <code class="filename">storage/home/bob</code> 
+      施加一个 10 GB 的总体配额，
+	  可使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set quota=10G storage/home/bob</code></strong></pre><p>用户配额限制了特定用户所能使用的空间。
+      一般格式为 <code class="literal">userquota@user=size</code>，
+      其中用户名必须为下列格式中的一种：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><acronym class="acronym">POSIX</acronym>
+          兼容的名字，例如
+	      <em class="replaceable"><code>joe</code></em>。</p></li><li class="listitem"><p><acronym class="acronym">POSIX</acronym>
+          数值型 ID，例如
+	      <em class="replaceable"><code>789</code></em>。</p></li><li class="listitem"><p><acronym class="acronym">SID</acronym>
+          名字，例如
+	      <em class="replaceable"><code>joe.bloggs@example.com</code></em>。</p></li><li class="listitem"><p><acronym class="acronym">SID</acronym>
+          数值型 ID，例如
+          <em class="replaceable"><code>S-1-123-456-789</code></em>。</p></li></ul></div><p>例如，使用如下命令给用户名为 <em class="replaceable"><code>joe</code></em>
+      的用户施加 50 GB 的配额限制：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set userquota@joe=50G</code></strong></pre><p>若要取消配额或者确保没有设置配额，使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set userquota@joe=none</code></strong></pre><p><code class="command">zfs get all</code> 并不显示用户配额属性。
+      非 <code class="systemitem">root</code> 用户只能看到他们自己的配额，
+      除非他们被授予了 <code class="literal">userquota</code> 权限。
+      具有该权限的用户能够查看并设置所有用户的配额。</p><p>用户组配额限制了某个特定用户组所能消耗的空间。
+      一般格式为 <code class="literal">groupquota@group=size</code>。</p><p>若要设置用户组 <em class="replaceable"><code>firstgroup</code></em>
+      的配额为 50 GB，使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set groupquota@firstgroup=50G</code></strong></pre><p>若要为用户组 <em class="replaceable"><code>firstgroup</code></em> 取消配额，
+      或者确保没有为其设置配额，则使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set groupquota@firstgroup=none</code></strong></pre><p>和用户配额属性一样，
+	  非 <code class="systemitem">root</code> 用户只能查看他所在的用户组的配额。
+      而 <code class="systemitem">root</code> 或是取得了 <code class="literal">groupquota</code>
+      权限的用户则能够查看并设置所有用户组的配额。</p><p>若要显示在某个特定的文件系统或快照上，各个用户的配额及其消耗了多少空间，
+      可使用 <code class="command">zfs userspace</code> 命令。
+      对于用户组的信息，则使用 <code class="command">zfs groupspace</code> 命令。
+      关于上述命令的具体选项，可参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=zfs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">zfs</span>(1)</span></a>。</p><p>具有足够权限的用户以及 <code class="systemitem">root</code>
+      可以使用如下命令列出 <code class="filename">storage/home/bob</code> 的配额：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs get quota storage/home/bob</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp81658576"></a>20.2.2.6. ZFS 空间预留</h4></div></div></div><p>ZFS 支持两种类型的空间预留。
+      本节阐述了这两种类型的实行方式和相关指令。</p><p><code class="literal">reservation</code> 
+      属性能够为数据集及其衍生数据集预留一块最小空间。
+      这就意味着，如果为 <code class="filename">storage/home/bob</code>
+      设置了 10 GB 的预留空间，当磁盘空间减少时，
+      至少要为该数据集预留 10 GB 可用空间。
+      <code class="literal">refreservation</code>
+      属性能够为数据集预留一块最小空间，
+      但并不包含其衍生数据，例如快照。
+      举例来说，如果要创建一份 <code class="filename">storage/home/bob</code> 的快照，
+      在 <code class="literal">refreservation</code> 之外必须有足够的空间，
+      操作才能成功。因为主数据集的衍生数据所需的空间并不计入
+      <code class="literal">refreservation</code>，所以不会为其预留。</p><p>在许多场合下，任何形式的空间预留都非常有用。
+      例如，计划和测试新系统上的磁盘空间分配适用性；
+      或是确保在系统恢复的过程中，文件系统上有足够的可用空间。</p><p><code class="literal">reservation</code> 属性的一般格式是
+	  <code class="literal">reservation=size</code>，
+      因此若要让 <code class="filename">storage/home/bob</code>
+      预留 10 GB 空间，使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set reservation=10G storage/home/bob</code></strong></pre><p>若要确保没有设置预留空间，或者取消预留空间，使用如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs set reservation=none storage/home/bob</code></strong></pre><p>同理可设置 <code class="literal">refreservation</code> 属性，
+      其一般格式为 <code class="literal">refreservation=size</code>。</p><p>若要检查在数据集 <code class="filename">storage/home/bob</code>
+      上是否设置了空间预留（reservations）或者引用空间预留（refreservations），
+      使用下列任一命令即可：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>zfs get reservation storage/home/bob</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>zfs get refreservation storage/home/bob</code></strong></pre></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="filesystems.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="filesystems.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="filesystem-linux.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 20. 文件系统支持 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 20.3. Linux 文件系统</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

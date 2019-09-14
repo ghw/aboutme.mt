@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.8. 通过 GEOM 实现 UFS 日志</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="geom-glabel.html" title="19.7. 为磁盘设备添加卷标" /><link rel="next" href="filesystems.html" title="Chapter 20. 文件系统支持" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.8. 通过 GEOM 实现 UFS 日志</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="geom-glabel.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="filesystems.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="geom-gjournal"></a>19.8. 通过 GEOM 实现 UFS 日志</h2></div></div></div><a id="idp81434320" class="indexterm"></a><a id="idp81435088" class="indexterm"></a><p>随着 FreeBSD 7.0 的发布，
+      提供了长期为人们所期待的日志功能的实现。 这个实现采用了
+      <acronym class="acronym">GEOM</acronym> 子系统， 可以很容易地使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gjournal&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gjournal</span>(8)</span></a> 工具来进行配置。</p><p>日志是什么？ 日志的作用是保存文件系统事务的记录， 换言之，
+      完成一次完整的磁盘写入操作所需的变动， 这些记录会在元数据以及文件数据写盘之前，
+      写入到磁盘中。 这种事务日志可以在随后用于重放并完成文件系统事务，
+      以避免文件系统出现不一致的问题。</p><p>这种方法是另一种阻止文件系统丢失数据并发生不一致的方法。 与 Soft Updates
+      追踪并确保元数据更新顺序这种方法不同，
+      它会实际地将日志保存到指定为此项任务保留的磁盘空间上，
+      在某些情况下可全部存放到另外一块磁盘上。</p><p>与其他文件系统的日志实现不同，
+      <code class="command">gjournal</code> 采用的是基于块， 而不是作为文件系统的一部分的方式 -
+      它只是作为一种
+      <acronym class="acronym">GEOM</acronym> 扩展实现。</p><p>如果希望启用 <code class="command">gjournal</code>，
+      FreeBSD 内核需要下列选项 - 这是 FreeBSD 7.0 以及更高版本系统上的默认配置：</p><pre class="programlisting">options	UFS_GJOURNAL</pre><p>如果使用日志的卷需要在启动的时候被挂载， 还需加载
+      <code class="filename">geom_journal.ko</code> 内核模块，
+      将以下这行加入 <code class="filename">/boot/loader.conf</code>：</p><pre class="programlisting">geom_journal_load="YES"</pre><p>这个功能也可被编译进一个定制的内核，
+      需在内核配置文件中加入以下这行：</p><pre class="programlisting">options	GEOM_JOURNAL</pre><p>现在， 可以为空闲的文件系统创建日志了。 对于新增的 <acronym class="acronym">SCSI</acronym> 磁盘
+      <code class="filename">da4</code>， 具体的操作步骤为：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gjournal load</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>gjournal label /dev/da4</code></strong></pre><p>这样， 就会出现一个与
+      <code class="filename">/dev/da4</code> 设备节点对应的
+      <code class="filename">/dev/da4.journal</code> 设备节点。
+      接下来， 可以在这个设备上建立文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>newfs -O 2 -J /dev/da4.journal</code></strong></pre><p>这个命令将建立一个包含日志设备的
+      <acronym class="acronym">UFS</acronym>2 文件系统。</p><p>然后就可以用 <code class="command">mount</code> 命令来挂接设备了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/da4.journal /mnt</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当磁盘包含多个 slice 时， 每个 slice 上都会建立日志。
+	例如， 如果有 <code class="filename">ad4s1</code> 和
+	<code class="filename">ad4s2</code> 这两个 slice，
+	则 <code class="command">gjournal</code> 会建立
+	<code class="filename">ad4s1.journal</code> 和
+	<code class="filename">ad4s2.journal</code>。</p></div><p>出于性能考虑， 可能会希望在其他磁盘上保存日志。 对于这类情形，
+      应该在启用日志的设备后面，给出日志提供者或存储设备。 在暨存的文件系统上，
+      可以用 <code class="command">tunefs</code> 来启用日志； 不过，
+      在尝试修改文件系统之前， 您应对其进行备份。 多数情况下，
+      如果无法创建实际的日志， <code class="command">gjournal</code> 就会失败， 
+      并且不会防止由于不当使用 <code class="command">tunefs</code> 而造成的数据丢失。</p><p>对于 FreeBSD 系统的启动磁盘使用日志也是可能的。
+      请参阅 <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/gjournal-desktop" target="_top">Implementing UFS Journaling on
+	a Desktop PC</a> 以获得更多详细信息。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="geom-glabel.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="filesystems.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.7. 为磁盘设备添加卷标 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 20. 文件系统支持</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

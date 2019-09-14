@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.6. GEOM Gate 网络设备</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="GEOM-raid3.html" title="19.5. RAID3 - 使用专用校验设备的字节级条带" /><link rel="next" href="geom-glabel.html" title="19.7. 为磁盘设备添加卷标" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.6. GEOM Gate 网络设备</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="GEOM-raid3.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="geom-glabel.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="geom-ggate"></a>19.6. GEOM Gate 网络设备</h2></div></div></div><p>通过 gate 工具， GEOM 支持以远程方式使用设备， 例如磁盘、
+      CD-ROM、 文件等等。 这和 <acronym class="acronym">NFS</acronym> 类似。</p><p>在开始工作之前， 首先要创建一个导出文件。
+      这个文件的作用是指定谁可以访问导出的资源，
+      以及提供何种级别的访问授权。 例如，
+      要把第一块 <acronym class="acronym">SCSI</acronym> 盘的第四个 slice 导出，
+      对应的 <code class="filename">/etc/gg.exports</code> 会是类似下面的样子：</p><pre class="programlisting">192.168.1.0/24 RW /dev/da0s4d</pre><p>这表示允许同属私有子网的所有机器访问
+      <code class="filename">da0s4d</code> 分区上的文件系统。</p><p>要导出这个设备， 首先请确认它没有被挂接，
+      然后是启动 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ggated&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ggated</span>(8)</span></a> 服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ggated</code></strong></pre><p>现在我们将在客户机上 <code class="command">mount</code> 该设备，
+      使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ggatec create -o rw 192.168.1.1 /dev/da0s4d</code></strong>
+ggate0
+<code class="prompt">#</code> <strong class="userinput"><code>mount /dev/ggate0 /mnt</code></strong></pre><p>到此为止， 设备应该已经可以通过挂接点
+      <code class="filename">/mnt</code> 访问了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">请注意， 如果设备已经被服务器或网络上的任何其他机器挂接，
+	则前述操作将会失败。</p></div><p>如果不再需要使用这个设备，
+      就可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">umount</span>(8)</span></a> 命令来安全地将其卸下了，
+      这一点和其他磁盘设备类似。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="GEOM-raid3.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="geom-glabel.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.5. <acronym class="acronym">RAID</acronym>3 - 使用专用校验设备的字节级条带 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 19.7. 为磁盘设备添加卷标</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

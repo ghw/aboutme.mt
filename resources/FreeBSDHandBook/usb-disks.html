@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.5. USB 存储设备</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="raid.html" title="18.4. RAID" /><link rel="next" href="creating-cds.html" title="18.6. 创建和使用光学介质(CD)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.5. USB 存储设备</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="raid.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="creating-cds.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="usb-disks"></a>18.5. USB 存储设备</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp79693904" class="indexterm"></a><p>到目前为止，有许多外部外部存储解决方案，
+    例如：通用串行总线 (USB)：硬盘、USB thumbdrives、CD-R burners
+    等等。 FreeBSD 为这些设备提供了支持。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79695440"></a>18.5.1. 配置</h3></div></div></div><p> USB 大容量存储设备驱动，在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umass&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">umass</span>(4)</span></a>,
+	中提供了对 USB 存储设备的支持。如果您使用
+	<code class="filename">GENERIC</code> 内核，您不必要改变配置文件里的任何内容。
+	如果您使用了定制的内核，就要确定下面的行出现在您的内核配置文件里：</p><pre class="programlisting">device scbus
+device da
+device pass
+device uhci
+device ohci
+device ehci
+device usb
+device umass</pre><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umass&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">umass</span>(4)</span></a> 驱动程序使用 SCSI 子系统来访问 USB 存储设备，
+	您的 USB 设备将被系统看成为一个 SCSI 设备。依靠您主板上的 USB 芯片，
+	您只须选择 <code class="literal">device
+	uhci</code> 或用于 USB 1.X 支持的 <code class="literal">device ohci</code>
+        二者之一即可， 但是两者都加入内核配置文件当中也是无害的。
+        对于 USB 2.X 控制器的支持由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ehci&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ehci</span>(4)</span></a> 提供
+        (<code class="literal">device ehci</code> 这一行)。
+	不要忘了如果您加入了上面的几行要重新编译和安装内核。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您的 USB 设备是一个 CD-R 或 DVD 刻录机， SCSI CD-ROM
+	  驱动程序， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">cd</span>(4)</span></a>, 就必须加入内核中通过下面这行：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">device cd</pre><p xmlns="http://www.w3.org/1999/xhtml">由于刻录机被视为 SCSI 设备， 因此， 不应该在内核配置文件中使用
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atapicam&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">atapicam</span>(4)</span></a> 驱动程序。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79712592"></a>18.5.2. 测试配置</h3></div></div></div><p>配置好后准备进行测试：插入您的 USB 设备，
+	在系统信息中 (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a>), 应该会出现像下面的设备：</p><pre class="screen">umass0: USB Solid state disk, rev 1.10/1.00, addr 2
+GEOM: create disk da0 dp=0xc2d74850
+da0 at umass-sim0 bus 0 target 0 lun 0
+da0: &lt;Generic Traveling Disk 1.11&gt; Removable Direct Access SCSI-2 device
+da0: 1.000MB/s transfers
+da0: 126MB (258048 512 byte sectors: 64H 32S/T 126C)</pre><p>当然啦，商标，设备标识
+	(<code class="filename">da0</code>) 和其它的细节信息会根据您的配置不同
+	而有所不同。</p><p>因为 USB 设备被看作 SCSI 设备中的一个，
+	<code class="command">camcontrol</code> 命令也能够用来列出
+	USB 存储设备和系统的关联：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>camcontrol devlist</code></strong>
+&lt;Generic Traveling Disk 1.11&gt;      at scbus0 target 0 lun 0 (da0,pass0)</pre><p>如果设备上已经包含了文件系统， 现在应该就可以挂接它了。 如果需要，
+	请参阅 <a class="xref" href="disks-adding.html" title="18.3. 添加磁盘">Section 18.3, “添加磁盘”</a> 来了解如何在 USB驱动器上格式化和创建分区。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">允许非可信用户挂载任意介质，
+	  例如通过使用前面介绍的 <code class="literal">vfs.usermount</code>
+	  来启用的功能， 从安全角度来看是很不保险的。
+	  FreeBSD 中的绝大多数文件系统并不提供针对恶意设备的内建防护能力。</p></div><p>如果希望设备能够被普通用户挂接，
+	还需要做一些其它操作。 首先， 在 USB 存储设备连接到计算机上时，
+	系统自动生成的设备文件， 必须是该用户能够读写的。
+	一种做法是让所有属于 <code class="systemitem">operator</code> 组的用户都可以访问该设备。
+	要完成这项工作， 首先需要用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pw</span>(8)</span></a> 来给用户指定组。 其次，
+	在生成设备文件时， <code class="systemitem">operator</code> 组应能读写它们。 这可以通过在
+	<code class="filename">/etc/devfs.rules</code> 中增加一些相应的设置来实现：</p><pre class="programlisting">[localrules=5]
+add path 'da*' mode 0660 group operator</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果系统中已经有其它 SCSI 磁盘， 则上述操作必须做一些变化。
+	  例如， 如果系统中已经存在了设备名为 <code class="filename">da0</code> 到
+	  <code class="filename">da2</code> 的磁盘， 则第二行应改为：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">add path 'da[3-9]*' mode 0660 group operator</pre><p xmlns="http://www.w3.org/1999/xhtml">这会将系统中已经存在的磁盘， 排除在属于 <code class="systemitem">operator</code>
+	  组的设备之外。</p></div><p>另外， 您还需要在 <code class="filename">/etc/rc.conf</code> 文件中，
+	启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs.rules&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs.rules</span>(5)</span></a> 规则集：</p><pre class="programlisting">devfs_system_ruleset="localrules"</pre><p>接下来， 需要配置内核， 令普通用户能够挂接文件系统。
+	最简单的方法是将下面的配置加入到
+	<code class="filename">/etc/sysctl.conf</code>：</p><pre class="programlisting">vfs.usermount=1</pre><p>注意， 这个设置只有在下次重启系统时才会生效。
+	另外， 您也可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 来设置这个变量。</p><p>最后一步是创建将要挂接文件系统的目录。
+	这个目录必须是属于将要挂接文件系统的用户的。
+	以 <code class="systemitem">root</code> 身份为用户建立属于该用户的
+	<code class="filename">/mnt/username</code>
+	(此处 <em class="replaceable"><code>username</code></em> 应替换成用户的登录名，
+        并把 <em class="replaceable"><code>usergroup</code></em> 替换成用户所属的组)：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /mnt/username</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>chown username:usergroup /mnt/username</code></strong></pre><p>假设已经插入了一个 USB 读卡设备， 并且系统将其识别为
+	<code class="filename">/dev/da0s1</code>， 由于这些设备通常是 FAT
+	文件系统， 用户可以这样挂接它们：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mount -t msdosfs -o -m=644,-M=755 /dev/da0s1 /mnt/username</code></strong></pre><p>如果拔出设备 (必须首先将其对应的磁盘卷卸下)，
+	则您会在系统消息缓冲区中看到类似下面的信息：</p><pre class="screen">umass0: at uhub0 port 1 (addr 2) disconnected
+(da0:umass-sim0:0:0:0): lost device
+(da0:umass-sim0:0:0:0): removing device entry
+GEOM: destroy disk da0 dp=0xc2d74850
+umass0: detached</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79764688"></a>18.5.3. 深入阅读</h3></div></div></div><p>除了 <a class="link" href="disks-adding.html" title="18.3. 添加磁盘">Adding
+	Disks</a> 和 <a class="link" href="mount-unmount.html" title="4.6. 文件系统的挂接和卸下">Mounting and
+	Unmounting File Systems</a> 章之外， 阅读各种手册页也是有益的：
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umass&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">umass</span>(4)</span></a>,	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=camcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">camcontrol</span>(8)</span></a>, 和 FreeBSD  8.X 的
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=usbconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">usbconfig</span>(8)</span></a> 或者对于更早期 FreeBSD 版本的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=usbdevs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">usbdevs</span>(8)</span></a>。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="raid.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="creating-cds.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.4. RAID </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.6. 创建和使用光学介质(CD)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

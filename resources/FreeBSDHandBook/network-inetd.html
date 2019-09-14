@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.2.  inetd “超级服务器”</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="next" href="network-nfs.html" title="28.3. 网络文件系统（NFS）" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.2.  <span class="application">inetd</span> <span class="quote">“<span class="quote">超级服务器</span>”</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-servers.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-nfs.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-inetd"></a>28.2.  <span class="application">inetd</span> <span class="quote">“<span class="quote">超级服务器</span>”</span></h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Chern</span> <span class="surname">Lee</span></span>. </span></div><div><span class="authorgroup">更新 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="othername">The FreeBSD Documentation Project</span></span>. </span></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-overview"></a>28.2.1. 总览</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 有时也被称作 <span class="quote">“<span class="quote">Internet
+	超级服务器</span>”</span>， 因为它可以为多种服务管理连接。
+	当 <span class="application">inetd</span> 收到连接时，
+	它能够确定连接所需的程序， 启动相应的进程，
+	并把 socket 交给它 (服务 socket 会作为程序的标准输入、
+	输出和错误输出描述符)。 使用
+	<span class="application">inetd</span> 来运行那些负载不重的服务有助于降低系统负载，
+	因为它不需要为每个服务都启动独立的服务程序。</p><p>一般说来， <span class="application">inetd</span> 主要用于启动其它服务程序，
+	但它也有能力直接处理某些简单的服务，
+	例如 <span class="application">chargen</span>、
+	<span class="application">auth</span>， 以及
+	<span class="application">daytime</span>。</p><p>这一节将介绍关于如何通过命令行选项， 以及配置文件
+	<code class="filename">/etc/inetd.conf</code> 来对
+	<span class="application">inetd</span> 进行配置的一些基础知识。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-settings"></a>28.2.2. 设置</h3></div></div></div><p><span class="application">inetd</span> 是通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc</span>(8)</span></a> 系统启动的。
+	<code class="literal">inetd_enable</code> 选项默认设为
+	<code class="literal">NO</code>， 但可以在安装系统时，
+	由用户根据需要通过 <span class="application">sysinstall</span> 来打开。
+	将：</p><pre class="programlisting">inetd_enable="YES"</pre><p>或</p><pre class="programlisting">inetd_enable="NO"</pre><p>写入
+	<code class="filename">/etc/rc.conf</code> 可以启用或禁用系统启动时
+	<span class="application">inetd</span> 的自动启动。 命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/inetd rcvar</code></strong></pre><p>可以显示目前的设置。</p><p>此外， 您还可以通过
+	<code class="literal">inetd_flags</code> 参数来向 <span class="application">inetd</span>
+	传递额外的其它参数。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-cmdline"></a>28.2.3. 命令行选项</h3></div></div></div><p>与多数服务程序类似， <span class="application">inetd</span>
+	也提供了为数众多的用以控制其行为的参数。 完整的参数列表如下：</p><p><code class="command">inetd</code> <code class="option">[-d] [-l] [-w] [-W] [-c maximum] [-C rate] [-a address | hostname]
+           [-p filename] [-R rate] [-s maximum] [configuration file]</code></p><p>这些参数都可以通过
+	<code class="filename">/etc/rc.conf</code> 的
+	<code class="literal">inetd_flags</code> 选项来传给 <span class="application">inetd</span>。
+	默认情况下，
+	<code class="literal">inetd_flags</code> 设为
+	<code class="literal">-wW -C 60</code>， 者表示希望为
+	<span class="application">inetd</span> 的服务启用 TCP wrapping，
+	并阻止来自同一 IP 每分钟超过 60 次的请求。</p><p>虽然我们会在下面介绍关于限制连接频率的选项，
+	但初学的用户可能会很高兴地发现这些参数通常并不需要进行修改。
+	在收到超大量的连接请求时， 这些选项则有可能会发挥作用。
+	完整的参数列表， 可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 联机手册中找到。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">-c maximum</span></dt><dd><p>指定单个服务的最大并发访问数量，默认为不限。
+	      也可以在此服务的具体配置里面通过<code class="option">max-child</code>改掉。</p></dd><dt><span class="term">-C rate</span></dt><dd><p>指定单个服务一分钟内能被单个IP地址调用的最大次数，
+	      默认不限。也可以在此服务的具体配置里面通过<code class="option">max-connections-per-ip-per-minute</code>
+	      改掉。</p></dd><dt><span class="term">-R rate</span></dt><dd><p>指定单个服务一分钟内能被调用的最大次数，默认为256。
+	      设为0 则允许不限次数调用。</p></dd><dt><span class="term">-s maximum</span></dt><dd><p>指定同一 IP 同时请求同一服务时允许的最大值； 默认值为不限制。
+	      您可以通过 <code class="option">max-child-per-ip</code>
+	      参数来以服务为单位进行限制。</p></dd></dl></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-conf"></a>28.2.4. <code class="filename">inetd.conf</code></h3></div></div></div><p>对于 <span class="application">inetd</span> 的配置，
+	是通过 <code class="filename">/etc/inetd.conf</code> 文件来完成的。</p><p>在修改了
+	<code class="filename">/etc/inetd.conf</code> 之后， 可以使用下面的命令来强制
+	<span class="application">inetd</span> 重新读取配置文件：</p><div class="example"><a id="network-inetd-reread"></a><div class="example-title">Example 28.1. 重新加载 <span class="application">inetd</span>
+	  配置文件</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/inetd reload</code></strong></pre></div></div><br class="example-break" /><p>配置文件中的每一行都是一个独立的服务程序。 在这个文件中， 前面有
+	<span class="quote">“<span class="quote">#</span>”</span> 的内容被认为是注释。
+	<code class="filename">/etc/inetd.conf</code> 文件的格式如下：</p><pre class="programlisting">service-name
+socket-type
+protocol
+{wait|nowait}[/max-child[/max-connections-per-ip-per-minute[/max-child-per-ip]]]
+user[:group][/login-class]
+server-program
+server-program-arguments</pre><p>下面是针对 IPv4 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ftpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ftpd</span>(8)</span></a> 服务的例子：</p><pre class="programlisting">ftp     stream  tcp     nowait  root    /usr/libexec/ftpd       ftpd -l</pre><div class="variablelist"><dl class="variablelist"><dt><span class="term">service-name</span></dt><dd><p>指明各个服务的服务名。其服务名必须与<code class="filename">/etc/services</code>中列出的一致。
+	      这将决定<span class="application">inetd</span>会监听哪个port。
+	      一旦有新的服务需要添加，必须先在<code class="filename">/etc/services</code>里面添加。</p></dd><dt><span class="term">socket-type</span></dt><dd><p>可以是<code class="literal">stream</code>、<code class="literal">dgram</code>、<code class="literal">raw</code>或者
+	      <code class="literal">seqpacket</code>。 <code class="literal">stream</code>
+	      用于基于连接的 TCP 服务；而 <code class="literal">dgram</code> 则用于使用 <acronym class="acronym">UDP</acronym> 协议的服务。</p></dd><dt><span class="term">protocol</span></dt><dd><p>下列之一：</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>协议</th><th>说明</th></tr></thead><tbody><tr><td>tcp， tcp4</td><td>TCP IPv4</td></tr><tr><td>udp， udp4</td><td>UDP IPv4</td></tr><tr><td>tcp6</td><td>TCP IPv6</td></tr><tr><td>udp6</td><td>UDP IPv6</td></tr><tr><td>tcp46</td><td>Both TCP IPv4 and v6</td></tr><tr><td>udp46</td><td>Both UDP IPv4 and v6</td></tr></tbody></table></div></dd><dt><span class="term">{wait|nowait}[/max-child[/max-connections-per-ip-per-minute[/max-child-per-ip]]]</span></dt><dd><p><code class="option">wait|nowait</code> 指明从<span class="application">inetd</span>
+	    	里头调用的服务是否可以自己处理socket.
+	      <code class="option">dgram</code>socket类型必须使用<code class="option">wait</code>，
+	      而stream socket daemons， 由于通常使用多线程方式，应当使用
+	      <code class="option">nowait</code>.  <code class="option">wait</code> 通常把多个
+	      socket 丢给单个服务进程， 而 <code class="option">nowait</code> 则
+	      会为每个新的 socket 生成一个子进程。</p><p><code class="option">max-child</code> 选项能够配置
+	      <span class="application">inetd</span> 能为本服务派生出的最大子进程数量。
+	      如果某特定服务需要限定最高10个实例， 把<code class="literal">/10</code>
+	      放到<code class="option">nowait</code>后头就可以了。 指定 <code class="literal">/0</code>
+	      表示不限制子进程的数量。</p><p>除了 <code class="option">max-child</code> 之外，
+	      还有两个选项可以限制来自同一位置到特定服务的最大连接数。
+	      <code class="option">max-connections-per-ip-per-minute</code> 可以限制特定 IP
+	      地址每分钟的总连接数， 例如， 限制任何
+	      IP 地址每分钟最多连接十次。 <code class="option">max-child-per-ip</code>
+	      则可以限制为某一 IP 地址在任何时候所启动的子进程数量。
+	      这些选项对于防止针对服务器有意或无意的资源耗竭和拒绝服务 (DoS)
+	      攻击十分有用。</p><p>这个字段中， 必须指定 <code class="option">wait</code> 或
+	      <code class="option">nowait</code> 两者之一。 而
+	      <code class="option">max-child</code>、
+	      <code class="option">max-connections-per-ip-per-minute</code> 和
+	      <code class="option">max-child-per-ip</code> 则是可选项。</p><p>流式多线程服务， 并且不配置任何
+	      <code class="option">max-child</code>、
+	      <code class="option">max-connections-per-ip-per-minute</code> 或
+	      <code class="option">max-child-per-ip</code> 限制时，
+	      其配置为： <code class="literal">nowait</code>。</p><p>同一个服务， 但希望将服务启动的数量限制为十个时，
+	      则是： <code class="literal">nowait/10</code>。</p><p>同样配置， 限制每个 IP 地址每分钟最多连接二十次，
+	      而同时启动的子进程最多十个， 应写作：
+	      <code class="literal">nowait/10/20</code>。</p><p>下面是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fingerd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fingerd</span>(8)</span></a> 服务的默认配置：</p><pre class="programlisting">finger stream  tcp     nowait/3/10 nobody /usr/libexec/fingerd fingerd -s</pre><p>最后这个例子中， 将子进程数限制为
+	      100 个， 而任意 IP 最多同时建立 5 个连接：
+	      <code class="literal">nowait/100/0/5</code>。</p></dd><dt><span class="term">user</span></dt><dd><p>该开关指定服务将以什么用户身份运行。一般而言，服务运行身份是
+	      <code class="systemitem">root</code>。基于安全目的，可以看到有些服务以
+	      <code class="systemitem">daemon</code>身份，或者是最小特权的
+	      <code class="systemitem">nobody</code>身份运行。</p></dd><dt><span class="term">server-program</span></dt><dd><p>当连接到来时，执行服务程序的全路径。如果服务是由
+	    <span class="application">inetd</span>内置提供的，以<code class="option">internal</code>代替。</p></dd><dt><span class="term">server-program-arguments</span></dt><dd><p>当<code class="option">server-program</code>调用到时，该开关
+	    的值通过<code class="literal">argv[0]</code>通过传递给服务而工作。
+	    如果命令行为：<code class="command">mydaemon -d</code>，则
+	      <code class="literal">mydaemon -d</code>为<code class="option">server-program-arguments</code>
+	      开关的值。同样的，如果服务是由<span class="application">inetd</span>
+	      内置提供的，这里还是
+	      <code class="option">internal</code>。</p></dd></dl></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-security"></a>28.2.5. Security</h3></div></div></div><p>随安装时所选的模式不同，
+	许多 <span class="application">inetd</span> 的服务可能已经默认启用。
+	如果确实不需要某个特定的服务， 则应考虑禁用它。
+	在 <code class="filename">/etc/inetd.conf</code> 中，
+	将对应服务的那行前面加上 <span class="quote">“<span class="quote">#</span>”</span>，
+	然后 <a class="link" href="network-inetd.html#network-inetd-reread" title="Example 28.1. 重新加载 inetd 配置文件">重新加载
+	inetd 配置</a> 就可以了。 某些服务， 例如
+	<span class="application">fingerd</span>， 可能是完全不需要的，
+	因为它们提供的信息可能对攻击者有用。</p><p>某些服务在设计时是缺少安全意识的， 或者有过长或压根没有连接请求的超时机制。
+	这使得攻击者能够通过缓慢地对这些服务发起连接， 并耗尽可用的资源。
+	对于这种情况， 设置 <code class="option">max-connections-per-ip-per-minute</code>、
+	<code class="option">max-child</code> 或 <code class="option">max-child-per-ip</code> 限制，
+	来制约服务的行为是个好办法。</p><p>默认情况下，TCP wrapping 是打开的。参考
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hosts_access&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hosts_access</span>(5)</span></a> 手册，以获得更多关于在各种 <span class="application">inetd</span>
+	调用的服务上设置TCP限制的信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-inetd-misc"></a>28.2.6. 杂项</h3></div></div></div><p><span class="application">daytime</span>、
+	<span class="application">time</span>、
+	<span class="application">echo</span>、
+	<span class="application">discard</span>、
+	<span class="application">chargen</span>， 以及
+	<span class="application">auth</span> 都是由 <span class="application">inetd</span>
+	提供的内建服务。</p><p><span class="application">auth</span> 服务提供了网络身份服务，
+	它可以配置为提供不同级别的服务， 而其它服务则通常只能简单的打开或关闭。</p><p>参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 手册获得更多信息。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-servers.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-nfs.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 28. 网络服务器 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.3. 网络文件系统（NFS）</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

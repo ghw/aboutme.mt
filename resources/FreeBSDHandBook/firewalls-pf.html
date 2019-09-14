@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>29.4. OpenBSD Packet Filter (PF) 和 ALTQ</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="firewalls.html" title="Chapter 29. 防火墙" /><link rel="prev" href="firewalls-apps.html" title="29.3. 防火墙软件包" /><link rel="next" href="firewalls-ipf.html" title="29.5. IPFILTER (IPF) 防火墙" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">29.4. OpenBSD Packet Filter (PF) 和
+      <acronym class="acronym">ALTQ</acronym></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="firewalls-apps.html">Prev</a> </td><th width="60%" align="center">Chapter 29. 防火墙</th><td width="20%" align="right"> <a accesskey="n" href="firewalls-ipf.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="firewalls-pf"></a>29.4. OpenBSD Packet Filter (PF) 和
+      <acronym class="acronym">ALTQ</acronym></h2></div><div><span class="authorgroup">Revised and updated by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">John</span> <span class="surname">Ferrell</span></span>. </span></div></div></div><a id="idp87837776" class="indexterm"></a><p>2003 年 7 月， OpenBSD 的防火墙，
+      也就是常说的 <acronym class="acronym">PF</acronym> 被成功地移植到了 FreeBSD 上，
+      并可以通过 FreeBSD Ports Collection 来安装了；
+      第一个将 <acronym class="acronym">PF</acronym> 集成到基本系统中的版本是
+      2004 年 11 月发行的 FreeBSD 5.3。
+      <acronym class="acronym">PF</acronym> 是一个完整的提供了大量功能的防火墙软件，
+      并提供了可选的 <acronym class="acronym">ALTQ</acronym> (交错队列， Alternate
+      Queuing) 功能。 <acronym class="acronym">ALTQ</acronym> 提供了服务品质
+      (<acronym class="acronym">QoS</acronym>) 带宽整形功能。</p><p>OpenBSD 项目非常杰出的维护着一份
+      <a class="link" href="http://www.openbsd.org/faq/pf/" target="_top">PF FAQ</a>。
+      就其本身而言，这一节注重于 FreeBSD 的 <acronym class="acronym">PF</acronym>
+      和提供一些关于使用方面的一般常识。更详细的使用信息请参阅
+      <a class="link" href="http://www.openbsd.org/faq/pf/" target="_top">PF FAQ</a>。</p><p>更多的详细信息， 可以在 FreeBSD 版本的
+      <acronym class="acronym">PF</acronym> 网站上找到： <code class="uri"><a class="uri" href="http://pf4freebsd.love2party.net/" target="_top">http://pf4freebsd.love2party.net/</a></code>。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87848912"></a>29.4.1. 使用 PF 可加载的内核模块</h3></div></div></div><p>要加载 PF 内核模块， 可以在
+	  <code class="filename">/etc/rc.conf</code> 中加入下面的设置：</p><pre class="programlisting">pf_enable="YES"</pre><p>然后使用启动脚本来加载模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/pf start</code></strong></pre><p>需要说明的是， 如果系统中没有规则集配置文件，
+	  则上述操作不会加载 PF 模块。 配置文件的默认位置是
+	  <code class="filename">/etc/pf.conf</code>。 如果 PF 规则集在其他位置，
+	  可以用下面的
+	  <code class="filename">/etc/rc.conf</code> 配置来告诉 PF：</p><pre class="programlisting">pf_rules="<em class="replaceable"><code>/path/to/pf.conf</code></em>"</pre><p><code class="filename">pf.conf</code> 的例子可以在 <code class="filename">/usr/share/examples/pf/</code> 找到。</p><p><acronym class="acronym">PF</acronym> 模块也可以手工从命令行加载：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload pf.ko</code></strong></pre><p>PF 的日志记录功能是由
+        <code class="literal">pflog.ko</code> 提供的， 通过在
+	<code class="filename">/etc/rc.conf</code> 中加入下面的设置：</p><pre class="programlisting">pflog_enable="YES"</pre><p>然后使用启动脚本来加载模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/pflog start</code></strong></pre><p>如果您需要其他 <acronym class="acronym">PF</acronym> 特性，
+	则需要将 <acronym class="acronym">PF</acronym> 支持联编进内核。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87864784"></a>29.4.2. PF 内核选项</h3></div></div></div><a id="idp87865424" class="indexterm"></a><a id="idp87866576" class="indexterm"></a><a id="idp87867728" class="indexterm"></a><p>虽然你不必亲自把对 <acronym class="acronym">PF</acronym> 的支持编译进 FreeBSD
+        内核，但是有时你仍然需要这么做来使用到 PF
+        的某些没有被收录进可加载模块的高级特性，比如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pfsync&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pfsync</span>(4)</span></a>
+        伪设备用来发送某些改变到<acronym class="acronym">PF</acronym> 状态表。
+        它能配合 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=carp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">carp</span>(4)</span></a> 使用 PF 建立支持故障转移的防火墙。
+        更多有关 <acronym class="acronym">CARP</acronym> 的详细信息可以参阅本手册的
+	<a class="xref" href="carp.html" title="30.14. Common Address Redundancy Protocol (CARP， 共用地址冗余协议)">Section 30.14, “Common Address Redundancy Protocol (CARP， 共用地址冗余协议)”</a>。</p><p>The <acronym class="acronym">PF</acronym> kernel options can be found in
+	<code class="filename">/usr/src/sys/conf/NOTES</code> and are reproduced
+	below:</p><p>有关 <acronym class="acronym">PF</acronym> 的内核选项可以在
+        <code class="filename">/usr/src/sys/conf/NOTES</code> 中找到，
+        以下也略有阐述：</p><pre class="programlisting">device pf
+device pflog
+device pfsync</pre><p><code class="literal">device pf</code> 选项用于启用
+	<span class="quote">“<span class="quote">Packet Filter</span>”</span> 防火墙的支持
+        （<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pf&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pf</span>(4)</span></a>）。</p><p><code class="literal">device pflog</code> 启用可选的
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pflog&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pflog</span>(4)</span></a> 伪网络设备， 用以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bpf&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">bpf</span>(4)</span></a>
+	描述符来记录流量。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pflogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pflogd</span>(8)</span></a> 服务可以用来存储信息，
+	并把它们以日志形式记录到磁盘上。</p><p><code class="literal">device pfsync</code> 选项启用可选的
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pfsync&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pfsync</span>(4)</span></a> 支持，这是用于监视 <span class="quote">“<span class="quote">状态变更</span>”</span>
+        的伪网络设备。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87894224"></a>29.4.3. 可用的 <code class="filename">rc.conf</code> 选项</h3></div></div></div><p>The following <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> statements configure
+	<acronym class="acronym">PF</acronym> and <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pflog&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pflog</span>(4)</span></a> at boot:</p><p>以下 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 中的语句用于启动时配置
+        <acronym class="acronym">PF</acronym> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pflog&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pflog</span>(4)</span></a></p><pre class="programlisting">pf_enable="YES"                 # 启用 PF (如果需要的话， 自动加载内核模块)
+pf_rules="/etc/pf.conf"         # pf 使用的规则定义文件
+pf_flags=""                     # 启动时传递给 pfctl 的其他选项
+pflog_enable="YES"              # 启动 pflogd(8)
+pflog_logfile="/var/log/pflog"  # pflogd 用于记录日志的文件名
+pflog_flags=""                  # 启动时传递给 pflogd 的其他选项</pre><p>如果您的防火墙后面有一个 LAN，
+	而且需要通过它来转发 LAN 上的包， 或进行 NAT，
+	还需要同时启用下述选项：</p><pre class="programlisting">gateway_enable="YES"            # 启用为 LAN 网关</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87901136"></a>29.4.4. 建立过滤规则</h3></div></div></div><p><acronym class="acronym">PF</acronym> 会从 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pf.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">pf.conf</span>(5)</span></a>
+        (默认为 <code class="filename">/etc/pf.conf</code>)
+        文件中读取配置规则， 并根据那里的规则修改、丢弃或让数据包通过。
+        默认安装的 FreeBSD 已经提供了一些简单的例子放在
+        <code class="filename">/usr/share/examples/pf/</code> 目录下。
+        请参阅 <a class="link" href="http://www.openbsd.org/faq/pf/" target="_top">PF FAQ</a>
+	获取完整的 <acronym class="acronym">PF</acronym> 规则信息。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在浏览 <a class="link" href="http://www.openbsd.org/faq/pf/" target="_top">PF FAQ</a> 时，
+          请时刻注意不同版本的 FreeBSD 可能会使用不同版本的 PF。 目前，
+	  FreeBSD 8.<em class="replaceable"><code>X</code></em> 和之前的系统使用的是与
+	  OpenBSD 4.1 相同版本的 <acronym class="acronym">PF</acronym>。
+          FreeBSD 9.<em class="replaceable"><code>X</code></em> 和之后的系统使用的是与
+          OpenBSD 4.5 相同版本的 <acronym class="acronym">PF</acronym>。</p></div><p><a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-pf" target="_top">FreeBSD packet filter 邮件列表</a> 是一个提有关配置使用 <acronym class="acronym">PF</acronym>
+        防火墙问题的好地方。请在提问之前查阅邮件列表的归档！</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87913168"></a>29.4.5. 使用 PF</h3></div></div></div><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pfctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pfctl</span>(8)</span></a> 可以控制 <acronym class="acronym">PF</acronym>。
+        以下是一些实用的命令
+        （请查阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pfctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pfctl</span>(8)</span></a> 获得全部可用的选项）:</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>命令</th><th>作用</th></tr></thead><tbody><tr><td><code class="command">pfctl -e</code></td><td>启用 PF</td></tr><tr><td><code class="command">pfctl -d</code></td><td>禁用 PF</td></tr><tr><td><code class="command">pfctl -F all -f /etc/pf.conf</code></td><td>清除所有规则 (nat, filter, state, table, 等等。)
+		并读取 <code class="filename">/etc/pf.conf</code></td></tr><tr><td><code class="command">pfctl -s [ rules | nat | state ]</code></td><td>列出 filter 规则, nat 规则,
+		或状态表</td></tr><tr><td><code class="command">pfctl -vnf /etc/pf.conf</code></td><td>检查 <code class="filename">/etc/pf.conf</code>
+                中的错误，但不加载相关的规则</td></tr></tbody></table></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87947216"></a>29.4.6. 启用 <acronym class="acronym">ALTQ</acronym></h3></div></div></div><p><acronym class="acronym">ALTQ</acronym> 只有在作为编译选项加入到 FreeBSD
+        内核时才能使用。<acronym class="acronym">ALTQ</acronym>
+        目前还不是所有的可用网卡驱动都能够支持的。
+	请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=altq&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">altq</span>(4)</span></a> 联机手册了解您正使用的 FreeBSD
+        版本中的驱动支持情况。</p><p>下面这些选项将启用 <acronym class="acronym">ALTQ</acronym>
+        以及一些附加的功能：</p><pre class="programlisting">options         ALTQ
+options         ALTQ_CBQ        # 基于分类的排列 (CBQ)
+options         ALTQ_RED        # 随机先期检测 (RED)
+options         ALTQ_RIO        # 对进入和发出的包进行 RED
+options         ALTQ_HFSC       # 带等级的包调度器 (HFSC)
+options         ALTQ_PRIQ       # 按优先级的排列 (PRIQ)
+options         ALTQ_NOPCC      # 在联编 SMP 内核时必须使用，禁止读时钟</pre><p><code class="literal">options ALTQ</code> 将启用
+	<acronym class="acronym">ALTQ</acronym> 框架的支持。</p><p><code class="literal">options ALTQ_CBQ</code>
+	用于启用 <span class="emphasis"><em>基于分类的队列</em></span> (<acronym class="acronym">CBQ</acronym>) 支持。 <acronym class="acronym">CBQ</acronym>
+	允许您将连接分成不同的类别， 或者说， 队列，
+	以便在规则中为它们指定不同的优先级。</p><p><code class="literal">options ALTQ_RED</code>
+	将启用 <span class="emphasis"><em>随机预检测</em></span> (<acronym class="acronym">RED</acronym>)。
+	<acronym class="acronym">RED</acronym> 是一种用于防止网络拥塞的技术。
+	<acronym class="acronym">RED</acronym> 度量队列的长度，
+	并将其与队列的最大和最小长度阈值进行比较。
+	如果队列过长， 则新的包将被丢弃。
+	如名所示， <acronym class="acronym">RED</acronym> 从不同的连接中随机地丢弃数据包。</p><p><code class="literal">options ALTQ_RIO</code> 将启用 <span class="emphasis"><em>出入的随机预检测</em></span>。</p><p><code class="literal">options ALTQ_HFSC</code>
+	启用 <span class="emphasis"><em>层次式公平服务平滑包调度器</em></span>。
+	要了解关于 <acronym class="acronym">HFSC</acronym> 进一步的信息， 请参见 <code class="uri"><a class="uri" href="http://www-2.cs.cmu.edu/~hzhang/HFSC/main.html" target="_top">http://www-2.cs.cmu.edu/~hzhang/HFSC/main.html</a></code>。</p><p><code class="literal">options ALTQ_PRIQ</code> 启用 <span class="emphasis"><em>优先队列</em></span>
+	(<acronym class="acronym">PRIQ</acronym>)。 <acronym class="acronym">PRIQ</acronym>
+	首先允许高优先级队列中的包通过。</p><p><code class="literal">options ALTQ_NOPCC</code> 启用
+	<acronym class="acronym">ALTQ</acronym> 的
+	<acronym class="acronym">SMP</acronym> 支持。
+	如果是 <acronym class="acronym">SMP</acronym> 系统，
+	则必须使用它。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="firewalls-apps.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="firewalls.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="firewalls-ipf.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">29.3. 防火墙软件包 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 29.5. IPFILTER (IPF) 防火墙</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

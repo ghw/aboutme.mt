@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>5.5. 使用Ports Collection</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports" /><link rel="prev" href="packages-using.html" title="5.4. 使用 Package 系统" /><link rel="next" href="ports-nextsteps.html" title="5.6. 安装之后还要做点什么？" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.5. 使用Ports Collection</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="packages-using.html">Prev</a> </td><th width="60%" align="center">Chapter 5. 安装应用程序: Packages 和 Ports</th><td width="20%" align="right"> <a accesskey="n" href="ports-nextsteps.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="ports-using"></a>5.5. 使用Ports Collection</h2></div></div></div><p>下面的几个小节中， 给出了关于如何使用
+      Ports 套件来在您的系统中安装或卸载程序的介绍。 关于可用的 <code class="command">make</code>
+      targets 以及环境变量的介绍， 可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ports&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">ports</span>(7)</span></a> 中找到。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-tree"></a>5.5.1. 获得Ports Collection</h3></div></div></div><p>在您能使用 ports 之前， 您必须先获得 Ports Collection ──
+	本质上是 <code class="filename">/usr/ports</code> 目录下的一堆
+	<code class="filename">Makefile</code>、 补丁和描述文件。
+      </p><p>在您安装 FreeBSD 系统的时候， <span class="application">sysinstall</span>
+	会询问您是否需要安装 Ports Collection。 如果您选择 no，
+	那您可以用下面的指令来安装 Ports Collection：</p><div class="procedure"><a id="idp70742352"></a><div class="procedure-title">Procedure 5.1. CVSup 方法</div><p>保持您本地 Ports 套件最新的一种快捷的方法，
+	  是使用 <span class="application">CVSup</span> 协议来进行更新。
+	  如果您希望了解更多关于 <span class="application">CVSup</span> 的细节， 请参见
+	  <a class="link" href="cvsup.html" title="A.7. 使用 CVSup （已取消）">使用 CVSup</a>。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 FreeBSD 系统里对 <span class="application">CVSup</span>
+	    的实现叫作 <span class="application">csup</span>。</p></div><p>在首次运行 <span class="application">csup</span> 之前，
+	  务必确认 <code class="filename">/usr/ports</code>
+	  是空的！ 如果您之前已经用其他地方安装了一份 Ports 套件，
+	  则 <span class="application">csup</span>
+	  可能不会自动删除已经在上游服务器上删除掉的补丁文件。</p><ol class="procedure" type="1"><li class="step"><p>运行 <code class="command">csup</code>:</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>csup -L 2 -h cvsup.FreeBSD.org /usr/share/examples/cvsup/ports-supfile</code></strong></pre><p>将
+	    <em class="replaceable"><code>cvsup.FreeBSD.org</code></em> 改为离您较近的
+	    <span class="application">CVSup</span> 服务器。 请参见
+	    <a class="link" href="cvsup.html#cvsup-mirrors" title="A.7.7. CVSup 镜像站">CVSup 镜像</a> (<a class="xref" href="cvsup.html#cvsup-mirrors" title="A.7.7. CVSup 镜像站">Section A.7.7, “CVSup 镜像站”</a>) 中的镜像站点完整列表。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">有时可能希望使用自己的
+	      <code class="filename">ports-supfile</code>， 比如说，
+	      不想每次都通过命令行来指定所使用的 <span class="application">CVSup</span>
+	      服务器。</p><div xmlns="http://www.w3.org/1999/xhtml" class="procedure"><ol class="procedure" type="1"><li class="step"><p>这种情况下， 需要以 <code class="systemitem">root</code> 身份将
+		  <code class="filename">/usr/share/examples/cvsup/ports-supfile</code>
+		  复制到新的位置， 例如
+		  <code class="filename">/root</code> 或您的主目录。</p></li><li class="step"><p>编辑 <code class="filename">ports-supfile</code>。</p></li><li class="step"><p>把
+		  <em class="replaceable"><code>CHANGE_THIS.FreeBSD.org</code></em>
+		  修改成离您较近的 <span class="application">CVSup</span> 服务器。
+		  可以参考 <a class="link" href="cvsup.html#cvsup-mirrors" title="A.7.7. CVSup 镜像站">CVSup
+		  镜像</a> (<a class="xref" href="cvsup.html#cvsup-mirrors" title="A.7.7. CVSup 镜像站">Section A.7.7, “CVSup 镜像站”</a>)
+		  中的镜像站点完整列表。</p></li><li class="step"><p>接下来按如下的方式运行 <code class="command">csup</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>csup -L 2 /root/ports-supfile</code></strong></pre></li></ol></div></div></li><li class="step"><p>此后运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=csup&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">csup</span>(1)</span></a> 命令将下载最近所进行的改动，
+	    并将它们应用到您的 Ports Collection 上，
+	    不过这一过程并不重新联编您系统上的 ports。</p></li></ol></div><div class="procedure"><a id="idp70767696"></a><div class="procedure-title">Procedure 5.2. Portsnap 方式</div><p><span class="application">Portsnap</span> 是用于发布 Ports 套件的另一套系统。
+	  请参阅 <a class="link" href="updating-upgrading-portsnap.html" title="23.3. Portsnap： 一个 Ports Collection 更新工具">使用 Portsnap</a>
+	  以了解关于 <span class="application">Portsnap</span>
+	  功能更详细的介绍。</p><ol class="procedure" type="1"><li class="step"><p>下载压缩的 Ports 套件快照到
+	    <code class="filename">/var/db/portsnap</code>。
+	    您可以根据需要在这之后关闭 Internet 连接。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsnap fetch</code></strong></pre></li><li class="step"><p>假如您是首次运行 <span class="application">Portsnap</span>，
+	    则需要将快照释放到 <code class="filename">/usr/ports</code>：
+	  </p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsnap extract</code></strong></pre><p>如果您已经有装好的 <code class="filename">/usr/ports</code> 而您只想更新，
+	    则应执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsnap update</code></strong></pre></li></ol></div><div class="procedure"><a id="idp70784592"></a><div class="procedure-title">Procedure 5.3. Sysinstall 方式</div><p>这种方法需要使用 <span class="application">sysinstall</span>
+	  从安装介质上安装 Ports 套件。 注意， 安装的将是发布发行版时的旧版 Ports
+	  套件。 如果您能访问 Internet， 应使用前面介绍的方法之一。</p><ol class="procedure" type="1"><li class="step"><p>以 <code class="systemitem">root</code> 身份运行
+	    <code class="command">sysinstall</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysinstall</code></strong></pre></li><li class="step"><p>用光标向下选择 <span class="guimenuitem">Configure</span>，
+	    并按 <span class="keycap"><strong>Enter</strong></span>。</p></li><li class="step"><p>向下并选择
+	    <span class="guimenuitem">Distributions</span>， 按
+	    <span class="keycap"><strong>Enter</strong></span>。</p></li><li class="step"><p>选择 <span class="guimenuitem">ports</span>， 并按
+	    <span class="keycap"><strong>Space</strong></span>。</p></li><li class="step"><p>选择 <span class="guimenuitem">Exit</span>， 并按
+	    <span class="keycap"><strong>Enter</strong></span>。</p></li><li class="step"><p>选择所希望的安装介质， 例如 CDROM、
+	    FTP， 等等。</p></li><li class="step"><p>选择 <span class="guimenuitem">Exit</span> 并按
+	    <span class="keycap"><strong>Enter</strong></span>。</p></li><li class="step"><p>按 <span class="keycap"><strong>X</strong></span> 退出
+	    <span class="application">sysinstall</span>。</p></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-skeleton"></a>5.5.2. 安装 Ports</h3></div></div></div><a id="idp70799696" class="indexterm"></a><p>当提到 Ports Collection 时，
+        第一个要说明的就是何谓 <span class="quote">“<span class="quote">skeleton</span>”</span>。 简单地说，
+        port skeleton 是让一个程序在 FreeBSD
+        上简洁地编译并安装的所需文件的最小组合。 每个 port skeleton 包含：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>一个 <code class="filename">Makefile</code>。 <code class="filename">Makefile</code>
+	    包括好几个部分， 指出应用程序是如何编译以及将被安装在系统的哪些地方。
+	  </p></li><li class="listitem"><p>一个 <code class="filename">distinfo</code> 文件。这个文件包括这些信息：
+	    这些文件用来对下载后的文件校验和进行检查
+	    (使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sha256&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sha256</span>(1)</span></a>)，
+	    来确保在下载过程中文件没有被破坏。
+	</p></li><li class="listitem"><p>一个 <code class="filename">files</code> 目录。 这个目录包括在
+	    FreeBSD 系统上编译和安装程序需要用到的补丁。
+	    这些补丁基本上都是些小文件， 指出特定文件作了哪些修正。
+	    它们都是纯文本的的格式，基本上是这样的
+	    <span class="quote">“<span class="quote">删除第 10 行</span>”</span> 或
+	    <span class="quote">“<span class="quote">将第 26 行改为这样 ...</span>”</span>，
+	    补丁文件也被称作 <span class="quote">“<span class="quote">diffs</span>”</span>，
+	    他们由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=diff&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">diff</span>(1)</span></a> 程序生成。
+	 </p><p>这个目录也包含了在编译 port 时要用到的其它文件。</p></li><li class="listitem"><p>一个 <code class="filename">pkg-descr</code> 文件。
+	    这是一个提供更多细节，有软件的多行描述。</p></li><li class="listitem"><p>一个 <code class="filename">pkg-plist</code> 文件。
+	    这是即将被安装的所有文件的列表。它告诉 ports
+	    系统在卸载时需要删除哪些文件。</p></li></ul></div><p>一些ports还有些其它的文件， 例如
+        <code class="filename">pkg-message</code>。 ports
+        系统在一些特殊情况下会用到这些文件。
+        如果您想知道这些文件更多的细节以及 ports 的概要， 请参阅
+        <a class="link" href="../../../../doc/en_US.ISO8859-1/books/porters-handbook/index.html" target="_top">FreeBSD Porter's Handbook</a>。</p><p>port里面包含着如何编译源代码的指令， 但不包含真正的源代码。 您可以在网上或
+        CD-ROM 上获得源代码。 源代码可能被开发者发布成任何格式。
+        一般来说应该是一个被 tar 和 gzip 过的文件，
+        或者是被一些其他的工具压缩或未压缩的文件。
+        ports中这个程序源代码标示文件叫 <span class="quote">“<span class="quote">distfile</span>”</span>，
+        安装 FreeBSD port的方法还不止这两种。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">您必须使用 <code class="systemitem">root</code> 用户登录后安装 ports。</p></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在安装任何 port 之前， 应该首先确保已经更新到了最新的
+	  Ports Collection， 并检查 <code class="uri"><a class="uri" href="http://vuxml.freebsd.org/" target="_top">http://vuxml.freebsd.org/</a></code> 中是否有与那个
+	  port 有关的安全问题。</p><p xmlns="http://www.w3.org/1999/xhtml">在安装应用程序之前， 可以使用
+	  <span class="application">portaudit</span> 来自动地检查是否存在已知的安全问题。
+	  这个工具同样可以在
+	  Ports Collection (<span class="package">ports-mgmt/portaudit</span>) 中找到。
+	  在安装新的 port 之前， 可以考虑先运行一下
+	  <code class="command">portaudit -F</code> 来抓取最新的漏洞数据库。
+	  在每天的周期性系统安全检察时， 数据库会被自动更新，
+	  并且会在这之后实施安全审计。
+	  欲了解进一步的情况，请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=portaudit&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">portaudit</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=periodic&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">periodic</span>(8)</span></a>。</p></div><p>Ports 套件假定您有可用的
+	Internet 连接。 如果您没有， 则需要将
+	distfile 手工放到 <code class="filename">/usr/ports/distfiles</code>
+	中。</p><p>要开始操作， 首先进入要安装 port 的目录：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/sysutils/lsof</code></strong></pre><p>一旦进入了 <code class="filename">lsof</code> 的目录，您将会看到这个port的结构。
+	  下一步就是 make，或说 <span class="quote">“<span class="quote">联编</span>”</span> 这个 port。
+	  只需在命令行简单地输入 <code class="command">make</code> 命令就可轻松完成这一工作。
+	  做好之后，您可以看到下面的信息：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make</code></strong>
+&gt;&gt; lsof_4.57D.freebsd.tar.gz doesn't seem to exist in /usr/ports/distfiles/.
+&gt;&gt; Attempting to fetch from ftp://lsof.itap.purdue.edu/pub/tools/unix/lsof/.
+===&gt;  Extracting for lsof-4.57
+...
+[extraction output snipped]
+...
+&gt;&gt; Checksum OK for lsof_4.57D.freebsd.tar.gz.
+===&gt;  Patching for lsof-4.57
+===&gt;  Applying FreeBSD patches for lsof-4.57
+===&gt;  Configuring for lsof-4.57
+...
+[configure output snipped]
+...
+===&gt;  Building for lsof-4.57
+...
+[compilation output snipped]
+...
+<code class="prompt">#</code></pre><p>注意，一旦编译完成，您就会回到命令行。 下一步安装 port，
+	  要安装它只需要在 <code class="command">make</code> 命令后跟上一个单词
+	  <code class="buildtarget">install</code> 即可：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make install</code></strong>
+===&gt;  Installing for lsof-4.57
+...
+[installation output snipped]
+...
+===&gt;   Generating temporary packing list
+===&gt;   Compressing manual pages for lsof-4.57
+===&gt;   Registering installation for lsof-4.57
+===&gt;  SECURITY NOTE:
+      This port has installed the following binaries which execute with
+      increased privileges.
+<code class="prompt">#</code></pre><p>一旦您返回到提示符，您就可以运行您刚刚安装的程序了。因为
+	  <code class="command">lsof</code> 是一个赋予特殊权限的程序，
+	  因此显示了一个安全警告。 在编译和安装 ports 的时候，
+	  您应该留意任何出现的警告。</p><p>删除工作目录是个好主意，
+	  这个目录中包含了全部在编译过程中用到的临时文件。
+	  这些文件不仅会占用宝贵的磁盘空间， 而且可能会给升级新版本的 port
+	  时带来麻烦。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make clean</code></strong>
+===&gt;  Cleaning for lsof-4.57
+<code class="prompt">#</code></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">使用 <code class="command">make
+	    install clean</code>
+	    可以一步完成 <code class="command">make</code>、
+	    <code class="command">make install</code> 和
+	    <code class="command">make clean</code>
+	    这三个分开的步骤的工作。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">一些 shell 会缓存环境变量
+	    <code class="envar">PATH</code> 中指定的目录里的可执行文件，
+	    以加速查找它们的速度。 如果您使用的是这类 shell，
+	    在安装 port 之后可能需要执行 <code class="command">rehash</code>
+	    命令， 然后才能运行新安装的那些命令。
+	    这个命令可以在类似
+	    <code class="command">tcsh</code> 的 shell 中使用。 对于类似
+	    <code class="command">sh</code> 的 shell，
+	    对应的命令是 <code class="command">hash -r</code>。
+	    请参见您的 shell 的文档以了解进一步的情况。</p></div><p>某些第三方 DVD-ROM 产品， 如 <a class="link" href="http://www.freebsdmall.com/" target="_top">FreeBSD
+	  Mall</a> 的 FreeBSD Toolkit 中包含了 distfiles。
+	  这些文件可以与 Ports 套件配合使用。
+	  将 DVD-ROM 挂接到 <code class="filename">/cdrom</code>。
+	  如果您使用不同的挂接点， 则应设置 make 变量 <code class="varname">CD_MOUNTPTS</code>。
+	  如果盘上有需要的 distfiles， 则会自动使用。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">请注意， 少数 ports 并不允许通过 CD-ROM 发行。
+	    这可能是由于下载之前需要填写注册表格，
+	    或者不允许再次发布， 或者有一些其它原因。
+	    如果您希望安装在 CD-ROM 上没有的 port，
+	    就需要在线操作了。</p></div><p>ports 系统使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fetch&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">fetch</span>(1)</span></a> 去下载文件， 它有很多可以设置的环境变量，
+	  其中包括 <code class="envar">FTP_PASSIVE_MODE</code>、 <code class="envar">FTP_PROXY</code>，
+	  和 <code class="envar">FTP_PASSWORD</code>。 如果您在防火墙之后，或使用 FTP/HTTP代理，
+	  您就可能需要设置它们。 完整的说明请看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fetch&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">fetch</span>(3)</span></a>。</p><p>当使用者不是所有时间都能连接上网络， 则可以利用 <code class="command">make
+	  fetch</code>。 您只要在顶层目录
+	  (<code class="filename">/usr/ports</code>) 下运行这个命令，
+	  所有需要的文件都将被下载。 这个命令也同样可以在下级类别目录中使用，
+	  例如： <code class="filename">/usr/ports/net</code>。
+	  注意， 如果一个port有一些依赖的库或其他 port， 它将 <span class="emphasis"><em>不</em></span>
+	  下载这些依赖的 port 的 distfile 文件， 如果您想获取所有依赖的
+	  port 的所有 distfile， 请用 <code class="buildtarget">fetch-recursive</code>
+	  命令代替 <code class="buildtarget">fetch</code>命令。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">您可以在一个类别或在顶级目录编译所有的 port， 或者使用上述提到的
+	  <code class="command">make fetch</code>命令。 这样是非常危险的，
+	  因为有一些port不能并存。 或者有另一种可能， 一些port会安装两个不同的文件，
+	  但是却是相同的文件名。</p></div><p>在一些罕见的例子中， 用户可能需要在除了 <code class="varname">MASTER_SITES</code>
+	  以外的一个站点(本地已经下载下来的文件)去获得一个文件包。
+	  您可以用以下命令不使用 <code class="varname">MASTER_SITES</code>:
+  </p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/directory</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make MASTER_SITE_OVERRIDE= \
+ftp://ftp.FreeBSD.org/pub/FreeBSD/ports/distfiles/ fetch</code></strong></pre><p>在这个例子中，我们把
+	  <code class="varname">MASTER_SITES</code>这个选项改为了 <code class="systemitem">ftp.FreeBSD.org/pub/FreeBSD/ports/distfiles/</code>。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">一些 port 允许 (或甚至要求) 您指定编译选项来
+	  启用/禁用 应用程序中非必需的功能， 一些安全选项，
+	  以及其他可以订制的内容。 具有代表性的包括
+	  <span class="package">www/mozilla</span>、 <span class="package">security/gpgme</span>、 以及 <span class="package">mail/sylpheed-claws</span>。
+	  如果存在这样的选项， 通常会在编译时给出提示。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp70874320"></a>5.5.2.1. 改变默认的 Ports 目录</h4></div></div></div><p>有时， 使用不同的工作临时目录和目标目录可能很有用
+	  (甚至是必要的)。 可以用
+	  <code class="varname">WRKDIRPREFIX</code> 和 <code class="varname">PREFIX</code>
+	  这两个变量来改变默认的目录。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make WRKDIRPREFIX=/usr/home/example/ports install</code></strong></pre><p>将在 <code class="filename">/usr/home/example/ports</code>
+	  中编译 port 并把所有的文件安装到
+	  <code class="filename">/usr/local</code>。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make PREFIX=/usr/home/example/local install</code></strong></pre><p>将在 <code class="filename">/usr/ports</code> 编译它并安装到
+	  <code class="filename">/usr/home/example/local</code>。</p><p>当然，</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make WRKDIRPREFIX=../ports PREFIX=../local install</code></strong></pre><p>将包含两种设置 (没有办法在这一页把它写完，
+	  但您应该已经知道怎么回事了)。</p><p>另外， 这些变量也可以作为环境变量来设置。
+	  请参考您的 shell 的联机手册上关于如何设置环境变量的说明。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp70890960"></a>5.5.2.2. 处理 <code class="command">imake</code></h4></div></div></div><p>一些 port 使用 <code class="command">imake</code> (这是
+	  X Window 系统的一部分) 不能正常地配合
+	  <code class="varname">PREFIX</code>， 它们会坚持把文件安装到
+	  <code class="filename">/usr/X11R6</code> 下面。
+	  类似地， 一些 Perl port 会忽略 <code class="varname">PREFIX</code>
+	  并把文件安装到 Perl 的目录中。
+	  让这些 port 尊重
+	  <code class="varname">PREFIX</code> 是困难甚至是不可能的事情。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp70894288"></a>5.5.2.3. 重新配置 Ports</h4></div></div></div><p>当你在编译某些 ports 的时候，可能会弹出一个基于 ncurses
+	  的菜单来让你来选择一些编译选项。 通常用户都希望能够在一个 port
+	  被编译安装了以后还能再次访问这份菜单以添加删除或修改这些选项。
+	  实际上有很多方法来做这件事情。 一个方法进入那个 port 的目录后键入
+	  <code class="command">make</code> <code class="buildtarget">config</code>，
+	  之后便会再次显示出菜单和已选择的项目。 另一个方法是用
+	  <code class="command">make</code> <code class="buildtarget">showconfig</code>，
+	  这会给你显示出所有的配置选项。还有一个方法是执行
+	  <code class="command">make</code> <code class="buildtarget">rmconfig</code>，
+	  这将删除所有已选择的项目。 有关这些选项更详细的内容请参阅
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ports&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">ports</span>(7)</span></a>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-removing"></a>5.5.3. 卸载已经安装的 Ports</h3></div></div></div><a id="idp70907728" class="indexterm"></a><p>现在您已经了解了如何安装 ports， 并希望进一步了解如何卸载，
+        特别是在错误地安装了某个 port 之后。我们将卸载前面例子
+	(假如您没有注意的话， 是 <code class="command">lsof</code>)
+	中安装的 port。 Ports 可以同 packages 以完全相同的方式 (在 <a class="link" href="packages-using.html" title="5.4. 使用 Package 系统">Packages 一节</a> 中进行了介绍) 卸载，
+	方法是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_delete&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_delete</span>(1)</span></a> 命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pkg_delete lsof-4.57</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-upgrading"></a>5.5.4. 升级 Ports</h3></div></div></div><a id="idp70912720" class="indexterm"></a><p>首先， 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_version&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_version</span>(1)</span></a> 命令来列出 Ports Collection
+	中提供了更新版本的那些 port：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pkg_version -v</code></strong></pre><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-file-updating"></a>5.5.4.1. <code class="filename">/usr/ports/UPDATING</code></h4></div></div></div><p>在您更新了 Ports 套件之后， 在升级 port 之前， 应查看
+	  <code class="filename">/usr/ports/UPDATING</code>。
+	  这个文件中介绍了在升级时用户应注意的问题，
+	  以及一些可能需要进行的操作。 这可能包括更改文件格式、
+	  配置文件位置的变动， 以及与先前版本的兼容性等等。</p><p>如果 <code class="filename">UPDATING</code> 与本书中介绍的内容不同，
+	  请以 <code class="filename">UPDATING</code> 为准。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="portupgrade"></a>5.5.4.2. 使用 Portupgrade 来更新 Ports</h4></div></div></div><a id="idp70919760" class="indexterm"></a><p><span class="application">portupgrade</span> 工具是设计来简化升级已安装的 port 的操作的。
+	它通过 <span class="package">ports-mgmt/portupgrade</span> port 来提供。
+	您可以像其它 port 那样， 使用 <code class="command">make install
+	clean</code> 命令来安装它：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/ports-mgmt/portupgrade</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install clean</code></strong></pre><p>使用 <code class="command">pkgdb
+	-F</code> 命令来扫描已安装的 port 的列表，
+	并修正其所报告的不一致。 在每次升级之前， 有规律地执行它是个好主意。</p><p>运行 <code class="command">portupgrade -a</code> 时，
+	<span class="application">portupgrade</span> 将开始并升级系统中所安装的所有过时的 ports。
+	如果您希望在每个升级操作时得到确认， 应指定 <code class="option">-i</code>
+	参数。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portupgrade -ai</code></strong></pre><p>如果您只希望升级某个特定的应用程序， 而非全部可用的 port，
+	应使用 <code class="command">portupgrade
+	pkgname</code>。
+	如果 <span class="application">portupgrade</span> 应首先升级指定应用程序的话，
+	则应指定 <code class="option">-R</code> 参数。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portupgrade -R firefox</code></strong></pre><p>要使用预编译的 package 而不是 ports 来进行安装， 需要指定
+	<code class="option">-P</code>。 如果指定了这个选项，
+	<span class="application">portupgrade</span>
+	会搜索 <code class="envar">PKG_PATH</code> 中指定的本地目录，
+	如果没有找到， 则从远程站点下载。 如果本地没有找到，
+	而且远程站点也没有成功地下载预编译包， 则
+	<span class="application">portupgrade</span> 将使用 ports。
+	要禁止使用 port， 可以指定 <code class="option">-PP</code>。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portupgrade -PP gnome2</code></strong></pre><p>如果只想下载 distfiles (或者， 如果指定了 <code class="option">-P</code>
+	的话， 是 packages) 而不想构建或安装任何东西，
+	可以使用 <code class="option">-F</code>。
+	要了解更多细节， 请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=portupgrade&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">portupgrade</span>(1)</span></a>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="portmanager"></a>5.5.4.3. 使用 Portmanager 来升级 Ports</h4></div></div></div><a id="idp70960592" class="indexterm"></a><p><span class="application">Portmanager</span> 是另一个用以简化已安装 port
+	  升级操作的工具。 它可以通过
+	  <span class="package">ports-mgmt/portmanager</span> port 安装：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/ports-mgmt/portmanager</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install clean</code></strong></pre><p>可以通过这个简单的命令来升级所有已安装的 port：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmanager -u</code></strong></pre><p>如果希望 <span class="application">Portmanager</span>
+	  在进行每步操作之前都给出提示， 应使用 <code class="option">-ui</code> 参数。
+	  <span class="application">Portmanager</span> 也可以用来在系统中安装新的 ports。
+	  与通常的 <code class="command">make install clean</code>
+	  命令不同，它会在联编和安装您所选择的 port 之前升级所有依赖包。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmanager x11/gnome2</code></strong></pre><p>如果关于所选 port 的依赖有任何问题，
+	  可以用 <span class="application">Portmanager</span> 来以正确的顺序重新构建它们。
+	  完成之后， 有问题的 port 也将被重新构建。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmanager graphics/gimp -f</code></strong></pre><p>要了解更多信息， 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=portmanager&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">portmanager</span>(1)</span></a>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="portmaster"></a>5.5.4.4. 使用 Portmaster 升级 Ports</h4></div></div></div><a id="idp70980560" class="indexterm"></a><p><span class="application">Portmaster</span>
+	  是另外一个用来升级已安装的 ports 的工具。
+	  <span class="application">Portmaster</span> 被设计成尽可能使用
+	  <span class="quote">“<span class="quote">基本</span>”</span> 系统中能找到的工具
+	  （它不依赖于其他的 ports） 和
+	  <code class="filename">/var/db/pkg/</code>
+	  中的信息来检测出需要升级的 ports。你可以在
+	  <span class="package">ports-mgmt/portmaster</span>
+	  找到它：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/ports-mgmt/portmaster</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make install clean</code></strong></pre><p><span class="application">Portmaster</span> groups ports into four
+	  categories:</p><p><span class="application">Portmaster</span> 把 ports
+	  分成4类：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Root ports (不依赖其他的 ports，也不被依赖)</p></li><li class="listitem"><p>Trunk ports (不依赖其他的 ports，但是被其他的 ports 依赖)</p></li><li class="listitem"><p>Branch ports (依赖于其他的 ports，同时也被依赖)</p></li><li class="listitem"><p>Leaf ports (依赖于其他的 ports，但不被依赖)</p></li></ul></div><p>你可以使用 <code class="option">-L</code>
+	选项列出所有已安装的 ports 和查找存在更新的 ports：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -L</code></strong>
+===&gt;&gt;&gt; Root ports (No dependencies, not depended on)
+===&gt;&gt;&gt; ispell-3.2.06_18
+===&gt;&gt;&gt; screen-4.0.3
+        ===&gt;&gt;&gt; New version available: screen-4.0.3_1
+===&gt;&gt;&gt; tcpflow-0.21_1
+===&gt;&gt;&gt; 7 root ports
+...
+===&gt;&gt;&gt; Branch ports (Have dependencies, are depended on)
+===&gt;&gt;&gt; apache-2.2.3
+        ===&gt;&gt;&gt; New version available: apache-2.2.8
+...
+===&gt;&gt;&gt; Leaf ports (Have dependencies, not depended on)
+===&gt;&gt;&gt; automake-1.9.6_2
+===&gt;&gt;&gt; bash-3.1.17
+        ===&gt;&gt;&gt; New version available: bash-3.2.33
+...
+===&gt;&gt;&gt; 32 leaf ports
+
+===&gt;&gt;&gt; 137 total installed ports
+        ===&gt;&gt;&gt; 83 have new versions available
+</pre><p>可以使用这个简单的命令升级所有已安装的 ports：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -a</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><span class="application">Portmaster</span> 默认在删除一个现有的
+	    port 前会做一个备份包。如果新的版本能够被成功安装，
+	    <span class="application">Portmaster</span> 将删除备份。
+	    使用 <code class="option">-b</code> 后 <span class="application">Portmaster</span>
+	    便不会自动删除备份。加上 <code class="option">-i</code> 选项之后
+	    <span class="application">Portmaster</span> 将进入互动模式，
+	    在升级每个 port 以前提示你给予确认。</p></div><p>如果你在升级的过程中发现了错误，你可以使用
+	  <code class="option">-f</code> 选项升级/重新编译所有的 ports：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -af</code></strong></pre><p>同样你也可以使用 <span class="application">Portmaster</span>
+	  往系统里安装新的 ports，升级所有的依赖关系之后并安装新的
+	  port：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster shells/bash</code></strong></pre><p>更多的详细信息请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=portmaster&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">portmaster</span>(8)</span></a></p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ports-disk-space"></a>5.5.5. Ports 和磁盘空间</h3></div></div></div><a id="idp71001552" class="indexterm"></a><p>使用 Ports 套件会最终用完磁盘空间。
+	在通过 ports 联编和安装软件之后，您应记得清理临时的
+	<code class="filename">work</code> 目录，
+	其方法是使用 <code class="command">make clean</code>
+	命令。 您可以使用下面的命令来清理整个 Ports 套件：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsclean -C</code></strong></pre><p>随着时间的推移， 您可能会在
+	<code class="filename">distfiles</code> 目录中积累下大量源代码文件。
+	您可以手工删除这些文件， 也可以使用下面的命令来删除所有 port
+	都不引用的文件：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsclean -D</code></strong></pre><p>除此之外， 也可以用下列命令删去目前安装的 port 没有使用的源码包文件：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portsclean -DD</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这个 <code class="command">portsclean</code> 工具是
+	  <span class="application">portupgrade</span> 套件的一部分。</p></div><p>不要忘记删除那些已经安装， 但已不再使用的 ports。
+	用于自动完成这种工作的一个好工具是
+	<span class="package">ports-mgmt/pkg_cutleaves</span> port。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="packages-using.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ports.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ports-nextsteps.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.4. 使用 Package 系统 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5.6. 安装之后还要做点什么？</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

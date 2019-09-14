@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.13. 调整内核限制</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-disk.html" title="12.12. 调整磁盘" /><link rel="next" href="adding-swap-space.html" title="12.14. 添加交换空间" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.13. 调整内核限制</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-disk.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="adding-swap-space.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-kernel-limits"></a>12.13. 调整内核限制</h2></div></div></div><a id="idp76187216" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="file-process-limits"></a>12.13.1. 文件/进程限制</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="kern-maxfiles"></a>12.13.1.1. <code class="varname">kern.maxfiles</code></h4></div></div></div><a id="idp76190032" class="indexterm"></a><p><code class="varname">kern.maxfiles</code> 可以根据系统的需要适当增减。
+	  这个变量用于指定在系统中允许的文件描述符的最大数量。
+	  当文件描述符表满的时候，
+	  <span class="errorname">file: table is full</span>
+	  会在系统消息缓冲区中反复出现， 您可以使用
+	  <code class="command">dmesg</code> 命令来观察这一现象。</p><p>每个打开的文件、 套接字和管道， 都会占用一个文件描述符。
+	  在大型生产服务器上， 可能会轻易地用掉数千个文件描述符，
+	  具体用量取决于服务的类型和并行启动的服务数量。</p><p>在早期版本的 FreeBSD 中， <code class="varname">kern.maxfiles</code> 的默认值，
+	  是根据您内核配置文件中的 <code class="option">maxusers</code> 选项计算的。
+          <code class="varname">kern.maxfiles</code> 这个数值，
+          会随 <code class="option">maxusers</code> 成比例地增减。
+          当编译定制的内核时， 按照您系统的用途来修改这个值是个好主意。
+          这个数字同时还决定内核的许多预设的限制值。 有时，
+          尽管并不会真的有 256 个用户同时连接一台生产服务器，
+          但对于高负载的 web 服务器而言， 却可能需要与之类似的资源。</p><p>变量 <code class="varname">kern.maxusers</code>
+          会在系统启动时， 根据可用内存的尺寸进行计算， 在内核开始运行之后，
+          可以通过只读的 <code class="varname">kern.maxusers</code> sysctl 变量值来进行观察。
+          有些情况下， 可能会希望使用更大或更小一些的
+          <code class="varname">kern.maxusers</code>， 它可以以加载器变量的形式进行配置；
+          类似 64、 128 和 256 这样的值都并不罕见。 我们不推荐使用超过 256
+          的值， 除非您需要巨量的文件描述符； 根据
+          <code class="varname">kern.maxusers</code> 推算默认值的那些变量，
+          一般都可以在引导甚至运行时通过 <code class="filename">/boot/loader.conf</code>
+          (请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">loader.conf</span>(5)</span></a> 联机手册或
+          <code class="filename">/boot/defaults/loader.conf</code> 文件来获得相关的指导)
+          或这篇文档的其余部分所介绍的方式来调整。</p><p>在较早的版本中， 如果您明确地将
+	  <code class="literal">maxusers</code> 设置为
+	  <code class="literal">0</code>， 则系统会自动地根据硬件配置来确定这个值。<a href="#ftn.idp76199376" class="footnote" id="idp76199376"><sup class="footnote">[2]</sup></a>。 在 FreeBSD 5.X 和更高版本中， <code class="literal">maxusers</code>
+	  如果不指定的话， 就会取默认值 <code class="literal">0</code>。 如果希望自行管理
+	  <code class="literal">maxusers</code>， 则应配置一个不低于 4 的值，
+	  特别是使用 X Window System 或编译软件的时候。
+	  这样做的原因是， <code class="literal">maxusers</code>
+	  所决定的一个最为重要的表的尺寸会影响最大进程数，
+	  这个数值将是 <code class="literal">20 + 16 *
+	  maxusers</code>。 因此如果将 <code class="literal">maxusers</code> 设置为 1，
+	  您就只能同时运行 36 个进程， 这还包括了 18
+	  个左右的系统引导时启动的进程， 以及 15 个左右的，
+	  在您启动 X Window System 时所引发的进程。 即使是简单的任务，
+	  如阅读联机手册， 也需要启动多至九个的进程， 用以过滤、
+	  解压缩， 并显示它。 将
+	  <code class="literal">maxusers</code> 设为 64 将允许您同时执行最多 1044
+	  个进程， 这几乎足以满足任何需要了。 不过，
+	  如果您看在启动其它程序， 或运行用以支持大量用户的服务 (例如
+	  <code class="systemitem">ftp.FreeBSD.org</code>) 时，
+	  看到令人担忧的 <span class="errortype">proc table
+	  full</span> 错误， 就应该提高这一数值，
+	  并重新联编内核。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="literal">maxusers</code> 并 <span class="emphasis"><em>不能</em></span>
+	    限制实际能够登录到您系统上来的用户的数量。
+	    它的主要作用是根据您可能支持的用户数量来为一系列系统数据表设置合理的尺寸，
+	    以便提供支持他们所需运行的进程资源。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76214096"></a>12.13.1.2. <code class="varname">kern.ipc.somaxconn</code></h4></div></div></div><a id="idp76214864" class="indexterm"></a><p><code class="varname">kern.ipc.somaxconn</code> sysctl 变量
+	  限制了接收新 TCP 连接侦听队列的大小。对于一个经常处理新连接的高负载
+	  web服务环境来说，默认的 <code class="literal">128</code> 太小了。
+	  大多数环境这个值建议增加到 <code class="literal">1024</code> 或者更多。
+	  服务进程会自己限制侦听队列的大小(例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendmail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sendmail</span>(8)</span></a>
+	  或者 <span class="application">Apache</span>)，
+	  常常在它们的配置文件中有设置队列大小的选项。
+	  大的侦听队列对防止拒绝服务 <abbr class="abbrev">DoS</abbr> 攻击也会有所帮助。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="nmbclusters"></a>12.13.2. 网络限制</h3></div></div></div><p><code class="literal">NMBCLUSTERS</code> 内核配置选项指出了系统可用的网络Mbuf的数量。
+	一个高流量的服务器使用一个小数目的网络缓存会影响 FreeBSD 的性能。
+	每个 cluster 可能需要2K内存，所以一个1024的值需要在内核中给网络缓存保留2M内存。
+	可以用简单的方法计算出来需要多少网络缓存。
+	如果您有一个同时发生1000个以上连接的web服务器，
+	并且每个连接用掉16K接收和发送缓存， 就需要大概32M网络缓存来确保web服务器的工作。
+	一个好的简单计算方法是乘以2，所以2x32Mb/2Kb=64MB/2kb=32768。
+	我们建议在有大量内存的机器上把这个值设置在4096到32768之间。
+	没有必要把它设置成任意太高的值，它会在启动时引起崩溃。
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=netstat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">netstat</span>(1)</span></a> 的 <code class="option">-m</code> 选项可以用来观察网络cluster使用情况。</p><p><code class="varname">kern.ipc.nmbclusters</code> 可以用来在启动时刻调节这个。
+	仅仅在旧版本的 FreeBSD 需要使用 <code class="literal">NMBCLUSTERS</code>
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=config&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">config</span>(8)</span></a> 选项。</p><p>经常使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendfile&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">sendfile</span>(2)</span></a> 系统调用的繁忙的服务器，
+	有必要通过 <code class="literal">NSFBUFS</code> 内核选项或者在
+	<code class="filename">/boot/loader.conf</code> (查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 以获得更多细节)
+	中设置它的值来调节 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendfile&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">sendfile</span>(2)</span></a> 缓存数量。
+	这个参数需要调节的普通原因是在进程中看到 <code class="literal">sfbufa</code>
+	状态。sysctl <code class="varname">kern.ipc.nsfbufs</code>
+	变量在内核配置变量中是只读的。 这个参数是由 <code class="varname">kern.maxusers</code>
+	决定的，然而它可能有必要因此而调整。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">
+	  即使一个套接字被标记成非阻塞，在这个非阻塞的套接字上呼叫
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendfile&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">sendfile</span>(2)</span></a> 可能导致 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sendfile&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">sendfile</span>(2)</span></a> 呼叫阻塞直到有足够的
+	  <code class="literal">struct sf_buf</code> 可用。
+	</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76243408"></a>12.13.2.1. <code class="varname">net.inet.ip.portrange.*</code></h4></div></div></div><a id="idp76244176" class="indexterm"></a><p><code class="varname">net.inet.ip.portrange.*</code> sysctl
+	  变量自动的控制绑定在 TCP 和 UDP 套接字上的端口范围。
+	  这里有三个范围：一个低端范围，一个默认范围和一个高端范围。
+	  大多数网络程序分别使用由 <code class="varname">net.inet.ip.portrange.first</code>
+	  和 <code class="varname">net.inet.ip.portrange.last</code> 控制的从 1024 到 5000
+	  的默认范围。端口范围用作对外连接，并且某些情况可能用完系统的端口，
+	  这经常发生在运行一个高负荷 web 代理服务器的时候。
+	  这个端口范围不是用来限制主要的例如 web
+	  服务器进入连接或者有固定端口例如邮件传递对外连接的。
+	  有时您可能用完了端口，那就建议适当的增加
+	  <code class="varname">net.inet.ip.portrange.last</code>。
+	  <code class="literal">10000</code>、<code class="literal">20000</code> 或者
+	  <code class="literal">30000</code> 可能是适当的值。
+	  更改端口范围的时候也要考虑到防火墙。 一些防火墙会阻止端口的大部分范围
+	  (通常是低范围的端口)并且用高端口进行对外连接(──)。
+	  基于这个问题建议不要把 <code class="varname">net.inet.ip.portrange.first</code>
+	  设的太小。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76252624"></a>12.13.2.2. TCP 带宽迟延(Bandwidth Delay Product)</h4></div></div></div><a id="idp76253264" class="indexterm"></a><p>限制 TCP 带宽延迟积和 NetBSD 的 TCP/Vegas 类似。
+	  它可以通过将 sysctl 变量
+	  <code class="varname">net.inet.tcp.inflight.enable</code>
+	  设置成 <code class="literal">1</code> 来启用。
+	  系统将尝试计算每一个连接的带宽延迟积，
+	  并将排队的数据量限制在恰好能保持最优吞吐量的水平上。</p><p>这一特性在您的服务器同时向使用普通调制解调器，
+	  千兆以太网， 乃至更高速度的光与网络连接
+	  (或其他带宽延迟积很大的连接) 的时候尤为重要，
+	  特别是当您同时使用滑动窗缩放， 或使用了大的发送窗口的时候。
+	  如果启用了这个选项， 您还应该把
+	  <code class="varname">net.inet.tcp.inflight.debug</code> 设置为
+	  <code class="literal">0</code> (禁用调试)，
+	  对于生产环境而言， 将 <code class="varname">net.inet.tcp.inflight.min</code>
+	  设置成至少
+	  <code class="literal">6144</code> 会很有好处。 然而， 需要注意的是，
+	  这个值设置过大事实上相当于禁用了连接带宽延迟积限制功能。
+	  这个限制特性减少了在路由和交换包队列的堵塞数据数量，
+	  也减少了在本地主机接口队列阻塞的数据的数量。在少数的等候队列中、
+	  交互式连接，尤其是通过慢速的调制解调器，也能用低的
+	  <span class="emphasis"><em>往返时间</em></span>操作。但是，注意这只影响到数据发送
+	  (上载/服务端)。对数据接收(下载)没有效果。
+	</p><p>调整 <code class="varname">net.inet.tcp.inflight.stab</code> 是
+	  <span class="emphasis"><em>不</em></span> 推荐的。 这个参数的默认值是
+	  20， 表示把 2 个最大包加入到带宽延迟积窗口的计算中。
+	  额外的窗口似的算法更为稳定， 并改善对于多变网络环境的相应能力，
+	  但也会导致慢速连接下的 ping 时间增长 (尽管还是会比没有使用
+	  inflight 算法低许多)。 对于这些情形，
+	  您可能会希望把这个参数减少到 15， 10， 或 5；
+	  并可能因此而不得不减少
+	  <code class="varname">net.inet.tcp.inflight.min</code> (比如说，
+	  3500) 来得到希望的效果。 减少这些参数的值，
+	  只应作为最后不得已时的手段来使用。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76264144"></a>12.13.3. 虚拟内存</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76264784"></a>12.13.3.1. <code class="varname">kern.maxvnodes</code></h4></div></div></div><p>vnode 是对文件或目录的一种内部表达。
+          因此， 增加可以被操作系统利用的 vnode 数量将降低磁盘的 I/O。
+          一般而言， 这是由操作系统自行完成的， 也不需要加以修改。
+          但在某些时候磁盘 I/O 会成为瓶颈， 而系统的 vnode 不足，
+          则这一配置应被增加。 此时需要考虑是非活跃和空闲内存的数量。</p><p>要查看当前在用的 vnode 数量：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl vfs.numvnodes</code></strong>
+vfs.numvnodes: 91349</pre><p>要查看最大可用的 vnode 数量：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl kern.maxvnodes</code></strong>
+kern.maxvnodes: 100000</pre><p>如果当前的 vnode 用量接近最大值， 则将
+          <code class="varname">kern.maxvnodes</code> 值增大 1,000
+          可能是个好主意。 您应继续查看
+          <code class="varname">vfs.numvnodes</code> 的数值，
+          如果它再次攀升到接近最大值的程度，
+          仍需继续提高 <code class="varname">kern.maxvnodes</code>。
+          在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=top&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">top</span>(1)</span></a> 中显示的内存用量应有显著变化，
+          更多内存会处于活跃 (active) 状态。</p></div></div><div class="footnotes"><br /><hr class="footnote-hr" /><div id="ftn.idp76199376" class="footnote"><p><a href="#idp76199376" class="para"><sup class="para">[2] </sup></a>自动调整算法会将
+	      <code class="literal">maxusers</code> 设置为与主存的数量一样，
+	      或者取其下限 32 或上限 384。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-disk.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="adding-swap-space.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.12. 调整磁盘 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.14. 添加交换空间</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

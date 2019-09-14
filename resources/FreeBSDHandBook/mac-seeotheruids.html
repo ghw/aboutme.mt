@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.7. MAC seeotheruids 模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-modules.html" title="16.6. 模块配置" /><link rel="next" href="mac-bsdextended.html" title="16.8. MAC bsdextended 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.7. MAC seeotheruids 模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-modules.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-bsdextended.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-seeotheruids"></a>16.7. MAC seeotheruids 模块</h2></div></div></div><a id="idp78749264" class="indexterm"></a><p>模块名： <code class="filename">mac_seeotheruids.ko</code></p><p>对应的内核配置：
+      <code class="literal">options MAC_SEEOTHERUIDS</code></p><p>引导选项：
+      <code class="literal">mac_seeotheruids_load="YES"</code></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_seeotheruids&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_seeotheruids</span>(4)</span></a> 模块模仿并扩展了
+      <code class="literal">security.bsd.see_other_uids</code> 和
+      <code class="literal">security.bsd.see_other_gids</code>
+      <code class="command">sysctl</code> 变量。 这一模块并不需要预先配置标签，
+      它能够透明地与其他模块协同工作。</p><p>加载模块之后， 下列
+      <code class="command">sysctl</code> 变量可以用来控制其功能：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">security.mac.seeotheruids.enabled</code>
+	  将启用模块的功能， 并使用默认的配置。
+	  这些默认设置将阻止用户看到其他用户的进程和 socket。</p></li><li class="listitem"><p>
+	  <code class="literal">security.mac.seeotheruids.specificgid_enabled</code>
+	  将允许特定的组从这一策略中和面。 要将某些组排除在这一策略之外， 可以用
+	  <code class="literal">security.mac.seeotheruids.specificgid=XXX</code>
+	  <code class="command">sysctl</code> 变量。 前述例子中，
+	  <em class="replaceable"><code>XXX</code></em> 应替换为希望不受限的组 ID 的数值形式。</p></li><li class="listitem"><p>
+	  <code class="literal">security.mac.seeotheruids.primarygroup_enabled</code>
+	  可以用来将特定的主要组排除在策略之外。 使用这一变量时， 不能同时设置
+	  <code class="literal">security.mac.seeotheruids.specificgid_enabled</code>。</p></li></ul></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-modules.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-bsdextended.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.6. 模块配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.8. MAC bsdextended 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

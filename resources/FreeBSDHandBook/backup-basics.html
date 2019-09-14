@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.12. 备份程序</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="backup-strategies.html" title="18.11. 备份策略" /><link rel="next" href="disks-virtual.html" title="18.13. 网络、内存和 和以及映像文件为介质的虚拟文件系统" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.12. 备份程序</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="backup-strategies.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="disks-virtual.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="backup-basics"></a>18.12. 备份程序</h2></div></div></div><p>有三个主要的备份程序 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dump</span>(8)</span></a>、<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tar&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tar</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cpio&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cpio</span>(1)</span></a>。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80246096"></a>18.12.1. Dump 和 Restore</h3></div></div></div><a id="idp80246736" class="indexterm"></a><a id="idp80247888" class="indexterm"></a><a id="idp80248528" class="indexterm"></a><p><code class="command">dump</code> 和 <code class="command">restore</code> 是 <span class="trademark">UNIX</span>®
+        传统的备份程序。 它以 block 而不是以文件为单位来备份数据、链接或目录。
+         <code class="command">dump</code> 备份的是设备上的整个文件系统，
+         不能只备份一个文件系统的部分或是用到两个以上文件系统的目录树。
+         与其他备份软件不同的是，
+          <code class="command">dump</code> 不会写文件和目录到磁带机， 而是写入包含文件
+          和目录的原始数据块。 当需要恢复数据的时候，<code class="command">restore</code>
+          默认在 <code class="filename">/tmp/</code> 下保存临时数据 ──
+          如果你正在操作的恢复盘只有比较小的 <code class="filename">/tmp</code>
+          的话， 你可能需要把环境变量 <code class="envar">TMPDIR</code>
+          设置到一个有更多空间的目录， 使得此过程更容易成功。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果在您的 root 目录使用 <code class="command">dump</code>，
+          将不需要备份 <code class="filename">/home</code>、<code class="filename">/usr</code> 或其他目录，
+        因为这些是典型的其他文件系统或符号连接到那些文件系统的加载点。</p></div><p><code class="command">dump</code> 是最早出现于 AT&amp;T UNIX 的 Version 6 (约 1975)。
+        默认的参数适用于 9-track 磁带(6250 bpi)， 所以如果要用高密度的磁带（最高可达
+        62,182 ftpi）， 就不能用默认的参数， 而要另外指定参数。
+        这些默认值必须在命令行被修改以更好地利用当前磁带机的功能。</p><a id="idp80259536" class="indexterm"></a><p><code class="command">rdump</code> 和 <code class="command">rrestore</code>
+        可以通过网络在另一台计算机的磁带机上备份数据。
+        这两个程序都是依靠 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rcmd&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">rcmd</span>(3)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ruserok&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">ruserok</span>(3)</span></a> 来访问远程的磁带机。
+        因此，运行备份的用户必须要有远程主机的 <code class="filename">.rhosts</code> 访问权。
+        <code class="command">rdump</code> 和 <code class="command">rrestore</code> 的参数必须适用于远程主机
+        例如，当您从 FreeBSD 连到一台 SUN 工作站 knomodo 去使用磁带机时，使用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/sbin/rdump 0dsbfu 54000 13000 126 komodo:/dev/nsa8 /dev/da0a 2&gt;&amp;1</code></strong></pre><p>要注意的是：必须检查您在使用 <code class="filename">.rhosts</code> 时的安全情况。</p><p>也可以通过使用 <code class="command">ssh</code> 用一个更安全的方式来使用 <code class="command">dump</code>
+        和 <code class="command">restore</code> 。</p><div class="example"><a id="idp80279504"></a><div class="example-title">Example 18.1. 通过 <span class="application">ssh</span> 使用 <code class="command">dump</code> </div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/sbin/dump -0uan -f - /usr | gzip -2 | ssh -c blowfish \
+          targetuser@targetmachine.example.com dd of=/mybigfiles/dump-usr-l0.gz</code></strong></pre></div></div><br class="example-break" /><p>或使用 <code class="command">dump</code>　的 built-in 方法，
+        设置环境变量 <code class="envar">RSH</code>：</p><div class="example"><a id="idp80287312"></a><div class="example-title">Example 18.2. 通过设置 <span class="application">ssh</span> 环境变量 <code class="envar">RSH</code> 使用 <code class="command">dump</code> </div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>RSH=/usr/bin/ssh /sbin/dump -0uan -f targetuser@targetmachine.example.com:/dev/sa0 /usr</code></strong></pre></div></div><br class="example-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80290256"></a>18.12.2. <code class="command">tar</code></h3></div></div></div><a id="idp80291024" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tar&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tar</span>(1)</span></a> 也同样是在第 6 版 AT&amp;T UNIX
+	(大约是 1975 前后) 出现的。 <code class="command">tar</code> 对文件系统直接操作；
+	其作用是把文件和目录写入磁带。 <code class="command">tar</code> 并不支持
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cpio&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cpio</span>(1)</span></a> 所提供的全部功能， 但也不需要 <code class="command">cpio</code>
+	所需要使用的诡异的命令行管道。</p><a id="idp80299472" class="indexterm"></a><p>要 <code class="command">tar</code> 到连接在名为
+        <code class="systemitem">komodo</code> 的 Sun 机器上的
+        Exabyte 磁带机， 可以使用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tar cf - . | rsh komodo dd of=tape-device obs=20b</code></strong></pre><p>如果您担心通过网络备份会有安全问题，应当使用 <code class="command">ssh</code> ，
+        而不是 <code class="command">rsh</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80303440"></a>18.12.3. <code class="command">cpio</code></h3></div></div></div><a id="idp80304208" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cpio&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cpio</span>(1)</span></a> 是 <span class="trademark">UNIX</span>® 最早用来作文件交换的磁带机程序。它有执行字节
+        交换的选项，可以用几种不同的格式写入，并且可以将数据用管道传给其他程序。
+         <code class="command">cpio</code> 没办法自动查找目录树内的文件列表，必须通过标准
+         输入 <code class="filename">stdin</code> 来指定。</p><a id="idp80312016" class="indexterm"></a><p><code class="command">cpio</code> 不支持通过网络的备份方式。可以使用 pipeline 和
+       <code class="command">rsh</code> 来传送数据给远程的磁带机。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>for f in directory_list; do</code></strong>
+<strong class="userinput"><code>find $f &gt;&gt; backup.list</code></strong>
+<strong class="userinput"><code>done</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cpio -v -o --format=newc &lt; backup.list | ssh user@host "cat &gt; backup_device"</code></strong></pre><p>这里的 <em class="replaceable"><code>directory_list</code></em> 是要备份的目录列表，
+      	<em class="replaceable"><code>user</code></em>@<em class="replaceable"><code>host</code></em> 结合了将
+      	要执行备份的用户名和主机名，<em class="replaceable"><code>backup_device</code></em> 是写
+      	入备份的设备（如 <code class="filename">/dev/nsa0</code>）。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80318672"></a>18.12.4. <code class="command">pax</code></h3></div></div></div><a id="idp80327760" class="indexterm"></a><a id="idp80329040" class="indexterm"></a><a id="idp80329680" class="indexterm"></a><a id="idp80330192" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pax&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pax</span>(1)</span></a> 是符合 IEEE/<span class="trademark">POSIX</span>® 标准的程序。多年来各种不同版本
+        的 <code class="command">tar</code> 和 <code class="command">cpio</code> 间有些不兼容。
+        为了防止这种情况，并使其标准化，<span class="trademark">POSIX</span>® 出了这套新的工具程序。
+         <code class="command">pax</code> 尝试可以读写各种 <code class="command">cpio</code>
+	和 <code class="command">tar</code> 的格式，并可以自己增加新的格式。它的命令
+	集比 <code class="command">tar</code> 更接近 <code class="command">cpio</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="backups-programs-amanda"></a>18.12.5. <span class="application">Amanda</span></h3></div></div></div><a id="idp80340816" class="indexterm"></a><a id="idp80342096" class="indexterm"></a><p><span class="application">Amanda</span> (Advanced Maryland
+        Network Disk Archiver) 并非单一的程序，而是一个客户机/服务器模式的备份系统
+        。一台 <span class="application">Amanda</span> 服务器可以备份任意数量执行
+        <span class="application">Amanda</span> 的客户机或是将连上 <span class="application">Amanda</span>
+        服务器的计算机上的数据备份到一台磁带机上。一个常见的问题是，数据写入磁带机的时间将超
+        过取行数据的时间，而 <span class="application">Amanda</span> 解决了这个问题。它使用一个
+         <span class="quote">“<span class="quote">holding disk</span>”</span> 来同时备份几个文件系统。 <span class="application">Amanda</span>
+         建立 <span class="quote">“<span class="quote">archive sets</span>”</span> 的一组磁带，用来备份在 <span class="application">Amanda</span>
+         的配置文件中所列出的完整的文件系统。</p><p> <span class="application">Amanda</span> 配置文件提供完整的备份控制及
+        <span class="application">Amanda</span> 产生的网络传输。 <span class="application">Amanda</span>
+        可以使用上述任何一个设备程序来向磁带写入数据。<span class="application">Amanda</span>
+        可以从 port 或 package 取得，它并非系统默认安装的。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80348880"></a>18.12.6. Do Nothing 备份策略</h3></div></div></div><p><span class="quote">“<span class="quote">Do nothing</span>”</span> 不是一个程序，而是被广泛使用的备份策略。
+        不需要预算，不需要备份的计划表，全部都不用。如果您的数据发生了什么问题，
+        忽略它！</p><p>如果您的时间和数据不值得您做这些事，那么 <span class="quote">“<span class="quote">Do nothing</span>”</span>
+        将是最好的备份程序。要注意的是，<span class="trademark">UNIX</span>® 是相当好用的工具，您可能在几个月
+        内，就发现您已经收集了不少对您来说相当具有价值的文件和程序。</p><p><span class="quote">“<span class="quote">Do nothing</span>”</span> 对于像 <code class="filename">/usr/obj</code> 和其他
+        可由您的计算机产生的文件来说，是最好的方法。例如这本手册包含有 HTML 或
+        <span class="trademark">PostScript</span>® 格式的文件。这些文档格式是从 SGML 输入文件创建的。创建 HTML
+        或 <span class="trademark">PostScript</span>® 格式的文件的备份就没有必要了。只要经常备份 SGML 文件就够了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80353744"></a>18.12.7. 哪个备份程序最好？</h3></div></div></div><a id="idp80354384" class="indexterm"></a><p>在<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dump</span>(8)</span></a> <span class="emphasis"><em>时期</em></span> Elizabeth D. Zwicky
+        测试了所有以上列出的备份程序。在各种各样怪异的文件系统中，
+         <code class="command">dump</code> 是您明智的选择。Elizabeth 建立起各种各样、
+         奇怪或常见的文件系统，并用各种备份程序，测试在各种文件系统上备份
+         及恢复数据。这些怪异之处包括：具有 holes 和一个 nulls block 的文件，
+         文件名具有有趣字符，无法读写的文件及设备，在备份时改变文件大小，在
+         备份时建立或删除的文件。她将结果写在： LISA V in Oct. 1991.
+	参阅 <a class="link" href="http://www.coredumps.de/doc/dump/zwicky/testdump.doc.html " target="_top">torture-testing
+	  Backup and Archive Programs</a>.</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80357840"></a>18.12.8. 应急恢复程序</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80358480"></a>18.12.8.1. 在出现灾难前</h4></div></div></div><p>在遇到灾难前，只需要执行以下四个步骤：</p><a id="idp80359504" class="indexterm"></a><p>第一，打出您的每个磁盘驱动器的磁盘标签 (例如：
+	   <code class="command">bsdlabel da0 | lpr</code>)，文件系统表，
+	  (<code class="filename">/etc/fstab</code>) ，以及所有启动信息，
+	  并将其复制两份。</p><a id="idp80361680" class="indexterm"></a><p>第二， 刻录一张 <span class="quote">“<span class="quote">livefs</span>”</span> CDROM。 这个 CDROM
+	  包含了用于引导进入 FreeBSD
+	  <span class="quote">“<span class="quote">livefs</span>”</span> 修复模式的支持，
+	  这种模式允许用户执行许多任务， 例如执行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dump</span>(8)</span></a>、
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=restore&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">restore</span>(8)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fdisk&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fdisk</span>(8)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a>、
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a>， 等等。 Livefs CD 映像文件随
+	  FreeBSD/i386 9.2-RELEASE 提供，
+	  可以从 <code class="uri"><a class="uri" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/ISO-IMAGES/9.2/FreeBSD-9.2-RELEASE-i386-livefs.iso" target="_top">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/ISO-IMAGES/9.2/FreeBSD-9.2-RELEASE-i386-livefs.iso</a></code>
+	  获得。</p><p>第三，定期将数据备份到磁带。任何在上次备份后的改变都无法恢复。记得将
+	  磁盘写保护。</p><p>第四， 测试在第二步所建立的 <span class="quote">“<span class="quote">livefs</span>”</span> CDROM
+	  及备份的磁带。 写下笔记， 并和这张 CDROM、
+	  打印副本以及磁带放在一起。 您在需要恢复数据时可能正心慌意乱，
+	  而这些记录可能会帮助您避免毁掉备份磁带 （怎么会发生这种情况呢？
+	  举例来说， 本应执行 <code class="command">tar xvf /dev/sa0</code> 命令时，
+	  您可能会不小心输入 <code class="command">tar cvf /dev/sa0</code>，
+	  从而覆盖备份磁带）。</p><p>保险起见， 您可以制作两份 <span class="quote">“<span class="quote">livefs</span>”</span> CDROM 和备份磁带。
+	  其中一份应放到其它地方， 这里说的其他地方当然不是指同一栋办公楼的地下室，
+	  世贸中心的一大批公司已经学到了血的教训。
+	  保存这份备份的位置应该与您的计算机和磁盘驱动器越远越好。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80379728"></a>18.12.8.2. 出现灾难后</h4></div></div></div><p>关键问题是： 您的硬件是否幸免于难？
+	  由于已经做好了定期的备份工作， 因此并不需要担心软件的问题。</p><p>如果硬件已经损坏， 这些部分应该在尝试使用计算机之前换掉。</p><p>如果硬件还能用， 将
+	  <span class="quote">“<span class="quote">livefs</span>”</span> CDROM 插入 CDROM 驱动器并引导系统。
+	  您将看到最初安装系统时的菜单。 选择正确的国家之后， 选择
+	  <span class="guimenuitem">Fixit -- Repair mode with CDROM/DVD/floppy or
+	  start a shell</span> 选项， 然后再选择
+	  <span class="guimenuitem">CDROM/DVD -- Use the live filesystem
+	  CDROM/DVD</span> 这项。 您可以使用
+	  <code class="command">restore</code> 以及其他位于
+	  <code class="filename">/mnt2/rescue</code> 的工具。</p><p>分别恢复每一个文件系统</p><a id="idp80388048" class="indexterm"></a><a id="idp80388944" class="indexterm"></a><a id="idp80389456" class="indexterm"></a><a id="idp80390352" class="indexterm"></a><p>试着 <code class="command">mount</code> （例如： <code class="command">mount /dev/da0a
+	    /mnt</code>） 第一个磁盘上的 root 分区。
+	  如果 bsdlabel 已经毁坏， 则需要使用 <code class="command">bsdlabel</code>
+	  根据您先前打印存档的记录来重新分区并分配磁盘标签。 接着使用
+	    <code class="command">newfs</code> 重建文件系统。
+	  以读写方式重新挂载磁盘的根分区 (<code class="command">mount -u -o rw
+	    /mnt</code>)。 使用您的备份程序以及备份磁带恢复文件系统数据 （例如 <code class="command">restore vrf
+	    /dev/sa0</code>）。 最后卸下文件系统 （例如 <code class="command">umount
+	    /mnt</code>）。 对于毁掉的其他文件系统， 重复执行前面这些操作。</p><p>当您的系统正常启动后， 将您的数据备份到新的磁带。
+	  任何造成数据丢失的的灾难都可能再次发生。 现在花一些时间，
+	  也许可以在下次发生灾难时救您一把。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="backup-strategies.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="disks-virtual.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.11. 备份策略 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.13. 网络、内存和 和以及映像文件为介质的虚拟文件系统</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

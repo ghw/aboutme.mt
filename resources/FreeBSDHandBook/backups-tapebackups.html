@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.9. 用磁带机备份</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="floppies.html" title="18.8. 创建和使用软盘" /><link rel="next" href="backups-floppybackups.html" title="18.10. 用软盘备份" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.9. 用磁带机备份</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="floppies.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="backups-floppybackups.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="backups-tapebackups"></a>18.9. 用磁带机备份</h2></div></div></div><a id="idp80115536" class="indexterm"></a><p>主流的磁带机有 4mm, 8mm, QIC, mini-cartridge 和 DLT。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="backups-tapebackups-4mm"></a>18.9.1. 4mm (DDS: Digital Data Storage)</h3></div></div></div><a id="idp80117200" class="indexterm"></a><a id="idp80122576" class="indexterm"></a><p>4mm 磁带机正在逐步取代 QIC 成为工作站备份数据的首选设备。
+        在 Conner 收购了 QIC 磁带机领域领先的制造商 Archive 之后不久，
+        即不再生产这种磁带机， 这使得这一趋势变得愈加明显。
+        4mm 的驱动器更加小和安静，但对于数据保存的可靠性仍不及 8mm
+        驱动器。它要比 8mm 的便宜和小得多 (3 x 2 x 0.5 inches, 76 x 51
+	x 12 mm) 。和 8mm 的一样，读写关的寿命都不长，因为它们同样使用螺旋式
+	的方式来读写。</p><p>这些设备的数据传输的速度约在 ~150 kB/s 到 ~500 kB/s 之间，
+        存储空间从 1.3 GB 到 2.0 GB 之间，硬件压缩可使空间加倍。磁带库
+        单元可以有 6 台磁带机，120 个磁带匣，以自动切换的方式使用同一个磁带柜，
+        磁带库的容量可达 240 GB 。</p><p>DDS-3 标准现在支持的磁带机容量最高可达到 12 GB (或压缩的 24 GB )。</p><p>4mm 和 8mm 同样都使用螺旋式读写的方式，所有螺旋式读写的优点及缺点，
+        都可以在 4mm 和 8mm 磁带机上看到。</p><p>磁带在经过 2,000 次的使用或 100 次的全部备份后，就该退休了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="backups-tapebackups-8mm"></a>18.9.2. 8mm (Exabyte)</h3></div></div></div><a id="idp80126544" class="indexterm"></a><p>8mm 磁带机是最常见的 SCSI 磁带机，也是磁带交换的最佳选择。几乎每个
+        工作站都有一台 2 GB 8mm 磁带机。8mm 磁带机可信度高、方便、安静。
+        卡匣小 (4.8 x 3.3 x 0.6 inches; 122 x 84 x 15 mm)而且不贵。8mm 磁带机
+        的下边是一个短短的读写头，而读写头的寿命取决于磁带经过读写头时，相对高
+        速运动情况。</p><p>数据传输速度约在 250 kB/s 到 500 kB/s 之间，可存储的空间从
+        300 MB 到 7 GB，硬件压缩可使空间加倍。磁带库单元可以有 6 台磁
+        带机，120 个磁带匣，以自动切换的方式使用同一个磁带柜，磁带库的容量可达
+        840+ GB。</p><p>Exabyte <span class="quote">“<span class="quote">Mammoth</span>”</span> 模型支持 12 GB 的容量在一个磁带
+        上(压缩后可达 24 GB )相当于普通磁带的二倍。</p><p>数据是使用螺旋式读写的方式记录在磁带上的，读写头和磁带约相差 6 度，
+        磁带以 270 度缠绕着轴，并抵住读写头，轴适时地旋转，使得磁带具有高密度，
+        从一端到另一端并可使磁道紧密地分布。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="backups-tapebackups-qic"></a>18.9.3. QIC</h3></div></div></div><a id="idp80134736" class="indexterm"></a><p>QIC-150 磁带和磁带机可能是最常见的磁带机和介质了。
+	QIC 磁带机是最便宜的 <span class="quote">“<span class="quote">正规</span>”</span> 备份设备。
+	它的缺点在于介质的价格较高。 QIC 磁带要比 8mm 或 4mm 磁带贵，
+	每 GB 的数据存储价格可能最高高出 5 倍。 但是，
+	如果您的需求能够为半打磁带所满足的话， 那么 QIC
+	可能是明智之选。 QIC 是
+	<span class="emphasis"><em>最</em></span> 常见的磁带机。 每个站点都会有某种密度的 QIC。
+	这有时是一种麻烦， QIC 有很多在外观上相似（有时一样），但是密度不同的磁带。
+	QIC 磁带机噪音很大。
+	它们在寻址以及读写时都会发出声音。 QIC 磁带的规格是 6 x 4 x 0.7 英寸
+	(152 x 102 x 17 毫米)。</p><p>数据传输的速度介于 150 kB/s 到 500 kB/s 之间，可存储的空间
+        从 40 MB 到 15 GB。较新的 QIC 磁带机具有硬件压缩的功能。 QIC
+        的使用率愈来愈低，渐渐被 DAT 所取代。</p><p>数据以磁道的方式记录在磁带上，磁道数及磁道的宽度会根据容量而有所不同。
+        通常新的磁带机具有的向后兼容的读取功能（通常也具备写入的功能）。对于数据
+        的安全性，QIC 具有不错的评价。</p><p>磁带机在经过 5,000 次的使用后，就该退休了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="backups-tapebackups-dlt"></a>18.9.4. DLT</h3></div></div></div><a id="idp80139088" class="indexterm"></a><p>在这一章列出的磁带机中 DLT 具有最快的数据传输率。 1/2" (12.5mm) 的
+        磁带包含在单轴的磁带匣 (4 x 4 x 1 inches; 100 x 100 x 25 mm)中。磁带匣
+        的一边是一个旋转匣道，通过匣道的开合，可以让磁带卷动。磁带匣内只有一个
+        轴，而本章中所提到的其他磁带匣都是有两个轴的（9磁道磁带机例外）。</p><p>数据传输的速度约 1.5 MB/s，是 4mm, 8mm, 或 QIC 磁带机的三倍。
+        可存储的空间从 10 GB 到 20 GB，具有磁带机数据库。磁带机数据库
+        单元可以有 1 to 20 台磁带机，5 到 900 个磁带匣，磁带机数据库的容量可达
+        50 GB 到 9 TB 。</p><p>如果要压缩的话，DLT 型 IV 格式的磁带机最高可支持 70 GB 的存储
+        容量。</p><p>数据存储在平行于磁带运行方向的磁道上（就像 QIC 磁带），一次写入两个
+        磁道。读写头的寿命相当长，每当磁带停止前进，磁带与读写头之间没有相对运动。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80141904"></a>18.9.5. AIT</h3></div></div></div><a id="idp80142672" class="indexterm"></a><p>AIT 是 Sony 开发的一种新格式，每个磁带最高可以存储 50 GB。磁带
+        机使用内存芯片来保存磁带上的索引内容。这个索引能够被磁带机驱动器快速阅读
+        来搜索磁带机上文件所处的位置，而不像其他的磁带机需要花几分钟的时间才能找
+        到文件。像 <span class="application">SAMS:Alexandria</span> 这样的软件：能够操
+        作四十或者更多的 AIT 磁带库，直接使用内存芯片来进行通信把内容显示在屏幕上，
+        以决定把什么文件备份到哪个磁带上，加载和恢复数据。</p><p>像这样的库成本大概在 $20,000 美元左右，零售市场可能还要贵一点。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80149328"></a>18.9.6. 第一次使用新的磁带机</h3></div></div></div><p>当在一块完全空白的磁带上尝试定入数据时，会得到类似下面这样的错误信息：</p><pre class="screen">sa0(ncr1:4:0): NOT READY asc:4,1
+sa0(ncr1:4:0):  Logical unit is in process of becoming ready</pre><p>信息指出这块磁带没有块编号 (block 编号为 0)。在 QIC-525 之后的所有 QIC
+        磁带，都采用 QIC-525 标准，必须写入一个	Identifier Block 。对于这种问题，
+        有以下两种解决的办法：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>用<code class="command">mt fsf 1</code> 可以让磁带机对磁带写入 Identifier Block 。</p></li><li class="listitem"><p>使用面板上的按钮磁带。</p><p>再插入一次，并存储 <code class="command">dump</code> 数据到磁带上。</p><p>这时<code class="command">dump</code> 将传回 <span class="errorname">DUMP: End of tape
+	    detected</span> ，然后您会得到这样的错误信息： <span class="errorname">HARDWARE
+	    FAILURE info:280 asc:80,96</span>。</p><p>这时用 <code class="command">mt rewind</code> 来倒转磁带。</p><p>磁带操作的后续操作就完成了。</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="floppies.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="backups-floppybackups.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.8. 创建和使用软盘 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.10. 用软盘备份</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

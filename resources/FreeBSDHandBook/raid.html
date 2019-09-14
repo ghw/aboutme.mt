@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.4. RAID</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="disks-adding.html" title="18.3. 添加磁盘" /><link rel="next" href="usb-disks.html" title="18.5. USB 存储设备" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.4. RAID</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="disks-adding.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="usb-disks.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="raid"></a>18.4. RAID</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="raid-soft"></a>18.4.1. 软件 RAID</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ccd"></a>18.4.1.1. 连接磁盘驱动器配置 (CCD) </h4></div><div><span class="authorgroup">Original work by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Christopher</span> <span class="surname">Shumway</span></span>. </span></div><div><span class="authorgroup">Revised by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Jim</span> <span class="surname">Brown</span></span>. </span></div></div></div><a id="idp79581520" class="indexterm"></a><a id="idp79582416" class="indexterm"></a><p>选择一个大容量存储比较好的解决方案，最重要的因素是产品的速度、
+	  性能和成本。 通常这三者不可能都满足;要获得比较快和可靠的大容量存储设备，
+	  就比较昂贵。但如果将成本降下来，那它的速度或可靠性就会打折扣。
+	  </p><p>在设计下面描述的系统时， 价格被选为最重要的因素，
+            接下来是速度和性能。 这个系统的数据传输速度基本上受限于网络。
+            性能也非常重要，
+            CCD 驱动器上的所有数据都被备份到了 CD-R 盘， 可以很容易地对数据进行恢复。
+            </p><p>在选择一个大容量的存储解决方案时，第一步是要设计您自己的需求。
+            如果您的需求更偏重于速度和性能，那么您的解决方案将就不同于上面的设计。
+          </p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ccd-installhw"></a>18.4.1.1.1. 安装硬件</h5></div></div></div><p>除了 IDE 系统磁盘外，还有三个 Western Digital 30GB、5400 RPM
+	    的 IDE 磁盘构成了大约 90G 的连接磁盘驱动存储空间。 理想情况是每个 IDE
+	    硬盘都独占 IDE 控制器和数据线， 但为了尽可能降低成本， 通常并不会安装更多的控制器，
+	    而是通过配置跳线，使每个 IDE 控制器都管理一个主盘和一个从盘。</p><p>重启动后，系统 BIOS 被配置成自动检测硬盘。FreeBSD 检测到它们：</p><pre class="programlisting">ad0: 19574MB &lt;WDC WD205BA&gt; [39770/16/63] at ata0-master UDMA33
+ad1: 29333MB &lt;WDC WD307AA&gt; [59598/16/63] at ata0-slave UDMA33
+ad2: 29333MB &lt;WDC WD307AA&gt; [59598/16/63] at ata1-master UDMA33
+ad3: 29333MB &lt;WDC WD307AA&gt; [59598/16/63] at ata1-slave UDMA33</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果 FreeBSD 没有检测到它们，请确定它们的跳线是否设置
+ 	    正确。大多数 IDE 磁盘有一个 <span class="quote">“<span class="quote">Cable Select</span>”</span> 跳线。这个
+ 	     <span class="emphasis"><em>不是</em></span> 设置 master/slave 硬盘的跳线。查阅文档
+ 	     信息来确定正确的跳线设置。</p></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ccd-setup"></a>18.4.1.1.2. 安装 CCD</h5></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 允许用户将几个相同的的磁盘通过一个逻辑文件系统
+ 	    连接起来。要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>，您需要在内核中配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>
+ 	    支持选项。把这行加入到内核配置文件中，然后重建内核：</p><pre class="programlisting">device   ccd</pre><p>对 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 的支持也可以内核模块的形式载入。</p><p>要安装 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>, 首先需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a> 来编辑硬盘：</p><pre class="programlisting">bsdlabel -w ad1 auto
+bsdlabel -w ad2 auto
+bsdlabel -w ad3 auto</pre><p>此处将整个硬盘创建为 <code class="filename">ad1c</code>, <code class="filename">ad2c</code>
+ 	  和 <code class="filename">ad3c</code>。</p><p>下一步是改变 disklable 的类型。也可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bsdlabel&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bsdlabel</span>(8)</span></a> 来编辑：</p><pre class="programlisting">bsdlabel -e ad1
+bsdlabel -e ad2
+bsdlabel -e ad3</pre><p>这儿在每个已经设置了 <code class="envar">EDITOR</code> 环境变量的磁盘上打开了
+ 	    disklable，在我我例子中使用的是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vi&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vi</span>(1)</span></a>。</p><p>可以看到：</p><pre class="programlisting">8 partitions:
+#        size   offset    fstype   [fsize bsize bps/cpg]
+  c: 60074784        0    unused        0     0     0   # (Cyl.    0 - 59597)</pre><p>添加一个新的 <code class="literal">e</code> 分区给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 用。这可以是
+ 	    <code class="literal">c</code> 分区的一个副本， 但 <code class="option">fstype</code> <span class="emphasis"><em>必须</em></span>
+ 	    是 <strong class="userinput"><code>4.2BSD</code></strong>。做完之后，您会看到一面这些：</p><pre class="programlisting">8 partitions:
+#        size   offset    fstype   [fsize bsize bps/cpg]
+  c: 60074784        0    unused        0     0     0   # (Cyl.    0 - 59597)
+  e: 60074784        0    4.2BSD        0     0     0   # (Cyl.    0 - 59597)</pre></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ccd-buildingfs"></a>18.4.1.1.3. 建立文件系统</h5></div></div></div><p>现在已给每个磁盘都加上了标签，下面需要建立 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>。要这样做，
+	    需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ccdconfig</span>(8)</span></a> 工具，同时要提供类似下面的选项：</p><pre class="programlisting">ccdconfig ccd0<a id="co-ccd-dev"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span> 32<a id="co-ccd-interleave"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span> 0<a id="co-ccd-flags"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span> /dev/ad1e<a id="co-ccd-devs"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span> /dev/ad2e /dev/ad3e</pre><p>每个选项的意义和用法如下所示：</p><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-ccd-dev"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>配置设备的第一个参数，在这是 <code class="filename">/dev/ccd0c</code>。
+	      <code class="filename">/dev/</code> 部分是任选项。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ccd-interleave"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>下一个参数是文件系统的插入页(interleave)。插入页定义了一个
+	      磁盘块中一个分段或条带(stripe)的大小，通常是 512 个字节。所以一个为
+	      32 的插入页将是 16,384 字节。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ccd-flags"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p>插入页为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ccdconfig</span>(8)</span></a> 附带了标记。如果您要启用驱动器镜像，
+	      需要在这儿指定它。在这个配置中没有做 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 的镜像，所以把它
+	      设为 0 (zero)。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ccd-devs"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ccdconfig</span>(8)</span></a> 的最后配置是设备的排列问题。使用完整的设备
+	      路径名。</p></td></tr></table></div><p>运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ccdconfig</span>(8)</span></a> 后 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 就配置好了。现在要创建文件
+	    系统了，参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a> 选项，执行下同的命令： </p><pre class="programlisting">newfs /dev/ccd0c</pre></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ccd-auto"></a>18.4.1.1.4. 自动创建</h5></div></div></div><p>最后，要挂上 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> ，需要先配置它。把当前的配置文件写入
+	    <code class="filename">/etc/ccd.conf</code> 中，使用下面的命令：</p><pre class="programlisting">ccdconfig -g &gt; /etc/ccd.conf</pre><p>当重新启动系统时，如果 <code class="filename">/etc/ccd.conf</code> 存在，
+	    脚本 <code class="command">/etc/rc</code> 就运行 <code class="command">ccdconfig -C</code>。
+	    这样就能自动配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 以到它能被挂上。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果启动进入了单用户模式，在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 上 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>
+	    之前，需要执行下面的命令来配置队列：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">ccdconfig -C</pre></div><p>要自动挂接 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a>,需要为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ccd&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ccd</span>(4)</span></a> 在
+	    <code class="filename">/etc/fstab</code> 中配置一个记录，以便在启动时它能被挂上。
+	    如下所示：</p><pre class="programlisting">/dev/ccd0c              /media       ufs     rw      2       2</pre></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="vinum"></a>18.4.1.2.  Vinum 卷管理</h4></div></div></div><a id="idp79652432" class="indexterm"></a><a id="idp79653200" class="indexterm"></a><p>Vinum 卷管理是一个实现虚拟磁盘的块驱动设备工具。它使磁盘从
+	  块设备的接口和数据映射中独立出来。与传统的存储设备相比，增加了
+	  灵活性、性能和可靠性。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vinum&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">vinum</span>(4)</span></a> 实现了 RAID-0、RAID-1 和
+	  RAID-5 三种模式，它们既可以独立使用，也可组合使用。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="raid-hard"></a>18.4.2. 硬件 RAID</h3></div></div></div><a id="idp79656784" class="indexterm"></a><p>FreeBSD 支持很多硬件 <acronym class="acronym">RAID</acronym> 控制器。
+        这些硬件不需要 FreeBSD 指定软件来管理 <acronym class="acronym">RAID</acronym> 系统。
+        </p><p>使用 <acronym class="acronym">BIOS</acronym> 支持的硬件，一般情况下这些硬件可以自行操作。
+	下面是一个简明的描述设置一个 Promise <acronym class="acronym">IDE</acronym> <acronym class="acronym">RAID</acronym> 控制器。
+	当硬件设备装好且系统重启后，屏幕上显示一个询问信息。接着进入硬件设置屏幕。在这里，
+	您可以把所有的磁盘联合在一起使用。这样 FreeBSD 将磁盘看作一个驱动器。其它
+	级别的 <acronym class="acronym">RAID</acronym> 也可以相应的进行设置。
+      </p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79669456"></a>18.4.3. 重建 ATA RAID1 阵列</h3></div></div></div><p>FreeBSD 允许您热插拔阵列中损坏的磁盘。
+	在您重新启动系统之前请注意这一点。</p><p>您可能会在 <code class="filename">/var/log/messages</code> 或者在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a>
+	的输出中看到类似下面这些的内容：</p><pre class="programlisting">ad6 on monster1 suffered a hard error.
+ad6: READ command timeout tag=0 serv=0 - resetting
+ad6: trying fallback to PIO mode
+ata3: resetting devices .. done
+ad6: hard error reading fsbn 1116119 of 0-7 (ad6 bn 1116119; cn 1107 tn 4 sn 11)\\
+status=59 error=40
+ar0: WARNING - mirror lost</pre><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atacontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">atacontrol</span>(8)</span></a>，查看更多的信息：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atacontrol list</code></strong>
+ATA channel 0:
+	Master:      no device present
+	Slave:   acd0 &lt;HL-DT-ST CD-ROM GCR-8520B/1.00&gt; ATA/ATAPI rev 0
+
+ATA channel 1:
+	Master:      no device present
+	Slave:       no device present
+
+ATA channel 2:
+	Master:  ad4 &lt;MAXTOR 6L080J4/A93.0500&gt; ATA/ATAPI rev 5
+	Slave:       no device present
+
+ATA channel 3:
+	Master:  ad6 &lt;MAXTOR 6L080J4/A93.0500&gt; ATA/ATAPI rev 5
+	Slave:       no device present
+
+<code class="prompt">#</code> <strong class="userinput"><code>atacontrol status ar0</code></strong>
+ar0: ATA RAID1 subdisks: ad4 ad6 status: DEGRADED</pre><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>首先您应将包含故障盘的 ata 通道卸下，
+	    以便安全地将其拆除：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atacontrol detach ata3</code></strong></pre></li><li class="step"><p>换上磁盘</p></li><li class="step"><p>重新挂接 ata 通道：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atacontrol attach ata3</code></strong>
+Master:  ad6 &lt;MAXTOR 6L080J4/A93.0500&gt; ATA/ATAPI rev 5
+Slave:   no device present</pre></li><li class="step"><p>将新盘作为热备盘加入阵列：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atacontrol addspare ar0 ad6</code></strong></pre></li><li class="step"><p>重建阵列：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>atacontrol rebuild ar0</code></strong></pre></li><li class="step"><p>可以通过下面的命令来查看进度：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dmesg | tail -10</code></strong>
+[output removed]
+ad6: removed from configuration
+ad6: deleted from ar0 disk1
+ad6: inserted into ar0 disk1 as spare
+
+<code class="prompt">#</code> <strong class="userinput"><code>atacontrol status ar0</code></strong>
+ar0: ATA RAID1 subdisks: ad4 ad6 status: REBUILDING 0% completed</pre></li><li class="step"><p>等待操作完成。</p></li></ol></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="disks-adding.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="usb-disks.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.3. 添加磁盘 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.5. USB 存储设备</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

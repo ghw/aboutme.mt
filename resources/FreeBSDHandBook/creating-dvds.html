@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.7. 创建和使用光学介质(DVD)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="creating-cds.html" title="18.6. 创建和使用光学介质(CD)" /><link rel="next" href="floppies.html" title="18.8. 创建和使用软盘" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.7. 创建和使用光学介质(DVD)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="creating-cds.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="floppies.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="creating-dvds"></a>18.7. 创建和使用光学介质(DVD)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div><div><span class="authorgroup">With inputs from <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Andy</span> <span class="surname">Polyakov</span></span>. </span></div></div></div><a id="idp79947856" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79949008"></a>18.7.1. 介绍</h3></div></div></div><p>和 CD 相比，DVD 是下一代光学存储介质技术。
+	DVD 可以容纳比任何 CD 更多的数据，已经成为现今视频出版业的标准。</p><p>我们称作可记录 DVD 的有五种物理记录格式：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>DVD-R：这是第一种可用的 DVD 可记录格式。
+	    DVD-R 标准由 <a class="link" href="http://www.dvdforum.com/forum.shtml" target="_top">DVD Forum</a> 定义。
+	    这种格式是一次可写的。</p></li><li class="listitem"><p>DVD-RW：这是 DVD-R 标准的可覆写版本。
+	    一张 DVD-RW 可以被覆写大约 1000
+	    次。</p></li><li class="listitem"><p>DVD-RAM：这也是一种被 DVD Forum 所支持的可覆写格式。
+	    DVD-RAM 可以被看作一种可移动硬盘。
+	    然而，这种介质和大部分
+	    DVD-ROM 驱动器以及 DVD-Video 播放器不兼容；
+	    只有少数 DVD 刻录机支持 DVD-RAM。
+	    请参阅 <a class="xref" href="creating-dvds.html#creating-dvd-ram" title="18.7.9. 使用 DVD-RAM">Section 18.7.9, “使用 DVD-RAM”</a>
+	    以了解关于如何使用 DVD-RAM 的进一步详情。</p></li><li class="listitem"><p>DVD+RW：这是一种由
+	    <a class="link" href="http://www.dvdrw.com/" target="_top">DVD+RW
+	    Alliance</a> 定义的可覆写格式。一张 DVD+RW 可以被覆写大约 1000
+	    次。</p></li><li class="listitem"><p>DVD+R：这种格式是 DVD+RW 格式的一次可写变种。</p></li></ul></div><p>一张单层的可记录 DVD 可以存储
+	4,700,000,000  字节，相当于 4.38 GB 或者说
+	4485 MB (1 千字节等于 1024 字节)。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">必须说明一下物理介质与应用程序的分歧。
+	  例如 DVD-Video 是一种特殊的文件系统，
+	  可以被覆写到任何可记录的 DVD 物理介质上：
+	  DVD-R、DVD+R、DVD-RW 等等。在选择介质类型之前，
+	  您一定要确认刻录机和
+	  DVD-Video 播放器 (一种单独的播放器或者计算机上的 DVD-ROM 驱动器)
+	  是和这种介质兼容的。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79965776"></a>18.7.2. 配置</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 将被用来实施 DVD
+	刻录。 这个命令是
+	<span class="application">dvd+rw-tools</span> 工具集 (<span class="package">sysutils/dvd+rw-tools</span>) 的一部分。
+	<span class="application">dvd+rw-tools</span> 支持所有的 DVD 介质类型。</p><p>这些工具将使用 SCSI 子系统来访问设备，因此
+	<a class="link" href="creating-cds.html#atapicam" title="18.6.9. 使用 ATAPI/CAM 驱动">ATAPI/CAM 支持</a> 必须加入内核。
+	如果您的刻录机采用 USB 接口则不需要这么做，请参考
+	<a class="xref" href="usb-disks.html" title="18.5. USB 存储设备">Section 18.5, “USB 存储设备”</a> 来了解 USB
+	设备配置的进一步详情。</p><p>此外，还需要启用 ATAPI 设备的 DMA 支持。 这一工作可以通过在
+	<code class="filename">/boot/loader.conf</code> 文件中加入下面的行来完成：</p><pre class="programlisting">hw.ata.atapi_dma="1"</pre><p>试图使用
+	<span class="application">dvd+rw-tools</span> 之前您应该参考
+	<a class="link" href="http://fy.chalmers.se/~appro/linux/DVD+RW/hcn.html" target="_top">dvd+rw-tools
+	硬件兼容性列表</a> 是否有与您的 DVD 刻录机有关的信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您想要一个图形化的用户界面，您应该看一看
+	  <span class="application">K3b</span> (<span class="package">sysutils/k3b</span>)，它提供了
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 的一个友好界面和许多其他刻录工具。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79975248"></a>18.7.3. 刻录数据 DVD</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 命令是 <a class="link" href="creating-cds.html#mkisofs" title="18.6.2. mkisofs">mkisofs</a> 的前端，它会调用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 来创建文件系统布局，完成到 DVD 上的刻录。
+	这意味着您不需要在刻录之前创建数据映像。</p><p>要把 <code class="filename">/path/to/data</code> 目录的数据刻录到 DVD+R
+	或者 DVD-R 上面，使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -dvd-compat -Z /dev/cd0 -J -R /path/to/data</code></strong></pre><p><code class="option">-J -R</code> 选项传递给
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 用于文件系统创建 (这表示创建带有带有
+	joliet 和 Rock Ridge 扩展的 ISO 9660 文件系统)，
+	参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 联机手册了解更多细节。</p><p>选项 <code class="option">-Z</code> 用来在任何情况下初始刻录会话：
+	不管多会话与否。
+	DVD 设备，<em class="replaceable"><code>/dev/cd0</code></em>，
+	必须依照您的配置做出改变。
+	<code class="option">-dvd-compat</code> 参数会结束光盘，
+	光盘成为不可附加的。这会提供更多的和
+	DVD-ROM 驱动器的介质兼容性。</p><p>也可以刻录成一个 pre-mastered 映像,
+	例如记录一个映像文件
+	<em class="replaceable"><code>imagefile.iso</code></em>, 我们可以运行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -dvd-compat -Z /dev/cd0=imagefile.iso</code></strong></pre><p>刻录的速度可以被检测到并自动进行调整，
+	根据介质和驱动器的使用情况。如果您想强制改变速度，
+	可以使用 <code class="option">-speed=</code>
+	参数。更多的信息，请看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a>
+	联机手册。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果需要在刻录的编录中添加超过 4.38GB 的单个文件，
+	  就必须使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 或其他相关工具
+	  (例如  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a>) 的 <code class="option">-udf -iso-level
+	  3</code> 参数来创建 UDF/ISO-9660 混合文件系统。
+	  只有在创建 ISO 映像文件或直接在盘上写数据时才需要这样做。
+	  以这种方式创建的光盘必须通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_udf&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_udf</span>(8)</span></a> 工具以 UDF
+	  文件系统挂载， 因此只有操作系统支持 UDF 时才可以这样做，
+	  否则盘上的文件数据可能会无法正确读出。</p><p xmlns="http://www.w3.org/1999/xhtml">要创建这样的 ISO 文件：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mkisofs -R -J -udf -iso-level 3 -o imagefile.iso /path/to/data</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">直接将文件刻录到光盘上：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -dvd-compat -udf -iso-level 3 -Z /dev/cd0 -J -R /path/to/data</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">假如只是使用包含巨型文件的 ISO 映像文件时， 就不需要在运行
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 来将映像文件刻录成光盘时指定任何额外的选项了。</p><p xmlns="http://www.w3.org/1999/xhtml">另外， 在映像文件中增加或直接刻录巨型文件时， 还需要注意使用最新的
+	  <span class="package">sysutils/cdrtools</span> (包含了
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>)， 因为旧版并不提供巨型文件支持。 如果您遇到问题，
+	  也可以尝试一下开发版本的软件包， 例如 <span class="package">sysutils/cdrtools-devel</span> 并参阅
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 联机手册。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80006480"></a>18.7.4. 刻录 DVD-Video</h3></div></div></div><a id="idp80007120" class="indexterm"></a><p>DVD-Video 是一种特殊的基于 ISO 9660
+	和 micro-UDF (M-UDF) 规范的文件系统。 DVD-Video
+	也呈现了一个特殊的数据格式，
+	这就是为什么您需要一个特殊的程序像 <span class="package">multimedia/dvdauthor</span> 来制作
+	DVD 的原因。</p><p>如果您已经有了 DVD-Video 文件系统的映像，
+	就可以以同样的方式制作另一个映像，可以参看前面章节的例子。
+	如果您想制作 DVD 并想放在特定的目录中，如在目录
+	<code class="filename">/path/to/video</code> 中，
+	可以使用下面的命令来刻录 DVD-Video：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -Z /dev/cd0 -dvd-video /path/to/video</code></strong></pre><p> <code class="option">-dvd-video</code> 选项将传递给
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 并指示它创建一个 DVD-Video 文件系统布局。
+	除此之外。 <code class="option">-dvd-video</code> 选项也包含了
+	<code class="option">-dvd-compat</code> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a>
+	选项。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80014416"></a>18.7.5. 使用 DVD+RW</h3></div></div></div><a id="idp80015056" class="indexterm"></a><p>不像 CD-RW, 一个空白的 DVD+RW 在每一次使用前必须先格式化。
+	 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 程序将会适时的自动对其进行适当的处理，
+	这是 <span class="emphasis"><em>recommended</em></span> 的方式。您也可以使用
+	<code class="command">dvd+rw-format</code> 来对 DVD+RW 进行格式化：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dvd+rw-format /dev/cd0</code></strong></pre><p>您只需要执行这样的操作一次，牢记只有空白的
+	DVD+RW 介质才需要格式化。您可以以前面章节同样的方式来刻录
+	DVD+RW。</p><p>如果您想刻录新的数据 (刻录一个新的完整的文件系统
+	而不仅仅是追加一些数据) 到 DVD+RW，您不必再将其格式化成空白盘，
+	您只须要直接覆盖掉以前的记录即可。
+	(执行一个新的初始化对话), 像这样：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -Z /dev/cd0 -J -R /path/to/newdata</code></strong></pre><p>DVD+RW 格式化程序为简单的向以前的记录追加数据提供了可能性。
+	这个操作有一个新的会话和一个已经存在的会话合并而成。
+	它不需要多个写会话过程，
+	 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 将在介质上 <span class="emphasis"><em>增加</em></span>
+	ISO 9660 文件系统。</p><p>例如，我们想追加一些数据到到我们以前的
+	DVD+RW 上，我们可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -M /dev/cd0 -J -R /path/to/nextdata</code></strong></pre><p>在以后的写操作时， 应使用与最初的刻录会话时相同的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>
+	选项。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您想获得与 DVD-ROM 驱动更好的兼容性，可以使用 <code class="option">-dvd-compat</code>
+	  选项。 在 DVD+RW 这种情况下， 这样做并不妨碍您添加数据。</p></div><p>如果出于某种原因您真的想要空白介质盘，
+	可以执行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -Z /dev/cd0=/dev/zero</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80040144"></a>18.7.6. 使用 DVD-RW</h3></div></div></div><a id="idp80040784" class="indexterm"></a><p> DVD-RW 接受两种光盘格式：增补顺序写入和受限式覆写。默认的
+	DVD-RW 盘是顺序写入格式。</p><p>空白的 DVD-RW 能够直接进行刻录而不需要格式化操作，
+	然而非空的顺序写入格式的 DVD-RW 需要格式化才能写入新的初始区段。</p><p>要格式化一张 DVD-RW 为顺序写入模式，运行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dvd+rw-format -blank=full /dev/cd0</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">一次完全的格式化 (<code class="option">-blank=full</code>)
+	  在 1x 倍速的介质上将会花费大约 1 个小时。快速格式化可以使用
+	  <code class="option">-blank</code> 选项来进行，如果
+	  DVD-RW 要以 Disk-At-Once (DAO) 模式刻录的话。要以
+	  DAO 模式刻录 DVD-RW，使用命令：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -use-the-force-luke=dao -Z /dev/cd0=imagefile.iso</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml"><code class="option">-use-the-force-luke=dao</code> 选项不是必需的，
+	  因为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 试图最低限度的检测 (快速格式化) 介质并进行
+	  DAO 写入。</p><p xmlns="http://www.w3.org/1999/xhtml">事实上对于任何 DVD-RW 都应该使用受限式覆写模式，
+	  这种格式比默认的增补顺序写入更加灵活。</p></div><p>在一张顺序 DVD-RW 上写入数据，使用和其他 DVD 格式相同的指令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -Z /dev/cd0 -J -R /path/to/data</code></strong></pre><p>如果您想在您以前的刻录上附加数据，您必须使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 的 <code class="option">-M</code> 选项。然而，
+	如果您在一张增补顺序写入模式的 DVD-RW 上附加数据，
+	将会在盘上创建一个新的区段，结果就是一张多区段光盘。</p><p>受限式覆写格式的 DVD-RW 在新的初始化区段前不需要格式化，
+	您只是要用 <code class="option">-Z</code> 选项覆写光盘，这和
+	DVD+RW 的情形是相似的。也可以用和 DVD+RW 同样方式的
+	<code class="option">-M</code> 选项把现存的 ISO 9660 文件系统写入光盘。
+	结果会是一张单区段 DVD。</p><p>要把 DVD-RW 置于受限式覆写格式，
+	必须使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dvd+rw-format /dev/cd0</code></strong></pre><p>更改回顺序写入模式使用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dvd+rw-format -blank=full /dev/cd0</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80063568"></a>18.7.7. 多区段</h3></div></div></div><p>几乎没有哪个 DVD-ROM 驱动器支持多区段
+	DVD，它们大多数时候都只读取第一个区段。
+	顺序写入格式的 DVD+R、DVD-R 和 DVD-RW 可以支持多区段，
+	DVD+RW 和 DVD-RW 受限式覆写格式不存在多区段的概念。</p><p>在 DVD+R、DVD-R 或者 DVD-RW 的顺序写入格式下，
+	一次初始化 (未关闭) 区段之后使用下面的命令，
+	将会在光盘上添加一个新的区段：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>growisofs -M /dev/cd0 -J -R /path/to/nextdata</code></strong></pre><p>对 DVD+RW 或者 DVD-RW 在受限式覆写模式下使用这条命令，
+	会合并新区段到存在的区段中来附加数据。
+	结果就是一张单区段光盘。
+	这是在这些介质上用于在最初的写操作之后添加数据的方式。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">介质上的一些空间用于区段之间区段的开始与结束。
+	  因此，应该用大量的数据添加区段来优化介质空间。
+	  对于 DVD+R 来说区段的数量限制为 154，
+	  对于 DVD-R 来说大约是 2000，对于双层 DVD+R 来说是 127。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80067152"></a>18.7.8. 更多的信息</h3></div></div></div><p>要获得更多的关于 DVD 的信息
+	<code class="command">dvd+rw-mediainfo
+	/dev/cd0</code> 命令可以运行来获得
+	更多的信息。</p><p>更多的关于
+	<span class="application">dvd+rw-tools</span> 的信息可以在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=growisofs&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">growisofs</span>(1)</span></a> 联机手册找到，在 <a class="link" href="http://fy.chalmers.se/~appro/linux/DVD+RW/" target="_top">dvd+rw-tools
+	web site</a> 和 <a class="link" href="http://lists.debian.org/cdwrite/" target="_top">cdwrite mailing
+	list</a> 联接中也可找到。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="command">dvd+rw-mediainfo</code> 命令的输出结果记录，
+	  以及介质的问题会被用来做问题报告。 如果没有这些输出，
+	  就很难帮您解决问题。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="creating-dvd-ram"></a>18.7.9. 使用 DVD-RAM</h3></div></div></div><a id="idp80073296" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80074448"></a>18.7.9.1. 配置</h4></div></div></div><p>DVD-RAM 刻录机通常使用 SCSI 或 ATAPI
+	  两种接口之一。 对于 ATAPI 设备， DMA 传输模式必须手工启用。
+	  这一工作可以通过在
+	  <code class="filename">/boot/loader.conf</code> 文件中增加下述配置来完成：</p><pre class="programlisting">hw.ata.atapi_dma="1"</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80076368"></a>18.7.9.2. 初始化介质</h4></div></div></div><p>如本章前面的介绍所言，
+	  DVD-RAM 可以视为一移动硬盘。 与任何其它型号的移动硬盘类似，
+	  首次使用它之前， 应首先 <span class="quote">“<span class="quote">初始化</span>”</span> DVD-RAM。
+	  在下面的例子中， 我们将在全部空间上使用标准的 UFS2 文件系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/zero of=/dev/acd0 bs=2k count=1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>bsdlabel -Bw acd0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>newfs /dev/acd0</code></strong></pre><p>您应根据实际情况将 <code class="filename">acd0</code> 改为您所使用的设备名。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80081232"></a>18.7.9.3. 使用介质</h4></div></div></div><p>一旦您在 DVD-RAM 上完成了前面的操作，
+	  就可以像普通的硬盘一样挂接它了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/acd0 /mnt</code></strong></pre><p>然后就可以正常地对 DVD-RAM 进行读写了。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="creating-cds.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="floppies.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.6. 创建和使用光学介质(CD) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.8. 创建和使用软盘</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

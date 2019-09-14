@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.3. 网络文件系统（NFS）</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-inetd.html" title="28.2.  inetd “超级服务器”" /><link rel="next" href="network-nis.html" title="28.4. 网络信息服务 (NIS/YP)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.3. 网络文件系统（NFS）</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-inetd.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-nis.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-nfs"></a>28.3. 网络文件系统（NFS）</h2></div><div><span class="authorgroup">Reorganized and enhanced by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Bill</span> <span class="surname">Swingle</span></span>. </span></div></div></div><a id="idp86241744" class="indexterm"></a><p>网络文件系统是FreeBSD支持的文件系统中的一种，
+      也被称为 <acronym class="acronym">NFS</acronym>。 <acronym class="acronym">NFS</acronym>允许一个系统在网络上与它人共享目录和文件。通过使用<acronym class="acronym">NFS</acronym>，用户和程序可以象访问本地文件
+      一样访问远端系统上的文件。</p><p>以下是<acronym class="acronym">NFS</acronym>最显而易见的好处：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>本地工作站使用更少的磁盘空间，因为通常的数据可以存放在一
+	台机器上而且可以通过网络访问到。</p></li><li class="listitem"><p>用户不必在每个网络上机器里头都有一个home目录。Home目录
+	  可以被放在<acronym class="acronym">NFS</acronym>服务器上并且在网络上处处可用。
+	  </p></li><li class="listitem"><p>诸如软驱，CDROM，和 <span class="trademark">Zip</span>® 之类的存储设备可以在网络上面被别的机器使用。
+	  这可以减少整个网络上的可移动介质设备的数量。</p></li></ul></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86256848"></a>28.3.1. <acronym class="acronym">NFS</acronym>是如何工作的</h3></div></div></div><p><acronym class="acronym">NFS</acronym> 至少包括两个主要的部分： 一台服务器，
+        以及至少一台客户机， 客户机远程地访问保存在服务器上的数据。
+        要让这一切运转起来， 需要配置并运行几个程序。</p><p>服务器必须运行以下服务：</p><a id="idp86258768" class="indexterm"></a><a id="idp86259920" class="indexterm"></a><a id="idp86261072" class="indexterm"></a><a id="idp86261968" class="indexterm"></a><a id="idp86262992" class="indexterm"></a><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>服务</th><th>描述</th></tr></thead><tbody><tr><td><span class="application">nfsd</span></td><td><acronym class="acronym">NFS</acronym>，为来自<acronym class="acronym">NFS</acronym>客户端的
+	      请求服务。</td></tr><tr><td><span class="application">mountd</span></td><td><acronym class="acronym">NFS</acronym>挂载服务，处理<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=nfsd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">nfsd</span>(8)</span></a>递交过来的请求。</td></tr><tr><td><span class="application">rpcbind</span></td><td> 此服务允许
+	      <acronym class="acronym">NFS</acronym> 客户程序查询正在被 <acronym class="acronym">NFS</acronym> 服务使用的端口。</td></tr></tbody></table></div><p>客户端同样运行一些进程，比如
+        <span class="application">nfsiod</span>。
+        <span class="application">nfsiod</span>处理来自<acronym class="acronym">NFS</acronym>的请求。
+        这是可选的，而且可以提高性能，对于普通和正确的操作来说并不是必须的。
+        参考<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=nfsiod&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">nfsiod</span>(8)</span></a>手册获得更多信息。
+      </p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-configuring-nfs"></a>28.3.2. 配置<acronym class="acronym">NFS</acronym></h3></div></div></div><a id="idp86277584" class="indexterm"></a><p><acronym class="acronym">NFS</acronym>的配置过程相对简单。这个过程只需要
+      对<code class="filename">/etc/rc.conf</code>文件作一些简单修改。</p><p>在<acronym class="acronym">NFS</acronym>服务器这端，确认<code class="filename">/etc/rc.conf</code>
+      文件里头以下开关都配上了:</p><pre class="programlisting">rpcbind_enable="YES"
+nfs_server_enable="YES"
+mountd_flags="-r"</pre><p>只要<acronym class="acronym">NFS</acronym>服务被置为enable，<span class="application">mountd</span>
+      就能自动运行。</p><p>在客户端一侧，确认下面这个开关出现在
+        <code class="filename">/etc/rc.conf</code>里头:</p><pre class="programlisting">nfs_client_enable="YES"</pre><p><code class="filename">/etc/exports</code>文件指定了哪个文件系统
+      <acronym class="acronym">NFS</acronym>应该输出（有时被称为<span class="quote">“<span class="quote">共享</span>”</span>）。
+      <code class="filename">/etc/exports</code>里面每行指定一个输出的文件系统和
+      哪些机器可以访问该文件系统。在指定机器访问权限的同时，访问选项
+      开关也可以被指定。有很多开关可以被用在这个文件里头，不过不会在这
+      里详细谈。您可以通过阅读<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=exports&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">exports</span>(5)</span></a> 手册来发现这些开关。</p><p>以下是一些<code class="filename">/etc/exports</code>的例子：</p><a id="idp86295376" class="indexterm"></a><p>下面是一个输出文件系统的例子， 不过这种配置与您所处的网络环境及其配置密切相关。
+      例如， 如果要把 <code class="filename">/cdrom</code> 输出给与服务器域名相同的三台计算机
+      (因此例子中只有机器名， 而没有给出这些计算机的域名)， 或在
+      <code class="filename">/etc/hosts</code> 文件中进行了这种配置。 <code class="option">-ro</code>
+      标志表示把输出的文件系统置为只读。 由于使用了这个标志，
+      远程系统在输出的文件系统上就不能写入任何变动了。</p><pre class="programlisting">/cdrom -ro host1 host2 host3</pre><p>下面的例子可以输出<code class="filename">/home</code>给三个以IP地址方式表示的主机。
+	对于在没有配置<acronym class="acronym">DNS</acronym>服务器的私有网络里头，这很有用。
+	此外， <code class="filename">/etc/hosts</code> 文件也可以用以配置主机名；参看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hosts&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hosts</span>(5)</span></a> 。
+	<code class="option">-alldirs</code> 标记允许子目录被作为挂载点。
+	也就是说，客户端可以根据需要挂载需要的目录。 </p><pre class="programlisting">/home  -alldirs  10.0.0.2 10.0.0.3 10.0.0.4</pre><p>下面几行输出 <code class="filename">/a</code> ，以便两个来自不同域的客户端可以访问文件系统。
+	<code class="option">-maproot=root</code> 标记授权远端系统上的
+	<code class="systemitem">root</code> 用户在被输出的文件系统上以<code class="systemitem">root</code>身份进行读写。
+	如果没有特别指定 <code class="literal">-maproot=root</code> 标记，
+	则即使用户在远端系统上是 <code class="systemitem">root</code> 身份，
+	也不能修改被输出文件系统上的文件。 </p><pre class="programlisting">/a  -maproot=root  host.example.com box.example.org</pre><p> 为了能够访问到被输出的文件系统，客户端必须被授权。
+      请确认客户端在您的 <code class="filename">/etc/exports</code> 被列出。 </p><p>在 <code class="filename">/etc/exports</code> 里头，每一行里面，输出信息和文件系统一一对应。
+	一个远程主机每次只能对应一个文件系统。而且只能有一个默认入口。比如，假设
+	<code class="filename">/usr</code> 是独立的文件系统。这个 <code class="filename">/etc/exports</code> 就是无效的：</p><pre class="programlisting"># Invalid when /usr is one file system
+/usr/src   client
+/usr/ports client</pre><p>一个文件系统，<code class="filename">/usr</code>， 有两行指定输出到同一主机，
+	<code class="systemitem">client</code>.
+	解决这一问题的正确的格式是：</p><pre class="programlisting">/usr/src /usr/ports  client</pre><p>在同一文件系统中， 输出到指定客户机的所有目录， 都必须写到同一行上。
+	没有指定客户机的行会被认为是单一主机。 这限制了你可以怎样输出的文件系统，
+	但对绝大多数人来说这不是问题。</p><p>下面是一个有效输出列表的例子，
+	<code class="filename">/usr</code> 和 <code class="filename">/exports</code>
+	是本地文件系统：</p><pre class="programlisting"># Export src and ports to client01 and client02, but only
+# client01 has root privileges on it
+/usr/src /usr/ports -maproot=root    client01
+/usr/src /usr/ports               client02
+# The client machines have root and can mount anywhere
+# on /exports. Anyone in the world can mount /exports/obj read-only
+/exports -alldirs -maproot=root      client01 client02
+/exports/obj -ro</pre><p>在修改了 <code class="filename">/etc/exports</code> 文件之后，
+	就必须让 <span class="application">mountd</span> 服务重新检查它，
+	以便使修改生效。 一种方法是通过给正在运行的服务程序发送 HUP
+	信号来完成：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kill -HUP `cat /var/run/mountd.pid`</code></strong></pre><p>或指定适当的参数来运行 <code class="command">mountd</code> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc</span>(8)</span></a> 脚本：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/mountd onereload</code></strong></pre><p>关于使用 rc 脚本的细节， 请参见 <a class="xref" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc">Section 12.7, “在 FreeBSD 中使用 rc”</a>。</p><p>另外， 系统重启动可以让 FreeBSD 把一切都弄好。 尽管如此，
+        重启不是必须的。 以 <code class="systemitem">root</code> 身份执行下面的命令可以搞定一切。</p><p>在 <acronym class="acronym">NFS</acronym> 服务器端：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>rpcbind</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>nfsd -u -t -n 4</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mountd -r</code></strong></pre><p>在 <acronym class="acronym">NFS</acronym> 客户端：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>nfsiod -n 4</code></strong></pre><p>现在每件事情都应该就绪，以备挂载一个远端文件系统。 在这些例子里头，
+      服务器名字将是：<code class="systemitem">server</code> ，而客户端的名字将是： <code class="systemitem">client</code>。
+      如果您只打算临时挂载一个远端文件系统或者只是打算作测试配置正确与否，
+      只要在客户端以 <code class="systemitem">root</code> 身份执行下面的命令：</p><a id="idp86336592" class="indexterm"></a><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount server:/home /mnt</code></strong></pre><p>这条命令会把服务端的 <code class="filename">/home</code> 目录挂载到客户端的 <code class="filename">/mnt</code> 上。
+      如果配置正确，您应该可以进入客户端的 <code class="filename">/mnt</code> 目录并且看到所有服务端的文件。 </p><p>如果您打算让系统每次在重启动的时候都自动挂载远端的文件系统，把那个文件系统加到
+	<code class="filename">/etc/fstab</code> 文件里头去。下面是例子：</p><pre class="programlisting">server:/home	/mnt	nfs	rw	0	0</pre><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fstab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">fstab</span>(5)</span></a> 手册里有所有可用的开关。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86342864"></a>28.3.3. 锁</h3></div></div></div><p>某些应用程序 (例如 <span class="application">mutt</span>)
+	需要文件上锁支持才能正常运行。 在使用
+	<acronym class="acronym">NFS</acronym> 时， 可以用 <span class="application">rpc.lockd</span>
+	来支持文件上锁功能。 要启用它，
+	需要在服务器和客户机的 <code class="filename">/etc/rc.conf</code> 中加入
+	(假定两端均已配好了 <acronym class="acronym">NFS</acronym>)：</p><pre class="programlisting">rpc_lockd_enable="YES"
+rpc_statd_enable="YES"</pre><p>然后使用下述命令启动该程序：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/lockd start</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/statd start</code></strong></pre><p>如果并不需要真的在 <acronym class="acronym">NFS</acronym> 客户机和
+	<acronym class="acronym">NFS</acronym> 服务器间确保上锁的语义，
+	可以让 <acronym class="acronym">NFS</acronym> 客户机在本地上锁，
+	方法是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_nfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_nfs</span>(8)</span></a> 时指定 <code class="option">-L</code> 参数。
+	请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_nfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_nfs</span>(8)</span></a> 联机手册以了解更多细节。
+      </p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp86356176"></a>28.3.4. 实际应用</h3></div></div></div><p><acronym class="acronym">NFS</acronym> 有很多实际应用。下面是比较常见的一些：</p><a id="idp86357584" class="indexterm"></a><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>多个机器共享一台CDROM或者其他设备。这对于在多台机器中安装软件来说更加便宜跟方便。
+	   </p></li><li class="listitem"><p>在大型网络中，配置一台中心 <acronym class="acronym">NFS</acronym> 服务器用来放置所有用户的home目录可能会带来便利。
+	    这些目录能被输出到网络以便用户不管在哪台工作站上登录，总能得到相同的home目录。
+	    </p></li><li class="listitem"><p>几台机器可以有通用的<code class="filename">/usr/ports/distfiles</code> 目录。
+          这样的话，当您需要在几台机器上安装port时，您可以无需在每台设备上下载而快速访问源码。
+           </p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-amd"></a>28.3.5. 通过 <span class="application">amd</span> 自动地挂接</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Wylie</span> <span class="surname">Stilwell</span></span>. </span></div><div><span class="authorgroup">Rewritten by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Chern</span> <span class="surname">Lee</span></span>. </span></div></div></div><a id="idp86371152" class="indexterm"></a><a id="idp86371664" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=amd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">amd</span>(8)</span></a> (自动挂接服务) 能够自动地在访问时挂接远程的文件系统。
+	如果文件系统在一段时间之内没有活动， 则会被
+	<span class="application">amd</span> 自动卸下。 通过使用
+	<span class="application">amd</span>， 能够提供一个持久挂接以外的选择，
+	而后者往往需要列入
+        <code class="filename">/etc/fstab</code>。</p><p><span class="application">amd</span> 通过将自己以 NFS 服务器的形式，
+	附加到 <code class="filename">/host</code> 和
+	<code class="filename">/net</code> 目录上来工作。
+	当访问这些目录中的文件时， <span class="application">amd</span>
+	将查找相应的远程挂接点， 并自动地挂接。
+	<code class="filename">/net</code> 用于挂接远程 IP 地址上导出的文件系统，
+	而 <code class="filename">/host</code> 则用于挂接远程主机名上的文件系统。</p><p>访问
+	<code class="filename">/host/foobar/usr</code> 中的文件， 相当于告诉
+	<span class="application">amd</span> 尝试挂接在主机
+	<code class="systemitem">foobar</code> 上导出的
+	<code class="filename">/usr</code>。</p><div class="example"><a id="idp86379344"></a><div class="example-title">Example 28.2. 通过 <span class="application">amd</span> 来挂接导出的文件系统</div><div class="example-contents"><p>您可以通过使用 <code class="command">showmount</code>
+	  命令来查看远程主机上导出的文件系统。 例如，
+	  要查看 <code class="systemitem">foobar</code> 上导出的文件系统， 可以用：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>showmount -e foobar</code></strong>
+Exports list on foobar:
+/usr                               10.10.10.0
+/a                                 10.10.10.0
+<code class="prompt">%</code> <strong class="userinput"><code>cd /host/foobar/usr</code></strong></pre></div></div><br class="example-break" /><p>如同在前面例子中所看到的， <code class="command">showmount</code> 显示了导出的
+	<code class="filename">/usr</code>。 当进入
+	<code class="filename">/host/foobar/usr</code> 这个目录时， <span class="application">amd</span>
+	将尝试解析主机名 <code class="systemitem">foobar</code>
+	并自动地挂接需要的文件系统导出。</p><p><span class="application">amd</span> 可以通过启动脚本来启动， 方法是在
+	<code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">amd_enable="YES"</pre><p>除此之外， 还可以给
+      <span class="application">amd</span> 通过
+      <code class="varname">amd_flags</code> 选项来传递额外的参数。 默认情况下，
+      <code class="varname">amd_flags</code> 为：</p><pre class="programlisting">amd_flags="-a /.amd_mnt -l syslog /host /etc/amd.map /net /etc/amd.map"</pre><p><code class="filename">/etc/amd.map</code>
+	文件定义了挂接导出文件系统时所使用的默认选项。
+	<code class="filename">/etc/amd.conf</code> 文件， 则定义了更多关于
+	<span class="application">amd</span> 的高级功能选项。</p><p>请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=amd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">amd</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=amd.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">amd.conf</span>(5)</span></a> 联机手册，
+	以了解进一步的情况。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-nfs-integration"></a>28.3.6. 与其他系统集成时的常见问题</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">John</span> <span class="surname">Lind</span></span>. </span></div></div></div><p>某些特定的 ISA PC 系统上的以太网适配器上有一些限制，
+	这些限制可能会导致严重的网络问题， 特别是与 NFS 配合使用时。
+	这些问题并非 FreeBSD 所特有的， 但 FreeBSD 系统会受到这些问题的影响。</p><p>这样的问题， 几乎总是在当 (FreeBSD) PC 系统与高性能的工作站，
+	例如 Silicon Graphics, Inc., 和 Sun Microsystems, Inc. 的工作站联网时发生。
+	NFS 挂接能够正常工作， 而且一些操作也可能成功，
+	但服务器会很快变得对客户机不太理会，
+	虽然对其他客户机的请求仍然能够正常处理。
+	这种情况通常发生在客户端， 无论它是一个 FreeBSD 系统或是终端。
+	在许多系统上， 一旦发生了这样的问题， 通常没办法正常地关闭客户机。
+	唯一的办法通常是让终端复位， 因为这一 NFS 状况没有办法被解决。</p><p>尽管 <span class="quote">“<span class="quote">正确的</span>”</span> 解决办法， 是为
+	FreeBSD 系统配备一块高性能的、 适用的以太网适配器，
+	然而也有办法绕过问题并得到相对满意的结果。
+	如果 FreeBSD 系统是
+	<span class="emphasis"><em>服务器</em></span>， 则在客户机挂接时， 应该指定
+	<code class="option">-w=1024</code>。 如果
+	FreeBSD 系统是 <span class="emphasis"><em>客户机</em></span>，
+	则应加入 <code class="option">-r=1024</code> 参数。 这些选项可以通过在对应的
+	<code class="filename">fstab</code> 的第四个字段加入，
+	以便让客户机能够自动地挂接， 或者通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 的
+	<code class="option">-o</code> 参数在手工挂接时指定。</p><p>还需要注意的是另一个问题， 有时会被误认为是和上面一样的问题。
+	这个问题多见于 NFS 服务器和客户机在不同的网络上时。 如果是这种情况， 一定要
+	<span class="emphasis"><em>确定</em></span> 您的路由器确实把必需的 <acronym class="acronym">UDP</acronym>
+	信息路由到了目的地， 否则您将什么也做不了。</p><p>下面的例子中， <code class="systemitem">fastws</code> 是主机
+	(接口) 的名字， 它是一台高性能的终端， 而
+	<code class="systemitem">freebox</code> 是另一台主机 (接口) 的名字，
+	它是一个使用较低性能的以太网适配器的 FreeBSD 系统。 同时，
+	<code class="filename">/sharedfs</code> 将被导出成为 NFS
+	文件系统 (参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=exports&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">exports</span>(5)</span></a>)， 而
+	<code class="filename">/project</code>
+	将是客户机上挂接这一导出文件系统的挂接点。 所有的应用场景中，
+	请注意附加选项， 例如 <code class="option">hard</code> 或
+	<code class="option">soft</code> 以及 <code class="option">bg</code> 可能是您的应用所需要的。</p><p>关于 FreeBSD 系统 (<code class="systemitem">freebox</code>)
+	作为客户机的示范 <code class="filename">/etc/fstab</code> 文件， 见于
+	<code class="systemitem">freebox</code> 之上：</p><pre class="programlisting">fastws:/sharedfs /project nfs rw,-r=1024 0 0</pre><p>在 <code class="systemitem">freebox</code> 上手工挂接：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t nfs -o -r=1024 fastws:/sharedfs /project</code></strong></pre><p>以 FreeBSD 系统作为服务器的例子， 是 <code class="systemitem">fastws</code> 上的
+	<code class="filename">/etc/fstab</code>：</p><pre class="programlisting">freebox:/sharedfs /project nfs rw,-w=1024 0 0</pre><p>在 <code class="systemitem">fastws</code> 上手工挂接的命令是：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t nfs -o -w=1024 freebox:/sharedfs /project</code></strong></pre><p>几乎所有的 16-位 以太网控制器，
+	都能够在没有上述读写尺寸限制的情况下正常工作。</p><p>对于那些关心到底是什么问题的人， 下面是失败如何发生的解释，
+	同时这也说明了为什么这是一个无法恢复的问题。 典型情况下，
+	NFS 会使用一个 <span class="quote">“<span class="quote">块</span>”</span> 为单位进行操作， 其尺寸是
+	8 K (虽然它可能会将操作分成更小尺寸的分片)。
+	由于最大的以太网包尺寸大约是 1500 字节，
+	因此 NFS <span class="quote">“<span class="quote">块</span>”</span> 会分成多个以太网包，
+	虽然在更高层的代码看来它仍然是一个完整的单元，
+	并在接收方重新组装， 作为一个整体来
+	<span class="emphasis"><em>确认</em></span>。 高性能的工作站，
+	可以将构成 NFS 单元的包迅速发出， 其节奏会快到标准允许的最大限度。
+	在容量较小的卡上， 后来的包会冲掉同一单元内的较早的包，
+	因而整个单元无法被重建或确认。 其结果是，
+	工作站将超时并重试， 但仍然是完整的 8 K 单元，
+	这一过程将无休止地重复下去。</p><p>如果将单元尺寸限制在以太网包尺寸之下，
+	我们就能够确保每一个以太网包都能够被独立地接收和确认，
+	从而避免了上面的死锁情形。</p><p>溢出在高性能工作站将数据库投向 PC 系统时仍会发生，
+	但在更好的网卡上， 能够保证这类溢出不会在每一个 NFS
+	<span class="quote">“<span class="quote">单元</span>”</span> 上都发生。 当出现溢出时，
+	被影响的单元被重传， 因而此时有很大的机会它将被正确接收、
+	重组， 并确认。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-inetd.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-nis.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.2.  <span class="application">inetd</span> <span class="quote">“<span class="quote">超级服务器</span>”</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.4. 网络信息服务 (NIS/YP)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

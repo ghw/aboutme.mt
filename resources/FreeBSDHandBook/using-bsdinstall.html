@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>2.5. 介绍 bsdinstall</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="prev" href="bsdinstall-start.html" title="2.4. 开始安装" /><link rel="next" href="bsdinstall-netinstall.html" title="2.6. 通过网络安装" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.5. 介绍 <span class="application">bsdinstall</span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsdinstall-start.html">Prev</a> </td><th width="60%" align="center">Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</th><td width="20%" align="right"> <a accesskey="n" href="bsdinstall-netinstall.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="using-bsdinstall"></a>2.5. 介绍 <span class="application">bsdinstall</span></h2></div></div></div><p><span class="application">bsdinstall</span> 是一个基于文本的 FreeBSD 安装程序，
+      作者是 Nathan Whitehorn， 于 2011 年被 FreeBSD 9.0 采用。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">Kris Moore 为 <a class="link" href="http://pcbsd.org" target="_top">PC-BSD</a>
+	编写的 <span class="application">pc-sysinstall</span> 也可以用于
+	<a class="link" href="http://wiki.pcbsd.org/index.php/Use_PC-BSD_Installer_to_Install_FreeBSD" target="_top">安装
+	  FreeBSD</a>。 虽然有时会同
+	<span class="application">bsdinstall</span> 混淆，
+	但实际两者并不相关。</p></div><p><span class="application">bsdinstall</span> 菜单系统的主要控制键包括方向键、
+      <span class="keycap"><strong>Enter</strong></span> 键、
+      <span class="keycap"><strong>Tab</strong></span> 键、 <span class="keycap"><strong>Space</strong></span>
+      键等。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-keymap"></a>2.5.1. 选择键盘映射</h3></div></div></div><p>根据当前正在使用的系统控制台，
+	<span class="application">bsdinstall</span>
+	可能会首先提示选择一种非默认的键盘布局。</p><div class="figure"><a id="bsdinstall-keymap-select-default"></a><div class="figure-title">Figure 2.4. 键盘映射选择</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-keymap-select-default.png" alt="键盘映射选择" /></div></div></div><br class="figure-break" /><p>选择了 <span class="guibutton">[ YES ]</span> 后， 将显示下面的键盘选择画面；
+	否则将不显示此画面而直接使用默认键盘映射。</p><div class="figure"><a id="bsdinstall-config-keymap"></a><div class="figure-title">Figure 2.5. 键盘选择菜单</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-config-keymap.png" alt="键盘选择菜单" /></div></div></div><br class="figure-break" /><p>使用上/下方向键选择最适合当前系统的键盘映射后， 按
+	 <span class="keycap"><strong>Enter</strong></span> 键确认。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">按 <span class="keycap"><strong>Esc</strong></span> 键以使用默认的键盘映射。
+	  如果不清楚该选择哪一项， 推荐
+	  <span class="guimenuitem">United States of America
+	    ISO-8859-1</span>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-hostname"></a>2.5.2. 设置主机名</h3></div></div></div><p>下面， <span class="application">bsdinstall</span>
+	将提示为新安装的系统设置主机名。</p><div class="figure"><a id="bsdinstall-config-hostname"></a><div class="figure-title">Figure 2.6. 设置主机名</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-config-hostname.png" alt="设置主机名" /></div></div></div><br class="figure-break" /><p>应该输入完整的主机名，
+	例如
+	<code class="systemitem">machine3.example.com</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-components"></a>2.5.3. 选择要安装的组件</h3></div></div></div><p>下面， <span class="application">bsdinstall</span> 
+	将提示选择要安装的组件。</p><div class="figure"><a id="bsdinstall-config-components"></a><div class="figure-title">Figure 2.7. 选择要安装的组件</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-config-components.png" alt="选择要安装的组件" /></div></div></div><br class="figure-break" /><p>安装哪些组件很大程度取决于系统用途及可用磁盘空间。
+	注意， 任何情况下都会安装
+	FreeBSD 内核及用户空间（统称<span class="quote">“<span class="quote">基系统</span>”</span>）。</p><p>根据安装类型的不同， 某些组件可能不会显示。</p><div class="itemizedlist"><div class="itemizedlist-title">可选组件</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">doc</code> - 附加文档， 主要是与项目历史相关的内容。
+	    稍后还可以安装 FreeBSD 文档计划所提供的文档。</p></li><li class="listitem"><p><code class="literal">games</code> - 一些传统的 BSD 游戏，
+	    包括 <span class="application">fortune</span> 与
+	    <span class="application">rot13</span> 等。</p></li><li class="listitem"><p><code class="literal">lib32</code> - 兼容库文件，
+	    用于在 64 位版本的 FreeBSD 上运行 32 位程序。</p></li><li class="listitem"><p><code class="literal">ports</code> - FreeBSD 的 ports 集。</p><p>ports 集提供了一种简单而方便的途径来安装软件。
+	    在 ports 集中， 并不包含编译软件所需的源代码，
+	    取而代之的是一组能够自动下载、 编译并安装第三方软件包的文件。
+	    <a class="xref" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">Chapter 5, <em>安装应用程序: Packages 和 Ports</em></a> 会讲述如何使用 ports 集。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">选择此项时， 必须保证有足够的硬盘空间，
+	      注意安装程序并不会对此进行检查。
+	      FreeBSD 9.0 的 ports 集约需 500 MB 的磁盘空间；
+	      您也可以为稍后的版本预留更大的空间。</p></div></li><li class="listitem"><p><code class="literal">src</code> - 系统源代码。</p><p>FreeBSD 提供了与内核及用户空间有关的完整源代码。
+	    大部分程序并不需要这些源代码，
+	    它们主要用于联编特定软件（例如设备驱动或内核模块）或者
+	    FreeBSD 本身的开发。</p><p>完整的源代码树需要 1 GB 的磁盘空间，
+	    而重新编译整个 FreeBSD 系统则额外还需要 5 GB 的空间。</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsdinstall-start.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="bsdinstall.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="bsdinstall-netinstall.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.4. 开始安装 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.6. 通过网络安装</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

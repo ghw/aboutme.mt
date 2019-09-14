@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.3. 关于 MAC 的说明</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-inline-glossary.html" title="16.2. 本章出现的重要术语" /><link rel="next" href="mac-understandlabel.html" title="16.4. 理解 MAC 标签" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.3. 关于 MAC 的说明</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-inline-glossary.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-understandlabel.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-initial"></a>16.3. 关于 MAC 的说明</h2></div></div></div><p>在掌握了所有新术语之后， 我们从整体上来考虑 <acronym class="acronym">MAC</acronym>
+      是如何加强系统安全性的。 <acronym class="acronym">MAC</acronym>
+      框架提供的众多安全策略模块可以用来保护网络及文件系统，
+      也可以禁止用户访问某些特定的端口、 套接字及其它客体。
+      将策略模块组合在一起以构建一个拥有多层次安全性的环境，
+      也许是其最佳的使用方式， 这可以通过一次性加载多个安全策略模块来实现。
+      在多层次安全环境中， 多重策略模块可以有效地控制安全性，
+      这一点与强化型 (hardening) 策略，
+	  即那种通常只强化系统中用于特定目的的元素的策略是不同的。
+      相比之下， 多重策略的唯一不足是需要系统管理员先期设置好参数，
+      如多重文件系统安全标志、 每一位用户的网络访问权限等等。</p><p>与采用框架方式实现的长期效果相比， 这些不足之处是微不足道的。
+      例如， 让系统具有为特定配置挑选必需的策略的能力， 有助于降低性能开销。
+      而减少对无用策略的支持， 不仅可以提高系统的整体性能，
+	  而且提供了更灵活的选择空间。 好的实施方案中应该考虑到整体的安全性要求，
+      并有效地利用框架所提供的众多安全策略模块。</p><p>这样一个使用 <acronym class="acronym">MAC</acronym> 特性的系统，
+      至少要保证不允许用户任意更改安全属性； 所有的用户实用工具、
+      程序以及脚本， 必须在所选安全策略模块提供的访问规则的约束下工作；
+      并且系统管理员应掌握 <acronym class="acronym">MAC</acronym> 访问规则的一切控制权。</p><p>细心选择正确的安全策略模块是系统管理员专有的职责。
+      某些环境也许需要限制网络的访问控制权，
+      在这种情况下， 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_ifoff&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_ifoff</span>(4)</span></a> 乃至
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_biba&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_biba</span>(4)</span></a> 安全策略模块都会是不错的开始； 在其他情况下，
+      系统客体也许需要严格的机密性， 像 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 和
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_mls&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_mls</span>(4)</span></a> 这样的安全策略模块就是为此而设。</p><p>对安全策略模块的决定可依据网络配置进行，
+      也许只有特定的用户才应该被允许使用由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a>
+      提供的程序以访问网络或互联网， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_portacl&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_portacl</span>(4)</span></a>
+      安全策略模块应该成为这种情况下的选择。 但对文件系统又该作些什么呢？
+      是由特定的用户或群组来确定某些目录的访问权限，
+      抑或是将特定客体设为保密以限制用户或组件访问特定文件？</p><p>在文件系统的例子中， 也许访问客体的权限对某些用户是保密的，
+      但对其他则不是。 比如， 一个庞大的开发团队，
+      也许会被分成许多由几人组成的小组， A 项目中的开发人员可能不被允许访问
+      B 项目开发人员创作的客体， 但同时他们还需要访问由 C
+      项目开发人员创作的客体， 这正符合上述情形。 使用由
+      <acronym class="acronym">MAC</acronym> 框架提供的不同策略， 用户就可以被分成这种小组，
+      然后被赋予适当区域的访问权， 由此， 我们就不用担心信息泄漏的问题了。</p><p>因此， 每一种安全策略模块都有其处理系统整体安全问题的独特方法。
+      对安全策略模块的选择应在对安全策略深思熟虑的基础之上进行。 很多情况下，
+      整体安全策略需要重新修正并在系统上实施。 理解 <acronym class="acronym">MAC</acronym>
+      框架提供的不同安全策略模块会帮助管理员就其面临的情形选择最佳的策略模块。</p><p>FreeBSD 的默认内核并不包含 <acronym class="acronym">MAC</acronym> 框架选项， 因此，
+      在尝试使用本章中的例子或信息之前， 您应该添加以下内核选项：</p><pre class="programlisting">options	MAC</pre><p>此外， 内核还需要重新编译并且重新安装。</p><div xmlns="" class="caution"><h3 class="admontitle">Caution: </h3><p xmlns="http://www.w3.org/1999/xhtml">尽管有关 <acronym class="acronym">MAC</acronym>
+	的许多联机手册中都声明它们可以被编译到内核中，
+        但对这些策略模块的使用仍可能导致锁死系统的网络及其他功能。
+        使用 <acronym class="acronym">MAC</acronym> 就像使用防火墙一样，
+        因此必须要小心防止将系统完全锁死。 在使用 <acronym class="acronym">MAC</acronym> 时，
+        应该考虑是否能够回退到之前的配置， 在远程进行配置更应加倍小心。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-inline-glossary.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-understandlabel.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.2. 本章出现的重要术语 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.4. 理解 MAC 标签</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

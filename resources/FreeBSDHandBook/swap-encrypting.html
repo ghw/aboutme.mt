@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.17. 对交换区进行加密</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="disks-encrypting.html" title="18.16. 加密磁盘分区" /><link rel="next" href="disks-hast.html" title="18.18. 高可用性存储 (HAST)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.17. 对交换区进行加密</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="disks-encrypting.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="disks-hast.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="swap-encrypting"></a>18.17. 对交换区进行加密</h2></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Christian</span> <span class="surname">Brüffer</span></span>. </span></div></div></div><a id="idp80837712" class="indexterm"></a><p>FreeBSD 提供了易于配置的交换区加密机制。
+      随所用的 FreeBSD 版本， 可用的配置选项会有所不同，
+      而配置方法也会有一些差异。 可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gbde&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gbde</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a>
+      两种加密系统来进行交换区的加密操作。 前面所说的这两种加密系统，
+      都用到了 <code class="filename">encswap</code> 这个
+      <a class="link" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc">rc.d</a> 脚本。</p><p>在前面的小节 <a class="link" href="disks-encrypting.html" title="18.16. 加密磁盘分区">如何加密磁盘分区</a>
+      中， 已经就不同的加密系统之间的区别进行了简单的讨论。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80842576"></a>18.17.1. 为什么需要对交换区进行加密？</h3></div></div></div><p>与加密磁盘分区类似， 加密交换区有助于保护敏感信息。
+	为此， 我们不妨考虑一个需要处理敏感信息的程序， 例如，
+	它需要处理口令。 如果这些口令一直保持在物理内存中， 则一切相安无事。
+	然而， 如果操作系统开始将内存页换出到交换区，
+	以便为其他应用程序腾出内存时， 这些口令就可能以未加密的形式写到磁盘上，
+	并为攻击者所轻易获得。 加密交换区能够有效地解决这类问题。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80852048"></a>18.17.2. 准备</h3></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在本节余下的部分中， 我们约定使用 <code class="filename">ad0s1b</code>
+	  作为交换区。</p></div><p>到目前为止， 交换区仍是未加密的。
+	很可能其中已经存有明文形式的口令或其他敏感数据。
+	要纠正这一问题， 首先应使用随机数来覆盖交换分区的数据：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/random of=/dev/ad0s1b bs=1m</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80855248"></a>18.17.3. 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gbde&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gbde</span>(8)</span></a> 来加密交换区</h3></div></div></div><p><code class="filename">/etc/fstab</code>
+	中与交换区对应的行中， 设备名应追加
+	<code class="literal">.bde</code> 后缀：</p><pre class="programlisting">
+# Device                Mountpoint      FStype  Options         Dump    Pass#
+/dev/ad0s1b.bde         none            swap    sw              0       0
+      </pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80858320"></a>18.17.4. 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a> 来加密分区</h3></div></div></div><p>另一种方法是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a> 来达到加密交换区的目的，
+	其过程与使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gbde&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gbde</span>(8)</span></a> 大体相似。 此时， 在 <code class="filename">/etc/fstab</code>
+	中交换区对应的行中， 设备名应追加
+	<code class="literal">.eli</code> 后缀：</p><pre class="programlisting">
+# Device                Mountpoint      FStype  Options         Dump    Pass#
+/dev/ad0s1b.eli         none            swap    sw              0       0
+      </pre><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a> 默认情况下使用密钥长度为 256-位的
+	<acronym class="acronym">AES</acronym> 加密算法。</p><p>当然， 这些默认值是可以通过 <code class="filename">/etc/rc.conf</code> 中的
+	<code class="literal">geli_swap_flags</code> 选项来修改的。 下面的配置表示让 rc.d 脚本
+	<code class="filename">encswap</code> 创建一个 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a> 交换区，
+	在其上使用密钥长度为 128-位 的 Blowfish 加密算法， 4 kilobytes
+	的扇区尺寸， 并采用 <span class="quote">“<span class="quote">最后一次关闭时卸下</span>”</span> 的策略：</p><pre class="programlisting">geli_swap_flags="-e blowfish -l 128 -s 4096 -d"</pre><p>请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a> 联机手册中关于 <code class="command">onetime</code>
+	命令的说明， 以了解其他可用的选项。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80869456"></a>18.17.5. 验证所作的配置能够发挥作用</h3></div></div></div><p>在重启系统之后， 就可以使用
+	<code class="command">swapinfo</code> 命令来验证加密交换区是否已经在正常运转了。</p><p>如果使用了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gbde&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">gbde</span>(8)</span></a>， 则：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>swapinfo</code></strong>
+Device          1K-blocks     Used    Avail Capacity
+/dev/ad0s1b.bde    542720        0   542720     0%
+      </pre><p>如果使用了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=geli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">geli</span>(8)</span></a>， 则：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>swapinfo</code></strong>
+Device          1K-blocks     Used    Avail Capacity
+/dev/ad0s1b.eli    542720        0   542720     0%
+      </pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="disks-encrypting.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="disks-hast.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.16. 加密磁盘分区 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.18. 高可用性存储 (HAST)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

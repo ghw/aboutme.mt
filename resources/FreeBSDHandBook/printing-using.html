@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>10.5. 使用打印机</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="printing.html" title="Chapter 10. 打印" /><link rel="prev" href="printing-advanced.html" title="10.4. 高级设置" /><link rel="next" href="printing-lpd-alternatives.html" title="10.6. 替换标准后台打印" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.5. 使用打印机</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="printing-advanced.html">Prev</a> </td><th width="60%" align="center">Chapter 10. 打印</th><td width="20%" align="right"> <a accesskey="n" href="printing-lpd-alternatives.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="printing-using"></a>10.5. 使用打印机</h2></div></div></div><a id="idp74624848" class="indexterm"></a><p>这节将讲述如何使用在
+      FreeBSD 下设置好的打印机。 下面是一个用户级命令的总览：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a></span></dt><dd><p>打印任务</p></dd><dt><span class="term"><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a></span></dt><dd><p>检查打印队列</p></dd><dt><span class="term"><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a></span></dt><dd><p>从打印机的队列中移除任务</p></dd></dl></div><p>还有一个管理命令， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a>， 在 <a class="link" href="printing-using.html#printing-lpc" title="10.5.5. 管理打印机">管理打印机</a> 一节中有所介绍，
+      它可以用于控制打印机及其队列。</p><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a>, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a>, and <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a>
+      这三个命令都接受 <code class="option">-P
+	<em class="replaceable"><code>printer-name</code></em></code> 选项来指定对哪个打印机 / 队列进行操作，
+      在
+      <code class="filename">/etc/printcap</code> 文件中列出的打印机。 这允许您提交，
+      删除， 并检查任务在多个打印机上。 如果您不使用
+      <code class="option">-P</code> 选项， 那么这些命令会使用在
+      环境变量 <code class="envar">PRINTER</code> 中指定的打印机。
+      最终， 如果您也没有 <code class="envar">PRINTER</code> 这个环境变量，
+      这些命令的默认值是叫做 <code class="literal">lp</code> 的这台打印机。</p><p>从此以后， 术语 <span class="emphasis"><em>默认打印机</em></span>
+      就是指 <code class="envar">PRINTER</code> 环境变量中指定的这台，
+      或者叫做 <code class="literal">lp</code> 的这一台当没有环境变量
+      <code class="envar">PRINTER</code> 的时候。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpr"></a>10.5.1. 打印任务</h3></div></div></div><p>要打印文件， 输入：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr filename ...</code></strong></pre><a id="idp74652880" class="indexterm"></a><p>这个命令会打印所有列出的文件到默认打印机。
+	如果没有列出文件， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 会从标准输入读取打印数据。
+	比如， 这个命令打印一些重要的系统文件：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr /etc/host.conf /etc/hosts.equiv</code></strong></pre><p>要选择一个指定的打印机， 输入：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr -P printer-name filename ...</code></strong></pre><p>这个例子打印一个当前目录的长长的列表到叫做
+	<code class="literal">rattan</code> 的这台打印机：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ls -l | lpr -P rattan</code></strong></pre><p>因为没有为
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令列出文件， <code class="command">lpr</code> 从标准输入读入数据，
+	在这里是 <code class="command">ls
+	  -l</code> 命令的输出。</p><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令同样可以接受多种控制格式的选项，
+	应用文件转换， 生成多份副本， 等等。
+	要得到更多信息， 参考 <a class="link" href="printing-using.html#printing-lpr-options" title="10.5.4. 超越纯文本：打印选项">打印选项</a> 这节。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpq"></a>10.5.2. 检查任务</h3></div></div></div><a id="idp74667088" class="indexterm"></a><p>当使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 进行打印时， 您希望打印的所有数据被放在一起打包成了一个
+	<span class="quote">“<span class="quote">打印任务</span>”</span>， 它被发送到
+	<span class="application">LPD</span> 后台打印系统。
+	每台打印机都有一个任务队列，
+	并且您的任务在队列中等待其他用户的其他任务打印。
+	打印机按照先来先印的规则打印这些任务。</p><p>要显示默认打印机的队列， 输入 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a>。
+	要指定打印机， 使用 <code class="option">-P</code> 选项。
+	例如， 命令
+
+	</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpq -P bamboo</code></strong></pre><p>
+
+	会显示打印机 <code class="literal">bamboo</code> 的队列。
+	下面是命令 <code class="command">lpq</code>
+	输出的一个例子：</p><pre class="screen">bamboo is ready and printing
+Rank   Owner    Job  Files                              Total Size
+active kelly    9    /etc/host.conf, /etc/hosts.equiv   88 bytes
+2nd    kelly    10   (standard input)                   1635 bytes
+3rd    mary     11   ...                                78519 bytes</pre><p>这里显示了队列中有三个任务在 <code class="literal">bamboo</code> 中。
+	第一个任务， 用户 kelly 提交的， 标识 <span class="quote">“<span class="quote">任务编号</span>”</span>
+	9。 每个要打印的任务都会获得一个不同的任务编号。
+	大多时候可以忽略这个任务编号， 但在您需要取消任务时会用到这个号码；
+	参考 <a class="link" href="printing-using.html#printing-lprm" title="10.5.3. 移除任务">移除任务</a> 这节得到更多信息。</p><p>编号为 9 的任务包含了两个文件； 在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令行中指定的多个文件被看作是一个单个的任务。
+	它是当前激活的任务 (注意这个词 <code class="literal">激活</code>
+	在 <span class="quote">“<span class="quote">Rank</span>”</span> 这列下面)， 意思是打印机当前正在打印那个任务。
+	第二个任务包含了标准输入传给
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令的数据。
+	第三个任务来自用户 <code class="systemitem">mary</code>; ，
+	它是一个比较大的任务。 她要打印的文件的路径名太长了，
+	所以 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a> 命令只显示了三个点。</p><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a> 输出的头一行也很有用：
+	它告诉我们打印机正在做什么 (或者至少是
+	<span class="application">LPD</span> 认为打印机应该正在做的)。</p><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a> 命令同样支持 <code class="option">-l</code> 选项来生成一个详细的长列表。
+	下面是一个
+	<code class="command">lpq -l</code> 命令的例子：</p><pre class="screen">waiting for bamboo to become ready (offline ?)
+kelly: 1st				 [job 009rose]
+       /etc/host.conf                    73 bytes
+       /etc/hosts.equiv                  15 bytes
+
+kelly: 2nd				 [job 010rose]
+       (standard input)                  1635 bytes
+
+mary: 3rd                                [job 011rose]
+      /home/orchid/mary/research/venus/alpha-regio/mapping 78519 bytes</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lprm"></a>10.5.3. 移除任务</h3></div></div></div><p>如果您对一个打印任务改变了主意，
+	可以用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a> 将任务从队列中删除。 通常， 您甚至可以用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a> 命令来移除一个当前激活的任务， 但是任务的一部分或者所有还是可能打印出来。</p><p>要从默认打印机中移除一个任务， 首先使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a> 找到任务编号。 然后输入：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lprm job-number</code></strong></pre><p>要从指定打印机中删除任务， 增加
+	<code class="option">-P</code> 选项。 下面的命令会删除编号为
+	10 的任务从 <code class="literal">bamboo</code> 这台打印机：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lprm -P bamboo 10</code></strong></pre><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a> 命令有一些快捷方式：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">lprm -</span></dt><dd><p>删除所有属于您的任务 (默认打印机的)。</p></dd><dt><span class="term">lprm <em class="replaceable"><code>user</code></em></span></dt><dd><p>删除所有属于用户
+	      <em class="replaceable"><code>user</code></em> 的任务 (默认打印机的)。
+	      超级用户可以删除用户的任务； 您只可以删除自己的任务。</p></dd><dt><span class="term">lprm</span></dt><dd><p>命令行中不带任务编号， 任务名， 或者 <code class="option">-</code>
+	      选项， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a> 会删除默认打印机上当前激活的任务，
+	      如果它属于你。 超级用户可以删除任务激活的任务。</p></dd></dl></div><p>使用参数 <code class="option">-P</code> 和上面的快捷方式来用指定打印机替代默认打印机。
+	例如， 下面的命令会删除当前用户在打印机
+	<code class="literal">rattan</code> 队列中的所有任务：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lprm -P rattan -</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您正工作在一个网络环境中， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lprm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lprm</span>(1)</span></a>
+	  将只允许在提交任务的主机上删除任务，
+	  甚至是同一台打印机也可以在其他主机上使用时。
+	  下面的命令证明了这个：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr -P rattan myfile</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>rlogin orchid</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>lpq -P rattan</code></strong>
+Rank   Owner	  Job  Files                          Total Size
+active seeyan	  12	...                           49123 bytes
+2nd    kelly      13   myfile                         12 bytes
+<code class="prompt">%</code> <strong class="userinput"><code>lprm -P rattan 13</code></strong>
+rose: Permission denied
+<code class="prompt">%</code> <strong class="userinput"><code>logout</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>lprm -P rattan 13</code></strong>
+dfA013rose dequeued
+cfA013rose dequeued
+	</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpr-options"></a>10.5.4. 超越纯文本：打印选项</h3></div></div></div><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 支持许多控制文本格式的参数，
+	转换图形和其他格式文件，
+	生成多份副本， 处理任务， 等等。
+	这一节将描述这些选项。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpr-options-format"></a>10.5.4.1. 格式与转换选项</h4></div></div></div><p>下面的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 参数控制任务中文件的格式。
+	  使用这些参数， 如果任务不含纯文本，
+	  或者您想让纯文本通过
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pr</span>(1)</span></a> 格式化。</p><a id="idp74740560" class="indexterm"></a><p>例如， 下面的命令打印一个 DVI 文件 (来自
+	  <span class="application">TeX</span> 排版系统) 文件名为 <code class="filename">fish-report.dvi</code>
+	  到打印 <code class="literal">bamboo</code>：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr -P bamboo -d fish-report.dvi</code></strong></pre><p>这些选项应用到任务中的每个文件， 所以您不能混合
+	  (说) DVI 和 ditroff 文件在同一个任务中。 替代的方法是，
+	  用独立的任务提交这些文件， 使用不同的转换选项给不同的任务。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">所有这些选项除了 <code class="option">-p</code> 和
+	    <code class="option">-T</code> 都需要转换过滤器安装给目标打印机。
+	    例如， <code class="option">-d</code> 选项需要
+	    DVI 转换过滤器。 参考 <a class="link" href="printing-advanced.html#printing-advanced-convfilters" title="10.4.1.4. 转换过滤器">转换过滤器</a>
+	    这节得到更多细节。</p></div><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="option">-c</code></span></dt><dd><p>打印 cifplot 文件。</p></dd><dt><span class="term"><code class="option">-d</code></span></dt><dd><p>打印 DVI 文件。</p></dd><dt><span class="term"><code class="option">-f</code></span></dt><dd><p>打印 FORTRAN 文本文件。</p></dd><dt><span class="term"><code class="option">-g</code></span></dt><dd><p>打印 plot 数据。</p></dd><dt><span class="term"><code class="option">-i <em class="replaceable"><code>number</code></em></code></span></dt><dd><p>缩进 <em class="replaceable"><code>number</code></em> 列；
+		如果没有指定 <em class="replaceable"><code>number</code></em>，
+		则缩进 8 列。 这个选项仅可以工作在某些过滤器上。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">不要在选项 <code class="option">-i</code> 和数字之间加入空格。</p></div></dd><dt><span class="term"><code class="option">-l</code></span></dt><dd><p>打印文字数据，
+		包括控制字符。</p></dd><dt><span class="term"><code class="option">-n</code></span></dt><dd><p>打印 ditroff (无设备依赖 troff) 数据。</p></dd><dt><span class="term">-p</span></dt><dd><p>打印之前用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pr</span>(1)</span></a> 格式化纯文本。 参考
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pr</span>(1)</span></a> 得到更多信息。</p></dd><dt><span class="term"><code class="option">-T <em class="replaceable"><code>title</code></em></code></span></dt><dd><p>使用 <em class="replaceable"><code>title</code></em> 在
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pr</span>(1)</span></a> 上来替代文件名。
+		这个选项仅在使用 <code class="option">-p</code>
+		选项时起作用。</p></dd><dt><span class="term"><code class="option">-t</code></span></dt><dd><p>打印 troff 数据。</p></dd><dt><span class="term"><code class="option">-v</code></span></dt><dd><p>打印 raster 数据。</p></dd></dl></div><p>下面是一个例子： 这个命令打印了一个很好的
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a> 联机手册到默认打印机：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>zcat /usr/share/man/man1/ls.1.gz | troff -t -man | lpr -t</code></strong></pre><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=zcat&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">zcat</span>(1)</span></a> 命令解压缩
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a> 的手册并且将内容传给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=troff&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">troff</span>(1)</span></a>
+	  命令， 它将格式化这些内容并且生成 GNU troff
+	  输出给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> ， 它提交任务到
+	  <span class="application">LPD</span> 后台打印。
+	  因为使用了 <code class="option">-t</code>
+	  选项为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> ， 后台打印将会转换 GNU
+	  troff 输出到默认打印机可以理解的格式当任务被打印时。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpr-options-job-handling"></a>10.5.4.2. 任务处理选项</h4></div></div></div><p>下面的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 选项告诉
+	  <span class="application">LPD</span> 对任务特殊处理：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">-# <em class="replaceable"><code>copies</code></em></span></dt><dd><p>生成 <em class="replaceable"><code>copies</code></em> 个副本给任务中的每个文件，
+		替代每个文件一份副本。
+		管理员可以禁止这个选项来减少打印机的浪费和鼓励复印机的使用。
+		参考
+		<a class="link" href="printing-advanced.html#printing-advanced-restricting-copies" title="10.4.4.1. 限制多份副本">限制多份副本</a>。</p><p>这个例子打印三份副本的文件
+		<code class="filename">parser.c</code> 跟着三份副本的文件
+		<code class="filename">parser.h</code> 到默认打印机：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>lpr -#3 parser.c parser.h</code></strong></pre></dd><dt><span class="term">-m</span></dt><dd><p>打印完成后发信。 使用这个选项，
+		<span class="application">LPD</span> 系统将会发送邮件到您的帐户，
+		当它完成了处理您的任务后。
+		在信中， 它将会告诉您任务是否成功完成或者出现了错误，
+		并且 (通常) 指明是什么错误。</p></dd><dt><span class="term">-s</span></dt><dd><p>不要复制文件到后台打印队列目录，
+		要使用符号连接。</p><p>如果您正在打印一个很大的任务， 您可能需要这个选项。
+		它节省后台打印队列目录的空间
+		(您的任务可能使后台打印队列目录所在的文件系统剩余空间超出)。
+		它同样也节省了时间， 因为
+		<span class="application">LPD</span>
+		将不会副本任务的每个字节到后台打印队列目录。</p><p>这也有一个缺点： 因为
+		<span class="application">LPD</span> 将直接指向源文件，
+		您不能修改或者删除它们直到它们被打印出来。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您打印到一台远程打印机，
+		  <span class="application">LPD</span>
+		  将最终将文件从本地主机副本到远程主机上，
+		  所以选项 <code class="option">-s</code> 只能节省本地后台打印队列目录的空间，
+		  而不是远程的。
+		  虽然如此， 但它还是很有用。</p></div></dd><dt><span class="term">-r</span></dt><dd><p>移除任务中的文件在它们被复制到后台打印队列目录之后，
+		或者在用
+		<code class="option">-s</code> 选项打印它们之后。
+		谨慎使用这个选项！</p></dd></dl></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpr-options-misc"></a>10.5.4.3. 报头页选项</h4></div></div></div><p>这些 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 的选项调整了通常出现在任务报头页上的文本。
+	  如果报头页被跳过了在目标打印机上，
+	  这些选项将不会起作用。 参考
+	  <a class="link" href="printing-advanced.html#printing-advanced-header-pages" title="10.4.2. 报头页">报头页</a>
+	  得到更多关于设置报头页的信息。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">-C <em class="replaceable"><code>text</code></em></span></dt><dd><p>替换报头页上的主机名为
+		<em class="replaceable"><code>text</code></em>。
+		主机名通常都是提交任务的主机名称。</p></dd><dt><span class="term">-J <em class="replaceable"><code>text</code></em></span></dt><dd><p>替换报头页上的任务名为
+		<em class="replaceable"><code>text</code></em>。 任务名通常是任务中头一个文件的名字，
+		或者
+		<code class="filename">stdin</code> 如果您正在打印标准输入。</p></dd><dt><span class="term">-h</span></dt><dd><p>不打印任何报头页。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在某些地点， 这个选项可能无效，
+		  与报头页的产生方法有关。 参考 <a class="link" href="printing-advanced.html#printing-advanced-header-pages" title="10.4.2. 报头页">报头页</a>
+		  得到详细信息。</p></div></dd></dl></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-lpc"></a>10.5.5. 管理打印机</h3></div></div></div><p>作为一个打印机的管理者， 您必须要安装，
+	设置， 并且测试它们。 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> 命令，
+	您可以与打印机以更多的方式交流。 用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> ，
+	您可以</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>启动或停止打印机</p></li><li class="listitem"><p>启用或禁止它们的队列</p></li><li class="listitem"><p>重新安排每个队列中的任务。</p></li></ul></div><p>首先， 一个关于术语的解释： 如果一个打印机被
+	<span class="emphasis"><em>停止</em></span> 了， 它将不会打印它队列中的任何东西。
+	但用户还是可以提交任务， 它们会在队列中等待直到打印机被
+	<span class="emphasis"><em>启动</em></span> 或者队列被清空。</p><p>如果一个队列被 <span class="emphasis"><em>禁止</em></span>， 没有用户 (除了
+	<code class="systemitem">root</code>) 可以提交任务到打印机。 一个
+	<span class="emphasis"><em>启用</em></span> 的队列允许任务被提交。
+	一个打印机可以被 <span class="emphasis"><em>启动</em></span> 但它的队列被禁止，
+	在这种情况下打印机将打印队列中的任务， 直到队列为空。</p><p>通常， 您必须有 <code class="systemitem">root</code> 权限来使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> 命令。 普通用户可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a>
+	命令来获得打印机状态并且重启一台挂了的打印机。</p><p>这里是一个关于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> 命令的摘要。 大部分命令带着一个
+	<em class="replaceable"><code>printer-name</code></em> 参数来知道要对哪台打印机操作。
+	您可以用 <code class="literal">all</code>
+	填在 <em class="replaceable"><code>printer-name</code></em> 的位置来代表所有在
+	<code class="filename">/etc/printcap</code> 文件中列出的打印机。</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="command">abort
+	      printer-name</code></span></dt><dd><p>取消当前任务并停止打印机。
+	      用户仍然可以提交任务， 如果队列还是启用的。</p></dd><dt><span class="term"><code class="command">clean
+	      printer-name</code></span></dt><dd><p>从打印机的后台打印队列目录移除旧的文件。
+	      有时， 组成任务的文件没有被
+	      <span class="application">LPD</span> 正确的删除，
+	      特别是在打印中出现错误或者管理活动比较多的时候。
+	      这个命令查找不属于后台打印队列目录的文件并删除它们。</p></dd><dt><span class="term"><code class="command">disable
+	      printer-name</code></span></dt><dd><p>禁止新任务入队。 如果打印机正在工作，
+	      它将会继续打印队列中剩余的任务。
+	      超级用户 (<code class="systemitem">root</code>) 总是可以提交任务，
+	      甚至提交到一个禁止的队列。</p><p>这个命令在测试一台新打印机或者安装过滤器时非常有用：
+	      禁止队列并提交以
+	      <code class="systemitem">root</code> 提交任务。
+	      其他用户将不能提交任务直到您完成了测试并用命令
+	      <code class="command">enable</code> 重新启用了队列的时候。</p></dd><dt><span class="term"><code class="command">down printer-name
+	      message</code></span></dt><dd><p>打印机下线。 等于
+	      <code class="command">disable</code> 命令后跟一个 <code class="command">stop</code> 命令。
+	      <em class="replaceable"><code>message</code></em> 将作为打印机状态，
+	      当用户使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpq&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpq</span>(1)</span></a> 或者 <code class="command">lpc status</code>
+	      命令查看打印机队列状态的时候显示出来。</p></dd><dt><span class="term"><code class="command">enable
+	      printer-name</code></span></dt><dd><p>为打印机开启队列。
+	      用户可以提交任务到打印机但是在打印机启动之前不会打印出任何东西。</p></dd><dt><span class="term"><code class="command">help
+	      command-name</code></span></dt><dd><p>打印关于
+	      <em class="replaceable"><code>command-name</code></em> 命令的帮助。 不带
+	      <em class="replaceable"><code>command-name</code></em>，
+	      则打印可用命令的摘要。</p></dd><dt><span class="term"><code class="command">restart
+	      printer-name</code></span></dt><dd><p>启动打印机。 普通用户可以使用这个命令，
+	      当一些特别的环境导致
+	      <span class="application">LPD</span> 锁死时， 但他们不能启用一台使用
+	      <code class="command">stop</code> 或者
+	      <code class="command">down</code> 命令停用的打印机。
+	      <code class="command">restart</code> 命令等同于
+	      <code class="command">abort</code> 后跟着一个
+	      <code class="command">start</code>。</p></dd><dt><span class="term"><code class="command">start
+	      printer-name</code></span></dt><dd><p>启用打印机。 打印机将开始打印队列中的任务。</p></dd><dt><span class="term"><code class="command">stop
+	      printer-name</code></span></dt><dd><p>停止打印机。 打印机将完成当前任务并且将不再打印队列中的任务任务。
+	      尽管打印机被停用，
+	      但用户仍然可以提交任务到一个开启的队列。</p></dd><dt><span class="term"><code class="command">topq printer-name
+	      job-or-username</code></span></dt><dd><p>重新以
+	      <em class="replaceable"><code>printer-name</code></em> 安排队列，
+	      通过将列出的 <em class="replaceable"><code>job</code></em> 编号或者指定的所属
+	      <em class="replaceable"><code>username</code></em> 的任务放在队列的最前面。
+	      对于这个命令， 您不可以使用
+	      <code class="literal">all</code> 当作
+	      <em class="replaceable"><code>printer-name</code></em>。</p></dd><dt><span class="term"><code class="command">up
+	      printer-name</code></span></dt><dd><p>打印机上线； 相对于
+	      <code class="command">down</code> 命令。 等同于
+	      <code class="command">start</code> 后跟着一个
+	      <code class="command">enable</code> 命令。</p></dd></dl></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> 的命令行接受上面的命令。
+	如果您不输入任何命令， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpc</span>(8)</span></a> 则进入一个交互模式，
+	在这里您可以输入命令直到输入 <code class="command">exit</code>，
+	<code class="command">quit</code>， 或者文件结束符。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="printing-advanced.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="printing.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="printing-lpd-alternatives.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">10.4. 高级设置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 10.6. 替换标准后台打印</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

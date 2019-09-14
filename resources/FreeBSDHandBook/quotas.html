@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.15. 文件系统配额</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="snapshots.html" title="18.14. 文件系统快照" /><link rel="next" href="disks-encrypting.html" title="18.16. 加密磁盘分区" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.15. 文件系统配额</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="snapshots.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="disks-encrypting.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="quotas"></a>18.15. 文件系统配额</h2></div></div></div><a id="idp80521936" class="indexterm"></a><a id="idp80523088" class="indexterm"></a><p>配额是操作系统的一个可选的功能，
+      它允许管理员以文件系统为单元，
+      限制分派给用户或组成员所使用的磁盘空间大小或是使用的总文件数量。
+      这经常被用于那些分时操作的系统上， 对于这些系统而言，
+      通常希望限制分派到每一个用户或组的资源总量，
+      从而可以防止某个用户占用所有可用的磁盘空间。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80524112"></a>18.15.1. 配置系统来启用磁盘配额</h3></div></div></div><p>在决定使用磁盘配额前，确信磁盘配额已经在内核中配置好了。只要在在内核
+        中配置文件中添加下面一行就行了：</p><pre class="programlisting">options QUOTA</pre><p>在默认情况下 <code class="filename">GENERIC</code> 内核是不会启用这个功能的，
+        所以必须配置、重建和安装一个定制的内核。请参考 FreeBSD 内核配置
+	 <a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a> 这章了解更多有关内核配置的信息。</p><p>接下来，需要在 <code class="filename">/etc/rc.conf</code> 中启用磁盘配额。可以
+        通过添加下面这行来完成：</p><pre class="programlisting">enable_quotas="YES"</pre><a id="idp80527824" class="indexterm"></a><p>为了更好的控制配额时的启动，还有另外一个可配置的变量。通常
+        启动时，集成在每个文件系统上的配额会被配额检查程序
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quotacheck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">quotacheck</span>(8)</span></a> 自动检查。配额检查功能能够确保在配额数据库中
+        的数据正确地反映了文件系统的数
+        据情况。这是一个很耗时间的处理进程，它会影响系统的启动时间。如果
+        想跳过这一步，可以在文件  <code class="filename">/etc/rc.conf</code> 加入
+        下面这一行来达到目的：</p><pre class="programlisting">check_quotas="NO"</pre><p>最后，要编辑 <code class="filename">/etc/fstab</code> 文件，以在每一个
+        文件系统基础上启用磁盘配额。这是启用用户和组配额，或同时启用用户
+        和组配额的地方。</p><p>要在一个文件系统上启用每个用户的配额，可以在 <code class="filename">/etc/fstab</code>
+        里添加 <code class="option">userquota</code> 选项在要雇用配额文件的系统上。例如：</p><pre class="programlisting">/dev/da1s2g   /home    ufs rw,userquota 1 2</pre><p>同样的，要启用组配额，使用 <code class="option">groupquota</code> 选项来代替
+        <code class="option">userquota</code> 选项。要同时启用用户和组配额，可以这样做：</p><pre class="programlisting">/dev/da1s2g    /home    ufs rw,userquota,groupquota 1 2</pre><p>默认情况下，配额文件是存放在文件系统的以 <code class="filename">quota.user</code>
+        和 <code class="filename">quota.group</code> 命名的根目录下。可以查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fstab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">fstab</span>(5)</span></a>
+        联机手册了解更多信息。 尽管联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fstab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">fstab</span>(5)</span></a> 提到，
+        可以为配额文件指定其他的位置， 但并不推荐这样做，
+        因为不同的配额工具并不一定遵循此规则。</p><p>到这儿，可以用新内核重新启动系统。 <code class="filename">/etc/rc</code> 将自动
+        运行适当的命令来创建最初的配额文件，所以并不需要手动来创建任何零长度的配额
+        文件。</p><p>在通常的操作过程中，并不要求手动运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quotacheck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">quotacheck</span>(8)</span></a>、
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quotaon&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">quotaon</span>(8)</span></a>, 或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quotaoff&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">quotaoff</span>(8)</span></a> 命令，然而可能需要阅读与他们的操作
+	相似的联机手册。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80565968"></a>18.15.2. 设置配额限制</h3></div></div></div><a id="idp80566608" class="indexterm"></a><p>一旦您配置好了启用配额的系统，可以检查一下它们是真的有用。
+        可以这样做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>quota -v</code></strong></pre><p>您应该能够看到一行当前正在使用的每个文件系统启用的磁盘配额
+        使用情况的摘要信息。</p><p>现在可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=edquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">edquota</span>(8)</span></a> 命令准备启用配额限制。</p><p>有几个有关如何强制限制用户或组可以分配到的磁盘空间大小的选项。
+        您可以限制磁盘存储块的配额， 或文件的数量， 甚至同时限制两者。
+        这些限制最终可分为两类： 硬限制和软限制。</p><a id="idp80571216" class="indexterm"></a><p>硬性限制是一种不能越过的限制。 一旦用户达到了系统指定的硬性限制，
+	他就无法在对应的文件系统分配到更多的资源。
+	例如， 如果文件系统上分给用户的硬性限制是
+	500 KB， 而现在已经用掉了 490 KB，
+	那么这个用户最多还能再分配 10 KB 的空间。
+	换言之， 如果这时试图再分配 11 KB， 则会失败。</p><a id="idp80572112" class="indexterm"></a><p>而与此相反， 软性限制在一段时间内是允许越过的。
+        这段时间也称为宽限期， 其默认值是一周。
+        如果一个用户延缓时间太长的话，软限制将会变成硬限制，
+        而继续分配磁盘空间的操作将被拒绝。
+        当用户占用的空间回到软性限制值以下时， 宽限期将重新开始计算。</p><p>下面是一个运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=edquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">edquota</span>(8)</span></a> 时看到的例子。当 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=edquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">edquota</span>(8)</span></a>
+        命令被调用时，会被转移进 <code class="envar">EDITOR</code> 环境变量指派的编辑
+        器中，允许编辑配额限制。如果环境变量没有设置，默认在
+         <span class="application">vi</span> 编辑器上进行。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>edquota -u test</code></strong></pre><pre class="programlisting">Quotas for user test:
+/usr: kbytes in use: 65, limits (soft = 50, hard = 75)
+        inodes in use: 7, limits (soft = 50, hard = 60)
+/usr/var: kbytes in use: 0, limits (soft = 50, hard = 75)
+        inodes in use: 0, limits (soft = 50, hard = 60)</pre><p>在每一个启用了磁盘配额的文件系统上，通常会看到两行。一行是
+         block 限制，另一行是 inode 限制。简单地改变要修改的配额限制的值。
+         例如，提高这个用户软限制的数值到 500 ，硬限制到 600 ：</p><pre class="programlisting">/usr: kbytes in use: 65, limits (soft = 50, hard = 75)</pre><p>to:</p><pre class="programlisting">/usr: kbytes in use: 65, limits (soft = 500, hard = 600)</pre><p>当离开编辑器的时候，新的配额限制设置将会被保存。</p><p>有时，在 UIDs 的范围上设置配额限制是非常必要的。这可以通过在
+         <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=edquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">edquota</span>(8)</span></a> 命令后面加上 <code class="option">-p</code> 选项来完成。首先，
+         给用户分配所需要的配额限制，然后运行命令
+	<code class="command">edquota -p protouser startuid-enduid</code>。例如，如果
+	用户 <code class="systemitem">test</code> 已经有了所需要的配额限制，下面的命令
+	可以被用来复制那些  UIDs 为10,000 到 19,999 的配额限制：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>edquota -p test 10000-19999</code></strong></pre><p>更多细节请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=edquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">edquota</span>(8)</span></a> 联机手册。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80596048"></a>18.15.3. 检查配额限制和磁盘使用</h3></div></div></div><a id="idp80596688" class="indexterm"></a><p>既可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quota&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">quota</span>(1)</span></a> 也可以使用	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=repquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">repquota</span>(8)</span></a> 命令来检查
+        配额限制和磁盘使用情况。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quota&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">quota</span>(1)</span></a> 命令能够检查单个用户和组的配置
+        使用情况。只有超级用户才可以检查其它用户的配额和磁盘使用情况。
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=repquota&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">repquota</span>(8)</span></a> 命令可以用来了解所有配额和磁盘的使用情况。</p><p>下面是一个使用 <code class="command">quota -v</code> 命令后的输出情况：</p><pre class="programlisting">Disk quotas for user test (uid 1002):
+     Filesystem  usage    quota   limit   grace   files   quota   limit   grace
+           /usr      65*     50      75   5days       7      50      60
+       /usr/var       0      50      75               0      50      60</pre><a id="idp80602704" class="indexterm"></a><p>前面以 <code class="filename">/usr</code> 作为例子。
+	此用户目前已经比软限制 50 KB 超出了 15 KB，
+	还剩下 5 天的宽限期。 请注意，
+	星号 <code class="literal">*</code> 说明用户已经超出了其配额限制。</p><p>通常， 如果用户没有使用文件系统上的磁盘空间， 就不会在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quota&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">quota</span>(1)</span></a> 命令的输出中显示， 即使已经为那个用户指定了配额。
+	而使用 <code class="option">-v</code> 选项则会显示它们， 例如前面例子中的
+	<code class="filename">/usr/var</code>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80606416"></a>18.15.4. 通过 NFS 使用磁盘配额</h3></div></div></div><a id="idp80607056" class="indexterm"></a><p>配额能够在 NFS 服务器上被配额子系统强迫使用。在 NFS 客户端，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rpc.rquotad&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rpc.rquotad</span>(8)</span></a> 命令可以使用 quota 信息用于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=quota&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">quota</span>(1)</span></a>
+	命令， 可以允许用户查看它们的 quota 统计信息。</p><p>可以这样在 <code class="filename">/etc/inetd.conf</code> 中启用
+       <code class="command">rpc.rquotad</code>：</p><pre class="programlisting">rquotad/1      dgram rpc/udp wait root /usr/libexec/rpc.rquotad rpc.rquotad</pre><p>现在重启 <code class="command">inetd</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/inetd restart</code></strong></pre></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="snapshots.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="disks-encrypting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.14. 文件系统快照 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.16. 加密磁盘分区</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

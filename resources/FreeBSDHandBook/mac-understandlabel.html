@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.4. 理解 MAC 标签</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-initial.html" title="16.3. 关于 MAC 的说明" /><link rel="next" href="mac-planning.html" title="16.5. 规划安全配置" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.4. 理解 MAC 标签</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-initial.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-planning.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-understandlabel"></a>16.4. 理解 MAC 标签</h2></div></div></div><p><acronym class="acronym">MAC</acronym> 标签是一种安全属性，
+      它可以被应用于整个系统中的主体和客体。</p><p>配置标签时， 用户必须能够确切理解其所进行的操作。
+      客体所具有的属性取决于被加载的策略模块，
+      不同策略模块解释其属性的方式也差别很大。
+      由于缺乏理解或无法了解其间联系而导致的配置不当，
+      会引起意想不到的， 也许是不愿看到的系统异常。</p><p>客体上的安全标签是由安全策略模块决定的安全访问控制的一部分。
+      在某些策略模块中， 标签本身所包含的所有信息足以使其作出决策，
+      而在其它一些安全策略模块中， 标签则可能被作为一个庞大规则体系的一部分进行处理。</p><p>举例来说， 在文件上设定 <code class="literal">biba/low</code> 标签，
+      意味着此标签隶属 Biba 策略模块， 其值为 <span class="quote">“<span class="quote">low</span>”</span>。</p><p>某些在 FreeBSD 中支持标签特性的策略会提供三个预定义的标签，
+      分别是 low、 high 及 equal 标签。
+      尽管这些标签在不同安全策略模块中会对访问控制采取不同措施，
+      但有一点是可以肯定的， 那就是 low 标签表示最低限度的设定，
+      equal 标签会将主体或客体设定为被禁用的或不受影响的，
+      high 标签则会应用 Biba 及 <acronym class="acronym">MLS</acronym>
+      安全策略模块中允许的最高级别的设定。</p><p>在单一标签文件系统的环境中， 同一客体上只会应用一个标签，
+      于是， 一套访问权限将被应用于整个系统， 这也是很多环境所全部需要的。
+      另一些应用场景中， 我们需要将多重标签应用于文件系统的客体或主体，
+      如此一来， 就需要使用  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tunefs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tunefs</span>(8)</span></a>
+      的 <code class="option">multilabel</code> 选项。</p><p>在使用 Biba 和 <acronym class="acronym">MLS</acronym> 时可以配置数值标签，
+      以标示分级控制中的层级程度。
+      数值的程度可以用来划分或将信息按组分类，
+      从而只允许同程度或更高程度的组对其进行访问。</p><p>多数情况下， 管理员将仅对整个文件系统设定单一标签。</p><p><span class="emphasis"><em>等一下， 这看起来很像 <acronym class="acronym">DAC</acronym>！
+      但我认为 <acronym class="acronym">MAC</acronym> 确实只将控制权赋予了管理员。 </em></span>
+      此句话依然是正确的。 在某种程度上， <code class="systemitem">root</code> 是实施控制的用户，
+      他配置安全策略模块以使用户们被分配到适当的类别/访问 levels 中。
+      唉， 很多安全策略模块同样可以限制 <code class="systemitem">root</code> 用户。
+      对于客体的基本控制可能会下放给群组， 但 <code class="systemitem">root</code>
+      用户随时可以废除或更改这些设定。
+      这就是如 Biba 及 <acronym class="acronym">MLS</acronym>
+      这样一些安全策略模块所包含的 hierarchal/clearance 模型。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78648912"></a>16.4.1. 配置标签</h3></div></div></div><p>实际上， 有关标签式安全策略模块配置的各种问题都是用基础系统组件实现的。
+        这些命令为客体和主体配置以及配置的实施和验证提供了一个简便的接口。</p><p>所有的配置都应该通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setfmac&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">setfmac</span>(8)</span></a> 及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setpmac&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">setpmac</span>(8)</span></a> 组件实施。
+        <code class="command">setfmac</code> 命令是用来对系统客体设置
+        <acronym class="acronym">MAC</acronym> 标签的， 而 <code class="command">setpmac</code>
+        则是用来对系统主体设置标签的。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfmac biba/high test</code></strong></pre><p>若以上命令不发生错误则会直接返回命令提示符，
+	只有当发生错误时， 这些命令才会给出提示， 这和
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chmod</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chown&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chown</span>(8)</span></a> 命令类似。
+        某些情况下， 以上命令产生的错误可能是
+        <span class="errorname">Permission denied</span>，
+        一般在受限客体上设置或修改设置时会产生此错误。
+        <a href="#ftn.idp78656208" class="footnote" id="idp78656208"><sup class="footnote">[4]</sup></a>
+        系统管理员可使用以下命令解决此问题：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfmac biba/high test</code></strong>
+<span class="errorname">Permission denied</span>
+<code class="prompt">#</code> <strong class="userinput"><code>setpmac biba/low setfmac biba/high test</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>getfmac test</code></strong>
+test: biba/high</pre><p>如上所示， 通过 <code class="command">setpmac</code>
+	对被调用的进程赋予不同的标签， 以覆盖安全策略模块的设置。
+        <code class="command">getpmac</code> 组件通常用于当前运行的进程，
+        如 <span class="application">sendmail</span>：
+        尽管其使用进程编号来替代命令， 其逻辑是相同的。
+        如果用户试图对其无法访问的文件进行操作， 根据所加载的安全策略模块的规则，
+        函数 <code class="function">mac_set_link</code>
+        将会给出 <span class="errorname">Operation not permitted</span> 的错误提示。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78666576"></a>16.4.1.1. 一般标签类型</h4></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_biba&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_biba</span>(4)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_mls&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_mls</span>(4)</span></a> 及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_lomac&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_lomac</span>(4)</span></a>
+	  策略模块提供了设定简单标签的功能， 其值应该是 high、 equal 及 low
+	  之一。 以下是对这些标签功能的简单描述：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">low</code>
+	      标签被认为是主体或客体所具有的最低层次的标签设定。
+              对主体或客体采用此设定， 将阻止其访问标签为 high 的客体或主体。</p></li><li class="listitem"><p><code class="literal">equal</code> 标签只能被用于不希望受策略控制的客体上。</p></li><li class="listitem"><p><code class="literal">high</code> 标签对客体或主体采用可能的最高设定。</p></li></ul></div><p>至于每个策略模块， 每种设定都会产生不同的信息流指令。
+          阅读联机手册中相关的章节将进一步阐明这些一般标签配置的特点。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78677968"></a>16.4.1.1.1. 标签高级配置</h5></div></div></div><p>如下所示， 用于 <code class="literal">比较方式:区间+区间</code>
+	    (<code class="literal">comparison:compartment+compartment</code>) 的标签等级数：</p><pre class="programlisting">biba/10:2+3+6(5:2+3-20:2+3+4+5+6)</pre><p>其含义为：</p><p><span class="quote">“<span class="quote">Biba 策略标签</span>”</span>/<span class="quote">“<span class="quote">等级 10</span>”</span>
+	    ：<span class="quote">“<span class="quote">区间 2、 3及6</span>”</span>：
+	    (<span class="quote">“<span class="quote">等级5 ...</span>”</span>)</p><p>本例中， 第一个等级将被认为是 <span class="quote">“<span class="quote">有效区间</span>”</span> 的
+	    <span class="quote">“<span class="quote">有效等级</span>”</span>， 第二个等级是低级等级，
+	    最后一个则是高级等级。 大多数配置中并不使用这些设置，
+	    实际上， 它们是为更高级的配置准备的。</p><p>当把它们应用在系统客体上时， 则只有当前的等级/区间，
+	    因为它们反映可以实施访问控制的系统中可用的范围， 以及网络接口。</p><p>等级和区间， 可以用来在一对主体和客体之间建立一种称为
+	    <span class="quote">“<span class="quote">支配 (dominance)</span>”</span> 的关系， 这种关系可能是主体支配客体，
+	    客体支配主体， 互不支配或互相支配。
+	    <span class="quote">“<span class="quote">互相支配</span>”</span> 这种情况会在两个标签相等时发生。
+	    由于 Biba 的信息流特性， 您可以设置一系列区间，
+	    <span class="quote">“<span class="quote">need to know</span>”</span>， 这可能发生于项目之间，
+	    而客体也由其对应的区间。 用户可以使用
+	    <code class="command">su</code> 和 <code class="command">setpmac</code>
+	    来将他们的权限进一步细分， 以便在没有限制的区间里访问客体。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78686544"></a>16.4.1.2. 用户和标签设置</h4></div></div></div><p>用户本身也需要设置标签，
+	  以使其文件和进程能够正确地与系统上定义的安全策略互动，
+          这是通过使用登录分级在文件 <code class="filename">login.conf</code>
+          中配置的。 每个使用标签的策略模块都会进行用户分级设定。</p><p>以下是一个使用所有策略模块的例子：</p><pre class="programlisting">default:\
+	:copyright=/etc/COPYRIGHT:\
+	:welcome=/etc/motd:\
+	:setenv=MAIL=/var/mail/$,BLOCKSIZE=K:\
+	:path=~/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:\
+	:manpath=/usr/share/man /usr/local/man:\
+	:nologin=/usr/sbin/nologin:\
+	:cputime=1h30m:\
+	:datasize=8M:\
+	:vmemoryuse=100M:\
+	:stacksize=2M:\
+	:memorylocked=4M:\
+	:memoryuse=8M:\
+	:filesize=8M:\
+	:coredumpsize=8M:\
+	:openfiles=24:\
+	:maxproc=32:\
+	:priority=0:\
+	:requirehome:\
+	:passwordtime=91d:\
+	:umask=022:\
+	:ignoretime@:\
+	:label=partition/13,mls/5,biba/10(5-15),lomac/10[2]:</pre><p><code class="literal">label</code> 选项用以设定用户分级默认标签，
+	  该标签将由 <acronym class="acronym">MAC</acronym> 执行。
+	  用户绝不会被允许更改该值， 因此其从用户的观点看不是可选的。
+          当然， 在真实情况的配置中， 管理员不会希望启用所有策略模块。
+	  我们建议您在实施以上配置之前阅读本章的其余部分。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">用户也许会在首次登录后更改其标签，
+            尽管如此， 这仅仅是策略的主观局限性。
+            上面的例子告诉 Biba 策略， 进程的最小完整性是为5，
+            最大完整性为15， 默认且有效的标签为10。
+            进程将以10的完整性运行直至其决定更改标签，
+            这可能是由于用户使用了 setpmac 命令
+            (该操作将在登录时被 Biba 限制在一定用户范围之内)。</p></div><p>在所有情况下， 修改 <code class="filename">login.conf</code> 之后，
+          都必须使用 <code class="command">cap_mkdb</code> 重编译登录分级 capability 数据库，
+          这在接下来的例子和讨论中就会有所体现。</p><p>很多站点可能拥有数目可观的用户需要不同的用户分级，
+	  注意到这点是大有裨益的。 深入来说就是需要事先做好计划，
+	  因为管理起来可能十分困难。</p><p>在 FreeBSD 以后的版本中， 将包含一种将用户映射到标签的新方式，
+          尽管如此， 这也要到 FreeBSD 5.3 之后的某个时间才能实现。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78692560"></a>16.4.1.3. 网络接口和标签设定</h4></div></div></div><p>也可以在网络接口上配置标签， 以控制进出网络的数据流。
+	  在所有情况下， 策略都会以适应客体的方式运作。 例如， 在
+	  <code class="literal">biba</code> 中设置为高的用户，
+	  就不能访问标记为低的网络接口。</p><p><code class="option">maclabel</code> 可以作为
+	  <code class="command">ifconfig</code> 的参数用于设置网络接口的
+	  <acronym class="acronym">MAC</acronym> 标签。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig bge0 maclabel biba/equal</code></strong></pre><p>将在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bge&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">bge</span>(4)</span></a> 接口上设置 <code class="literal">biba/equal</code> 的
+	  <acronym class="acronym">MAC</acronym> 标签。 当使用类似
+	  <code class="literal">biba/high(low-high)</code> 这样的标签时，
+	  整个标签应使用引号括起来； 否则将发生错误。</p><p>每一个支持标签的策略模块都提供了用于在网络接口上禁用该
+	  <acronym class="acronym">MAC</acronym> 标签的系统控制变量。 将标签设置为
+	  <code class="option">equal</code> 的效果与此类似。
+	  请参见 <code class="command">sysctl</code> 的输出、 策略模块的联机手册，
+	  或本章接下来的内容， 以了解更进一步的详情。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78700496"></a>16.4.2. 用单一标签还是多重标签？</h3></div></div></div><p>默认情况下， 系统采用的是
+	<code class="option">singlelabel</code> 选项。 但这对管理员意味着什么呢？
+	两种策略之间存在很多的不同之处， 它们在系统安全模型的灵活性方面，
+	提供了不同的选择。</p><p><code class="option">singlelabel</code> 只允许在每个主体或客体上使用一个标签，
+	如 <code class="literal">biba/high</code>。
+	这降低了管理的开销， 但也同时降低了支持标签的策略的灵活性。
+	许多管理员可能更希望在安全策略中使用 <code class="option">multilabel</code>。</p><p><code class="option">multilabel</code> 选项允许每一个主体或客体拥有各自独立的
+	<acronym class="acronym">MAC</acronym> 标签，
+	起作用与标准的、 只允许整个分区上使用一个的
+	<code class="option">singlelabel</code> 选项类似。 <code class="option">multilabel</code>
+	和 <code class="option">single</code> 标签选项只有对实现了标签功能的那些策略，
+	如 Biba、 Lomac、
+	<acronym class="acronym">MLS</acronym> 以及 <acronym class="acronym">SEBSD</acronym>
+	才有意义。</p><p>很多情况下是不需要设置 <code class="option">multilabel</code> 的。
+	考虑下列情形和安全模型：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>使用了 <acronym class="acronym">MAC</acronym> 以及许多混合策略的 FreeBSD
+	    web-服务器。</p></li><li class="listitem"><p>这台机器上的整个系统中只需要一个标签， 即
+	    <code class="literal">biba/high</code>。 此处的文件系统并不需要
+	    <code class="option">multilabel</code> 选项，
+	    因为有效的 label 只有一个。</p></li><li class="listitem"><p>因为这台机器将作为 Web 服务器使用，
+	    因此应该以 <code class="literal">biba/low</code> 运行 Web 服务，
+	    以杜绝向上写。 Biba 策略以及它如何运作将在稍后予以讨论，
+	    因此， 如果您感觉前面的说明难以理解的话， 请继续阅读下面的内容，
+	    再回来阅读这些内容就会有较为清晰的认识了。 服务器可以使用设置为
+	    <code class="literal">biba/low</code> 的单独的分区，
+	    用于保持其运行环境的状态。 这个例子中还省略了许多内容，
+	    例如， 如何为数据配置访问限制、 参数配置和用户的设置；
+	    它只是为前述的内容提供一个简单的例子。</p></li></ul></div><p>如果打算使用非标签式策略，
+	就不需要 <code class="option">multilabel</code> 选项了。
+	这些策略包括 <code class="literal">seeotheruids</code>、
+	<code class="literal">portacl</code> 和 <code class="literal">partition</code>。</p><p>另一个需要注意的事情是， 在分区上使用
+	<code class="option">multilabel</code> 并建立基于 <code class="option">multilabel</code>
+	可能会提高系统管理的开销， 因为文件系统中的所有客体都需要指定标签。
+	这包括对目录、文件， 甚至设备节点。</p><p>接下来的命令将在需要使用多个标签的文件系统上设置
+	<code class="option">multilabel</code>。 这一操作只能在单用户模式下完成：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tunefs -l enable /</code></strong></pre><p>交换区不需要如此配置。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">某些用户可能会在根分区上配置
+	  <code class="option">multilabel</code> 标志时遇到困难。
+	  如果发生这样的情况， 请复查本章的
+	  <a class="xref" href="mac-troubleshoot.html" title="16.17. MAC 框架的故障排除">Section 16.17, “MAC 框架的故障排除”</a>。</p></div></div><div class="footnotes"><br /><hr class="footnote-hr" /><div id="ftn.idp78656208" class="footnote"><p><a href="#idp78656208" class="para"><sup class="para">[4] </sup></a>其它情况也能导致不同的执行失败。
+        例如， 文件可能并不隶属于尝试重标签该文件的用户，
+        客体可能不存在或着是只读的。 文件的某一属性、
+        进程的某一属性或新的自定义标签值的某一属性，
+        将使强制式策略不允许进程重标签文件。 例如：
+        低完整性的用户试图修改高完整性文件的标签，
+        或者低完整性的用户试图将低完整性文件的标签改为高完整性标签。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-initial.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-planning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.3. 关于 MAC 的说明 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.5. 规划安全配置</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

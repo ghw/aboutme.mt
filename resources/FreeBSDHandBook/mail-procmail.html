@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.13. 使用 procmail</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="mail-fetchmail.html" title="27.12. 使用 fetchmail" /><link rel="next" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.13. 使用 procmail</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mail-fetchmail.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="network-servers.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mail-procmail"></a>27.13. 使用 procmail</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Silver</span></span>. </span></div></div></div><a id="idp86048976" class="indexterm"></a><p><span class="application">procmail</span> 是一个强大得惊人的过滤进入邮件的应用程序。
+      它允许用户定义 <span class="quote">“<span class="quote">规则</span>”</span>， 并用这些规则来匹配进入的邮件，
+      进而执行某些特定的功能， 或将这些邮件转发到其他信箱和/或邮件地址。
+      <span class="application">procmail</span> 可以通过
+      <span class="package">mail/procmail</span> port 来安装。
+      装好之后， 可以直接把它集成到绝大多数
+      <acronym class="acronym">MTA</acronym> 中； 请参考您使用的 <acronym class="acronym">MTA</acronym>
+      的文档了解具体的作法。 另外，
+      <span class="application">procmail</span>
+      可允许通过把下面的设置加入到用户主目录中的 <code class="filename">.forward</code>
+      文件中， 来启用
+      <span class="application">procmail</span> 功能：</p><pre class="programlisting">"|exec /usr/local/bin/procmail || exit 75"</pre><p>接下来我们将介绍一些基本的
+      <span class="application">procmail</span> 规则， 以及它们都是做什么的。
+      各种各样的规则， 都应该写到 <code class="filename">.procmailrc</code>
+      文件中， 而这个文件则必须放在用户的主目录下。</p><p>主要的规则， 也可以在
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=procmailex&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">procmailex</span>(5)</span></a> 联机手册中找到。</p><p>将所有来自 <code class="email">&lt;<a xmlns="" class="email" href="mailto:user@example.com">user@example.com</a>&gt;</code> 的邮件，
+      转发到外部地址 <code class="email">&lt;goodmail@example2.com&gt;</code>：</p><pre class="programlisting">:0
+* ^From.*user@example.com
+! goodmail@example2.com</pre><p>转发所有不超过 1000 字节的邮件到外部地址
+      <code class="email">&lt;goodmail@example2.com&gt;</code>：</p><pre class="programlisting">:0
+* &lt; 1000
+! goodmail@example2.com</pre><p>把所有发送到 <code class="email">&lt;<a xmlns="" class="email" href="mailto:alternate@example.com">alternate@example.com</a>&gt;</code>
+      的邮件放到信箱 <code class="filename">alternate</code> 中：</p><pre class="programlisting">:0
+* ^TOalternate@example.com
+alternate</pre><p>将所有标题为 <span class="quote">“<span class="quote">Spam</span>”</span> 的邮件发到
+      <code class="filename">/dev/null</code>：</p><pre class="programlisting">:0
+^Subject:.*Spam
+/dev/null</pre><p>将收到的所有 <code class="systemitem">FreeBSD.org</code> 邮件列表的邮件，
+      转发到各自的信箱：</p><pre class="programlisting">:0
+* ^Sender:.owner-freebsd-\/[^@]+@FreeBSD.ORG
+{
+	LISTNAME=${MATCH}
+	:0
+	* LISTNAME??^\/[^@]+
+	FreeBSD-${MATCH}
+}</pre></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mail-fetchmail.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-servers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.12. 使用 fetchmail </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 28. 网络服务器</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

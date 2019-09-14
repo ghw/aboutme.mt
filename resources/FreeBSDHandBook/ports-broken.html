@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>5.7. 如何处理坏掉的 Ports</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports" /><link rel="prev" href="ports-nextsteps.html" title="5.6. 安装之后还要做点什么？" /><link rel="next" href="x11.html" title="Chapter 6. X Window 系统" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.7. 如何处理坏掉的 Ports</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ports-nextsteps.html">Prev</a> </td><th width="60%" align="center">Chapter 5. 安装应用程序: Packages 和 Ports</th><td width="20%" align="right"> <a accesskey="n" href="x11.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="ports-broken"></a>5.7. 如何处理坏掉的 Ports</h2></div></div></div><p>如果您发现某个 port 无法正常工作，
+        有几件事值得尝试， 包括：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>在 <a class="link" href="../../../../support.html#gnats" target="_top">问题报告数据库</a>
+	    中查找是否有尚未提交的修正。 如果有， 可以使用所提议的修正。</p></li><li class="listitem"><p>要求 port 的监护人 (maintainer) 提供帮助。 输入
+	    <code class="command">make maintainer</code>
+	    或阅读 <code class="filename">Makefile</code>
+	    查找监护人的电子邮件地址。 请记得把 port 的名字和版本写在邮件里
+	    (<code class="filename">Makefile</code> 中的
+	    <code class="literal">$FreeBSD:</code>这一行)
+	    并把错误输出的头几行发给 maintainer。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">某些 ports 并非一个人维护， 而是写了一个 <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/mailing-list-faq/article.html" target="_top">邮件列表</a>。
+	      许多， 但并非所有 port， 使用类似
+	      <code class="email">&lt;freebsd-listname@FreeBSD.org&gt;</code> 这样的地址。
+	      请在提出问题时考虑这一点。</p><p xmlns="http://www.w3.org/1999/xhtml">特别地， 由
+	      <code class="email">&lt;ports@FreeBSD.org&gt;</code> 监护的 port，
+	      实际上并没有人维护。 订阅这个邮件列表的人们会感谢您提供的修正和支持。
+	      我们一直都需要更多志愿者！</p></div><p>如果您没有得到回应，
+	    则可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=send-pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">send-pr</span>(1)</span></a> 来提交问题报告 (请参见 <a class="link" href="../../../../doc/en_US.ISO8859-1/articles/problem-reports/article.html" target="_top">如何撰写
+	    FreeBSD 问题报告</a>)。</p></li><li class="listitem"><p>修正它！ <a class="link" href="../../../../doc/en_US.ISO8859-1/books/porters-handbook/index.html" target="_top">Porter
+	    手册</a> 中提供了关于
+	    <span class="quote">“<span class="quote">Ports</span>”</span> 基础设施的详细信息，
+	    通过了解这些内容， 您就能修正偶然坏掉的 port，
+	    或甚至提交自己的 port 了！</p></li><li class="listitem"><p>从较近的 FTP 站点下载一个编译好的安装包。
+	    <span class="quote">“<span class="quote">中央的</span>”</span> package collection 在 <code class="systemitem">ftp.FreeBSD.org</code> 的 <a class="link" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/ports/packages/" target="_top">packages
+	    目录中</a>， 但 <span class="emphasis"><em>在此之前</em></span>
+	    请 <span class="emphasis"><em>事先</em></span> 检查一下是否存在较近的 <a class="link" href="mirrors-ftp.html" title="A.2. FTP 镜像站">镜像网站</a>！
+	    通常情况下这些安装包都可以直接使用，
+	    而且应该比自行编译快一些。
+	    安装过程本身可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_add</span>(1)</span></a> 来完成。</p></li></ol></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ports-nextsteps.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ports.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="x11.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">5.6. 安装之后还要做点什么？ </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 6. X Window 系统</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.6. 链路聚合与故障转移</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-bridging.html" title="30.5. 桥接" /><link rel="next" href="network-diskless.html" title="30.7. 无盘操作" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.6. 链路聚合与故障转移</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-bridging.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-diskless.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-aggregation"></a>30.6. 链路聚合与故障转移</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Andrew</span> <span class="surname">Thompson</span></span>. </span></div></div></div><a id="idp89651024" class="indexterm"></a><a id="idp89651536" class="indexterm"></a><a id="idp89652048" class="indexterm"></a><a id="idp89652560" class="indexterm"></a><a id="idp89653072" class="indexterm"></a><a id="idp89653584" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89654096"></a>30.6.1. 介绍</h3></div></div></div><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a> 接口， 能够将多个网络接口聚合为一个虚拟接口，
+	以提供容灾和高速连接的能力。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89656016"></a>30.6.2. 运行模式</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">Failover (故障转移)</span></dt><dd><p>只通过主网口收发数据。 如果主网口不可用， 则使用下一个激活的网口。
+	  您在这里加入的第一个网口便会被视为主网口； 此后加入的其他网口，
+	  则会被视为故障转移的备用网口。 如果发生故障转移之后，
+	  原先的网口又恢复了可用状态， 则它仍会作为主网口使用。</p></dd><dt><span class="term"><span class="trademark">Cisco</span>® Fast <span class="trademark">EtherChannel</span>®</span></dt><dd><p><span class="trademark">Cisco</span>® Fast <span class="trademark">EtherChannel</span>® (FEC) 是一种静态配置，
+	  并不进行节点间协商或交换以太网帧来监控链路情况。
+	  如果交换机支持 LACP， 则应使用后者而非这种配置。</p><p><acronym class="acronym">FEC</acronym> 将输出流量在激活的网口之间以协议头散列信息为依据分拆，
+	  并接收来自任意激活网口的入流量。 散列信息包含以太网源地址、
+	  目的地址， 以及 (如果有的话) VLAN tag 和 IPv4/IPv6 源地址及目的地址信息。</p></dd><dt><span class="term">LACP</span></dt><dd><p>支持 <span class="trademark">IEEE</span>® 802.3ad 链路聚合控制协议
+	  (LACP) 和标记协议。 LACP 能够在节点与若干链路聚合组之间协商链路。
+	  每一个链路聚合组 (LAG) 由一组相同速度、 以全双工模式运行的网口组成。
+	  流量在 LAG 中的网口之间， 会以总速度最大的原则进行分摊。
+	  当物理链路发生变化时， 链路聚合会迅速适应变动形成新的配置。</p><p><acronym class="acronym">LACP</acronym> 也是将输出流量在激活的网口之间以协议头散列信息为依据分拆，
+	  并接收来自任意激活网口的入流量。 散列信息包含以太网源地址、
+	  目的地址， 以及 (如果有的话) VLAN tag 和 IPv4/IPv6 源地址及目的地址信息。</p></dd><dt><span class="term">Loadbalance (负载均衡)</span></dt><dd><p>这是 <span class="emphasis"><em>FEC</em></span> 模式的别名。</p></dd><dt><span class="term">Round-robin (轮转)</span></dt><dd><p>将输出流量以轮转方式在所有激活端口之间调度， 并从任意激活端口接收进入流量。
+	  这种模式违反了以太网帧排序规则， 因此应小心使用。</p></dd></dl></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89676496"></a>30.6.3. 例子</h3></div></div></div><div class="example"><a id="networking-lacp-aggregation-cisco"></a><div class="example-title">Example 30.1. 与 <span class="trademark">Cisco</span>® 交换机配合完成 LACP 链路聚合</div><div class="example-contents"><p>在这个例子中， 我们将 FreeBSD 的两个网口作为一个负载均衡和故障转移链路聚合组接到交换机上。
+	  在此基础上， 还可以增加更多的网口， 以提高吞吐量和故障容灾能力。
+	  由于以太网链路上两节点间的帧序是强制性的， 因此两个节点之间的连接速度，
+	  会取决于一块网卡的最大速度。 传输算法会尽量采用更多的信息，
+	  以便将不同的网络流量分摊到不同的网络接口上， 并平衡不同网口的负载。</p><p>在 <span class="trademark">Cisco</span>® 交换机上将
+	  <em class="replaceable"><code>FastEthernet0/1</code></em> 和
+	  <em class="replaceable"><code>FastEthernet0/2</code></em> 这两个网口添加到
+	  channel-group <em class="replaceable"><code>1</code></em>：</p><pre class="screen"><strong class="userinput"><code>interface FastEthernet0/1
+ channel-group 1 mode active
+ channel-protocol lacp</code></strong>
+!
+<strong class="userinput"><code>interface FastEthernet0/2
+ channel-group 1 mode active
+ channel-protocol lacp</code></strong></pre><p>使用
+	  <em class="replaceable"><code>fxp0</code></em> 和 <em class="replaceable"><code>fxp1</code></em>
+	  创建 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a> 接口， 启用这个接口并配置 IP 地址
+	  <em class="replaceable"><code>10.0.0.3/24</code></em>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig fxp0 up</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig fxp1 up</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 create </code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 up laggproto lacp laggport fxp0 laggport fxp1 10.0.0.3/24</code></strong></pre><p>用下面的命令查看接口状态：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0</code></strong></pre><p>标记为
+	  <span class="emphasis"><em>ACTIVE</em></span> 的接口是激活据合组的部分，
+	  这表示它们已经完成了与远程交换机的协商，
+	  同时， 流量将通过这些接口来收发。 在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a>
+	  的详细输出中会给出 LAG 的标识。</p><pre class="screen">lagg0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=8&lt;VLAN_MTU&gt;
+        ether 00:05:5d:71:8d:b8
+        media: Ethernet autoselect
+        status: active
+        laggproto lacp
+        laggport: fxp1 flags=1c&lt;ACTIVE,COLLECTING,DISTRIBUTING&gt;
+        laggport: fxp0 flags=1c&lt;ACTIVE,COLLECTING,DISTRIBUTING&gt;</pre><p>如果需要查看交换机上的端口状态， 则应使用 <strong class="userinput"><code>show
+	  lacp neighbor</code></strong> 命令：</p><pre class="screen">switch# show lacp neighbor
+Flags:  S - Device is requesting Slow LACPDUs
+        F - Device is requesting Fast LACPDUs
+        A - Device is in Active mode       P - Device is in Passive mode
+
+Channel group 1 neighbors
+
+Partner's information:
+
+                  LACP port                        Oper    Port     Port
+Port      Flags   Priority  Dev ID         Age     Key     Number   State
+Fa0/1     SA      32768     0005.5d71.8db8  29s    0x146   0x3      0x3D
+Fa0/2     SA      32768     0005.5d71.8db8  29s    0x146   0x4      0x3D</pre><p>如欲查看进一步的详情， 则需要使用 <strong class="userinput"><code>show lacp neighbor
+	  detail</code></strong> 命令。</p><p>如果希望在系统重启时保持这些设置， 应在
+	  <code class="filename">/etc/rc.conf</code> 中增加如下配置：</p><pre class="programlisting">ifconfig_<em class="replaceable"><code>fxp0</code></em>="up"
+ifconfig_<em class="replaceable"><code>fxp1</code></em>="up"
+cloned_interfaces="<code class="literal">lagg0</code>"
+ifconfig_<code class="literal">lagg0</code>="laggproto lacp laggport <em class="replaceable"><code>fxp0</code></em> laggport <em class="replaceable"><code>fxp1</code></em> <em class="replaceable"><code>10.0.0.3/24</code></em>"
+</pre></div></div><br class="example-break" /><div class="example"><a id="networking-lagg-failover"></a><div class="example-title">Example 30.2. 故障转移模式</div><div class="example-contents"><p>故障转移模式中， 当首选链路发生问题时，
+	  会自动切换到备用端口。 首先启用成员接口，
+	  接着是配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a> 接口， 其中， 使用
+	  <em class="replaceable"><code>fxp0</code></em> 作为首选接口，
+	  <em class="replaceable"><code>fxp1</code></em> 作为备用接口，
+	  并在整个接口上配置 IP 地址 <em class="replaceable"><code>10.0.0.15/24</code></em>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig fxp0 up</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig fxp1 up</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 create</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 up laggproto failover laggport fxp0 laggport fxp1 10.0.0.15/24</code></strong></pre><p>创建成功之后， 接口状态会是类似下面这样，
+	  主要的区别是 <acronym class="acronym">MAC</acronym> 地址和设备名：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0</code></strong>
+lagg0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=8&lt;VLAN_MTU&gt;
+        ether 00:05:5d:71:8d:b8
+        inet 10.0.0.15 netmask 0xffffff00 broadcast 10.0.0.255
+        media: Ethernet autoselect
+        status: active
+        laggproto failover
+        laggport: fxp1 flags=0&lt;&gt;
+        laggport: fxp0 flags=5&lt;MASTER,ACTIVE&gt;</pre><p>系统将在
+	  <em class="replaceable"><code>fxp0</code></em> 上进行流量的收发。 如果
+	  <em class="replaceable"><code>fxp0</code></em>  的连接中断， 则 <em class="replaceable"><code>fxp1</code></em>
+	  会自动成为激活连接。 如果主端口的连接恢复， 则它又会成为激活连接。</p><p>如果希望在系统重启时保持这些设置， 应在
+	  <code class="filename">/etc/rc.conf</code> 中增加如下配置：</p><pre class="programlisting">ifconfig_<em class="replaceable"><code>fxp0</code></em>="up"
+ifconfig_<em class="replaceable"><code>fxp1</code></em>="up"
+cloned_interfaces="<code class="literal">lagg0</code>"
+ifconfig_<code class="literal">lagg0</code>="laggproto failover laggport <em class="replaceable"><code>fxp0</code></em> laggport <em class="replaceable"><code>fxp1</code></em> <em class="replaceable"><code>10.0.0.15/24</code></em>"
+</pre></div></div><br class="example-break" /><div class="example"><a id="networking-lagg-wired-and-wireless"></a><div class="example-title">Example 30.3. 有线网络和无线网络接口间的自动切换</div><div class="example-contents"><p>对于使用笔记本的用户来说， 通常会希望使用无线网络接口作为备用接口，
+	  以便在有线网络不可用时继续保持网络连接。 通过使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a>， 我们可以只使用一个
+	  IP 地址的情况下， 优先使用性能和安全性都更好的有线网络，
+	  同时保持通过无线网络连接来传输数据的能力。</p><p>要实现这样的目的， 就需要将用于连接无线网络的物理接口的
+	  <acronym class="acronym">MAC</acronym> 地址修改为与所配置的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a> 一致，
+	  后者是从主网络接口， 也就是有线网络接口， 继承而来。</p><p>在这个配置中， 我们将优先使用有线网络接口
+	  <em class="replaceable"><code>bge0</code></em> 作为主网络接口，
+	  而将无线网络接口
+	  <em class="replaceable"><code>wlan0</code></em> 作为备用网络接口。 这里的
+	  <em class="replaceable"><code>wlan0</code></em> 使用的物理设备是
+	  <em class="replaceable"><code>iwn0</code></em>，
+	  我们需要将它的 <acronym class="acronym">MAC</acronym> 地址修改为与有线网络接口一致。
+	  为了达到这个目的首先要得到有线网络接口上的
+	  <acronym class="acronym">MAC</acronym> 地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig bge0</code></strong>
+bge0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	options=19b&lt;RXCSUM,TXCSUM,VLAN_MTU,VLAN_HWTAGGING,VLAN_HWCSUM,TSO4&gt;
+	ether 00:21:70:da:ae:37
+	inet6 fe80::221:70ff:feda:ae37%bge0 prefixlen 64 scopeid 0x2
+	nd6 options=29&lt;PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL&gt;
+	media: Ethernet autoselect (1000baseT &lt;full-duplex&gt;)
+	status: active</pre><p>您可能需要将 <em class="replaceable"><code>bge0</code></em> 改为您系统上实际使用的接口，
+	  并从输出结果中的 <code class="literal">ether</code>
+	  这行找出有线网络的 <acronym class="acronym">MAC</acronym> 地址。 接着是修改物理的无线网络接口，
+	  <em class="replaceable"><code>iwn0</code></em>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig iwn0 ether 00:21:70:da:ae:37</code></strong></pre><p>启用无线网络接口， 但不在其上配置 IP
+	  地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev iwn0 ssid my_router up</code></strong></pre><p>启用 <em class="replaceable"><code>bge0</code></em> 接口。 创建
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lagg&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lagg</span>(4)</span></a>  接口， 其中 <em class="replaceable"><code>bge0</code></em>
+	  作为主网络接口， 而以 <em class="replaceable"><code>wlan0</code></em> 作为备选接口：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig bge0 up</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 create</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0 up laggproto failover laggport bge0 laggport wlan0</code></strong></pre><p>新创建的接口的状态如下， 您系统上的 <acronym class="acronym">MAC</acronym>
+	  地址和设备名等可能会有所不同：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig lagg0</code></strong>
+lagg0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=8&lt;VLAN_MTU&gt;
+        ether 00:21:70:da:ae:37
+        media: Ethernet autoselect
+        status: active
+        laggproto failover
+        laggport: wlan0 flags=0&lt;&gt;
+        laggport: bge0 flags=5&lt;MASTER,ACTIVE&gt;</pre><p>接着用 DHCP 客户端来获取 IP 地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dhclient lagg0</code></strong></pre><p>如果希望在系统重启时保持这些设置， 应在
+	  <code class="filename">/etc/rc.conf</code> 中增加如下配置：</p><pre class="programlisting">ifconfig_bge0="up"
+ifconfig_iwn0="ether 00:21:70:da:ae:37"
+wlans_iwn0="wlan0"
+ifconfig_wlan0="WPA"
+cloned_interfaces="<code class="literal">lagg0</code>"
+ifconfig_<code class="literal">lagg0</code>="laggproto failover laggport bge0 laggport wlan0 DHCP"
+</pre></div></div><br class="example-break" /></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-bridging.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-diskless.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.5. 桥接 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.7. 无盘操作</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

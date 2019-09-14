@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.8. OpenSSL</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="kerberos5.html" title="14.7. Kerberos5" /><link rel="next" href="ipsec.html" title="14.9. IPsec 上的 VPN" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.8. OpenSSL</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="kerberos5.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="ipsec.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="openssl"></a>14.8. OpenSSL</h2></div><div><span class="authorgroup">作者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp77693008" class="indexterm"></a><p>许多用户可能并没有注意到 FreeBSD 所附带的
+      <span class="application">OpenSSL</span> 工具包的功能。
+      <span class="application">OpenSSL</span> 提供了建立在普通的通讯层基础上的加密传输层；
+      这些功能为许多网络应用和服务程序所广泛使用。</p><p>对 <span class="application">OpenSSL</span> 的一些常见用法包括加密邮件客户的身份验证过程，
+      基于 Web 的交易如信用卡等等。 许多 ports 如
+      <span class="package">www/apache13-ssl</span>， 以及
+      <span class="package">mail/claws-mail</span>
+      等等都提供了编译进
+      <span class="application">OpenSSL</span> 支持的方法。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">绝大多数情况下 Ports Collection 会试图使用
+	<span class="package">security/openssl</span>
+	除非明确地将 <code class="varname">WITH_OPENSSL_BASE</code> make
+	变量设置为 <span class="quote">“<span class="quote">yes</span>”</span>。</p></div><p>FreeBSD 中附带的 <span class="application">OpenSSL</span> 版本能够支持
+      安全套接字层 v2/v3 (SSLv2/SSLv3) 和 安全传输层
+      v1 (TLSv1) 三种网络协议， 并可作为通用的密码学函数库使用。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">尽管 <span class="application">OpenSSL</span> 支持
+	<acronym class="acronym">IDEA</acronym> 算法， 但由于美国专利，
+	它在默认情况下是不编译的。 如果想使用它，
+	请查阅相应的授权， 如果认为授权可以接受， 则可以在
+	<code class="filename">make.conf</code> 中设置
+	<code class="varname">MAKE_IDEA</code>。</p></div><p>为应用软件提供证书是
+      <span class="application">OpenSSL</span> 最为常用的功能之一。
+      证书是一种能够确保公司或个人有效身份不被伪造的凭据。
+      如果证书没有被众多 <span class="quote">“<span class="quote">权威发证机构</span>”</span>，
+      或 <acronym class="acronym">CA</acronym> 中的某一个确认，
+      则会产生一个警告。 权威发证机构通常是一家公司，
+      例如 <a class="link" href="http://www.verisign.com" target="_top">VeriSign</a>，
+      它能够通过签署来证明个人或公司证书的有效性。
+      这个过程是需要付费的， 当然， 这不是使用证书的必要条件；
+      然而， 这样做会让那些比较偏执的用户感到轻松。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77704400"></a>14.8.1. 生成证书</h3></div></div></div><a id="idp77705040" class="indexterm"></a><p>为了生成证书， 需要使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>openssl req -new -nodes -out req.pem -keyout cert.pem</code></strong>
+Generating a 1024 bit RSA private key
+................++++++
+.......................................++++++
+writing new private key to 'cert.pem'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:<strong class="userinput"><code>US</code></strong>
+State or Province Name (full name) [Some-State]:<strong class="userinput"><code>PA</code></strong>
+Locality Name (eg, city) []:<strong class="userinput"><code>Pittsburgh</code></strong>
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:<strong class="userinput"><code>My Company</code></strong>
+Organizational Unit Name (eg, section) []:<strong class="userinput"><code>Systems Administrator</code></strong>
+Common Name (eg, YOUR name) []:<strong class="userinput"><code>localhost.example.org</code></strong>
+Email Address []:<strong class="userinput"><code>trhodes@FreeBSD.org</code></strong>
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:<strong class="userinput"><code>SOME PASSWORD</code></strong>
+An optional company name []:<strong class="userinput"><code>Another Name</code></strong></pre><p>请注意， 在
+	<span class="quote">“<span class="quote">Common Name</span>”</span> 提示后面我们输入的是一个域名。
+	这个提示要求输入服务器的名字，
+	这个名字今后将用于完成验证过程；
+	如果在这里输入域名以外的内容， 那么证书也就失去其意义了。
+	您还可以指定一些其他的选项， 比如证书的有效期，
+	以及使用的加密算法等等。 这些选项的完整列表，
+	可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=openssl&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">openssl</span>(1)</span></a> 联机手册中找到。</p><p>在您执行前述命令的目录中将生成两个文件。
+	证书申请， 即 <code class="filename">req.pem</code>，
+	可以发给一家发证机构， 它将验证您输入的凭据的真实性，
+	并对申请进行签名， 再把证书返还给您。
+	第二个文件的名字将是 <code class="filename">cert.pem</code>，
+	它包含了证书的私钥， 应被全力保护；
+	如果它落入别人手中， 则可以被用来伪造您
+	(或您的服务器)。</p><p>如果不需要来自 <acronym class="acronym">CA</acronym> 的签名，
+	也可以创建自行签名的证书。 首先，
+	需要生成 <acronym class="acronym">RSA</acronym> 密钥：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>openssl dsaparam -rand -genkey -out myRSA.key 1024</code></strong></pre><p>接下来， 生成 <acronym class="acronym">CA</acronym> 密钥：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>openssl gendsa -des3 -out myca.key myRSA.key</code></strong></pre><p>然后用这个密钥来创建证书：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>openssl req -new -x509 -days 365 -key myca.key -out new.crt</code></strong></pre><p>上述步骤将在当前目录中生成两个新文件：
+	一个是权威发证机构的签名文件， <code class="filename">myca.key</code>；
+	另一个是证书本身， <code class="filename">new.crt</code>。
+	这些文件应该放到同一个目录中， 一般而言， 推荐放到
+	<code class="filename">/etc</code>，
+	并且只允许 <code class="systemitem">root</code> 读取。
+	建议把权限设置为 0700， 这可以通过 <code class="command">chmod</code>
+	工具来完成。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77729872"></a>14.8.2. 使用证书的一个例子</h3></div></div></div><p>那么有了这些文件可以做些什么呢？ 一个比较典型的用法是用来加密
+	<span class="application">Sendmail</span> <acronym class="acronym">MTA</acronym>
+	的通讯连接。 这可以解决用户通过本地 <acronym class="acronym">MTA</acronym>
+	发送邮件时使用明文进行身份验证的问题。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这个用法可能并不完美， 因为某些
+	  <acronym class="acronym">MUA</acronym> 会由于没有在本地安装证书而向用户发出警告。
+	  请参考那些软件的说明了解关于安装证书的信息。</p></div><p>下面的设置应添加到本地的
+	<code class="filename">.mc</code> 文件</p><pre class="programlisting">dnl SSL Options
+define(`confCACERT_PATH',`/etc/certs')dnl
+define(`confCACERT',`/etc/certs/new.crt')dnl
+define(`confSERVER_CERT',`/etc/certs/new.crt')dnl
+define(`confSERVER_KEY',`/etc/certs/myca.key')dnl
+define(`confTLS_SRV_OPTIONS', `V')dnl</pre><p>这里， <code class="filename">/etc/certs/</code>
+	是准备用来在本地保存证书和密钥的位置。 最后，
+	需要重新生成本地的 <code class="filename">.cf</code> 文件。
+	这一工作可以简单地通过在
+	目录中执行 <code class="command">make</code>
+	<code class="buildtarget">install</code> 来完成。
+	接下来， 可以使用 <code class="command">make</code>
+	<code class="buildtarget">restart</code> 来重新启动
+	<span class="application">Sendmail</span> 服务程序。</p><p>如果一切正常的话， 在
+	<code class="filename">/var/log/maillog</code> 中就不会出现错误提示，
+	<span class="application">Sendmail</span> 也应该出现在进程列表中。</p><p>做一个简单的测试， 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=telnet&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">telnet</span>(1)</span></a> 来连接邮件服务器：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>telnet example.com 25</code></strong>
+Trying 192.0.34.166...
+Connected to <code class="systemitem">example.com</code>.
+Escape character is '^]'.
+220 <code class="systemitem">example.com</code> ESMTP Sendmail 8.12.10/8.12.10; Tue, 31 Aug 2004 03:41:22 -0400 (EDT)
+<strong class="userinput"><code>ehlo example.com</code></strong>
+250-example.com Hello example.com [192.0.34.166], pleased to meet you
+250-ENHANCEDSTATUSCODES
+250-PIPELINING
+250-8BITMIME
+250-SIZE
+250-DSN
+250-ETRN
+250-AUTH LOGIN PLAIN
+250-STARTTLS
+250-DELIVERBY
+250 HELP
+<strong class="userinput"><code>quit</code></strong>
+221 2.0.0 <code class="systemitem">example.com</code> closing connection
+Connection closed by foreign host.</pre><p>如果输出中出现了 <span class="quote">“<span class="quote">STARTTLS</span>”</span> 则说明一切正常。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="kerberos5.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ipsec.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.7. <span class="application">Kerberos5</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.9. IPsec 上的 VPN</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

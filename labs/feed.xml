@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+<title type="text">Haowu Ge</title>
+<generator uri="https://github.com/jekyll/jekyll">Jekyll</generator>
+<link rel="self" type="application/atom+xml" href="https://www.gehaowu.com/labs/feed.xml" />
+<link rel="alternate" type="text/html" href="https://www.gehaowu.com/labs" />
+<updated>2015-12-19T22:26:28+08:00</updated>
+<id>https://www.gehaowu.com/labs/</id>
+<author>
+  <name>Haowu Ge</name>
+  <uri>https://www.gehaowu.com/labs/</uri>
+  
+</author>
+
+
+<entry>
+  <title type="html"><![CDATA[将应用服务关进 Jails 以增加服务器安全性]]></title>
+  <link rel="alternate" type="text/html" href="https://www.gehaowu.com/labs/2015/11/freebsd-jails/" />
+  <id>https://www.gehaowu.com/labs/2015/11/freebsd-jails</id>
+  <updated>2015-11-09T00:00:00-00:00</updated>
+  <published>2015-11-15T00:00:00+08:00</published>
+  
+  <author>
+    <name>Haowu Ge</name>
+    <uri>https://www.gehaowu.com/labs</uri>
+    
+  </author>
+  <content type="html">
+    &lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;全文概览&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#jails-&quot; id=&quot;markdown-toc-jails-&quot;&gt;Jails 是什么？&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot; id=&quot;markdown-toc-section&quot;&gt;如何安装？&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-1&quot; id=&quot;markdown-toc-section-1&quot;&gt;如何配置？&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#jails--etcjailconf&quot; id=&quot;markdown-toc-jails--etcjailconf&quot;&gt;Jails 的主配置文件 /etc/jail.conf&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#freebsd--jails&quot; id=&quot;markdown-toc-freebsd--jails&quot;&gt;安装 FreeBSD 基本系统到 Jails&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#freebsd-&quot; id=&quot;markdown-toc-freebsd-&quot;&gt;获取 FreeBSD 基本系统，并释放到刚创建的目录中&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#jails--1&quot; id=&quot;markdown-toc-jails--1&quot;&gt;升级 Jails 主机基本系统&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#jails--2&quot; id=&quot;markdown-toc-jails--2&quot;&gt;配置 Jails 主机启动管理项&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#jails--dns-&quot; id=&quot;markdown-toc-jails--dns-&quot;&gt;添加 Jails 主机 DNS 服务器&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#fstab-&quot; id=&quot;markdown-toc-fstab-&quot;&gt;创建 fstab 文件&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#pf-&quot; id=&quot;markdown-toc-pf-&quot;&gt;配置 PF 防火墙转发规则&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#section-2&quot; id=&quot;markdown-toc-section-2&quot;&gt;配置母机服务&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#jails--3&quot; id=&quot;markdown-toc-jails--3&quot;&gt;启动 Jails 服务管理&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-3&quot; id=&quot;markdown-toc-section-3&quot;&gt;后续管理&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section-4&quot; id=&quot;markdown-toc-section-4&quot;&gt;没了，，就扯辣麽多！！！&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;h3 id=&quot;jails-&quot;&gt;Jails 是什么？&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;FreeBSD Jail&lt;/strong&gt; 是 &lt;em&gt;chroot&lt;/em&gt; 的改进版本，几乎能提供一个完整操作系统所具有的功能。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://www.gehaowu.com/labs/images/2015/11/jails.png&quot; alt=&quot;FreeBSD Jails&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;section&quot;&gt;如何安装？&lt;/h3&gt;
+
+&lt;p&gt;当前官方仍然支持的所有版本都默认支持 jail 功能，可以直接使用。&lt;/p&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;如何配置？&lt;/h3&gt;
+
+&lt;h4 id=&quot;jails--etcjailconf&quot;&gt;Jails 的主配置文件 /etc/jail.conf&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;allow.raw_sockets &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+exec.clean&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+exec.start &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/bin/sh /etc/rc&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+exec.stop &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/bin/sh /etc/rc.shutdown&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+exec.consolelog &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/var/log/jail_${name}_console.log&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+mount.devfs&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+mount.fstab &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/etc/fstab.$name&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+allow.mount&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+allow.set_hostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+allow.sysvipc &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;/usr/jails/${name}&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; vtnet0&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+NGINX &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;jid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    host.hostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; NginxDigital.daemon.xin&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    ip4.addr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 192.168.7.1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    ip6.addr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0:0:0:0:0:0:C0A8:0701&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+HEXO &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nv&quot;&gt;jid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 5&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    host.hostname &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; HexoDigital.daemon.xin&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    ip4.addr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 192.168.9.1&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    ip6.addr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 0:0:0:0:0:0:C0A8:0901&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;每个 Jails 相当于一个完整主机，所以完整系统需要的东西它也应该也有，比如 IP 地址。&lt;/p&gt;
+
+&lt;p&gt;相关参数：&lt;br /&gt;
+&lt;strong&gt;NGINX,HEXO&lt;/strong&gt;    他们是 Jails 配置名称，可以随意，不过得跟 rc.conf 中的匹配&lt;br /&gt;
+&lt;strong&gt;jid&lt;/strong&gt;           这个是 Jails ID，XD&lt;br /&gt;
+&lt;strong&gt;host.hostname&lt;/strong&gt; 是 Jails 的主机名&lt;br /&gt;
+&lt;strong&gt;interface&lt;/strong&gt;     写上你的网络设备接口，你也可以直接写 &lt;em&gt;lo0&lt;/em&gt; 啥的&lt;br /&gt;
+&lt;strong&gt;ip4.addr&lt;/strong&gt;      你的 Jails 内网 IP，可以随意指定，比如我这里是 &lt;em&gt;192.168.7.1&lt;/em&gt;&lt;br /&gt;
+&lt;strong&gt;ip6.addr&lt;/strong&gt;      这个是 IPv6 的内网 IP，当然如果你没有 IPv6 支持，则可以不写&lt;/p&gt;
+
+&lt;h4 id=&quot;freebsd--jails&quot;&gt;安装 FreeBSD 基本系统到 Jails&lt;/h4&gt;
+
+&lt;h5 id=&quot;freebsd-&quot;&gt;获取 FreeBSD 基本系统，并释放到刚创建的目录中&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;mkdir -p mkdir /usr/jails/NGINX
+fetch -o /tmp/base.txz http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/base.txz
+tar xf /tmp/base.txz -C /usr/jails/NGINX&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;jails--1&quot;&gt;升级 Jails 主机基本系统&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;freebsd-update -b /usr/jails/NGINX fetch
+freebsd-update -b /usr/jails/NGINX install&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;jails--2&quot;&gt;配置 Jails 主机启动管理项&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;cat &amp;gt; /usr/jails/NGINX/etc/rc.conf &lt;span class=&quot;s&quot;&gt;&amp;lt;&amp;lt;EOF&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;syslogd_flags=&amp;quot;-ssC&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;clear_tmp_enable=&amp;quot;YES&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;sendmail_enable=&amp;quot;NONE&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;cron_flags=&amp;quot;$cron_flags -J 60&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;jails--dns-&quot;&gt;添加 Jails 主机 DNS 服务器&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;cat &amp;gt; /usr/jails/NGINX/etc/resolv.conf &lt;span class=&quot;s&quot;&gt;&amp;lt;&amp;lt;EOF&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;nameserver 114.114.114.114&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;nameserver 119.29.29.29&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;nameserver 8.8.8.8&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;nameserver 8.8.4.4&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h5 id=&quot;fstab-&quot;&gt;创建 fstab 文件&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;touch /etc/fstab.NGINX&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;需要挂载的项目可以直接写这里&lt;/p&gt;
+
+&lt;h5 id=&quot;pf-&quot;&gt;配置 PF 防火墙转发规则&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;cat &amp;gt;&amp;gt; /etc/pf.conf &amp;lt;&amp;lt;EOF
+&lt;span class=&quot;c&quot;&gt;# The OpenBSD Packet Filter Configuration file&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ext_if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;vtnet0&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ext_if_ipv4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;188.166.224.72&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ext_if_ipv6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;2400:6180:0:d0::13d:7001&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;jail_webser_ipv4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;192.168.7.1&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;jail_webser_ipv6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;::192.168.7.1&amp;quot;&lt;/span&gt;
+nat on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet from &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv4&lt;/span&gt; to any -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv4&lt;/span&gt; round-robin
+nat on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet6 from &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv6&lt;/span&gt; to any -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv6&lt;/span&gt; round-robin
+rdr pass on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet proto tcp from any to &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv4&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; http -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv4&lt;/span&gt;
+rdr pass on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet proto tcp from any to &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv4&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; https -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv4&lt;/span&gt;
+rdr pass on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet6 proto tcp from any to &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv6&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; http -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv6&lt;/span&gt;
+rdr pass on &lt;span class=&quot;nv&quot;&gt;$ext_if&lt;/span&gt; inet6 proto tcp from any to &lt;span class=&quot;nv&quot;&gt;$ext_if_ipv6&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; https -&amp;gt; &lt;span class=&quot;nv&quot;&gt;$jail_webser_ipv6&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;因为 Jails 主机类似内网主机，所以需要母机转发相关数据到 Jails 主机，
+并将 Jails 主机外发的数据转发出去。&lt;/p&gt;
+
+&lt;h5 id=&quot;section-2&quot;&gt;配置母机服务&lt;/h5&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;nv&quot;&gt;jail_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;YES&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;jail_parallel_start&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;YES&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;jail_list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;NGINX HEXO&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;pf_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;YES&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;gateway_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;YES&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;ipv6_gateway_enable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;YES&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;允许 Jails 随机启动，开启 PF 防火墙随机启动，并开启 IP 转发服务。&lt;/p&gt;
+
+&lt;h4 id=&quot;jails--3&quot;&gt;启动 Jails 服务管理&lt;/h4&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;service jail start
+service jail stop
+service jail restart&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以上三条指令分别是启动，停止和重启 Jails 服务&lt;/p&gt;
+
+&lt;h3 id=&quot;section-3&quot;&gt;后续管理&lt;/h3&gt;
+&lt;p&gt;#### 如何登陆主机？&lt;/p&gt;
+
+&lt;p&gt;通过 jls 命令，列出 Jails 主机 ID ，&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ghw@AliyunHost.pts/1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; ~/labs % jls
+JID  IP Address      Hostname                      Path
+&lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;  192.168.7.1     NginxAliyun.daemon.xin        /usr/jails/NGINX
+&lt;span class=&quot;m&quot;&gt;2&lt;/span&gt;  192.168.8.1     HoneypotAliyun.daemon.xin     /usr/jails/HONEYPOT
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;ghw@AliyunHost.pts/1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; ~/labs %&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;如果我要登陆 JID 为 1 的 Jails 主机，那么只需要输入&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;sudo jexec &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; tcsh&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这样就能直接获得一个 Shell， 供您管理器 Jails 主机了， 进入主机后所有操作与本机相同。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;提示：&lt;/strong&gt;
+试试以下命令行？&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;sudo jexec &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt; service nginx restart&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;对了，您还能使用 SSH 直接远程登陆，（如果你的 Jails 主机开启了 SSH 服务）&lt;/p&gt;
+
+&lt;h2 id=&quot;section-4&quot;&gt;没了，，就扯辣麽多！！！&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://www.gehaowu.com/labs/images/2015/11/jails2.png&quot; alt=&quot;FreeBSD Jails&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/resources/FreeBSDHandBook/jails.html#jails-synopsis&quot; class=&quot;btn btn-success&quot;&gt;《FreeBSD Handbook》 Jails 概述&lt;/a&gt;&lt;/p&gt;
+
+    &lt;p&gt;&lt;a href=&quot;https://www.gehaowu.com/labs/2015/11/freebsd-jails/&quot;&gt;将应用服务关进 Jails 以增加服务器安全性&lt;/a&gt; was originally published by Haowu Ge at &lt;a href=&quot;https://www.gehaowu.com/labs&quot;&gt;Haowu Ge&lt;/a&gt; on November 15, 2015.&lt;/p&gt;
+  </content>
+</entry>
+
+
+<entry>
+  <title type="html"><![CDATA[使用 Let&rsquo;s Encrypt 开源 SSL 证书]]></title>
+  <link rel="alternate" type="text/html" href="https://www.gehaowu.com/labs/2015/11/letsencrypt-https-certificate/" />
+  <id>https://www.gehaowu.com/labs/2015/11/letsencrypt-https-certificate</id>
+  <updated>2015-11-09T00:00:00-00:00</updated>
+  <published>2015-11-01T00:00:00+08:00</published>
+  
+  <author>
+    <name>Haowu Ge</name>
+    <uri>https://www.gehaowu.com/labs</uri>
+    
+  </author>
+  <content type="html">
+    &lt;section id=&quot;table-of-contents&quot; class=&quot;toc&quot;&gt;
+  &lt;header&gt;
+    &lt;h3&gt;全文概览&lt;/h3&gt;
+  &lt;/header&gt;
+&lt;div id=&quot;drawer&quot;&gt;
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#letrsquos-encrypt-&quot; id=&quot;markdown-toc-letrsquos-encrypt-&quot;&gt;Let’s Encrypt 是什么？&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#letrsquos-encrypt--1&quot; id=&quot;markdown-toc-letrsquos-encrypt--1&quot;&gt;Let’s Encrypt 是如何工作的？&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#letrsquos-encrypt&quot; id=&quot;markdown-toc-letrsquos-encrypt&quot;&gt;申请证书 Let’s Encrypt&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#section&quot; id=&quot;markdown-toc-section&quot;&gt;下面的以后在写。。&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;/div&gt;
+&lt;/section&gt;
+&lt;!-- /#table-of-contents --&gt;
+
+&lt;h3 id=&quot;letrsquos-encrypt-&quot;&gt;Let’s Encrypt 是什么？&lt;/h3&gt;
+
+&lt;p class=&quot;image-pull-right&quot;&gt;&lt;img src=&quot;https://www.gehaowu.com/labs/images/2015/11/ZsUlrVAwD16p.png&quot; alt=&quot;Let&amp;rsquo;s Encrypt&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Mozilla、思科、Akamai、IdenTrust、EFF 和密歇根大学研究人员联合宣布了 Let’s Encrypt CA 项目，计划为网站提供免费的基本 SSL 证书，以加速互联网从 HTTP 向 HTTPS 过渡。Let’s Encrypt CA 将由非赢利组织 Internet Security Research Group (ISRG) 运营，计划于 2015 年夏天开始向任何需要加密证书的网站自动发放免费的 SSL 证书。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Let’s Encrypt&lt;/strong&gt; 是一个将于2015年末推出的数字证书认证机构，
+将通过旨在消除当前手动创建和安装证书的复杂过程的自动化流程，
+为安全网站提供免费的SSL/TLS证书。&lt;/p&gt;
+
+&lt;p&gt;Let’s Encrypt 是由公益组织互联网安全研究小组（ISRG）维护的。
+2015年4月9日，ISRG与Linux基金会宣布合作。
+它的主要赞助商包括电子前哨基金会，Mozilla基金会，Akamai以及思科。&lt;/p&gt;
+
+&lt;p&gt;预计将在2015年11月16日全面开始提供服务。&lt;/p&gt;
+
+&lt;h3 id=&quot;letrsquos-encrypt--1&quot;&gt;Let’s Encrypt 是如何工作的？&lt;/h3&gt;
+
+&lt;p&gt;这个好像是重点？ 好复杂，，自己去官方看文档。。&lt;/p&gt;
+
+&lt;h3 id=&quot;letrsquos-encrypt&quot;&gt;申请证书 Let’s Encrypt&lt;/h3&gt;
+
+&lt;p&gt;获取 Let’s Encrypt 源程序，并进入目录&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;git clone https://github.com/letsencrypt/letsencrypt
+  &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;letsencrypt&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;首次运行直接执行letsencrypt-auto，它会为你的系统配置好 Let’s Encrypt 运行所需的环境&lt;/p&gt;
+
+&lt;p&gt;(如果你的系统是FreeBSD，则需要多添加–debug参数)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto --debug
+grep: /etc/os-release: 文件或目录不存在
+Bootstrapping dependencies &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; FreeBSD...
++ pkg install -Ay git python py27-virtualenv augeas libffi
+Updating FreeBSD repository catalogue...
+FreeBSD repository is up-to-date.
+All repositories are up-to-date.
+Updating database digests format: 100%
+Checking integrity... &lt;span class=&quot;k&quot;&gt;done&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;0&lt;/span&gt; conflicting&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+The most recent version of packages are already installed
+Creating virtual environment...
+Updating letsencrypt and virtual environment dependencies...You are using pip version 7.1.0, however version 7.1.2 is available.
+You should consider upgrading via the &lt;span class=&quot;s1&quot;&gt;&amp;#39;pip install --upgrade pip&amp;#39;&lt;/span&gt; command.
+.You are using pip version 7.1.0, however version 7.1.2 is available.
+You should consider upgrading via the &lt;span class=&quot;s1&quot;&gt;&amp;#39;pip install --upgrade pip&amp;#39;&lt;/span&gt; command.
+...
+Running with virtualenv: sudo /home/ghw/.local/share/letsencrypt/bin/letsencrypt --debug&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;环境初始化完成会弹出同意许可的窗口，你可以一步步照着来就 OK 了&lt;/p&gt;
+
+&lt;p&gt;我是直接使用命令行的 webroot 模式完成密钥申请的。。。窗口实在太麻烦了&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;sudo ~/.local/share/letsencrypt/bin/letsencrypt &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --debug &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        -vvvvv &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --text &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --agree-dev-preview &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --agree-tos &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        -a webroot &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --webroot-path /usr/home/wwwroot/www.gehaowu.com &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --server https://acme-v01.api.letsencrypt.org/directory &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --rsa-key-size &lt;span class=&quot;m&quot;&gt;4096&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        --email webmaster@gehaowu.com -d www.gehaowu.com -d gehaowu.com &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        auth&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;em&gt;这里的 –debug，-vvvvv， –text，并不是必要参数，正式版发布之后，–agree-dev-preview，–server，参数也将不需要添加&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;webroot-path 是你的网站根目录，&lt;/p&gt;
+
+&lt;p&gt;比如我有一个存放在 “/usr/home/wwwroot/www.gehaowu.com/robots.txt”&lt;/p&gt;
+
+&lt;p&gt;它可以通过 https://www.gehaowu.com/robots.txt 访问到，那么网站根目录就是：&lt;/p&gt;
+
+&lt;p&gt;/usr/home/wwwroot/www.gehaowu.com&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;提示：&lt;/strong&gt;
+webroot 模式需要为申请证书的站点指定目录添加 mime 类型，
+NGINX 添加以下内容到指定站点配置文件&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;location            ~ /.well-known/acme-challenge/&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;.*&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    default_type    text/plain&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Apache 添加：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;&amp;lt;IfModule mod_headers.c&amp;gt;
+    &amp;lt;LocationMatch &lt;span class=&quot;s2&quot;&gt;&amp;quot;/.well-known/acme-challenge/*&amp;quot;&lt;/span&gt;&amp;gt;
+        Header &lt;span class=&quot;nb&quot;&gt;set &lt;/span&gt;Content-Type &lt;span class=&quot;s2&quot;&gt;&amp;quot;application/jose+json&amp;quot;&lt;/span&gt;
+    &amp;lt;/LocationMatch&amp;gt;
+&amp;lt;/IfModule&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;个人认为 webroot 模式最方便省事&lt;/p&gt;
+
+&lt;p&gt;Let’s Encrypt 的服务端貌似 BUG 很多，你需要将 DNS 切换到国外的
+如我是切换到 cloudflare  隔了差不多 6 个小时候之后成功申请到证书的&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://www.gehaowu.com/labs/images/2015/11/ghwletsencrypt.jpg&quot; alt=&quot;Let&amp;rsquo;s Encrypt&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;下面的以后在写。。&lt;/h2&gt;
+
+&lt;p&gt;自动配置相关服务，如为NGINX/Apache添加证书相关配置。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto run&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;如果没有相关支持的WEBSERVER服务，那么可以在当前目录生成证书。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto -d example.com -d example.com auth&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;目前使用 renew 参数更新证书有效期（默认情况下会自动更新证书）&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto renew --cert-path example-cert.pem&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;使用 revoke 吊销证书&lt;/p&gt;
+
+&lt;p&gt;吊销指定证书&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto revoke --cert-path example-cert.pem&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;吊销指定私钥&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sh&quot; data-lang=&quot;sh&quot;&gt;./letsencrypt-auto revoke --key-path example-key.pem&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://letsencrypt.org/&quot; class=&quot;btn btn-success&quot;&gt;Go Go Go Let’s Encrypt Website&lt;/a&gt;&lt;/p&gt;
+
+    &lt;p&gt;&lt;a href=&quot;https://www.gehaowu.com/labs/2015/11/letsencrypt-https-certificate/&quot;&gt;使用 Let&amp;rsquo;s Encrypt 开源 SSL 证书&lt;/a&gt; was originally published by Haowu Ge at &lt;a href=&quot;https://www.gehaowu.com/labs&quot;&gt;Haowu Ge&lt;/a&gt; on November 01, 2015.&lt;/p&gt;
+  </content>
+</entry>
+
+</feed>

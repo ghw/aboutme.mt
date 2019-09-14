@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.3. 无线网络</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-routing.html" title="30.2. 网关和路由" /><link rel="next" href="network-bluetooth.html" title="30.4. 蓝牙" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.3. 无线网络</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-routing.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-bluetooth.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-wireless"></a>30.3. 无线网络</h2></div><div><span class="authorgroup"><span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="othername">陈福康</span></span>, <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp88849744" class="indexterm"></a><a id="idp88850256" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88851408"></a>30.3.1. 无线网络基础</h3></div></div></div><p>绝大多数无线网络都采用了 <span class="trademark">IEEE</span>® 802.11
+	标准。 基本的无线网络中， 都包含多个以 2.4GHz 或 5GHz
+	频段的无线电波广播的站点 (不过， 随所处地域的不同，
+	或者为了能够更好地进行通讯， 具体的频率会在
+	2.3GHz 和 4.9GHz 的范围内变化)。</p><p>802.11 网络有两种组织方式： 在
+	<span class="emphasis"><em>infrastructure 模式</em></span> 中，
+	一个通讯站作为主站， 其他通讯站都与其关联；
+	这种网络称为 BSS， 而主站则成为无线访问点 (AP)。
+	在 BSS 中， 所有的通讯都是通过 AP 来完成的；
+	即使通讯站之间要相互通讯， 也必须将消息发给 AP。
+	在第二种形式的网络中， 并不存在主站，
+	通讯站之间是直接通讯的。 这种网络形式称作 IBSS，
+	通常也叫做 <span class="emphasis"><em>ad-hoc
+	网络</em></span>。</p><p>802.11 网络最初在 2.4GHz 频段上部署，
+	并采用了由 <span class="trademark">IEEE</span>® 802.11 和 802.11b
+	标准所定义的协议。 这些标准定义了采用的操作频率、
+	包括分帧和传输速率 (通讯过程中可以使用不同的速率) 在内的 MAC 层特性等。
+	稍后的 802.11a 标准定义了使用
+	5GHz 频段进行操作， 以及不同的信号机制和更高的传输速率。
+	其后定义的 802.11g 标准启用了在 2.4GHz 上如何使用 802.11a 信号和传输机制，
+	以提供对较早的 802.11b 网络的向前兼容。</p><p>802.11 网络中采用的各类底层传输机制提供了不同类型的安全机制。
+	最初的 802.11 标准定义了一种称为 WEP 的简单安全协议。
+	这个协议采用固定的预发布密钥， 并使用 RC4
+	加密算法来对在网络上传输的数据进行编码。
+	全部通讯站都必须采用同样的固定密钥才能通讯。
+	这一格局已经被证明很容易被攻破， 因此目前已经很少使用了，
+	采用这种方法只能让那些接入网络的用户迅速断开。
+	最新的安全实践是由
+	<span class="trademark">IEEE</span>® 802.11i 标准给出的， 它定义了新的加密算法，
+	并通过一种附加的协议来让通讯站向无线访问点验证身份，
+	并交换用于进行数据通讯的密钥。 更进一步，
+	用于加密的密钥会定期地刷新，
+	而且有机制能够监测入侵的尝试 (并阻止这种尝试)。
+	无线网络中另一种常用的安全协议标准是 WPA。 这是在 802.11i
+	之前由业界组织定义的一种过渡性标准。 WPA 定义了在 802.11i
+	中所规定的要求的子集， 并被设计用来在旧式硬件上实施。
+	特别地， WPA 要求只使用由最初 WEP
+	所采用的算法派生的 TKIP 加密算法。 802.11i 则不但允许使用 TKIP，
+	而且还要求支持更强的加密算法 AES-CCM 来用于加密数据。 (在 WPA
+	中并没有要求使用 AES 加密算法，
+	因为在旧式硬件上实施这种算法时所需的计算复杂性太高。)</p><p>除了前面介绍的那些协议标准之外，
+	还有一种需要介绍的标准是 802.11e。 它定义了用于在 802.11
+	网络上运行多媒体应用， 如视频流和使用 IP 传送的语音 (VoIP) 的协议。
+	与 802.11i 类似， 802.11e 也有一个前身标准，
+	通常称作 WME (后改名为 WMM)， 它也是由业界组织定义的 802.11e
+	的子集， 以便能够在旧式硬件中使用多媒体应用。
+	关于  802.11e 与 WME/WMM 之间的另一项重要区别是，
+	前者允许对流量通过服务品质
+	(QoS) 协议和增强媒体访问协议来安排优先级。
+	对于这些协议的正确实现， 能够实现高速突发数据和流量分级。</p><p>FreeBSD 支持采用 802.11a, 802.11b 和 802.11g
+	的网络。 类似地， 它也支持 WPA 和 802.11i 安全协议 (与
+	11a、 11b 和 11g 配合)， 而 WME/WMM 所需要的 QoS 和流量分级，
+	则在部分无线设备上提供了支持。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-basic"></a>30.3.2. 基本安装</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88861776"></a>30.3.2.1. 内核配置</h4></div></div></div><p>要使用无线网络， 您需要一块无线网卡，
+	  并适当地配置内核令其提供无线网络支持。
+	  后者被分成了多个模块，
+	  因此您只需配置使用您所需要的软件就可以了。</p><p>首先您需要的是一个无线设备。 最为常用的一种无线配件是
+	  Atheros 生产的。 这些设备由 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ath&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ath</span>(4)</span></a>
+	  驱动程序提供支持， 您需要把下面的配置加入到
+	  <code class="filename">/boot/loader.conf</code> 文件中：</p><pre class="programlisting">if_ath_load="YES"</pre><p>Atheros 驱动分为三个部分： 驱动部分 (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ath&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ath</span>(4)</span></a>)、
+	  用于处理芯片专有功能的支持层
+	  (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ath_hal&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ath_hal</span>(4)</span></a>)， 以及一组用以选择传输帧速率的算法
+	  (ath_rate_sample here)。 当以模块方式加载这一支持时，
+	  所需的其它模块会自动加载。 如果您使用的不是 Atheros
+	  设备， 则应选择对应的模块； 例如：</p><pre class="programlisting">if_wi_load="YES"</pre><p>表示使用基于 Intersil Prism 产品的无线设备
+	  (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wi</span>(4)</span></a> 驱动)。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在这篇文档余下的部分中， 我们将以
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ath&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ath</span>(4)</span></a> 卡来进行示范， 如果要套用这些配置的话，
+	    可能需要根据您实际的配置情况来修改示例中的设备名称。
+	    在 FreeBSD 兼容硬件说明中提供了目前可用的无线网络驱动，
+	    以及兼容硬件的列表。 针对不同版本和硬件平台的说明可以在
+	    FreeBSD 网站的 <a class="link" href="http://www.FreeBSD.org/releases/index.html" target="_top">Release
+	    Information</a> 页面找到。
+	    如果您的无线设备没有与之对应的 FreeBSD 专用驱动程序，
+	    也可以尝试使用 <a class="link" href="config-network-setup.html#config-network-ndis" title="12.8.1.1. 使用 Windows® NDIS 驱动程序">NDIS</a>
+	    驱动封装机制来直接使用 <span class="trademark">Windows</span>® 驱动。</p></div><p>对于 FreeBSD 7.X， 在配置好设备驱动之后， 您还需要引入驱动程序所需要的 802.11
+	  网络支持。 对于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ath&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ath</span>(4)</span></a> 驱动而言， 至少需要 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan</span>(4)</span></a>
+          <code class="literal">wlan_scan_ap</code> 和
+          <code class="literal">wlan_scan_sta</code>
+	  模块； <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan</span>(4)</span></a> 模块会自动随无线设备驱动一同加载，
+          剩下的模块必须要在系统引导时加载， 就需要在
+          <code class="filename">/boot/loader.conf</code>
+          中加入下面的配置：</p><pre class="programlisting">wlan_scan_ap_load="YES"
+wlan_scan_sta_load="YES"</pre><p>从 FreeBSD 8.0 起，
+	  这些模块成为了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan</span>(4)</span></a> 驱动的基础组件，
+	  并会随适配器驱动一起动态加载。</p><p>除此之外， 您还需要提供您希望使用的安全协议所需的加密支持模块。
+	  这些模块是设计来让 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan</span>(4)</span></a> 模块根据需要自动加载的，
+	  但目前还必须手工进行配置。 您可以使用下面这些模块： <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_wep&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_wep</span>(4)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_ccmp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_ccmp</span>(4)</span></a>
+	  和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_tkip&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_tkip</span>(4)</span></a>。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_ccmp&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_ccmp</span>(4)</span></a> 和
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_tkip&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_tkip</span>(4)</span></a> 这两个驱动都只有在您希望采用 WPA 和/或 802.11i
+	  安全协议时才需要。 如果您的网络不采用加密，
+	  就不需要 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wlan_wep&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">wlan_wep</span>(4)</span></a> 支持了。
+	  要在系统引导时加载这些模块， 需要在
+	  <code class="filename">/boot/loader.conf</code> 中加入下面的配置：</p><pre class="programlisting">wlan_wep_load="YES"
+wlan_ccmp_load="YES"
+wlan_tkip_load="YES"</pre><p>通过系统引导配置文件 (也就是
+	  <code class="filename">/boot/loader.conf</code>) 中的这些信息生效，
+	  您必须重新启动运行 FreeBSD 的计算机。 如果不想立刻重新启动，
+	  也可以使用
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 来手工加载。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果不想加载模块， 也可以将这些驱动编译到内核中，
+	    方法是在内核的编译配置文件中加入下面的配置：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">device wlan              # 802.11 support
+device wlan_wep          # 802.11 WEP support
+device wlan_ccmp         # 802.11 CCMP support
+device wlan_tkip         # 802.11 TKIP support
+device wlan_amrr         # AMRR transmit rate control algorithm
+device ath               # Atheros pci/cardbus NIC's
+device ath_hal           # pci/cardbus chip support
+options AH_SUPPORT_AR5416 # enable AR5416 tx/rx descriptors
+device ath_rate_sample   # SampleRate tx rate control for ath</pre><p xmlns="http://www.w3.org/1999/xhtml">使用 FreeBSD 7.X 时， 还需要配置下面这两行；
+	    FreeBSD 的其他版本不需要它们。</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">device wlan_scan_ap      # 802.11 AP mode scanning
+device wlan_scan_sta     # 802.11 STA mode scanning</pre><p xmlns="http://www.w3.org/1999/xhtml">将这些信息写到内核编译配置文件中之后，
+	    您需要重新编译内核， 并重新启动运行 FreeBSD
+	    的计算机。</p></div><p>在系统启动之后， 您会在引导时给出的信息中，
+	  找到类似下面这样的关于无线设备的信息：</p><pre class="screen">ath0: &lt;Atheros 5212&gt; mem 0x88000000-0x8800ffff irq 11 at device 0.0 on cardbus1
+ath0: [ITHREAD]
+ath0: AR2413 mac 7.9 RF2413 phy 4.5</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88896976"></a>30.3.3. Infrastructure 模式</h3></div></div></div><p>通常的情形中使用的是 infrastructure 模式或称 BSS 模式。
+	在这种模式中， 有一系列无线访问点接入了有线网络。
+	每个无线网都会有自己的名字， 这个名字称作网络的 SSID。
+	无线客户端都通过无线访问点来完成接入。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88898000"></a>30.3.3.1. FreeBSD 客户机</h4></div></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88898640"></a>30.3.3.1.1. 如何查找无线访问点</h5></div></div></div><p>您可以通过使用
+	    <code class="command">ifconfig</code> 命令来扫描网络。
+	    由于系统需要在操作过程中切换不同的无线频率并探测可用的无线访问点，
+	    这种请求可能需要数分钟才能完成。
+	    只有超级用户才能启动这种扫描：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 up scan</code></strong>
+SSID/MESH ID    BSSID              CHAN RATE   S:N     INT CAPS
+dlinkap         00:13:46:49:41:76   11   54M -90:96   100 EPS  WPA WME
+freebsdap       00:11:95:c3:0d:ac    1   54M -83:96   100 EPS  WPA</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在开始扫描之前， 必须将网络接口设为 <code class="option">up</code>。
+	      后续的扫描请求就不需要再将网络接口设为 up 了。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 FreeBSD 7.X 中， 会直接适配器设备， 例如
+	      <code class="filename">ath0</code>，
+	      而不是
+	      <code class="filename">wlan0</code>
+	      设备。 因此您需要把前面的命令行改为：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig ath0 up scan</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">在这份文档余下的部分中， 您也需要注意 FreeBSD 7.X
+	      上的这些差异， 并对命令行示例进行类似的改动。</p></div><p>扫描会列出所请求到的所有 BSS/IBSS
+	    网络列表。 除了网络的名字
+	    <code class="literal">SSID</code> 之外， 我们还会看到
+	    <code class="literal">BSSID</code> 即无线访问点的 MAC 地址。
+	    而 <code class="literal">CAPS</code> 字段则给出了网络类型及其提供的功能，
+	    其中包括：</p><div class="table"><a id="idp88911696"></a><div class="table-title">Table 30.1. 通讯站功能代码</div><div class="table-contents"><table summary="通讯站功能代码" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>功能代码</th><th>含义</th></tr></thead><tbody><tr><td><code class="literal">E</code></td><td>Extended Service Set (ESS)。 表示通讯站是
+		  infrastructure 网络 (相对于 IBSS/ad-hoc 网络) 的成员。</td></tr><tr><td><code class="literal">I</code></td><td>IBSS/ad-hoc 网络。 表示通讯站是 ad-hoc
+		  网络 (相对于 ESS 网络) 的成员。</td></tr><tr><td><code class="literal">P</code></td><td>私密。 在 BSS 中交换的全部数据帧均需保证数据保密性。
+		  这表示 BSS 需要通讯站使用加密算法，
+		  例如 WEP、 TKIP 或 AES-CCMP 来加密/解密与其他通讯站交换的数据帧。</td></tr><tr><td><code class="literal">S</code></td><td>短前导码 (Short Preamble)。 表示网络采用的是短前导码
+		  (由 802.11b High
+		  Rate/DSSS PHY 定义， 短前导码采用 56-位 同步字段，
+		  而不是在长前导码模式中所采用的 128-位 字段)。</td></tr><tr><td><code class="literal">s</code></td><td>短碰撞槽时间 (Short slot time)。 表示由于不存在旧式 (802.11b)
+		  通讯站， 802.11g 网络正使用短碰撞槽时间。</td></tr></tbody></table></div></div><br class="table-break" /><p>要显示目前已知的网络， 可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 list scan</code></strong></pre><p>这些信息可能会由无线适配器自动更新，
+	    也可使用 <code class="option">scan</code> 手动更新。
+	    快取缓存中的旧数据会自动删除，
+	    因此除非进行更多扫描，
+	    这个列表会逐渐缩小。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88932176"></a>30.3.3.1.2. 基本配置</h5></div></div></div><p>在这一节中我们将展示一个简单的例子来介绍如何让无线网络适配器在 FreeBSD
+	    中以不加密的方式工作。 在您熟悉了这些概念之后，
+	    我们强烈建议您在实际的使用中采用 <a class="link" href="network-wireless.html#network-wireless-wpa" title="30.3.3.1.3. WPA">WPA</a> 来配置网络。</p><p>配置无线网络的过程可分为三个基本步骤： 选择无线访问点、
+	    验证您的通讯站身份， 以及配置 IP 地址。
+	    下面的几节中将分步骤地介绍它们。</p><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88934096"></a>30.3.3.1.2.1. 选择无线访问点</h6></div></div></div><p>多数时候让系统以内建的探测方式选择无线访问点就可以了。
+	      这是在您将网络接口置为 up 或在
+	      <code class="filename">/etc/rc.conf</code> 中配置 IP 地址时的默认方式，
+	      例如：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="DHCP"</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如前面提到的那样， FreeBSD 7.X 只需要一行配置：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">ifconfig_ath0="DHCP"</pre></div><p>如果存在多个无线访问点， 而您希望从中选择具体的一个，
+	      则可以通过指定 SSID 来实现：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="ssid <em class="replaceable"><code>your_ssid_here</code></em> DHCP"</pre><p>在某些环境中， 多个访问点可能会使用同样的 SSID (通常，
+	      这样做的目的是简化漫游)， 这时可能就需要与某个具体的设备关联了。
+	      这种情况下， 您还应指定无线访问点的
+	      BSSID (这时可以不指定
+	      SSID)：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="ssid <em class="replaceable"><code>your_ssid_here</code></em> bssid <em class="replaceable"><code>xx:xx:xx:xx:xx:xx</code></em> DHCP"</pre><p>除此之外， 还有一些其它的方法能够约束查找无线访问点的范围，
+	      例如限制系统扫描的频段， 等等。 如果您的无线网卡支持多个频段，
+	      这样做可能会非常有用， 因为扫描全部可用频段是一个十分耗时的过程。
+	      要将操作限制在某个具体的频段， 可以使用 <code class="option">mode</code>
+	      参数； 例如：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="mode <em class="replaceable"><code>11g</code></em> ssid <em class="replaceable"><code>your_ssid_here</code></em> DHCP"</pre><p>就会强制卡使用采用 2.4GHz 的 802.11g， 这样在扫描的时候，
+	      就不会考虑那些 5GHz 的频段了。 除此之外， 还可以通过
+	      <code class="option">channel</code> 参数来将操作锁定在特定频率， 以及通过
+	      <code class="option">chanlist</code> 参数来指定扫描的频段列表。
+	      关于这些参数的进一步信息， 可以在联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a>
+	      中找到。</p></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88944080"></a>30.3.3.1.2.2. 验证身份</h6></div></div></div><p>一旦您选定了无线访问点， 您的通讯站就需要完成身份验证，
+	      以便开始发送和接收数据。 身份验证可以通过许多方式进行，
+	      最常用的一种方式称为开放式验证，
+	      它允许任意通讯站加入网络并相互通信。
+	      这种验证方式只应在您第一次配置无线网络进行测试时使用。
+	      其它的验证方式则需要在进行数据通讯之前，
+	      首先进行密钥协商握手； 这些方式要么使用预先分发的密钥或密码，
+	      要么是用更复杂一些的后台服务， 如 RADIUS。
+	      绝大多数用户会使用默认的开放式验证，
+	      而第二多的则是 WPA-PSK， 它也称为个人 WPA， 在 <a class="link" href="network-wireless.html#network-wireless-wpa-wpa-psk" title="30.3.3.1.3.1. WPA-PSK">下面</a>
+	      的章节中将进行介绍。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您使用 <span class="trademark">Apple</span>® <span class="trademark">AirPort</span>® Extreme 基站作为无线访问点，
+		则可能需要同时在两端配置 WEP 共享密钥验证。 这可以通过在
+		<code class="filename">/etc/rc.conf</code> 文件中进行设置， 或使用
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wpa_supplicant&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">wpa_supplicant</span>(8)</span></a> 程序来手工完成。 如果您只有一个
+		<span class="trademark">AirPort</span>® 基站， 则可以用类似下面的方法来配置：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="authmode shared wepmode on weptxkey <em class="replaceable"><code>1</code></em> wepkey <em class="replaceable"><code>01234567</code></em> DHCP"</pre><p xmlns="http://www.w3.org/1999/xhtml">一般而言， 应尽量避免使用共享密钥这种验证方法，
+		因为它以非常受限的方式使用 WEP 密钥，
+		使得攻击者能够很容易地破解密钥。 如果必须使用 WEP (例如，
+		为了兼容旧式的设备) 最好使用
+		WEP 配合 <code class="literal">open</code> 验证方式。
+		关于 WEP 的更多资料请参见 <a class="xref" href="network-wireless.html#network-wireless-wep" title="30.3.3.1.4. WEP">Section 30.3.3.1.4, “WEP”</a>。</p></div></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88951760"></a>30.3.3.1.2.3. 通过 DHCP 获取 IP 地址</h6></div></div></div><p>在您选定了无线访问点， 并配置了验证参数之后，
+	      还必须获得 IP 地址才能真正开始通讯。 多数时候，
+	      您会通过 DHCP 来获得无线 IP 地址。 要达到这个目的，
+	      需要编辑 <code class="filename">/etc/rc.conf</code> 并在配置中加入
+	      <code class="literal">DHCP</code>：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="DHCP"</pre><p>现在您已经完成了启用无线网络接口的全部准备工作了，
+	      下面的操作将启用它：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif start</code></strong></pre><p>一旦网络接口开始运行， 就可以使用
+	      <code class="command">ifconfig</code> 来查看网络接口 <code class="filename">ath0</code>
+	      的状态了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+        ether 00:11:95:d5:43:62
+        inet 192.168.1.100 netmask 0xffffff00 broadcast 192.168.1.255
+        media: IEEE 802.11 Wireless Ethernet OFDM/54Mbps mode 11g
+        status: associated
+        ssid dlinkap channel 11 (2462 Mhz 11g) bssid 00:13:46:49:41:76
+        country US ecm authmode OPEN privacy OFF txpower 21.5 bmiss 7
+        scanvalid 60 bgscan bgscanintvl 300 bgscanidle 250 roam:rssi 7
+        roam:rate 5 protmode CTS wme burst</pre><p>这里的 <code class="literal">status: associated</code>
+	      表示您已经连接到了无线网络 (在这个例子中， 这个网络的名字是
+	      <code class="literal">dlinkap</code>)。
+	      <code class="literal">bssid 00:13:46:49:41:76</code> 是指您所用无线访问点的
+	      MAC 地址；
+	      <code class="literal">authmode OPEN</code> 表示您通讯的内容将将不加密。</p></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp88972112"></a>30.3.3.1.2.4. 静态 IP 地址</h6></div></div></div><p>如果无法从某个 DHCP 服务器获得 IP 地址，
+	      则可以配置一个静态 IP 地址，
+	      方法是将前面的 <code class="literal">DHCP</code> 关键字替换为地址信息。
+	      请务必保持其他用于连接无线访问点的参数：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="inet <em class="replaceable"><code>192.168.1.100</code></em> netmask <em class="replaceable"><code>255.255.255.0</code></em> ssid <em class="replaceable"><code>your_ssid_here</code></em>"</pre></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wpa"></a>30.3.3.1.3. WPA</h5></div></div></div><p>WPA (Wi-Fi 保护访问) 是一种与 802.11 网络配合使用的安全协议，
+	    其目的是消除 <a class="link" href="network-wireless.html#network-wireless-wep" title="30.3.3.1.4. WEP">WEP</a> 中缺少身份验证能力的问题，
+	    以及一些其它的安全弱点。 WPA 采用了 802.1X 认证协议，
+	    并采用从多种与 WEP 不同的加密算法中选择一种来保证数据保密性。
+	    WPA 支持的唯一一种加密算法是 TKIP (临时密钥完整性协议)，
+	    TKIP 是一种对 WEP 所采用的基本 RC4 加密算法的扩展，
+	    除此之外还提供了对检测到的入侵的响应机制。 TKIP
+	    被设计用来与旧式硬件一同工作， 只需要进行部分软件修改；
+	    它提供了一种改善安全性的折衷方案，
+	    但仍有可能受到攻击。 WPA 也指定了
+	    AES-CCMP 加密作为 TKIP 的替代品，
+	    在可能时倾向于使用这种加密； 表达这一规范的常用术语是
+	    WPA2 (或 RSN)。</p><p>WPA 定义了验证和加密协议。
+	    验证通常是使用两种方法之一来完成的： 通过 802.1X
+	    或类似 RADIUS 这样的后端验证服务，
+	    或通过在通讯站和无线访问点之间通过事先分发的密码来进行最小握手。
+	    前一种通常称作企业 WPA， 而后者通常也叫做个人 WPA。
+	    因为多数人不会为无线网络配置 RADIUS 后端服务器， 因此
+	    WPA-PSK 是在 WPA 中最为常见的一种。</p><p>对无线连接的控制和身份验证工作 (密钥协商或通过服务器验证)
+	    是通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wpa_supplicant&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">wpa_supplicant</span>(8)</span></a> 工具来完成的。
+	    这个程序运行时需要一个配置文件，
+	    <code class="filename">/etc/wpa_supplicant.conf</code>。
+	    关于这个文件的更多信息， 请参考联机手册
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wpa_supplicant.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">wpa_supplicant.conf</span>(5)</span></a>。</p><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wpa-wpa-psk"></a>30.3.3.1.3.1. WPA-PSK</h6></div></div></div><p>WPA-PSK 也称作 个人-WPA， 它基于预先分发的密钥 (PSK)，
+	      这个密钥是根据作为无线网络上使用的主密钥的密码生成的。
+	      这表示每个无线用户都会使用同样的密钥。 WPA-PSK
+	      主要用于小型网络， 在这种网络中，
+	      通常不需要或没有办法架设验证服务器。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">无论何时， 都应使用足够长， 且包括尽可能多字母和数字的强口令，
+		以免被猜出和/或攻击。</p></div><p>第一步是修改配置文件
+	      <code class="filename">/etc/wpa_supplicant.conf</code>，
+	      并在其中加入在您网络上使用的 SSID 和事先分发的密钥：</p><pre class="programlisting">network={
+  ssid="freebsdap"
+  psk="freebsdmall"
+}</pre><p>接下来， 在 <code class="filename">/etc/rc.conf</code> 中，
+	      我们将指定无线设备的配置， 令其采用 WPA，
+	      并通过 DHCP 来获取 IP 地址：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="WPA DHCP"</pre><p>下面启用无线网络接口：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif start</code></strong>
+Starting wpa_supplicant.
+DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 5
+DHCPDISCOVER on wlan0 to 255.255.255.255 port 67 interval 6
+DHCPOFFER from 192.168.0.1
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67
+DHCPACK from 192.168.0.1
+bound to 192.168.0.254 -- renewal in 300 seconds.
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.254 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet OFDM/36Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre><p>除此之外， 您也可以手动地使用 <a class="link" href="network-wireless.html#network-wireless-wpa-wpa-psk" title="30.3.3.1.3.1. WPA-PSK">above</a> 中那份
+	      <code class="filename">/etc/wpa_supplicant.conf</code> 来配置，
+	      方法是执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>wpa_supplicant -i wlan0 -c /etc/wpa_supplicant.conf</code></strong>
+Trying to associate with 00:11:95:c3:0d:ac (SSID='freebsdap' freq=2412 MHz)
+Associated with 00:11:95:c3:0d:ac
+WPA: Key negotiation completed with 00:11:95:c3:0d:ac [PTK=CCMP GTK=CCMP]
+CTRL-EVENT-CONNECTED - Connection to 00:11:95:c3:0d:ac completed (auth) [id=0 id_str=]</pre><p>接下来的操作， 是运行
+	      <code class="command">dhclient</code> 命令来从 DHCP 服务器获取 IP：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dhclient wlan0</code></strong>
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67
+DHCPACK from 192.168.0.1
+bound to 192.168.0.254 -- renewal in 300 seconds.
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.254 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet OFDM/36Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果在 <code class="filename">/etc/rc.conf</code> 中把
+                <code class="literal">ifconfig_wlan0</code>
+                设置成了 <code class="literal">DHCP</code>
+                (像 <code class="literal">ifconfig_wlan0="DHCP"</code> 这样)，
+                那么在 <code class="command">wpa_supplicant</code>
+                连上了无线接入点 (AP) 之后，则会自动运行
+                <code class="command">dhclient</code>。</p></div><p>如果不打算使用 DHCP 或者 DHCP 不可用， 您可以在
+	      <code class="command">wpa_supplicant</code> 为通讯站完成了身份认证之后，
+	      指定静态 IP 地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.100 netmask 255.255.255.0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.100 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet OFDM/36Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre><p>如果没有使用 DHCP， 还需要手工配置默认网关，
+	      以及域名服务器：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>route add default your_default_router</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>echo "nameserver your_DNS_server" &gt;&gt; /etc/resolv.conf</code></strong></pre></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wpa-eap-tls"></a>30.3.3.1.3.2. 使用 EAP-TLS 的 WPA</h6></div></div></div><p>使用 WPA 的第二种方式是使用 802.1X 后端验证服务器。
+	      在这个例子中， WPA 也称作 企业-WPA，
+	      以便与安全性较差、 采用事先分发密钥的 个人-WPA 区分开来。
+	      在 企业-WPA 中， 验证操作是采用 EAP 完成的
+	      (可扩展认证协议)。</p><p>EAP 并未附带加密方法。
+	      因此设计者决定将 EAP 放在加密信道中进行传送。
+	      目前有许多 EAP 验证方法，
+	      最常用的方法是 EAP-TLS、 EAP-TTLS 和
+	      EAP-PEAP。</p><p>EAP-TLS (带 传输层安全 的 EAP)
+	      是一种在无线世界中得到了广泛支持的验证协议，
+	      因为它是 <a class="link" href="http://www.wi-fi.org/" target="_top">Wi-Fi 联盟</a>
+	      核准的第一个 EAP 方法。
+	      EAP-TLS 需要使用三个证书： CA
+	      证书 (在所有计算机上安装)、 用以向您证明服务器身份的服务器证书，
+	      以及每个无线客户端用于证明身份的客户机证书。 在这种
+	      EAP 方式中， 验证服务器和无线客户端均通过自己的证书向对方证明身份，
+	      它们均验证对方的证书是本机构的证书发证机构 (CA) 签发的。</p><p>与之前介绍的方法类似， 配置也是通过
+	      <code class="filename">/etc/wpa_supplicant.conf</code> 来完成的：</p><pre class="programlisting">network={
+  ssid="freebsdap" <a id="co-tls-ssid"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+  proto=RSN  <a id="co-tls-proto"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+  key_mgmt=WPA-EAP <a id="co-tls-kmgmt"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+  eap=TLS <a id="co-tls-eap"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+  identity="loader" <a id="co-tls-id"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+  ca_cert="/etc/certs/cacert.pem" <a id="co-tls-cacert"></a><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span>
+  client_cert="/etc/certs/clientcert.pem" <a id="co-tls-clientcert"></a><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span>
+  private_key="/etc/certs/clientkey.pem" <a id="co-tls-pkey"></a><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span>
+  private_key_passwd="freebsdmallclient" <a id="co-tls-pwd"></a><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span>
+}</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-ssid"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段表示网络名
+		  (SSID)。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-proto"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这里， 我们使用 RSN (<span class="trademark">IEEE</span>® 802.11i) 协议， 也就是
+		  WPA2。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-kmgmt"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">key_mgmt</code> 这行表示所用的密钥管理协议。
+		  在我们的例子中， 它是使用 EAP 验证的 WPA：
+		  <code class="literal">WPA-EAP</code>。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-eap"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段中， 提到了我们的连接采用 EAP 方式。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-id"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">identity</code> 字段包含了 EAP 的实体串。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-cacert"><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">ca_cert</code> 字段给出了 CA 证书文件的路径名。
+		  在验证服务器证书时， 这个文件是必需的。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-clientcert"><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">client_cert</code> 这行给出了客户机证书的路径名。
+		  对每个无线客户端而言， 这个证书都是在全网范围内唯一的。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-pkey"><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">private_key</code> 字段是客户机证书私钥文件的路径名。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-tls-pwd"><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">private_key_passwd</code> 字段是私钥的口令字。</p></td></tr></table></div><p>接着， 把下面的配置写入
+	      <code class="filename">/etc/rc.conf</code>：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="WPA DHCP"</pre><p>下一步是使用 <code class="filename">rc.d</code> 机制来启用网络接口：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif start</code></strong>
+Starting wpa_supplicant.
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 7
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 15
+DHCPACK from 192.168.0.20
+bound to 192.168.0.254 -- renewal in 300 seconds.
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.254 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet DS/11Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre><p>如前面提到的那样， 也可以手工通过
+	      <code class="command">wpa_supplicant</code> 和
+	      <code class="command">ifconfig</code> 命令达到类似的目的。</p></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wpa-eap-ttls"></a>30.3.3.1.3.3. 使用 EAP-TTLS 的 WPA</h6></div></div></div><p>在使用 EAP-TLS 时， 参与验证过程的服务器和客户机都需要证书，
+	      而在使用 EAP-TTLS (带传输层安全隧道的 EAP) 时，
+	      客户机证书则是可选的。 这种方式与某些安全 web
+	      站点更为接近， 即使访问者没有客户端证书，
+	      这些 web 服务器也能建立安全的 SSL 隧道。
+	      EAP-TTLS 会使用加密的 TLS
+	      隧道来传送验证信息。</p><p>对于它的配置， 同样是通过
+	      <code class="filename">/etc/wpa_supplicant.conf</code>
+	      文件来进行的：</p><pre class="programlisting">network={
+  ssid="freebsdap"
+  proto=RSN
+  key_mgmt=WPA-EAP
+  eap=TTLS <a id="co-ttls-eap"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+  identity="test" <a id="co-ttls-id"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+  password="test" <a id="co-ttls-passwd"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+  ca_cert="/etc/certs/cacert.pem" <a id="co-ttls-cacert"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+  phase2="auth=MD5" <a id="co-ttls-pha2"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+}</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttls-eap"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段是我们的连接所采用的 EAP 方式。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttls-id"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">identity</code> 字段中是在加密 TLS 隧道中用于 EAP
+		  验证的身份串。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttls-passwd"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">password</code> 字段中是用于 EAP
+		  验证的口令字。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttls-cacert"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">ca_cert</code> 字段给出了 CA 证书文件的路径名。
+		  在验证服务器证书时， 这个文件是必需的。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ttls-pha2"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段中给出了加密 TLS 隧道中使用的验证方式。
+		  在这个例子中， 我们使用的是带 MD5-加密口令 的 EAP。
+		  <span class="quote">“<span class="quote">inner authentication</span>”</span> (译注：内部鉴定) 通常也叫
+		  <span class="quote">“<span class="quote">phase2</span>”</span>。</p></td></tr></table></div><p>您还必须把下面的配置写入
+	      <code class="filename">/etc/rc.conf</code>：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="WPA DHCP"</pre><p>下一步是启用网络接口：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif start</code></strong>
+Starting wpa_supplicant.
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 7
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 15
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 21
+DHCPACK from 192.168.0.20
+bound to 192.168.0.254 -- renewal in 300 seconds.
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.254 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet DS/11Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre></div><div class="sect5"><div xmlns="" class="titlepage"><div><div><h6 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wpa-eap-peap"></a>30.3.3.1.3.4. 使用 EAP-PEAP 的 WPA</h6></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">PEAPv0/EAP-MSCHAPv2 是最常见的 PEAP 方法。
+                此文档的以下部分将使用 PEAP 指代这些方法。</p></div><p>PEAP (受保护的 EAP) 被设计用以替代 EAP-TTLS，
+	      并且是在 EAP-TLS 之后最为常用的 EAP 标准。
+	      换言之， 如果您的网络中有多种不同的操作系统，
+	      PEAP 将是仅次于 EAP-TLS 的支持最广的标准。</p><p>PEAP 与 EAP-TTLS 很像： 它使用服务器端证书，
+	      通过在客户端与验证服务器之间建立加密的 TLS 隧道来向用户验证身份，
+	      这保护了验证信息的交换过程。 在安全方面，
+	      EAP-TTLS 与 PEAP 的区别是 PEAP 会以明文广播用户名，
+	      只有口令是通过加密 TLS 隧道传送的。 而
+              EAP-TTLS 在传送用户名和口令时， 都使用 TLS 隧道。</p><p>我们需要编辑
+	      <code class="filename">/etc/wpa_supplicant.conf</code> 文件，
+	      并加入与 EAP-PEAP 有关的配置：</p><pre class="programlisting">network={
+  ssid="freebsdap"
+  proto=RSN
+  key_mgmt=WPA-EAP
+  eap=PEAP <a id="co-peap-eap"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+  identity="test" <a id="co-peap-id"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+  password="test" <a id="co-peap-passwd"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+  ca_cert="/etc/certs/cacert.pem" <a id="co-peap-cacert"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+  phase1="peaplabel=0" <a id="co-peap-pha1"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+  phase2="auth=MSCHAPV2" <a id="co-peap-pha2"></a><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span>
+}</pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-eap"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段的内容是用于连接的 EAP 方式。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-id"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">identity</code> 字段中是在加密 TLS 隧道中用于 EAP
+		  验证的身份串。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-passwd"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">password</code> 字段中是用于 EAP
+		  验证的口令字。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-cacert"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">ca_cert</code> 字段给出了 CA 证书文件的路径名。
+		  在验证服务器证书时， 这个文件是必需的。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-pha1"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段包含了第一阶段验证 (TLS
+		  隧道) 的参数。 随您使用的验证服务器的不同，
+		  您需要指定验证的标签。 多数时候，
+		  标签应该是 <span class="quote">“<span class="quote">客户端 EAP 加密</span>”</span>，
+		  这可以通过使用 <code class="literal">peaplabel=0</code> 来指定。
+		  更多信息可以在联机手册
+		  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=wpa_supplicant.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">wpa_supplicant.conf</span>(5)</span></a> 中找到。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-peap-pha2"><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个字段的内容是验证协议在加密的 TLS 隧道中使用的信息。
+		  对 PEAP 而言， 这是
+		  <code class="literal">auth=MSCHAPV2</code>。</p></td></tr></table></div><p>您还必须把下面的配置加入到
+	      <code class="filename">/etc/rc.conf</code>：</p><pre class="programlisting">wlans_ath0="wlan0"
+ifconfig_wlan0="WPA DHCP"</pre><p>下一步是启用网络接口：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif start</code></strong>
+Starting wpa_supplicant.
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 7
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 15
+DHCPREQUEST on wlan0 to 255.255.255.255 port 67 interval 21
+DHCPACK from 192.168.0.20
+bound to 192.168.0.254 -- renewal in 300 seconds.
+wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+      ether 00:11:95:d5:43:62
+      inet 192.168.0.254 netmask 0xffffff00 broadcast 192.168.0.255
+      media: IEEE 802.11 Wireless Ethernet DS/11Mbps mode 11g
+      status: associated
+      ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+      country US ecm authmode WPA2/802.11i privacy ON deftxkey UNDEF
+      AES-CCM 3:128-bit txpower 21.5 bmiss 7 scanvalid 450 bgscan
+      bgscanintvl 300 bgscanidle 250 roam:rssi 7 roam:rate 5 protmode CTS
+      wme burst roaming MANUAL</pre></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-wep"></a>30.3.3.1.4. WEP</h5></div></div></div><p>WEP (有线等效协议) 是最初
+	    802.11 标准的一部分。 其中没有提供身份验证机制，
+	    只提供了弱访问控制， 而且很容易破解。</p><p>WEP 可以通过
+	    <code class="command">ifconfig</code> 配置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.1.100 netmask 255.255.255.0 \
+	    ssid my_net wepmode on weptxkey 3 wepkey 3:0x3456789012</code></strong></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">weptxkey</code> 指明了使用哪个 WEP
+		密钥来进行数据传输。 这里我们使用第三个密钥。
+		它必须与无线接入点的配置一致。
+                如果你不清楚你的无线接入点，
+                尝试用 <code class="literal">1</code>
+                （就是说第一个密钥）来设置这个变量。</p></li><li class="listitem"><p><code class="literal">wepkey</code> 用于选择 WEP 密钥。
+		其格式应为
+		<em class="replaceable"><code>index:key</code></em>，
+		key 默认为 <code class="literal">1</code>;
+		如果需要设置的密钥不是第一个， 就必需指定 index 了。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">您需要将 <code class="literal">0x3456789012</code> 改为在无线接入点上配置的那个。</p></div></li></ul></div><p>我们建议您阅读联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a> 来了解进一步的信息。</p><p><code class="command">wpa_supplicant</code> 机制也可以用来配置您的无线网卡使用 WEP。
+	    前面的例子也可以通过在
+	    <code class="filename">/etc/wpa_supplicant.conf</code> 中加入下述设置来实现：</p><pre class="programlisting">network={
+  ssid="my_net"
+  key_mgmt=NONE
+  wep_key3=3456789012
+  wep_tx_keyidx=3
+}</pre><p>接着：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>wpa_supplicant -i wlan0 -c /etc/wpa_supplicant.conf</code></strong>
+Trying to associate with 00:13:46:49:41:76 (SSID='dlinkap' freq=2437 MHz)
+Associated with 00:13:46:49:41:76</pre></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89212880"></a>30.3.4. Ad-hoc 模式</h3></div></div></div><p>IBSS 模式， 也称为 ad-hoc 模式， 是为点对点连接设计的。
+	例如， 如果希望在计算机 <code class="systemitem">A</code> 和
+	<code class="systemitem">B</code> 之间建立 ad-hoc 网络，
+	我们只需选择两个 IP 地址和一个 SSID 就可以了。</p><p>在计算机 <code class="systemitem">A</code> 上：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0 wlanmode adhoc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.1 netmask 255.255.255.0 ssid freebsdap</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	  ether 00:11:95:c3:0d:ac
+	  inet 192.168.0.1 netmask 0xffffff00 broadcast 192.168.0.255
+	  media: IEEE 802.11 Wireless Ethernet autoselect mode 11g &lt;adhoc&gt;
+	  status: running
+	  ssid freebsdap channel 2 (2417 Mhz 11g) bssid 02:11:95:c3:0d:ac
+	  country US ecm authmode OPEN privacy OFF txpower 21.5 scanvalid 60
+	  protmode CTS wme burst</pre><p>此处的 <code class="literal">adhoc</code> 参数表示无线网络接口应以 IBSS 模式运转。</p><p>此时， 在 <code class="systemitem">B</code> 上应该能够检测到
+	<code class="systemitem">A</code> 的存在了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0 wlanmode adhoc</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 up scan</code></strong>
+  SSID/MESH ID    BSSID              CHAN RATE   S:N     INT CAPS
+  freebsdap       02:11:95:c3:0d:ac    2   54M -64:-96  100 IS   WME</pre><p>在输出中的 <code class="literal">I</code> 再次确认了 <code class="systemitem">A</code>
+	机是以 ad-hoc 模式运行的。 我们只需给 <code class="systemitem">B</code> 配置一不同的 IP
+	地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.2 netmask 255.255.255.0 ssid freebsdap</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	  ether 00:11:95:d5:43:62
+	  inet 192.168.0.2 netmask 0xffffff00 broadcast 192.168.0.255
+	  media: IEEE 802.11 Wireless Ethernet autoselect mode 11g &lt;adhoc&gt;
+	  status: running
+	  ssid freebsdap channel 2 (2417 Mhz 11g) bssid 02:11:95:c3:0d:ac
+	  country US ecm authmode OPEN privacy OFF txpower 21.5 scanvalid 60
+	  protmode CTS wme burst</pre><p>这样， <code class="systemitem">A</code> 和 <code class="systemitem">B</code> 就可以交换信息了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-ap"></a>30.3.5. FreeBSD 基于主机的（无线）访问接入点</h3></div></div></div><p>FreeBSD 可以作为一个（无线）访问接入点（AP），
+	这样可以不必再去买一个硬件 AP 或者使用 ad-hoc 模式的网络。
+	当你的 FreeBSD 机器作为网关连接到另外一个网络的时候将非常有用。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-wireless-ap-basic"></a>30.3.5.1. 基本配置</h4></div></div></div><p>在把你的 FreeBSD 机器配置成一个 AP 以前，
+	  你首先需要先在内核配置好对你的无线网卡的无线网络支持。
+	  当然你还需要加上你想用的安全协议。想获得更详细的信息，
+	  请参阅 <a class="xref" href="network-wireless.html#network-wireless-basic" title="30.3.2. 基本安装">Section 30.3.2, “基本安装”</a>。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前还不支持使用 <span class="trademark">Windows</span>® 驱动和 NDIS
+	    驱动包装的网卡做为 AP 使用。只有 FreeBSD
+	    原生的无线驱动能够支持 AP 模式。</p></div><p>一旦装载了无线网络的支持，
+	  你就可以检查一下看看你的无线设备是否支持基于主机的无线访问接入模式
+	  （通常也被称为 hostap 模式）：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 list caps</code></strong>
+drivercaps=6f85edc1&lt;STA,FF,TURBOP,IBSS,HOSTAP,AHDEMO,TXPMGT,SHSLOT,SHPREAMBLE,MONITOR,MBSS,WPA1,WPA2,BURST,WME,WDS,BGSCAN,TXFRAG&gt;
+cryptocaps=1f&lt;WEP,TKIP,AES,AES_CCM,TKIPMIC&gt;</pre><p>这段输出显示了网卡所支持的各种功能； 其中的关键字
+	  <code class="literal">HOSTAP</code> 表示这块网卡可以作为无线网络接入点来使用。
+	  此外， 这里还会给出所支持的加密算法： WEP、 TKIP、 AES， 等等。
+	  这些信息对于知道在访问接入点上使用何种安全协议非常重要。</p><p>只有创建网络伪设备时能够配置无线设备是否以 hostap 模式运行，
+	  如果之前已经存在了相应的设备， 则需要首先将其销毁：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 destroy</code></strong></pre><p>接着， 在配置其它参数前， 以正确的选项重新生成设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0 wlanmode hostap</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.1 netmask 255.255.255.0 ssid freebsdap mode 11g channel 1</code></strong></pre><p>再次使用 <code class="command">ifconfig</code> 检查
+	  <code class="filename">wlan0</code> 网络接口的状态：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	  ether 00:11:95:c3:0d:ac
+	  inet 192.168.0.1 netmask 0xffffff00 broadcast 192.168.0.255
+	  media: IEEE 802.11 Wireless Ethernet autoselect mode 11g &lt;hostap&gt;
+	  status: running
+	  ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+	  country US ecm authmode OPEN privacy OFF txpower 21.5 scanvalid 60
+	  protmode CTS wme burst dtimperiod 1 -dfs</pre><p><code class="literal">hostap</code> 参数指定了接口以主机接入点的方式运行。</p><p>通过在 <code class="filename">/etc/rc.conf</code> 中加入下面的配置，
+	  也可以在系统引导的过程中自动完成对于网络接口的配置：</p><pre class="programlisting">wlans_ath0="wlan0"
+create_args_wlan0="wlanmode hostap"
+ifconfig_wlan0="inet <em class="replaceable"><code>192.168.0.1</code></em> netmask <em class="replaceable"><code>255.255.255.0</code></em> ssid <em class="replaceable"><code>freebsdap</code></em> mode 11g channel <em class="replaceable"><code>1</code></em>"</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89251024"></a>30.3.5.2. 不使用认证或加密的（无线）访问接入点</h4></div></div></div><p>尽管我们不推荐运行一个不使用任何认证或加密的 AP，
+	  但这是一个非常简单的检测 AP 是否正常工作的方法。
+	  这样配置对于调试客户端问题也非常重要。</p><p>一旦 AP 被配置成了我们前面所展示的那样，
+	  就可以在另外一台无线机器上初始化一次扫描来找到这个 AP：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 up scan</code></strong>
+SSID/MESH ID    BSSID              CHAN RATE   S:N     INT CAPS
+freebsdap       00:11:95:c3:0d:ac    1   54M -66:-96  100 ES   WME</pre><p>在客户机上能看到已经连接上了（无线）访问接入点：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.2 netmask 255.255.255.0 ssid freebsdap</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	  ether 00:11:95:d5:43:62
+	  inet 192.168.0.2 netmask 0xffffff00 broadcast 192.168.0.255
+	  media: IEEE 802.11 Wireless Ethernet OFDM/54Mbps mode 11g
+	  status: associated
+	  ssid freebsdap channel 1 (2412 Mhz 11g) bssid 00:11:95:c3:0d:ac
+	  country US ecm authmode OPEN privacy OFF txpower 21.5 bmiss 7
+	  scanvalid 60 bgscan bgscanintvl 300 bgscanidle 250 roam:rssi 7
+	  roam:rate 5 protmode CTS wme burst</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89260752"></a>30.3.5.3. 使用 WPA 的（无线）访问接入点</h4></div></div></div><p>这一段将注重介绍在 FreeBSD （无线）访问接入点上配置使用
+	  WPA 安全协议。 更多有关 WPA 和配置基于 WPA 无线客户端的细节
+	  请参阅 <a class="xref" href="network-wireless.html#network-wireless-wpa" title="30.3.3.1.3. WPA">Section 30.3.3.1.3, “WPA”</a>。</p><p><span class="application">hostapd</span>
+	  守护进程将被用于处理与客户端的认证和在启用 WPA
+	  （无线）访问接入点上的密钥管理。</p><p>接下来，所有的配置操作都将在作为 AP 的 FreeBSD 机器上完成。
+	  一旦 AP 能够正确的工作了，便把如下这行加入
+	  <code class="filename">/etc/rc.conf</code> 使得
+	  <span class="application">hostapd</span>
+	  能在机器启动的时候自动运行：</p><pre class="programlisting">hostapd_enable="YES"</pre><p>在配置 <span class="application">hostapd</span> 以前，
+	  请确保你已经完成了基本配置中所介绍的步骤 <a class="xref" href="network-wireless.html#network-wireless-ap-basic" title="30.3.5.1. 基本配置">Section 30.3.5.1, “基本配置”</a>。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89269712"></a>30.3.5.3.1. WPA-PSK</h5></div></div></div><p>WPA-PSK 旨在为没有认证服务器的小型网络而设计的。</p><p>配置文件为
+	    <code class="filename">/etc/hostapd.conf</code> file：</p><pre class="programlisting">interface=wlan0 <a id="co-ap-wpapsk-iface"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+debug=1 <a id="co-ap-wpapsk-dbug"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+ctrl_interface=/var/run/hostapd <a id="co-ap-wpapsk-ciface"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+ctrl_interface_group=wheel <a id="co-ap-wpapsk-cifacegrp"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+ssid=freebsdap <a id="co-ap-wpapsk-ssid"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+wpa=1 <a id="co-ap-wpapsk-wpa"></a><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span>
+wpa_passphrase=freebsdmall <a id="co-ap-wpapsk-pass"></a><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span>
+wpa_key_mgmt=WPA-PSK <a id="co-ap-wpapsk-kmgmt"></a><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span>
+wpa_pairwise=CCMP TKIP <a id="co-ap-wpapsk-pwise"></a><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span></pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-iface"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这一项标明了访问接入点所使用的无线接口。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-dbug"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这一项设置了执行 <span class="application">hostapd</span>
+		时候显示相关信息的详细程度。
+		<code class="literal">1</code> 表示最小的级别。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-ciface"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">ctrl_interface</code> 这项给出了
+		<span class="application">hostapd</span>
+		存储与其他外部程序（比如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hostapd_cli&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">hostapd_cli</span>(8)</span></a>)
+		通信的域套接口文件路径。这里使用了默认值。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-cifacegrp"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">ctrl_interface_group</code>
+		这行设置了允许访问控制界面文件的组属性
+		（这里我们使用了 <code class="systemitem">wheel</code> 组）。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-ssid"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这一项是设置网络的名称。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-wpa"><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">wpa</code> 这项表示启用了 WPA
+		而且指明要使用何种 WPA 认证协议。
+		值 <code class="literal">1</code> 表示 AP 将使用 WPA-PSK。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-pass"><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">wpa_passphrase</code>
+		这项包含用于 WPA 认证的 ASCII 密码。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">通常使用从丰富的字母表生成足够长度的强壮密码，
+		  以不至于被轻易的猜测或攻击到。</p></div></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-kmgmt"><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">wpa_key_mgmt</code>
+		这行表明了我们所使用的密钥管理协议。
+		在这个例子中是 WPA-PSK。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ap-wpapsk-pwise"><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">wpa_pairwise</code>
+		这项表示（无线）访问接入点所接受的加密算法。
+		在这个例子中，TKIP(WPA) 和 CCMP(WPA2) 密码都会被接受。
+		CCMP 密码是除 TKIP 外的另一种选择，
+		CCMP 一般作为首选密码；
+		仅有在 CCMP 不能被使用的环境中选择 TKIP。</p></td></tr></table></div><p>接下来的一步就是运行
+	    <span class="application">hostapd</span>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/hostapd forcestart</code></strong></pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 2290
+	  inet 192.168.0.1 netmask 0xffffff00 broadcast 192.168.0.255
+	  inet6 fe80::211:95ff:fec3:dac%ath0 prefixlen 64 scopeid 0x4
+	  ether 00:11:95:c3:0d:ac
+	  media: IEEE 802.11 Wireless Ethernet autoselect mode 11g &lt;hostap&gt;
+	  status: associated
+	  ssid freebsdap channel 1 bssid 00:11:95:c3:0d:ac
+	  authmode WPA2/802.11i privacy MIXED deftxkey 2 TKIP 2:128-bit txpowmax 36 protmode CTS dtimperiod 1 bintval 100</pre><p>现在客户端能够连接上运行的（无线）访问接入点了，
+	  更多细节可以参阅 <a class="xref" href="network-wireless.html#network-wireless-wpa" title="30.3.3.1.3. WPA">Section 30.3.3.1.3, “WPA”</a>。
+	    查看有哪些客户连接上了 AP 可以运行命令
+	    <code class="command">ifconfig wlan0 list
+	      sta</code>。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89313872"></a>30.3.5.4. 使用 WEP 的（无线）访问接入点</h4></div></div></div><p>我们不推荐使用 WEP 来设置一个（无线）访问接入点，
+	  因为没有认证的机制并容易被破解。 一些历史遗留下的无线网卡仅支持
+	  WEP 作为安全协议， 这些网卡仅允许搭建不含认证或 WEP
+	  协议的 AP。</p><p>在设置了正确的 SSID 和 IP 地址后，无线设备就可以进入
+	  hostap 模式了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0 wlanmode hostap</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 inet 192.168.0.1 netmask 255.255.255.0 \
+	ssid freebsdap wepmode on weptxkey 3 wepkey 3:0x3456789012 mode 11g</code></strong></pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">weptxkey</code> 表示传输中使用哪一个
+	      WEP 密钥。 这个例子中用了第3把密钥（请注意密钥的编号从
+	      <code class="literal">1</code>开始）。
+	      这个参数必须设置以用来加密数据。</p></li><li class="listitem"><p><code class="literal">wepkey</code> 表示设置所使用的 WEP
+	      密钥。 它应该符合 <em class="replaceable"><code>index:key</code></em>
+	      这样的格式。 如果没有指定 index，那么默认值为
+	      <code class="literal">1</code>。
+	      这就是说如果我们使用了除第一把以外的密钥，
+	      那么就需要指定 index。</p></li></ul></div><p>再使用一次 <code class="command">ifconfig</code> 命令查看
+	  <code class="filename">wlan0</code> 接口的状态：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0</code></strong>
+  wlan0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+	  ether 00:11:95:c3:0d:ac
+	  inet 192.168.0.1 netmask 0xffffff00 broadcast 192.168.0.255
+	  media: IEEE 802.11 Wireless Ethernet autoselect mode 11g &lt;hostap&gt;
+	  status: running
+	  ssid freebsdap channel 4 (2427 Mhz 11g) bssid 00:11:95:c3:0d:ac
+	  country US ecm authmode OPEN privacy ON deftxkey 3 wepkey 3:40-bit
+	  txpower 21.5 scanvalid 60 protmode CTS wme burst dtimperiod 1 -dfs</pre><p>现在可以从另外一台无线机器上初始化一次扫描来找到这个
+	  AP 了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 create wlandev ath0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ifconfig wlan0 up scan</code></strong>
+SSID            BSSID              CHAN RATE  S:N   INT CAPS
+freebsdap       00:11:95:c3:0d:ac    1   54M 22:1   100 EPS</pre><p>现在客户机能够使用正确的参数（密钥等）
+	  找到并连上（无线）访问接入点了，
+	  更多细节请参阅<a class="xref" href="network-wireless.html#network-wireless-wep" title="30.3.3.1.4. WEP">Section 30.3.3.1.4, “WEP”</a>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89326544"></a>30.3.6. 同时使用有线和无线连接</h3></div></div></div><p>一般而言， 有线网络的速度更快而且更可靠，
+	而无线网络则提供更好的灵活及机动性， 使用笔记本的用户，
+	往往会希望结合两者的优点， 并能够在两种连接之间无缝切换。</p><p>在 FreeBSD 上可以将多个网络接口合并到一起，
+	并以 <span class="quote">“<span class="quote">故障转移</span>”</span> 的方式自动切换，
+	也就是说， 这一组网络接口有一定的优先顺序，
+	而操作系统在链路状态发生变化时则自动进行切换，
+	例如当同时存在有线和无线连接的时候优先使用有线网络，
+	而当有线网络断开时， 则自动切换到无线网络。</p><p>我们将在稍后的 <a class="xref" href="network-aggregation.html" title="30.6. 链路聚合与故障转移">Section 30.6, “链路聚合与故障转移”</a>
+	中介绍链路聚合和故障转移， 并在
+	<a class="xref" href="network-aggregation.html#networking-lagg-wired-and-wireless" title="Example 30.3. 有线网络和无线网络接口间的自动切换">Example 30.3, “有线网络和无线网络接口间的自动切换”</a>
+	中对这种配置方式进行示范。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89329616"></a>30.3.7. 故障排除</h3></div></div></div><p>如果您在使用无线网络时遇到了麻烦，
+	此处提供了一系列用以帮助排除故障的步骤。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果您在列表中找不到无线访问点，
+	    请确认您没有将无线设备配置为使用有限的一组频段。</p></li><li class="listitem"><p>如果您无法关联到无线访问点，
+	    请确认您的通讯站配置与无线访问点的配置一致。
+	    这包括认证模式以及安全协议。 尽可能简化您的配置。
+	    如果您正使用类似 WPA 或 WEP 这样的安全协议，
+	    请将无线访问点配置为开放验证和不采用安全措施，
+	    并检查是否数据能够通过。</p></li><li class="listitem"><p>一旦您能够关联到无线访问点之后，
+	    就可以使用简单的工具如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ping&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ping</span>(8)</span></a> 来诊断安全配置了。</p><p><code class="command">wpa_supplicant</code> 提供了许多调试支持；
+	    尝试手工运行它， 在启动时指定
+	    <code class="option">-dd</code> 选项， 并察看输出结果。</p></li><li class="listitem"><p>除此之外还有许多其它的底层调试工具。
+	    您可以使用 <code class="filename">/usr/src/tools/tools/net80211</code>
+	    中的 <code class="command">wlandebug</code> 命令来启用 802.11
+	    协议支持层的调试功能。 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>wlandebug -i ath0 +scan+auth+debug+assoc</code></strong>
+  net.wlan.0.debug: 0 =&gt; 0xc80000&lt;assoc,auth,scan&gt;</pre><p>可以用来启用与扫描无线访问点和 802.11
+	    协议在安排通讯时与握手有关的控制台信息。</p><p>还有许多有用的统计信息是由 802.11 层维护的；
+	    <code class="command">wlanstats</code> 工具可以显示这些信息。
+	    这些统计数据能够指出由 802.11 层识别出来的错误。
+	    请注意某些错误可能是由设备驱动在 802.11 层之下识别出来的，
+	    因此这些错误可能并不显示。 要诊断与设备有关的问题，
+	    您需要参考设备驱动程序的文档。</p></li></ul></div><p>如果上述信息没能帮助您找到具体的问题所在，
+	请提交问题报告， 并在其中附上这些工具的输出。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-routing.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-bluetooth.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.2. 网关和路由 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.4. 蓝牙</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

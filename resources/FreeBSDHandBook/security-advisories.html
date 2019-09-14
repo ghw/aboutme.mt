@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.13. FreeBSD 安全公告</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="security-portaudit.html" title="14.12. 监视第三方安全问题" /><link rel="next" href="security-accounting.html" title="14.14. 进程记帐" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.13. FreeBSD 安全公告</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="security-portaudit.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="security-accounting.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="security-advisories"></a>14.13. FreeBSD 安全公告</h2></div><div><span class="authorgroup">作者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp78137040" class="indexterm"></a><p>像其它具有产品级品质的操作系统一样， FreeBSD 会发布
+      <span class="quote">“<span class="quote">安全公告</span>”</span>。
+      通常这类公告会只有在相应的发行版本已经正确地打过补丁之后发到安全邮件列表并在勘误中说明。
+      本节将介绍什么是安全公告， 如何理解它， 以及为系统打补丁的具体步骤。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78138576"></a>14.13.1. 安全公告看上去是什么样子？</h3></div></div></div><p>FreeBSD 安全公告的样式类似下面的范例， 这一例子来自
+	<a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-security-notifications" target="_top">freebsd-security-notifications</a> 邮件列表。</p><pre class="programlisting">=============================================================================
+FreeBSD-SA-XX:XX.UTIL                                       Security Advisory
+                                                          The FreeBSD Project
+
+Topic:          denial of service due to some problem<a id="co-topic"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+
+Category:       core<a id="co-category"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+Module:         sys<a id="co-module"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+Announced:      2003-09-23<a id="co-announce"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+Credits:        Person<a id="co-credit"></a><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span>
+Affects:        All releases of FreeBSD<a id="co-affects"></a><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span>
+                FreeBSD 4-STABLE prior to the correction date
+Corrected:      2003-09-23 16:42:59 UTC (RELENG_4, 4.9-PRERELEASE)
+                2003-09-23 20:08:42 UTC (RELENG_5_1, 5.1-RELEASE-p6)
+                2003-09-23 20:07:06 UTC (RELENG_5_0, 5.0-RELEASE-p15)
+                2003-09-23 16:44:58 UTC (RELENG_4_8, 4.8-RELEASE-p8)
+                2003-09-23 16:47:34 UTC (RELENG_4_7, 4.7-RELEASE-p18)
+                2003-09-23 16:49:46 UTC (RELENG_4_6, 4.6-RELEASE-p21)
+                2003-09-23 16:51:24 UTC (RELENG_4_5, 4.5-RELEASE-p33)
+                2003-09-23 16:52:45 UTC (RELENG_4_4, 4.4-RELEASE-p43)
+                2003-09-23 16:54:39 UTC (RELENG_4_3, 4.3-RELEASE-p39)<a id="co-corrected"></a><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span>
+<acronym class="acronym">CVE</acronym> Name:       CVE-XXXX-XXXX<a id="co-cve"></a><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span>
+
+For general information regarding FreeBSD Security Advisories,
+including descriptions of the fields above, security branches, and the
+following sections, please visit
+http://www.FreeBSD.org/security/.
+
+I.   Background<a id="co-backround"></a><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span>
+
+
+II.  Problem Description<a id="co-descript"></a><span><img src="./imagelib/callouts/10.png" alt="10" border="0" /></span>
+
+
+III. Impact<a id="co-impact"></a><span><img src="./imagelib/callouts/11.png" alt="11" border="0" /></span>
+
+
+IV.  Workaround<a id="co-workaround"></a><span><img src="./imagelib/callouts/12.png" alt="12" border="0" /></span>
+
+
+V.   Solution<a id="co-solution"></a><span><img src="./imagelib/callouts/13.png" alt="13" border="0" /></span>
+
+
+VI.  Correction details<a id="co-details"></a><span><img src="./imagelib/callouts/14.png" alt="14" border="0" /></span>
+
+
+VII. References<a id="co-ref"></a><span><img src="./imagelib/callouts/15.png" alt="15" border="0" /></span></pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-topic"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Topic</code>(标题) 一栏说明了问题到底是什么。
+	    它基本上是对所发现的安全问题及其所涉及的工具的描述。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-category"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Category</code> (分类) 是指系统中受到影响的组件，
+	    这一栏可能是 <code class="literal">core</code>、 <code class="literal">contrib</code>，
+	    或者 <code class="literal">ports</code> 之一。 <code class="literal">core</code>
+	    分类表示安全弱点影响到了 FreeBSD 操作系统的某个核心组件。
+	    <code class="literal">contrib</code> 分类表示弱点存在于某个捐赠给
+	    FreeBSD Project 的软件， 例如
+	    <span class="application">sendmail</span>。
+	    最后是 <code class="literal">ports</code>， 它表示该弱点影响了 Ports
+	    Collection 中的某个第三方软件。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-module"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Module</code>(模块) 一栏给出了组件的具体位置，
+	    例如 <code class="literal">sys</code>。 在这个例子中， 可以看到
+	    <code class="literal">sys</code> 模块是存在问题的； 因此，
+	    这个漏洞会影响某个在内核中的组件。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-announce"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Announced</code>(发布时间) 一栏反映了与安全公告有关的数据是什么时候公之于众的。
+	    这说明安全团队已经证实问题确实存在， 而补丁已经写入了 FreeBSD
+	    的代码库。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-credit"><span><img src="./imagelib/callouts/5.png" alt="5" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Credits</code>(作者) 一栏给出了注意到问题存在并报告它的个人或团体。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-affects"><span><img src="./imagelib/callouts/6.png" alt="6" border="0" /></span></a> </p></td><td valign="top" align="left"><p>The <code class="literal">Affects</code>(影响范围) 一栏给出了 FreeBSD 的哪些版本存在这个漏洞。
+	    对于内核来说， 检视受影响的文件上执行的 <code class="command">ident</code> 输出可以帮助确认文件版本。
+	    对于 ports， 版本号在 <code class="filename">/var/db/pkg</code>
+	    里面的 port 的名字后面列出。
+	    如果系统没有与 FreeBSD <acronym class="acronym">CVS</acronym> 代码库同步并每日构建，
+	    它很可能是有问题的。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-corrected"><span><img src="./imagelib/callouts/7.png" alt="7" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Corrected</code>(修正时间) 一栏给出了发行版本中修正问题的具体日期、时间和时差。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-cve"><span><img src="./imagelib/callouts/8.png" alt="8" border="0" /></span></a> </p></td><td valign="top" align="left"><p>在公共漏洞数据库 (Common Vulnerabilities Database) 系统中预留的，
+	    用于查看漏洞的标识信息。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-backround"><span><img src="./imagelib/callouts/9.png" alt="9" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Background</code>(技术背景) 一栏提供了受影响的组件的作用。
+	    多数时候这一部分会说明为什么 FreeBSD 中包含了它， 它的作用， 以及它的一些原理。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-descript"><span><img src="./imagelib/callouts/10.png" alt="10" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Problem Description</code>(问题描述) 一栏深入阐述安全漏洞的技术细节。
+	    这部分有时会包括有问题的代码相关的详细情况，
+	    甚至是这个部件如何能够被恶意利用并打开漏洞的细节。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-impact"><span><img src="./imagelib/callouts/11.png" alt="11" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Impact</code>(影响) 一栏描述了问题能够造成的影响类型。
+	    例如， 可能导致拒绝服务攻击， 权限提升， 甚至导致得到超级用户的权限。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-workaround"><span><img src="./imagelib/callouts/12.png" alt="12" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Workaround</code>(应急方案) 一栏给出了系统管理员在暂时无法升级系统时可以采取的临时性对策。
+	    这些原因可能包括时间限制， 网络资源的限制， 或其它因素。
+	    不过无论如何， 安全不能够被轻视， 有问题的系统要么应该打补丁，
+	    要么应该实施这种应急方案。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-solution"><span><img src="./imagelib/callouts/13.png" alt="13" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">Solution</code>(解决方案) 一栏提供了如何给有问题的系统打补丁的方法。
+	    这是经过逐步测试和验证过的给系统打补丁并让其安全地工作的方法。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-details"><span><img src="./imagelib/callouts/14.png" alt="14" border="0" /></span></a> </p></td><td valign="top" align="left"><p>=<code class="literal">Correction Details</code>(修正细节) 一栏展示了针对
+	    <acronym class="acronym">CVS</acronym> 分支或某个发行版的修正特征。
+	    同时也提供了每个分支上相关文件的版本号。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-ref"><span><img src="./imagelib/callouts/15.png" alt="15" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">References</code>(文献) 一栏通常会给出其它信息的来源。
+	    这可能包括 <acronym class="acronym">URL</acronym>， 书籍、 邮件列表以及新闻组。</p></td></tr></table></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="security-portaudit.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="security-accounting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.12. 监视第三方安全问题 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.14. 进程记帐</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

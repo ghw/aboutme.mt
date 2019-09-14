@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.10. 通过 NTP 进行时钟同步</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-samba.html" title="28.9. 为 Microsoft® Windows® 客户机提供文件和打印服务 (Samba)" /><link rel="next" href="network-syslogd.html" title="28.11. 使用 syslogd 记录远程主机的日志" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.10. 通过 NTP 进行时钟同步</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-samba.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-syslogd.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-ntp"></a>28.10. 通过 NTP 进行时钟同步</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Hukins</span></span>. </span></div></div></div><a id="idp87631440" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87631952"></a>28.10.1. 纵览</h3></div></div></div><p>随着时间的推移， 计算机的时钟会倾向于漂移。
+	网络时间协议 (NTP) 是一种确保您的时钟保持准确的方法。</p><p>许多 Internet 服务依赖、 或极大地受益于本地计算机时钟的准确性。
+	例如， web 服务器可能会接收到一个请求，
+	要求如果文件在某一时刻之后修改过才发送它。
+	在局域网环境中， 共享文件的计算机之间的时钟是否同步至关重要，
+	因为这样才能使时间戳保持一致。 类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a>
+	这样的程序， 也依赖于正确的系统时钟， 才能够准确地执行操作。</p><a id="idp87634128" class="indexterm"></a><p>FreeBSD 附带了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a> <acronym class="acronym">NTP</acronym> 服务器，
+	它可以用于查询其它的 <acronym class="acronym">NTP</acronym>
+	服务器， 并配置本地计算机的时钟， 或者为其它机器提供服务。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87637712"></a>28.10.2. 选择合适的 NTP 服务器</h3></div></div></div><a id="idp87638352" class="indexterm"></a><p>为了同步您的系统时钟，
+	需要首先找到至少一个 <acronym class="acronym">NTP</acronym> 服务器以供使用。 网络管理员，
+	或 ISP 都可能会提供用于这样目的的 NTP
+	服务器──请查看他们的文档以了解是否是这样。
+	另外， 也有一个在线的 <a class="link" href="http://ntp.isc.org/bin/view/Servers/WebHome" target="_top">公开的
+	NTP 服务器列表</a>， 您可以从中选一个较近的 NTP 服务器。
+	请确认您选择的服务器的访问策略， 如果需要的话，
+	申请一下所需的许可。</p><p>选择多个相互不连接的 NTP 服务器是一个好主意，
+	这样在某个服务器不可达， 或者时钟不可靠时就可以有别的选择。
+	这是因为， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a>
+	会智能地选择它收到的响应──它会更倾向于使用可靠的服务器。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87642192"></a>28.10.3. 配置您的机器</h3></div></div></div><a id="idp87647056" class="indexterm"></a><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87648208"></a>28.10.3.1. 基本配置</h4></div></div></div><a id="idp87648848" class="indexterm"></a><p>如果只想在系统启动时同步时钟，
+	  则可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpdate&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpdate</span>(8)</span></a>。 对于经常重新启动，
+	  并且不需要经常同步的桌面系统来说这比较适合，
+	  但绝大多数机器都应该运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a>。</p><p>在引导时使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpdate&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpdate</span>(8)</span></a> 来配合运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a>
+	  也是一个好主意。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a> 渐进地修正时钟，
+	  而 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpdate&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpdate</span>(8)</span></a> 则直接设置时钟，
+	  无论机器的当前时间和正确时间有多大的偏差。</p><p>要启用引导时的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpdate&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpdate</span>(8)</span></a>， 需要把
+	  <code class="literal">ntpdate_enable="YES"</code> 加到
+	  <code class="filename">/etc/rc.conf</code> 中。 此外，
+	  还需要通过 <code class="varname">ntpdate_flags</code>
+	  来设置同步的服务器和选项，
+	  它们将传递给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpdate&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpdate</span>(8)</span></a>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87658064"></a>28.10.3.2. 一般配置</h4></div></div></div><a id="idp87658704" class="indexterm"></a><p>NTP 是通过
+	  <code class="filename">/etc/ntp.conf</code> 文件来进行配置的，
+	  其格式在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntp.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ntp.conf</span>(5)</span></a> 中进行了描述。
+	  下面是一个例子：</p><pre class="programlisting">server ntplocal.example.com prefer
+server timeserver.example.org
+server ntp2a.example.net
+
+driftfile /var/db/ntp.drift</pre><p>这里， <code class="literal">server</code> 选项指定了使用哪一个服务器，
+	  每一个服务器都独立一行。 如果某一台服务器上指定了 <code class="literal">prefer</code>
+	  (偏好) 参数， 如上面的 <code class="systemitem">ntplocal.example.com</code>，
+	  则会优先选择这个服务器。
+	  如果偏好的服务器和其他服务器的响应存在显著的差别，
+	  则丢弃它的响应， 否则将使用来自它的响应，
+	  而不理会其他服务器。 一般来说，
+	  <code class="literal">prefer</code> 参数应该标注在非常精确的 NTP
+	  时源， 例如那些包含特殊的时间监控硬件的服务器上。</p><p>而 <code class="literal">driftfile</code> 选项，
+	  则指定了用来保存系统时钟频率偏差的文件。
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a> 程序使用它来自动地补偿时钟的自然漂移，
+	  从而使时钟即使在切断了外来时源的情况下，
+	  仍能保持相当的准确度。</p><p>另外， <code class="literal">driftfile</code>
+	  选项也保存上一次响应所使用的 NTP 服务器的信息。
+	  这个文件包含了 NTP 的内部信息， 它不应被任何其他进程修改。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87674704"></a>28.10.3.3. 控制您的服务器的访问</h4></div></div></div><p>默认情况下， NTP 服务器可以被整个 Internet 上的主机访问。
+	  如果在 <code class="filename">/etc/ntp.conf</code> 中指定 <code class="literal">restrict</code>
+	  参数， 则可以控制允许哪些机器访问您的服务器。</p><p>如果希望拒绝所有的机器访问您的 NTP
+	  服务器， 只需在
+	  <code class="filename">/etc/ntp.conf</code> 中加入：</p><pre class="programlisting">restrict default ignore</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这样做会禁止您的服务器访问在本地配置中列出的服务器。
+	    如果您需要令 NTP 服务器与外界的 NTP
+	    服务器同步时间， 则应允许指定服务器。 请参见联机手册
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntp.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ntp.conf</span>(5)</span></a> 以了解进一步的细节。</p></div><p>如果只希望子网内的机器通过您的服务器同步时钟，
+	  而不允许它们配置为服务器， 或作为同步时钟的节点来时用，
+	  则加入</p><pre class="programlisting">restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap</pre><p>这里， 需要把 <code class="systemitem">192.168.1.0</code> 改为您网络上的
+	  IP 地址， 并把 <code class="systemitem">255.255.255.0</code> 改为您的子网掩码。</p><p><code class="filename">/etc/ntp.conf</code> 可能包含多个
+	  <code class="literal">restrict</code> 选项。 要了解进一步的细节，
+	  请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntp.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ntp.conf</span>(5)</span></a> 的
+	  <code class="literal">Access Control Support</code>(访问控制支持)
+	  小节。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87683920"></a>28.10.4. 运行 NTP 服务器</h3></div></div></div><p>要让 NTP 服务器在系统启动时随之开启，
+	需要把 <code class="literal">ntpd_enable="YES"</code> 加入到
+	<code class="filename">/etc/rc.conf</code> 中。
+	如果希望向 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a> 传递更多参数， 需要编辑
+	<code class="filename">/etc/rc.conf</code> 中的
+	<code class="varname">ntpd_flags</code>。</p><p>要在不重新启动机器的前提下启动服务器， 需要手工运行
+	<code class="command">ntpd</code>， 并带上
+	<code class="filename">/etc/rc.conf</code>
+	中的 <code class="varname">ntpd_flags</code> 所指定的参数。
+	例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ntpd -p /var/run/ntpd.pid</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87689936"></a>28.10.5. 在临时性的 Internet 连接上使用 ntpd</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ntpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ntpd</span>(8)</span></a> 程序的正常工作并不需要永久性的 Internet 连接。
+	然而， 如果您的临时性连接是配置为按需拨号的，
+	那么防止 NTP 通讯频繁触发拨号， 或保持连接就有必要了。
+	如果您使用用户级 PPP， 可以使用 <code class="literal">filter</code>
+	语句， 在 <code class="filename">/etc/ppp/ppp.conf</code> 中进行必要的设置。
+	例如：</p><pre class="programlisting"> set filter dial 0 deny udp src eq 123
+ # Prevent NTP traffic from initiating dial out
+ set filter dial 1 permit 0 0
+ set filter alive 0 deny udp src eq 123
+ # Prevent incoming NTP traffic from keeping the connection open
+ set filter alive 1 deny udp dst eq 123
+ # Prevent outgoing NTP traffic from keeping the connection open
+ set filter alive 2 permit 0/0 0/0</pre><p>要了解进一步的信息， 请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppp&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ppp</span>(8)</span></a> 的 <code class="literal">PACKET
+	FILTERING</code>(包过滤) 小节， 以及
+	<code class="filename">/usr/share/examples/ppp/</code> 中的例子。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">某些 Internet 访问提供商会阻止低编号的端口，
+	  这会导致 NTP 无法正常工作， 因为响应无法到达您的机器。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87695568"></a>28.10.6. 进一步的信息</h3></div></div></div><p>关于 NTP 服务器的文档， 可以在
+	<code class="filename">/usr/share/doc/ntp/</code> 找到 HTML
+	格式的版本。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-samba.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-syslogd.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.9. 为 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 客户机提供文件和打印服务 (Samba) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.11. 使用 <code class="command">syslogd</code> 记录远程主机的日志</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

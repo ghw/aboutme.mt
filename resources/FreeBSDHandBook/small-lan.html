@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>23.8. 跟踪多台计算机</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="prev" href="makeworld.html" title="23.7. 重新编译 “world”" /><link rel="next" href="dtrace.html" title="Chapter 24. DTrace" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.8. 跟踪多台计算机</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="makeworld.html">Prev</a> </td><th width="60%" align="center">Chapter 23. 更新与升级 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="dtrace.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="small-lan"></a>23.8. 跟踪多台计算机</h2></div><div><span class="authorgroup">贡献者 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Mike</span> <span class="surname">Meyer</span></span>. </span></div></div></div><a id="idp83349456" class="indexterm"></a><p>当您有多台计算机需要跟踪同一份源代码树， 如果让它们各自都建立一份副本，
+        那么将会是一个及其浪费的磁盘空间， 网络带宽和 CPU 资源的行为。
+        我们可以使用其中一台计算机来完成绝大部分这些工作，
+        然后其他计算机通过 NFS 方式连接到这台计算机来完成剩下的工作。
+        本章将简述几种使用这种方式工作的方法。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="small-lan-preliminaries"></a>23.8.1. 前期准备</h3></div></div></div><p>首先， 我们需要选定一批将运行相同的二进制代码的计算机，
+          这里我们称它们为 <span class="emphasis"><em>编译客户机 （build set）</em></span> 。
+          它们可以运行着各自的自定义内核， 但是他们的用户层必须运行着同一套二进制程序
+          （译者注： 运行相同版本的 world ）。
+          然后， 在这批计算机中选择一台计算机用于构建系统与内核的计算机，
+          这里我们它为 <span class="emphasis"><em>编译主机 （build machine）</em></span> 。
+          理想情况下， 它应该是一台有足够空闲 CPU 资源来执行
+          <code class="command">make buildworld</code> 和 <code class="command">make buildkernel</code>
+          指令的计算机。 接着，
+          您还需要选择一台用于对即将投入生产的应用做测试工作的计算机，
+          这里我们称它为 <span class="emphasis"><em>测试主机（test machine）</em></span> 。
+          它 <span class="emphasis"><em>必须</em></span> 是一台日常常用的计算机， 它可以由编译主机担当，
+          也可以专门选择一台。</p><p>这里， 所有编译客户机都需要从同一台计算机上挂载
+          <code class="filename">/usr/obj</code> 和 <code class="filename">/usr/src</code> 。
+          理想情况下， 这些目录应该位于编译主机上的两个不同的磁盘驱动器上，
+          编译主机也是可以通过 NFS 实现将这两个目录分布到两个磁盘驱动器上。
+          如果您有多个编译客户机， 那么 <code class="filename">/usr/src</code>
+          应该保存在编译主机上， 其他计算机通过 NFS 共享这个目录。</p><p>最后， 需要保证所有编译客户机使用与编译主机相同的
+          <code class="filename">/etc/make.conf</code> 和 <code class="filename">/etc/src.conf</code> 文件。
+          这是因为， 编译主机构建的基本系统将会应用于所有编译客户机。
+          此外， 编译主机还应在 <code class="filename">/etc/make.conf</code> 中设置
+          <code class="varname">KERNCONF</code> 参数， 并在里面列出所有编译客户机的
+          <code class="varname">KERNCONF</code> ， 同时将自己的内核配置文件列在最前面。
+          如果希望构建所有编译客户机的内核， 则
+          <code class="filename">/usr/src/sys/arch/conf</code>
+          中必须包含所有编译客户机的内核配置文件。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="small-lan-base-system"></a>23.8.2. 基本系统</h3></div></div></div><p>在编译主机根据 <a class="xref" href="makeworld.html#make-buildworld" title="23.7.8.2. 编译基本系统">Section 23.7.8.2, “编译基本系统”</a>
+          中的内容构建完内核和 world （但不安装）。 就可以进入测试主机安装刚构建的内核，
+          如果您是通过 NFS 挂载 <code class="filename">/usr/src</code> 和
+          <code class="filename">/usr/obj</code> 的情况， 则需要进入单用户模式后启动网络，
+          然后挂载它。 最简单的方法是在多用户模式下执行
+          <code class="command">shutdown now</code> 命令， 直接切换到单用户模式，
+          一旦完成， 就可以像通常情况那样运行安装内核， world 和
+          <code class="command">mergemaster</code> 命令了。 全部完成后，
+          就重启进入正常的多用户模式了。</p><p>确认一切在测试主机上都能正常工作后，
+          就可以相同方式在所有编译客户机上安装新软件。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="small-lan-ports"></a>23.8.3. Ports</h3></div></div></div><p>类似， 这种想法也可用于 ports 树。
+          首先关键步骤是在所有编译客户机上从同一台计算机上挂载
+          <code class="filename">/usr/ports</code> 目录。
+          然后在 <code class="filename">/etc/make.conf</code> 文件中设置合适的参数来共享
+          distfiles 。 您还应该将 <code class="varname">DISTDIR</code> 安置到一个共享目录里，
+          这样就可以通过 NFS 让所有 <code class="systemitem">root</code>
+          用户都能写入数据。 为每台计算机设置一个本地目录为
+          <code class="varname">WRKDIRPREFIX</code> 变量。 如果需要构建并发布预编译二进制包，
+          则还应该设置 <code class="varname">PACKAGES</code> 变量， 设置方法与
+          <code class="varname">DISTDIR</code> 类似。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="makeworld.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="updating-upgrading.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dtrace.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.7. 重新编译 <span class="quote">“<span class="quote">world</span>”</span> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 24. DTrace</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

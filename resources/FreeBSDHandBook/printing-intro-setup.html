@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>10.3. 基本设置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="printing.html" title="Chapter 10. 打印" /><link rel="prev" href="printing-intro-spooler.html" title="10.2. 介绍" /><link rel="next" href="printing-advanced.html" title="10.4. 高级设置" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.3. 基本设置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="printing-intro-spooler.html">Prev</a> </td><th width="60%" align="center">Chapter 10. 打印</th><td width="20%" align="right"> <a accesskey="n" href="printing-advanced.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="printing-intro-setup"></a>10.3. 基本设置</h2></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 起， 串口对应的设备名由
+	<code class="filename">/dev/ttydN</code> 变为
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户应将这篇文档的示例中的设备名改为原先的样子。</p></div><p>要想在 <span class="application">LPD</span>后台打印系统上使用打印机，
+      您需要设置打印机硬件和
+      <span class="application">LPD</span>软件。 这个
+      文档描述了这两级设置：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>参见<a class="link" href="printing-intro-setup.html#printing-simple" title="10.3.1. 简单打印机设置">简单打印机
+	  设置</a>来了解怎样连接一个打印机， 告诉
+	  <span class="application">LPD</span>怎样与
+	  它通讯， 并且打印纯文本到
+	  打印机。</p></li><li class="listitem"><p>参见 <a class="link" href="printing-advanced.html" title="10.4. 高级设置">高级打印机设置</a>
+	  来了解怎样打印多种
+	  特殊格式的文件， 怎样打印报头页， 怎样通过网络
+	  打印， 怎样控制打印机的访问权限， 并且学会为打印
+	  作业记帐统计。</p></li></ul></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-simple"></a>10.3.1. 简单打印机设置</h3></div></div></div><p>这部分讲解怎样配置打印机硬件和
+	<span class="application">LPD</span>使之与打印机配合。
+	讲解的基础知识有：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="printing-intro-setup.html#printing-hardware" title="10.3.1.1. 硬件设置">硬件
+	    设置</a>部分将讲解怎样把一台打印机连接到
+	    您计算机的一个端口上。</p></li><li class="listitem"><p><a class="link" href="printing-intro-setup.html#printing-software" title="10.3.1.2. 软件设置">软件
+	    设置</a>部分将讲解怎样配置
+	    <span class="application">LPD</span>后台打印的配置
+	    文件 (<code class="filename">/etc/printcap</code>)。</p></li></ul></div><p>如果您正在设置一台通过网络协议
+	接收数据来打印而不是通过串口或者并口的打印机，
+	参见 <a class="link" href="printing-advanced.html#printing-advanced-network-net-if" title="10.4.3.2. 带有网络数据流接口的打印机">使用网络数据流界面的打印机</a>。</p><p>尽管这部分叫<span class="quote">“<span class="quote">简单打印机
+	设置</span>”</span>， 但还是相当复杂的。 使打印机
+	配合 <span class="application">LPD</span>
+	后台打印系统在计算机上正常运转是最难的
+	部分。 一旦您的打印机可以正常工作后，那些高级选项， 比如报文页和记帐，
+	是相当简单的。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-hardware"></a>10.3.1.1. 硬件设置</h4></div></div></div><p>这部分讲述了打印机连接到计算机的多种
+	  途径。 主要讨论了多种接口和
+	  连接线， 还有允许 FreeBSD 与打印机通讯所需的
+	  内核配置。</p><p>如果您已经连接好了您的打印机而且已经
+	  用它在另外一个操作系统下成功的打印， 您
+	  或许可以跳到这个部分<a class="link" href="printing-intro-setup.html#printing-software" title="10.3.1.2. 软件设置">软件设置</a>。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-ports"></a>10.3.1.1.1. 端口和连接电缆</h5></div></div></div><p>现在所出售的在 PC 上使用的打印机通常至少有
+	    以下三种接口中的一个：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a id="idp73474128" class="indexterm"></a><p><span class="emphasis"><em>串口</em></span>， 也叫 RS-232 或者 COM 口，
+		使用您计算机上的串口来发送数据到打印机。
+		串口在计算机上已经非常普遍，
+		而且电缆也非常容易买到且容易制作。
+		串口有时需要特殊的电缆，
+		而且可能需要您去配置稍微有点儿复杂的通讯选项。
+		大多数 PC 的串口的最高传输速度只有 115200 bps，
+		这使得打印很大的图像需要的时间很长。</p></li><li class="listitem"><a id="idp73476304" class="indexterm"></a><p><span class="emphasis"><em>并口</em></span>
+		使用计算机上的并口来发送数据到打印机。
+		并口在计算机上也已经非常普遍，
+		而且速度高于 RS-232 串口。 电缆非常容易买到，
+		但很难手工制作。 并口通常没有通讯选项，
+		这使得配置它相当简单。</p><a id="idp73478096" class="indexterm"></a><p>并口按打印机上的接头来命名也叫做
+		<span class="quote">“<span class="quote">Centronics</span>”</span>接口。</p></li><li class="listitem"><a id="idp73480528" class="indexterm"></a><p>USB 接口， 即通用串行总线，
+	        可以达到比并口和串口高很多的速度。 其电缆既简单又便宜。
+	        USB 用来打印比串口和并口更有优势， 但 <span class="trademark">UNIX</span>®
+	        系统不能很好的支持它。 避免这个问题的方法就是购买一台
+	        像大多数打印机一样的既有 USB 接口又有并口的
+	        打印机。</p></li></ul></div><p>一般来说并口只提供单向通讯
+	    (计算机到打印机)， 而串口和
+	    USB 则可以提供双向通讯。 新的并口 (EPP 和
+	    ECP) 及打印机在使用了
+	    IEEE-1284 标准的电缆之后， 可以在 FreeBSD 下双向通讯。</p><a id="idp73483216" class="indexterm"></a><p>与打印机通过并口双向通讯通常由这两种方法中的一种来完成。
+	    第一个方法是使用为 FreeBSD
+	    编写的可以通过打印机使用的语言与打印机通讯的驱动程序。
+	    这通常用在喷墨打印机上，
+	    且可以用来报告剩余墨水多少和其他状态信息。
+	    第二种方法使用在支持
+	    <span class="trademark">PostScript</span>® 的打印机上。</p><p><span class="trademark">PostScript</span>® 任务事实上由程序发送给打印机；
+	    但它并不进行打印而是直接将结果返回给计算机。
+	    <span class="trademark">PostScript</span>® 也采取双向通讯来将打印中的问题报告给计算机，
+	    比如 <span class="trademark">PostScript</span>® 程序中的错误或者打印机卡纸。
+	    这些信息对于用户来说也许是非常有价值的。 此外，
+	    最好的在支持 <span class="trademark">PostScript</span>®
+	    的打印机上记帐的方法需要双向通讯：
+	    询问打印机打印总页数 (打印机从出厂一共打印过多少页)，
+	    然后发送用户的任务， 之后再次查询总打印页数。
+	    将打印前后得到的两个值相减就可以得到该用户要付多少纸钱。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-parallel"></a>10.3.1.1.2. 并口</h5></div></div></div><p>用并口连接打印机需要用 Centronics
+	    电缆把打印机与计算机连接起来。
+	    具体说明指导在打印机， 计算机的说明书上应该有，
+	    或者干脆两个上面都有。</p><p>记住您用的计算机上的哪个并口。
+	    第一个并口在 FreeBSD 上叫
+            <code class="filename">/dev/ppc0</code>；
+	    第二个叫
+            <code class="filename">/dev/ppc1</code>，
+            依此类推。打印机设备也用同样的方法命名：
+	    <code class="filename">/dev/lpt0</code>
+	    是接在第一个并口上的打印机， 依此类推。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-serial"></a>10.3.1.1.3. 串口</h5></div></div></div><p>用串口连接打印机需要用
+	    合适的串口电缆把打印机与计算机连接起来。 具体
+	    说明指导应该在打印机， 计算机的说明书上有， 或者
+	    同样干脆两个上面都有。</p><p>如果您不确定什么样儿的电缆才是 <span class="quote">“<span class="quote"> 合适的串口
+	    电缆 </span>”</span> ， 您可以尝试以下几种不同的
+	    电缆：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>调制解调器</em></span> 电缆每一端的
+		每一根引脚都直接连接到另一端
+		相应的引脚
+		上。 这种电缆也叫做
+		<span class="quote">“<span class="quote">DTE-to-DCE</span>”</span> 电缆。</p></li><li class="listitem"><a id="idp73502160" class="indexterm"></a><p><span class="emphasis"><em>非调制解调器</em></span>电缆上每一端的有些引脚
+		是与另一端相应引脚直接连接的， 而有一些则是交叉连接的 (比如， 发送数据引脚连接到
+		接收数据引脚 )， 还有一些引脚直接在电缆连接头儿内
+		短接。 这种电缆也叫做
+		<span class="quote">“<span class="quote">DTE-to-DTE</span>”</span> 电缆。</p></li><li class="listitem"><p>一些特殊的打印机需要的<span class="emphasis"><em>串口打印机</em></span> 电缆，
+		是一种和非调制解调器电缆类似的电缆，
+		只是一些信号还是送到了另一端， 而
+		不是直接在连接头儿内短路。</p></li></ul></div><a id="idp73505232" class="indexterm"></a><a id="idp73505744" class="indexterm"></a><a id="idp73506256" class="indexterm"></a><p>当然， 您还得为打印机设置通讯参数。
+	    一般是通过打印机面板上的按钮或者 DIP
+	    开关进行设置。 在计算机和打印机上都选择它们所支持的最高
+	    <code class="literal">波特</code> (每秒多少比特， 有时也叫
+	    <span class="emphasis"><em>波特率</em></span>) 的传输速率。
+	    选择7或者8个数据位； 选择不校验，
+	    偶校验或者奇校验； 选择1个或2个停止位。 还要选择流量控制协议：
+	    无， XON/XOFF (也叫做
+	    <span class="quote">“<span class="quote">in-band</span>”</span> 或 <span class="quote">“<span class="quote">软件</span>”</span>) 流量控制。
+	    记住您的软件配置中的参数也要设成上面的数值。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-software"></a>10.3.1.2. 软件设置</h4></div></div></div><p>这部分描述了要使用 FreeBSD 系统中的
+	  <span class="application">LPD</span> 后台打印系统进行打印所需的软件设置。
+	</p><p>包括这几个步骤：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>在需要的时候配置内核来允许您连接
+	      打印机的端口；  <a class="link" href="printing-intro-setup.html#printing-kernel" title="10.3.1.2.1. 配置内核">配置内核</a> 部分会告诉您
+	      需要做什么。</p></li><li class="step"><p>如果您使用并口， 则需要设置一下
+	      并口的通讯模式; <a class="link" href="printing-intro-setup.html#printing-parallel-port-mode" title="10.3.1.3. 设置并口的通讯模式">设置
+	      并口通讯模式</a> 部分会告诉您具体的
+	      细节。</p></li><li class="step"><p>测试操作系统是否能够发送数据到打印机。
+	      <a class="link" href="printing-intro-setup.html#printing-testing" title="10.3.1.4. 检测打印机的通讯">检测打印机
+	      联机状况</a> 部分会告诉您要怎样
+	      做。</p></li><li class="step"><p>为 <span class="application">LPD</span> 设置与打印机匹配的参数则
+	      通过修改
+	      <code class="filename">/etc/printcap</code> 这个文件来完成。 这章后面
+	      的部分将讲解如何来完成设置。</p></li></ol></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-kernel"></a>10.3.1.2.1. 配置内核</h5></div></div></div><p>操作系统的内核为了使某些特殊设备工作需要重新
+	    编译。 打印机所用的串口、
+	    并口就属于那些特殊设备。 因此， 可能需要
+	    添加对串口或并口的支持，
+	    如果内核并没有配置它们的话。</p><p>要想知道您现在使用的内核是否支持串口，
+	    输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>grep sioN /var/run/dmesg.boot</code></strong></pre><p>其中 <em class="replaceable"><code>N</code></em> 是串口的
+	    编号， 从0开始。 如果您看到
+	    类似下面的输出：</p><pre class="screen">sio2 at port 0x3e8-0x3ef irq 5 on isa
+sio2: type 16550A</pre><p>则说明您现在使用的内核支持串口。</p><p>要想知道您现在使用的内核是否支持并口，
+	    输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>grep ppcN /var/run/dmesg.boot</code></strong></pre><p>其中 <em class="replaceable"><code>N</code></em> 是并口的
+	    编号， 同样从0开始。 如果得到类似
+	    下面的输出：</p><pre class="screen">ppc0: &lt;Parallel port&gt; at port 0x378-0x37f irq 7 on isa0
+ppc0: SMC-like chipset (ECP/EPP/PS2/NIBBLE) in COMPATIBLE mode
+ppc0: FIFO with 16/16/8 bytes threshold</pre><p>那么您现在使用的内核支持并口。</p><p>您可能必须为了使操作系统支持您打印机需要的串口或
+	    并口而
+	    重新配置内核。</p><p>要增加对串口的支持， 参见
+	    内核配置这部分。 要增加对并口的支持， 除了参见
+	    上面提到的那部分之外， <span class="emphasis"><em>还要</em></span> 参见下面的
+	    部分。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-parallel-port-mode"></a>10.3.1.3. 设置并口的通讯模式</h4></div></div></div><p>在使用并口时， 您可以选择
+	    让 FreeBSD 用中断方式还是轮询方式来
+	    与打印机通讯。 在 FreeBSD 上，
+	    通用的打印机驱动 (<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpt&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">lpt</span>(4)</span></a>) 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppbus&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ppbus</span>(4)</span></a> 系统，
+	    它利用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppc&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ppc</span>(4)</span></a> 驱动来控制端口芯片。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>中断</em></span> 方式是 GENERIC 核心的默认方式。
+		在这种方式下， 操作系统占用一条中断请求线来检测打印机是否已经做好接收数据的准备。</p></li><li class="listitem"><p><span class="emphasis"><em>轮询</em></span>
+		方式是操作系统反复不断的询问打印机是否做好接收数据的准备。
+		当它返回就绪时， 核心开始发送下面要发送的数据。</p></li></ul></div><p>中断方式速度通常会快一些，
+	    但却占用了一条宝贵的中断请求线。 一些新出的 HP 打印机
+	    不能正常的工作在中断模式下，
+	    是由于一些定时问题 (还没正确的理解)
+	    造成的。 这些打印机需要使用轮询方式。 您应该使用
+	    任何一种方式， 只要它能正常工作就行。 一些打印机虽然在两种模式下都可以
+	    工作， 但在中断模式下会慢的要命。</p><p>您可以用以下两种方法设定通讯模式： 通过
+	    配置内核或者使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lptcontrol</span>(8)</span></a>
+	    这个程序。</p><p><span class="emphasis"><em>要通过配置内核的方法设置
+	    通讯模式：</em></span></p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>修改内核配置文件。 找到
+		一个叫 <code class="literal">ppc0</code> 的记录。 如果您想要设置的是
+		第二个并口， 那么用 <code class="literal">ppc1</code>
+		代替。 使用第三个并口的时候用 <code class="literal">ppc2</code> 代替，
+		依此类推。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果您希望使用中断驱动模式，
+		    则应编辑下面的配置：</p><pre class="programlisting">hint.ppc.0.irq="<em class="replaceable"><code>N</code></em>"</pre><p>它在 <code class="filename">/boot/device.hints</code> 这个文件中，
+		    其中 <em class="replaceable"><code>N</code></em> 用正确的中断
+		    编号代替。 同时， 核心配置文件也必须
+		    包括 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ppc&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ppc</span>(4)</span></a> 的驱动：</p><pre class="screen">device ppc</pre></li><li class="listitem"><p>如果您想要使用轮询方式， 只需要把
+		    <code class="filename">/boot/device.hints</code>
+		    这个文件中的下面这行删除掉：</p><pre class="programlisting">hint.ppc.0.irq="<em class="replaceable"><code>N</code></em>"</pre><p>在 FreeBSD 下， 有时上面的方法并不能使并口工作在轮询方式。
+		    大多数情况是由于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a> 驱动造成的，
+		    它可以自动侦测到设备并将其挂载到系统上， 但也因此，
+		    它控制着打印机端口的访问模式.  您需要检查 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a>
+		    的配置来解决这个问题。</p></li></ul></div></li><li class="step"><p>保存文件。 然后配置， 建立， 并安装刚配置的内核，
+		最后重新启动。 参见 <a class="link" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">内核配置</a> 这章来获得更多细节。</p></li></ol></div><p><span class="emphasis"><em>使用</em></span>
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lptcontrol</span>(8)</span></a> <span class="emphasis"><em>设置通讯模式</em></span>：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lptcontrol -i -d /dev/lptN</code></strong></pre><p>将
+		<code class="literal">lptN</code> 设置成中断方式。</p></li><li class="step"><p>输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lptcontrol -p -d /dev/lptN</code></strong></pre><p>将
+		<code class="literal">lptN</code> 设置成轮询方式。</p></li></ol></div><p>您可以把这些命令加入到
+	    <code class="filename">/etc/rc.local</code> 这个文件中， 这样每次启动系统
+	    时都会设置成您想要的方式。 参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lptcontrol</span>(8)</span></a> 来获得
+	    更多信息。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-testing"></a>10.3.1.4. 检测打印机的通讯</h4></div></div></div><p>在设置后台打印系统之前，
+	    您应该确保您的计算机可以把数据
+	    发送到打印机上。 分别独立调试打印机的通讯和后台打印系统会更简单。</p><p>我们为了测试打印机，将发送一些文本给它。 一个叫 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>
+	    的程序能胜任这项工作， 它可以让打印机立即打印出程序发给它的
+	    字符： 它在每行打出
+	    可以打印的 96 个 ASCII 字符。</p><a id="idp73581136" class="indexterm"></a><p>当我们使用的是一台 <span class="trademark">PostScript</span>® ( 或者以其他语言为基础的 ) 打印机， 那么
+	    需要更仔细的检测。 一段小小的 <span class="trademark">PostScript</span>®
+	    程序足以完成检测的任务， 比如下面这段程序：</p><pre class="programlisting">%!PS
+100 100 moveto 300 300 lineto stroke
+310 310 moveto /Helvetica findfont 12 scalefont setfont
+(Is this thing working?) show
+showpage</pre><p>可以把上面这段 <span class="trademark">PostScript</span>® 代码写进一个文件里，
+	    并且像下面部分的例子里那样
+	    使用。</p><a id="idp73584336" class="indexterm"></a><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">上面的小程序是针对 <span class="trademark">PostScript</span>® 而不是惠普的 PCL 写的。
+	      由于 PCL 拥有许多其他打印机没有的强大功能，
+	      比如它支持在打印纯文本的同时夹带特殊的命令， 而
+	      <span class="trademark">PostScript</span>® 则不能直接打印纯文本，
+	      所以需要对这类打印机语言进行特殊的处理。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-checking-parallel"></a>10.3.1.4.1. 检测并口打印机</h5></div></div></div><a id="idp73587536" class="indexterm"></a><p>这部分内容将指导您怎样检测 FreeBSD
+	      是否可以与一台已经连接在并口上的打印机通讯。</p><p><span class="emphasis"><em>要测试并口上的打印机：</em></span></p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=su&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">su</span>(1)</span></a> 命令转换到 <code class="systemitem">root</code> 用户。</p></li><li class="step"><p>发送数据到打印机。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果打印机可以直接打印纯文本， 可以用
+		      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>。 输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lptest &gt; /dev/lptN</code></strong></pre><p>其中 <em class="replaceable"><code>N</code></em>
+		      是并口的编号， 从0开始。</p></li><li class="listitem"><p>如果打印机支持 <span class="trademark">PostScript</span>® 或其他打印机语言，
+		      可以发送一段小程序到打印机。 输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cat &gt; /dev/lptN</code></strong></pre><p>然后， 一行一行地 <span class="emphasis"><em>输入</em></span>
+		      输入这段程序。 因为在按下 <code class="literal">换行</code> 或者
+		      <code class="literal">回车</code> 之后， 这一行就不能再修改了。
+		      当您输入完这段程序之后， 按
+		      <code class="literal">CONTROL+D</code>，
+		      或者其他表示文件结束的键。</p><p>另外一种办法，
+		      您可以把这段程序写在一个文件里， 并输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cat file &gt; /dev/lptN</code></strong></pre><p>其中 <em class="replaceable"><code>file</code></em>
+		      是包含这您要发给打印机程序的文件名。</p></li></ul></div></li></ol></div><p>之后， 您应该看到打印出了一些东西。
+	      如果打印出的东西看起来并不正确， 请不要着急；
+	      我们将在后面指导您如何解决这类问题。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-checking-serial"></a>10.3.1.4.2. 检测串口打印机</h5></div></div></div><a id="idp73612496" class="indexterm"></a><p>这部分将告诉您如何检测 FreeBSD
+	      是否可以与连接在串口上的打印机通讯。</p><p><span class="emphasis"><em>要测试连接在串口上的打印机：</em></span></p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=su&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">su</span>(1)</span></a> 命令转为 <code class="systemitem">root</code> 用户。</p></li><li class="step"><p>修改 <code class="filename">/etc/remote</code> 这个文件。
+		  增加下面这些内容：</p><pre class="programlisting">printer:dv=<code class="filename">/dev/port</code>:br#<em class="replaceable"><code>bps-rate</code></em>:pa=<em class="replaceable"><code>parity</code></em></pre><a id="idp73619408" class="indexterm"></a><a id="idp73619920" class="indexterm"></a><a id="idp73620432" class="indexterm"></a><p>其中 <em class="replaceable"><code>port</code></em>
+		  是串口的设备节点 (<code class="literal">ttyu0</code>、
+		  <code class="literal">ttyu1</code>， 等等)，
+		  <em class="replaceable"><code>bps-rate</code></em>
+		  是与打印机通讯时使用的速率， 而
+		   <em class="replaceable"><code>parity</code></em>
+		  是通讯时打印机要求的校验方法 (应该是 <code class="literal">even</code>、
+		  <code class="literal">odd</code>、 <code class="literal">none</code>， 或
+		  <code class="literal">zero</code> 之一)。</p><p>这儿有一个串口打印机的例子，
+		  它连接在第三个串口上， 速度为 19200   波特，
+		  不进行校验：</p><pre class="programlisting">printer:dv=<code class="filename">/dev/ttyu2</code>:br#19200:pa=none</pre></li><li class="step"><p>用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tip</span>(1)</span></a> 连接打印机。
+		  输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tip printer</code></strong></pre><p>如果没能成功， 则要再次修改
+		  <code class="filename">/etc/remote</code> 这个文件， 并且试试用
+		  <code class="filename">/dev/cuaaN</code>
+		   代替
+		  <code class="filename">/dev/ttydN</code>。</p></li><li class="step"><p>发送数据到打印机。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果打印机可以直接打印纯文本， 则用
+		      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>。 输入：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>$lptest</code></strong></pre></li><li class="listitem"><p>如果打印机支持 <span class="trademark">PostScript</span>® 或者其他
+		      打印机语言， 则发送一段小程序到
+		      打印机。 一行一行的输入程序， 必须
+		      <span class="emphasis"><em>非常仔细</em></span> 因为像退格
+		      或者其他编辑键也许对打印机来说有它的
+		      意义。 您同样也需要按一个特殊的
+		      文件结束键， 让打印机知道它已经
+		      接收了整个程序。 对于 <span class="trademark">PostScript</span>®
+		      打印机， 按 <code class="literal">CONTROL+D</code>。</p><p>或者， 您同样也可以把程序存储在一个文件里
+		      并输入：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>&gt;file</code></strong></pre><p>其中 <em class="replaceable"><code>file</code></em> 是
+		      包含要发送程序的文件名。 在
+		      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tip</span>(1)</span></a> 发送这个文件之后， 按代表
+		      文件结束的键。</p></li></ul></div></li></ol></div><p>您应该看到打印出了一些东西。
+	      如果它们看起来并不正确也不要着急；
+	      我们将在稍后的章节中介绍如何解决这类问题。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-printcap"></a>10.3.1.5. 启用后台打印： 文件 <code class="filename">/etc/printcap</code>
+	  </h4></div></div></div><p>目前， 您的打印机应该已经连好了线，
+	  系统内核也为与打印机联机而重新配置好 (如果需要的话)，
+	  而且您也已经可以发送一些简单的数据到打印机。 现在，
+	  我们要配置 <span class="application">LPD</span> 来使其控制您的打印机。</p><p>配置 <span class="application">LPD</span> 要修改
+	  <code class="filename">/etc/printcap</code> 这个文件。 由于
+	  <span class="application">LPD</span> 后台打印系统在每次使用后台打印的时候，
+	  都会读取这个文件， 因此对这个文件的修改会立即生效。</p><a id="idp73652176" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=printcap&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">printcap</span>(5)</span></a> 这个文件的格式很简单。
+	  您可以用您最喜欢的文本编辑器来修改
+	  <code class="filename">/etc/printcap</code> 这个文件。
+	  这种格式和其他的像
+	  <code class="filename">/usr/share/misc/termcap</code> 和
+	  <code class="filename">/etc/remote</code> 这类文件是一样的。
+	  要得到关于这种格式的详尽信息，
+	  请参阅联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cgetent&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">cgetent</span>(3)</span></a>。</p><p>简单的后台打印配置包括下面的几步：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>给打印机起一个名字 (记忆和使用的别名)， 然后把它们写进文件
+	      <code class="filename">/etc/printcap</code>； 参见
+	      <a class="link" href="printing-intro-setup.html#printing-naming" title="10.3.1.5.1. 打印机的命名">如何为打印机命名</a>
+	      这章来得到更多的关于起名的帮助。</p></li><li class="step"><a id="idp73659088" class="indexterm"></a><p>通过增加 <code class="literal">sh</code> 项关掉报头页
+	      (它默认是启用的)； 参见
+	      <a class="link" href="printing-intro-setup.html#printing-no-header-pages" title="10.3.1.5.2. 不打印报头页">如何禁用报头页</a>
+	      部分来得到更多信息。</p></li><li class="step"><p>建立一个后台打印队列的目录， 并且通过
+	       <code class="literal">sd</code> 项目指定它的位置； 您可参见 <a class="link" href="printing-intro-setup.html#printing-spooldir" title="10.3.1.5.3. 建立后台打印队列目录">创建后台打印队列目录</a>
+	      一节了解更多信息。</p></li><li class="step"><p>在 <code class="filename">/dev</code> 下设置打印机设备节点，
+	      并且在写在 <code class="filename">/etc/printcap</code>
+	      文件中 <code class="literal">lp</code> 项目里； 参见 <a class="link" href="printing-intro-setup.html#printing-device" title="10.3.1.5.4. 识别打印机设备">识别打印机设备</a>
+	      这部分可以得到更多信息。 此外， 如果打印机连接在串口上，
+	      通讯参数的设置需要写在
+	       <code class="literal">ms#</code> 项中。 这些参数在 <a class="link" href="printing-intro-setup.html#printing-commparam" title="10.3.1.5.5. 配置后台打印通讯参数">配置后台打印通讯参数</a>
+	      这在前面已经讨论过。</p></li><li class="step"><p>安装纯文本过滤器； 详情请参见 <a class="link" href="printing-intro-setup.html#printing-textfilter" title="10.3.1.5.6. 安装文本过滤器">安装文本过滤器</a> 小节。</p></li><li class="step"><p>用
+	      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令来测试设置。 想得到更多信息可以参见
+	      <a class="link" href="printing-intro-setup.html#printing-trying" title="10.3.1.5.8. 测试">测试</a> 和
+	      <a class="link" href="printing-troubleshooting.html" title="10.7. 疑难问题">故障排除</a>
+	      部分。</p></li></ol></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">使用打印机语言的打印机， 如 <span class="trademark">PostScript</span>® 打印机，
+	    通常是不能直接打印纯文本的。 前面提到，
+	    并且将在后面继续进行介绍的简单的设置方法，
+	    均假定您正在安装这种只能打印它能识别的文件格式的打印机。</p></div><p>用户通常会希望直接在系统提供的打印机上打印纯文本。 采用
+	   <span class="application">LPD</span> 接口的程序也通常是这样设计的。
+	  如果您正在安装这样一台打印机，
+	  并且希望它不仅能打印使用它支持的打印机语言的任务
+	  <span class="emphasis"><em>而且</em></span> 还能打印纯文本的任务的话，
+	  那么强烈建议您在上面提到的简单设置的步骤上增加一步：
+	  安装从自动纯文本到 <span class="trademark">PostScript</span>® (或者其他打印机语言)
+	  的转换程序。 更多的细节， 请参见 <a class="link" href="printing-advanced.html#printing-advanced-if-conversion" title="10.4.1.2. 在 PostScript® 打印机上打印纯文本任务">在
+	   <span class="trademark">PostScript</span>® 打印机上打印纯文本</a>。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-naming"></a>10.3.1.5.1. 打印机的命名</h5></div></div></div><p>第一步 (简单) 就是给打印机起一个名字。
+	    您是按功能起名字还是干脆起个古怪的名字都没有关系，
+	    因为您可以给打印机设置许多的别名。</p><p>在
+	    <code class="filename">/etc/printcap</code> 里至少有一个打印机必须指定， 别名是
+	    <code class="literal">lp</code>。 这是默认的打印机名。
+	    如果用户既没有 <code class="envar">PRINTER</code> 环境变量， 也没有在任何
+	     <span class="application">LPD</span> 命令的命令行中指定打印机名，
+	    则 <code class="literal">lp</code> 将是默认要使用的打印机。</p><p>还有， 我们通常把最后一个别名设置成能完全描述打印机的名字，
+	    包括厂家和型号。</p><p>一旦您选好了名字或者一些别名， 把它们放进文件
+	    <code class="filename">/etc/printcap</code> 里。
+	    打印机的名字应该从最左边的一列写起。 用竖杠来隔开每个别名，
+	    并且在最后一个别名后面加上一个冒号。</p><p>在下面的例子中， 我们从一个基本的
+	    <code class="filename">/etc/printcap</code> 开始， 它只定义了两台打印机
+	    (一台 Diablo 630 行式打印机和一台 Panasonic KX-P4455 <span class="trademark">PostScript</span>®
+	    激光打印机 ):</p><pre class="programlisting">#
+#  /etc/printcap for host rose
+#
+rattan|line|diablo|lp|Diablo 630 Line Printer:
+
+bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:</pre><p>在这个例子中， 第一台打印机被命名为
+	    <code class="literal">rattan</code> 并且设置了
+	    <code class="literal">line</code>， <code class="literal">diablo</code>,
+	    <code class="literal">lp</code>， 和 <code class="literal">Diablo 630 Line
+	    Printer</code> 这几个别名。 因为它被设置了
+	    <code class="literal">lp</code> 这个别名， 所以它是默认打印机。 第二台
+	    被命名为 <code class="literal">bamboo</code>， 并且设置了
+	    <code class="literal">ps</code>， <code class="literal">PS</code>,
+	    <code class="literal">S</code>， <code class="literal">panasonic</code>， 和
+	    <code class="literal">Panasonic KX-P4455 PostScript v51.4</code> 这几个别名。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-no-header-pages"></a>10.3.1.5.2. 不打印报头页</h5></div></div></div><a id="idp73695056" class="indexterm"></a><p><span class="application">LPD</span> 后台打印系统默认
+	    会为每个任务打印
+	    <span class="emphasis"><em>报头页</em></span>。 报头页
+	    包含了发送这个任务的用户，
+	    发送这个任务的计算机， 任务的名字，
+	    并用大字母打出。 但不幸的是， 所有这些额外的文本，
+	    都会给在对打印机进行最初的配置时排除故障带来困难，
+	    所以我们将先不打印报头页。</p><p>要暂停打印报头页， 为打印机的记录增加 <code class="literal">sh</code>
+	    标记， 在
+	    <code class="filename">/etc/printcap</code> 文件中。 这儿有一个
+	    <code class="filename">/etc/printcap</code> 文件中使用 <code class="literal">sh</code>
+	     的例子: </p><pre class="programlisting">#
+#  /etc/printcap for host rose - no header pages anywhere
+#
+rattan|line|diablo|lp|Diablo 630 Line Printer:\
+        :sh:
+
+bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:\
+        :sh:</pre><p>注意我们的正确格式: 第一行从最左边一列开始，
+	    而后的每一行用 TAB 缩进一次。
+	    一行写不下需要换行时， 在换行前打一个反斜杠。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-spooldir"></a>10.3.1.5.3. 建立后台打印队列目录</h5></div></div></div><a id="idp73705168" class="indexterm"></a><a id="idp73705680" class="indexterm"></a><p>下一步设置就是要建立一个
+	    <span class="emphasis"><em>后台打印队列目录</em></span>，
+	    也就是在打印任务最终完成之前用于存放这些任务的目录，
+	    这个目录中也会存放后台打印系统用到的其他一些文件。</p><p>由于后台打印队列目录的变量本质， 通常
+	    把这些目录安排在
+	    <code class="filename">/var/spool</code> 下。 您也没有必要去
+	    备份后台打印队列目录里的内容。
+	    重新建立它们只要简单的使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkdir&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">mkdir</span>(1)</span></a> 命令。</p><p>通常， 我们习惯将目录名起成和
+	    打印机一样的名字， 像下面
+	    这样：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /var/spool/printer-name</code></strong></pre><p>然而， 如果您有很多网络打印机，
+	    您可能想要把这些后台打印的队列目录目录放在一个单独的专为使用
+	    <span class="application">LPD</span> 打印而准备的目录里。
+	    我们将用我们的两台打印机
+	    <code class="literal">rattan</code> 和
+	    <code class="literal">bamboo</code> 作为例子：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /var/spool/lpd</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir /var/spool/lpd/rattan</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mkdir /var/spool/lpd/bamboo</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果担心用户任务的保密性，
+	      可能会希望保护相应的后台打印队列目录， 使之不能被其他用户访问。
+	      后台打印的队列目录的属主应该是 daemon 用户，
+	      而 <code class="systemitem">daemon</code> 用户和 <code class="systemitem">daemon</code>
+              组拥有读写和搜索的权限，但其他用户没有。
+              接下来用我们的两台打印机作为例子:</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chown daemon:daemon /var/spool/lpd/rattan</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>chown daemon:daemon /var/spool/lpd/bamboo</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>chmod 770 /var/spool/lpd/rattan</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>chmod 770 /var/spool/lpd/bamboo</code></strong></pre></div><p>最后， 您需要通过<code class="filename">/etc/printcap</code> 文件告诉 <span class="application">LPD</span>
+	    这些目录。 您可以用 <code class="literal">sd</code> 标记来指定后台打印队列目录的路径:</p><pre class="programlisting">#
+#  /etc/printcap for host rose - added spooling directories
+#
+rattan|line|diablo|lp|Diablo 630 Line Printer:\
+        :sh:sd=<code class="filename">/var/spool/lpd/rattan</code>:
+
+bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:\
+        :sh:sd=<code class="filename">/var/spool/lpd/bamboo</code>:</pre><p>注意打印机的名字要从第 1 列开始， 其他记录每行都要用
+	    TAB 键缩进一次， 写不开需要换行在最后加上反斜杠。</p><p>如果您没用
+	    <code class="literal">sd</code> 标记指定后台打印队列目录， 后台打印系统会将
+	    <code class="filename">/var/spool/lpd</code> 目录作为默认目录。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-device"></a>10.3.1.5.4. 识别打印机设备</h5></div></div></div><p>在 <a class="link" href="printing-intro-setup.html#printing-hardware" title="10.3.1.1. 硬件设置">Hardware Setup</a>
+            一节中，我们说明了 FreeBSD 与打印机通讯将使用哪个端口和
+            <code class="filename">/dev</code> 目录下的节点。
+            我们要告诉 <span class="application">LPD</span> 这些信息。
+            当后台打印系统有任务需要打印，它将为过滤程序
+            （负责传送数据到打印机） 打开指定的设备。</p><p>用 <code class="literal">lp</code> 标记在 <code class="filename">/etc/printcap</code> 里列出 <code class="filename">/dev</code>
+	    下的设备节点。</p><p>在我们的例子中， 假设打印机
+	    <code class="literal">rattan</code> 在第一个并口上， 打印机
+	    <code class="literal">bamboo</code> 在第六个串口上; 下面是
+	    要对 <code class="filename">/etc/printcap</code> 文件里增加的内容 :</p><pre class="programlisting">#
+#  /etc/printcap for host rose - identified what devices to use
+#
+rattan|line|diablo|lp|Diablo 630 Line Printer:\
+        :sh:sd=<code class="filename">/var/spool/lpd/rattan</code>:\
+        :lp=<code class="filename">/dev/lpt0</code>:
+
+bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:\
+        :sh:sd=<code class="filename">/var/spool/lpd/bamboo</code>:\
+        :lp=<code class="filename">/dev/ttyu5</code>:</pre><p>如果您没在您的 <code class="filename">/etc/printcap</code> 文件中
+	    用 <code class="literal">lp</code> 标记指定设备节点，
+	    <span class="application">LPD</span> 将默认使用 <code class="filename">/dev/lp</code>
+	   。
+	    <code class="filename">/dev/lp</code> 目前在
+	    FreeBSD 中不存在。</p><p>如果您正在安装的打印机是连接在
+	    并口上的， 请跳到 <a class="link" href="printing-intro-setup.html#printing-textfilter" title="10.3.1.5.6. 安装文本过滤器">安装文本
+	    过滤器</a> 这章。 如果不是的话， 还是最好按下面介绍的
+	    步骤做。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-commparam"></a>10.3.1.5.5. 配置后台打印通讯参数</h5></div></div></div><a id="idp73743312" class="indexterm"></a><p>对于连在串口上的打印机， <span class="application">LPD</span>
+	    可以为发送数据到打印机的过滤程序设置好波特率，
+	    校验， 和其他串口通讯参数
+	   。 这是有利的，
+	    因为:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>它可以让您只需简单的修改
+		 <code class="filename">/etc/printcap</code> 就能尝试不同的通讯
+		参数; 您并不需要去重新编译过滤器
+		程序。</p></li><li class="listitem"><p>它使得后台打印系统可以在
+		多台有不同串口通讯设置的打印机上使用
+		相同的过滤器程序。</p></li></ul></div><p>下面这个 <code class="filename">/etc/printcap</code> 中
+	    用 <code class="literal">lp</code> 标记来控制列出设备的
+	    串口通讯参数 :</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">br#bps-rate</code></span></dt><dd><p>设置设备的通讯速度为
+		  <em class="replaceable"><code>bps-rate</code></em>， 这里
+		  <em class="replaceable"><code>bps-rate</code></em> 可以为 50， 75， 110,
+		  134， 150， 200， 300， 600， 1200， 1800， 2400， 4800， 9600,
+		  19200， 38400， 57600， or 115200 比特每秒。</p></dd><dt><span class="term"><code class="literal">ms#stty-mode</code></span></dt><dd><p>设置已打开的中端设备的选项
+		 。 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=stty&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">stty</span>(1)</span></a> 将详细
+		  讲述可用的选项。</p></dd></dl></div><p>当 <span class="application">LPD</span> 打开
+	    用 <code class="literal">lp</code> 指定的设备时， 它会
+	    将设备的特性设置成在
+	     <code class="literal">ms#</code> 标记后指定的那样。 特别是
+	     <code class="literal">parenb</code>,
+	    <code class="literal">parodd</code>， <code class="literal">cs5</code>,
+	    <code class="literal">cs6</code>， <code class="literal">cs7</code>,
+	    <code class="literal">cs8</code>， <code class="literal">cstopb</code>,
+	    <code class="literal">crtscts</code>， 和 <code class="literal">ixon</code>
+	    这些模式， 它们在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=stty&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">stty</span>(1)</span></a>
+	    手册中有详细说明。</p><p>我们举个例子来添加我们连在第6个串口上的
+	    打印机。 我们将设波特为38400。 至于模式，
+	    我们将用 <code class="literal">-parenb</code> 设置成不校验，
+	    用 <code class="literal">cs8</code> 设置成8位字符，
+	    用 <code class="literal">clocal</code> 设置成不要调制解调器控制，
+	    用 <code class="literal">crtscts</code> 设置成硬件流量控制：</p><pre class="programlisting">bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:\
+        :sh:sd=<code class="filename">/var/spool/lpd/bamboo</code>:\
+        :lp=<code class="filename">/dev/ttyu5</code>:ms#-parenb cs8 clocal crtscts:</pre></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-textfilter"></a>10.3.1.5.6. 安装文本过滤器</h5></div></div></div><a id="idp73768400" class="indexterm"></a><p>我们现在准备告诉 <span class="application">LPD</span>
+	    使用什么文本过滤器
+	    给打印机发送任务。 <span class="emphasis"><em> 文本过滤器</em></span>，
+	    也叫 <span class="emphasis"><em> 输入过滤器</em></span>， 是一个
+	    在 <span class="application">LPD</span> 有一个任务要发给
+	    打印机时运行的程序。 当 <span class="application">LPD</span>
+	    为打印机运行文本过滤器时， 它设置过滤器的
+	    标准输入为要发给打印机的任务， 而标准输出为
+	    用 <code class="literal">lp</code> 标记指定的打印机
+	   。 过滤器先从标准输入读取
+	    任务， 为打印机进行一些转换
+	    ， 并将结果写到标准输出， 这些结果
+	    将被打印。 想得到更多关于文本过滤器的信息， 见
+	     <a class="link" href="printing-advanced.html#printing-advanced-filters" title="10.4.1.1. 过滤器是怎样工作的">过滤器</a>
+	    这节。</p><p>对于简单的打印机设置， 文本过滤器可以仅仅是一段
+	    执行 <code class="command">/bin/cat</code> 的 shell 脚本来
+	    发送任务到打印机。
+	    FreeBSD 还提供了一个叫做
+	    <code class="filename">lpf</code> 的过滤器， 它可以处理退格和下划线来
+	    使那些可能不能很好处理这类字符流的打印机正常工作。
+	    而且， 当然， 您可以用任何其他的
+	    您想用的过滤程序。 <code class="command">lpf</code> 过滤器在
+	     <a class="link" href="printing-advanced.html#printing-advanced-lpf" title="10.4.1.6. lpf： 一个文本过滤器">lpf: 一个文本
+	    过滤器</a> 这节将有详细描述。</p><p>首先， 我们来写一段叫做
+	    <code class="filename">/usr/local/libexec/if-simple</code> 的简单
+	    shell 脚本作为文本过滤器。 用您熟悉的文本编辑器将下面的内容放进
+	    这个文件：</p><pre class="programlisting">#!/bin/sh
+#
+# if-simple - Simple text input filter for lpd
+# Installed in /usr/local/libexec/if-simple
+#
+# Simply copies stdin to stdout.  Ignores all filter arguments.
+
+/bin/cat &amp;&amp; exit 0
+exit 2</pre><p>使这个文件可以被执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>chmod 555 /usr/local/libexec/if-simple</code></strong></pre><p>然后用
+	    <code class="literal">if</code> 标记在
+	    <code class="filename">/etc/printcap</code> 里告诉 LPD 使用这个脚本。 我们将仍然为
+	    一直作为例子的这两台打印机在
+	    <code class="filename">/etc/printcap</code> 里增加这个标记：</p><pre class="programlisting">#
+#  /etc/printcap for host rose - added text filter
+#
+rattan|line|diablo|lp|Diablo 630 Line Printer:\
+        :sh:sd=<code class="filename">/var/spool/lpd/rattan</code>:\ :lp=<code class="filename">/dev/lpt0</code>:\
+        :if=<code class="filename">/usr/local/libexec/if-simple</code>:
+
+bamboo|ps|PS|S|panasonic|Panasonic KX-P4455 PostScript v51.4:\
+        :sh:sd=<code class="filename">/var/spool/lpd/bamboo</code>:\
+        :lp=<code class="filename">/dev/ttyu5</code>:ms#-parenb cs8 clocal crtscts:\
+        :if=<code class="filename">/usr/local/libexec/if-simple</code>:</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="filename">if-simple</code> 脚本的副本可以在 <code class="filename">/usr/share/examples/printing</code>
+	      目录中找到。</p></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp73791568"></a>10.3.1.5.7. 开启 <span class="application">LPD</span></h5></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpd</span>(8)</span></a> 在 <code class="filename">/etc/rc</code> 中被运行，
+	    它是否被运行由 <code class="literal">lpd_enable</code> 这个变量控制。 这个
+	    变量默认是 <code class="literal">NO</code>。 如果您还没有修改
+	    ， 那么增加这行：</p><pre class="programlisting">lpd_enable="YES"</pre><p>到 <code class="filename">/etc/rc.conf</code> 文件当中， 然后既可以重启您的
+	    机器， 也可以直接运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">lpd</span>(8)</span></a>。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lpd</code></strong></pre></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="printing-trying"></a>10.3.1.5.8. 测试</h5></div></div></div><p>现在已经基本完成了
+	    <span class="application">LPD</span> 的基本设置。
+	    但不幸的是， 还不是庆祝的时候，
+	    因为我们还需要测试设置并且修正所有的
+	    问题。 要测试设置， 尝试打印一些东西。 要
+	    用 <span class="application">LPD</span> 系统打印， 您可以
+	    使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 命令，
+	    它可以提交一个任务来打印。</p><p>您可以联合使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>
+	     程序， 在 <a class="link" href="printing-intro-setup.html#printing-testing" title="10.3.1.4. 检测打印机的通讯">检查打印机
+	    通讯</a> 这节介绍怎样生成一些测试文本。</p><p><span class="emphasis"><em>要测试简单 <span class="application">LPD</span>
+	      设置：</em></span></p><p>输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lptest 20 5 | lpr -Pprinter-name</code></strong></pre><p>其中 <em class="replaceable"><code>printer-name</code></em> 是
+	    在 <code class="filename">/etc/printcap</code> 中指定的打印机的一个名字 ( 或者一个别名)
+	   。 要测试默认
+	    打印机， 输入 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lpr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lpr</span>(1)</span></a> 不带任何 <code class="option">-P</code>
+	     选项。 同样， 如果您正在测试一台使用
+	    <span class="trademark">PostScript</span>® 的打印机， 发送一个 <span class="trademark">PostScript</span>® 程序到打印机而不是
+	    使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>。 您可以把程序放在一个
+	    文件里， 然后输入： <code class="command">lpr
+	    file</code>。</p><p>对于一台 <span class="trademark">PostScript</span>® 打印机， 您应该得到那段程序的
+	    结果。 而如果您使用的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a>， 则您得到的
+	    结果应该看起来像下面这样：</p><pre class="screen">!"#$%&amp;'()*+,-./01234
+"#$%&amp;'()*+,-./012345
+#$%&amp;'()*+,-./0123456
+$%&amp;'()*+,-./01234567
+%&amp;'()*+,-./012345678</pre><p>要更进一步的测试打印机， 尝试下载一些大的
+	    程序 (为基于特定语言的打印机 ) 或者运行
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lptest&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lptest</span>(1)</span></a> 并使用不同的参数。 比如，
+	    <code class="command">lptest 80 60</code> 将生成 60 行 每行 80
+	     个字符。</p><p>如果打印机不能工作， 参考 <a class="link" href="printing-troubleshooting.html" title="10.7. 疑难问题">故障排除</a>
+	     这节。</p></div></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="printing-intro-spooler.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="printing.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="printing-advanced.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">10.2. 介绍 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 10.4. 高级设置</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

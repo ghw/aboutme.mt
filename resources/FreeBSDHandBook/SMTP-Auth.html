@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.10. SMTP 验证</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="SMTP-dialup.html" title="27.9. 拨号连接时使用邮件传送" /><link rel="next" href="mail-agents.html" title="27.11. 邮件用户代理" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.10. SMTP 验证</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="SMTP-dialup.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="mail-agents.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="SMTP-Auth"></a>27.10. SMTP 验证</h2></div><div><span class="authorgroup">作者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">James</span> <span class="surname">Gorham</span></span>. </span></div></div></div><p>在您的邮件服务器上启用 <acronym class="acronym">SMTP</acronym> 验证有很多好处。
+      <acronym class="acronym">SMTP</acronym> 验证可以让
+      <span class="application">sendmail</span> 多一重安全保障，
+      而且也使得使用不同机器的漫游用户能够使用同一个邮件服务器，
+      而不需要每次都修改它们的邮件客户端配置。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>从 ports 安装 <span class="package">security/cyrus-sasl2</span>。
+	  这个 port 位于
+	  <span class="package">security/cyrus-sasl2</span>。
+	  <span class="package">security/cyrus-sasl2</span> port
+	  支持很多可以在编译时指定的可选项。 由于我们要使用 SMTP
+	  身份验证， 因此要确认没有禁用 <code class="option">LOGIN</code> 选项。</p></li><li class="step"><p>安装完 <span class="package">security/cyrus-sasl2</span> 之后，
+	  编辑 <code class="filename">/usr/local/lib/sasl2/Sendmail.conf</code>
+	  (如果不存在则建立一个) 并在其中增加下列配置：</p><pre class="programlisting">pwcheck_method: saslauthd</pre></li><li class="step"><p>接下来， 安装 <span class="package">security/cyrus-sasl2-saslauthd</span>，
+	  编辑 <code class="filename">/etc/rc.conf</code> 并加入下列配置：</p><pre class="programlisting">saslauthd_enable="YES"</pre><p>最后启用 saslauthd 服务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/usr/local/etc/rc.d/saslauthd start</code></strong></pre><p>这个服务将充当 <span class="application">sendmail</span> 使用 FreeBSD
+	  的 <code class="filename">passwd</code> 数据库来完成身份验证时的代理人角色。
+	  这避免了为每个需要使用
+	  <acronym class="acronym">SMTP</acronym> 身份验证的用户建立对应的用户名和口令的麻烦，
+	  也确保了登录与邮件的口令一致。</p></li><li class="step"><p>现在编辑 <code class="filename">/etc/make.conf</code> 文件，添加如下行：</p><pre class="programlisting">SENDMAIL_CFLAGS=-I/usr/local/include/sasl -DSASL
+SENDMAIL_LDFLAGS=-L/usr/local/lib
+SENDMAIL_LDADD=-lsasl2</pre><p>这些配置将告诉系统在联编 <span class="application">sendmail</span>
+	时使用适当的配置选项来在编译过程中连入 <span class="package">cyrus-sasl2</span>.
+	在重新编译 <span class="application">sendmail</span>
+	之前， 请确认已经安装了 <span class="package">cyrus-sasl2</span>。</p></li><li class="step"><p>重新编译 <span class="application">sendmail</span> 运行如下命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src/lib/libsmutil</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make cleandir &amp;&amp; make obj &amp;&amp; make</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src/lib/libsm</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make cleandir &amp;&amp; make obj &amp;&amp; make</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src/usr.sbin/sendmail</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make cleandir &amp;&amp; make obj &amp;&amp; make &amp;&amp; make install</code></strong></pre><p>如果 <code class="filename">/usr/src</code>
+	  和共享库没有大的变化并且它们都必须可用，<span class="application">sendmail</span>
+	  编译应该没有任何问题。</p></li><li class="step"><p><span class="application">sendmail</span> 被重新编译和安装后，
+	  编辑您的 <code class="filename">/etc/mail/freebsd.mc</code>
+	  文件 (或者无论您选择使用的您的哪个 <code class="filename">.mc</code>
+	  文件。许多管理员选择使用跟 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hostname&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">hostname</span>(1)</span></a> 一样的唯一的
+	  <code class="filename">.mc</code> 文件输出)。添加这些行在这个文件：</p><pre class="programlisting">dnl set SASL options
+TRUST_AUTH_MECH(`GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN')dnl
+define(`confAUTH_MECHANISMS', `GSSAPI DIGEST-MD5 CRAM-MD5 LOGIN')dnl</pre><p>这些选项配置有不同的方法，对于
+	<span class="application">sendmail</span> 验证用户。
+	如果您想要使用除
+	<span class="application">pwcheck</span> 之外的方法，请参考相关文档。</p></li><li class="step"><p>最后，在 <code class="filename">/etc/mail</code> 运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=make&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">make</span>(1)</span></a>。
+	  它将建立您的新 <code class="filename">.mc</code> 文件并建立一个
+	  <code class="filename">.cf</code> 文件命名为 <code class="filename">freebsd.cf</code>
+	  (或者您想使用您的其它名字的 <code class="filename">.mc</code>文件)。接着使用命令
+	  <code class="command">make install restart</code>，这将复制文件到
+	  <code class="filename">sendmail.cf</code>，并且正确的重新启动
+	  <span class="application">sendmail</span>。
+	  更多有关这个过程的信息，您可以参考
+	  <code class="filename">/etc/mail/Makefile</code> 文件。</p></li></ol></div><p>如果所每个步骤都做对了，
+      您应该可以通过您的邮件客户端进入您的登录信息并且传送一个测试信息。
+      更多的分析，设置 <span class="application">sendmail</span> 的
+      <code class="option">LogLevel</code> 到 13 并且查看 <code class="filename">/var/log/maillog</code>
+      中的信息。</p><p>如欲了解更多的信息， 请参看 <span class="application">sendmail</span>
+      网站上的 <a class="link" href="http://www.sendmail.org/~ca/email/auth.html" target="_top"> 关于
+      <acronym class="acronym">SMTP</acronym> 验证</a> 的介绍。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="SMTP-dialup.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mail-agents.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.9. 拨号连接时使用邮件传送 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.11. 邮件用户代理</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

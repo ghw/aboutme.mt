@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.6. 创建和使用光学介质(CD)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="usb-disks.html" title="18.5. USB 存储设备" /><link rel="next" href="creating-dvds.html" title="18.7. 创建和使用光学介质(DVD)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.6. 创建和使用光学介质(CD)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="usb-disks.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="creating-dvds.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="creating-cds"></a>18.6. 创建和使用光学介质(CD)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Mike</span> <span class="surname">Meyer</span></span>. </span></div></div></div><a id="idp79772880" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79774032"></a>18.6.1. 介绍</h3></div></div></div><p>CD 与普通的磁盘相比有很多不同的特性。最初它们是不能被用户写入的。
+        由于没有磁头和磁道移动时的延迟，所以它们可以连续的进行读取。
+        方便的在两个系统之间进行数据的传输，比起相同大小的存储介质来说。</p><p>CD 有磁道，这关系到数据读取时的连续性而不是物理磁盘的性能。
+	要在 FreeBSD 中制作一个 CD，您要准备好要写到 CD 上的数据文件，
+	然后根据每个 tracks 写入到 CD。</p><a id="idp79775568" class="indexterm"></a><a id="idp79776080" class="indexterm"></a><p>ISO 9660 文件系统被设计用来处理这些差异。
+	但令人遗憾的是， 它也有一些其他文件系统所没有的限制， 不过幸运的是，
+	它提供了一项扩展机制， 使得正确写入的 CD 能够超越这些限制，
+	而又能在不支持这些扩展的系统上正常使用。</p><a id="idp79777616" class="indexterm"></a><p><span class="package">sysutils/</span>
+	port 包括了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>， 这是一个可以用来生成包含 ISO 9660 文件系统的数据文件的程序。
+	他也提供了对于一些扩展的支持选项，下面将详细介绍。</p><a id="idp79780048" class="indexterm"></a><p>使用哪个工具来刻录 CD 取决于您的 CD 刻录机是 ATAPI 的，
+	还是其他类型的。 对于 ATAPI CD 刻录机， 可以使用基本系统附带的 <code class="command">burncd</code> 程序。 SCSI 和 USB CD
+	刻录机， 则需要配合
+	<code class="command">cdrecord</code> 程序使用，
+	它可以通过 <span class="package">sysutils/cdrtools</span> port
+	安装。 除此之外， 在 ATAPI 接口的刻录机上， 也可以配合 <a class="link" href="creating-cds.html#atapicam" title="18.6.9. 使用 ATAPI/CAM 驱动">ATAPI/CAM 模块</a> 来使用 <code class="command">cdrecord</code> 以及其它为 SCSI
+	刻录机撰写的工具。</p><p>如果您想使用带图形界面的 CD 刻录软件，
+	可以考虑一下
+	<span class="application">X-CD-Roast</span> 或
+	<span class="application">K3b</span>。 这些工具可以通过使用预编译安装包，
+	或通过 <span class="package">sysutils/xcdroast</span> 和 <span class="package">sysutils/k3b</span> ports 来安装。
+	<span class="application">X-CD-Roast</span> 和
+	<span class="application">K3b</span> 需要 <a class="link" href="creating-cds.html#atapicam" title="18.6.9. 使用 ATAPI/CAM 驱动">ATAPI/CAM 模块</a> 配合 ATAPI
+	硬件。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mkisofs"></a>18.6.2. mkisofs</h3></div></div></div><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 程序作为
+	<span class="package">sysutils/cdrtools</span> port 的一部分，
+        将生成 ISO 9660 文件系统，其中包含 <span class="trademark">UNIX</span>® 命名空间中的文件名。
+	最简单的用法是：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkisofs -o imagefile.iso /path/to/tree</code></strong></pre><a id="idp79795280" class="indexterm"></a><p>这个命令将创建一个包含 ISO9660 文件系统的 <em class="replaceable"><code>imagefile.iso</code></em>
+        文件，它是目录树 <em class="replaceable"><code>/path/to/tree</code></em> 的一个副本。 在处理过程中，
+        它将文件名称映射为标准的 ISO9660 文件系统的文件名，将排除那些不典型的 ISO
+        文件系统的文件。</p><a id="idp79797584" class="indexterm"></a><a id="idp79798736" class="indexterm"></a><p>有很多选项能够用来克服那些限制。特别的，<code class="option">-R</code> 选项能够启用
+        Rock Ridge 扩展一般的 <span class="trademark">UNIX</span>® 系统，<code class="option">-J</code> 选项能启用用于
+        Microsoft 系统的 Joliet 扩展，<code class="option">-hfs</code> 选项能用来创建用于
+        <span class="trademark">Mac OS</span>® 系统的 HFS 文件系统。</p><p>对于那些即将要在 FreeBSD 系统中使用 CD 的人来说，<code class="option">-U</code>
+        选项能用来消除所有文件名的限制。当使用 <code class="option">-R</code> 选项时，它会产生一个
+        文件系统映像，它与您从那儿启动 FreeBSD 树是一样的，虽然它在许多方面也违反了
+         ISO 9660 的标准。</p><a id="idp79807824" class="indexterm"></a><p>最后一个常用的选项是 <code class="option">-b</code>。
+	它用来指定启动映像的位置， 用以生成
+	<span class="quote">“<span class="quote">El Torito</span>”</span> 启动 CD。 这个选项使用一个参数，
+	用以指定将写入 CD 的目录的根。 默认情况下， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>
+	会以常说的 <span class="quote">“<span class="quote">软盘模拟</span>”</span> 方式来创建 ISO，
+	因此它希望引导映像文件的尺寸恰好是 1200， 1440 或
+	2880 KB。 某些引导加载器， 例如
+	FreeBSD 发行版磁盘， 并不使用模拟模式； 这种情况下，
+	需要使用 <code class="option">-no-emul-boot</code> 选项。 因此， 如果
+	<code class="filename">/tmp/myboot</code> 是一个包含了启动映像文件
+	<code class="filename">/tmp/myboot/boot/cdboot</code> 的可引导的
+	FreeBSD 系统， 您就可以使用下面的命令生成 ISO 9660 文件系统映像
+	<code class="filename">/tmp/bootable.iso</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkisofs -R -no-emul-boot -b boot/cdboot -o /tmp/bootable.iso /tmp/myboot</code></strong></pre><p>完成这些工作之后， 如果您的内核中配置了 <code class="filename">md</code>，
+	就可以用下列命令来挂接文件系统了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mdconfig -a -t vnode -f /tmp/bootable.iso -u 0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mount -t cd9660 /dev/md0 /mnt</code></strong></pre><p>可以发现 <code class="filename">/mnt</code> 和 <code class="filename">/tmp/myboot</code>
+        是一样的。</p><p>还可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>
+        的其它选项来调整它的行为。特别是修改 ISO 9660 的划分格式，创建 Joliet
+        和 HFS 格式的磁盘。查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 联机手册得到更多的帮助。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="burncd"></a>18.6.3. burncd</h3></div></div></div><a id="idp79820624" class="indexterm"></a><p>如果用的是 ATAPI 的 CD 刻录机，可以使用 <code class="command">burncd</code>
+      　命令来刻录您的 CD ISO 映像文件。 <code class="command">burncd</code> 命令是基本
+      　系统的一部分，中以使用 <code class="filename">/usr/sbin/burncd</code> 来安装。
+      　用法如下：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>burncd -f cddevice data imagefile.iso fixate</code></strong></pre><p>在 <em class="replaceable"><code>cddevice</code></em> 上刻录一份
+	<em class="replaceable"><code>imagefile.iso</code></em> 的副本。
+	默认的设备是
+	<code class="filename">/dev/acd0</code>。
+	请参考 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=burncd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">burncd</span>(8)</span></a> 以了解设置写入速度的参数，如何在刻录完成之后自动弹出CD，以及刻录音频数据。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="cdrecord"></a>18.6.4. cdrecord</h3></div></div></div><p>如果没有一个 ATAPI CD 刻录机，必须使用 <code class="command">cdrecord</code>
+        来刻录您的 CD 。 <code class="command">cdrecord</code> 不是基本系统的一部分;必须
+        从 <span class="package">sysutils/cdrtools</span> 或适当的
+        package 安装它。基本系统的变化可能会引起这个程序的错误。可能是由
+        <span class="quote">“<span class="quote">coaster</span>”</span> 引起的。当升级系统时，同时需要升级 port，
+        或者如果您 <a class="link" href="current-stable.html#stable" title="23.5.2. 使用最新的 FreeBSD Stable">使用 -STABLE</a>，
+        那么在升级到新版本时也要升级 port。</p><p><code class="command">cdrecord</code> 有许多选项，基本用法与 <code class="command">burncd</code>
+        相似。刻录一个 ISO 9660 映像文件只需这样做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cdrecord dev=device imagefile.iso</code></strong></pre><p>使用 <code class="command">cdrecord</code> 的比较巧妙的方法是找到使用的
+	 <code class="option">dev</code> 。要找到正确的设置，可以使用 <code class="command">cdrecord</code>
+	 的 <code class="option">-scanbus</code> 标记，这会产生这样的结果：</p><a id="idp79838160" class="indexterm"></a><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cdrecord -scanbus</code></strong>
+Cdrecord-Clone 2.01 (i386-unknown-freebsd7.0) Copyright (C) 1995-2004 Jörg Schilling
+Using libscg version 'schily-0.1'
+scsibus0:
+        0,0,0     0) 'SEAGATE ' 'ST39236LW       ' '0004' Disk
+        0,1,0     1) 'SEAGATE ' 'ST39173W        ' '5958' Disk
+        0,2,0     2) *
+        0,3,0     3) 'iomega  ' 'jaz 1GB         ' 'J.86' Removable Disk
+        0,4,0     4) 'NEC     ' 'CD-ROM DRIVE:466' '1.26' Removable CD-ROM
+        0,5,0     5) *
+        0,6,0     6) *
+        0,7,0     7) *
+scsibus1:
+        1,0,0   100) *
+        1,1,0   101) *
+        1,2,0   102) *
+        1,3,0   103) *
+        1,4,0   104) *
+        1,5,0   105) 'YAMAHA  ' 'CRW4260         ' '1.0q' Removable CD-ROM
+        1,6,0   106) 'ARTEC   ' 'AM12S           ' '1.06' Scanner
+        1,7,0   107) *</pre><p>这个列表列出了设备的的适当的 <code class="option">dev</code> 值。找到您的
+        CD burner ,使用三个用逗号分隔的数值来表示 <code class="option">dev</code>.在
+        这个例子中，CRW 是 <code class="option">dev=1,5,0</code>，所以正确的输入应是
+        dev=1,5,0 。有一个很容易的方法可以指定这个值;看看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cdrecord&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cdrecord</span>(1)</span></a>
+        的介绍了解有关音轨，控制速度和其他的东西。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="duplicating-audiocds"></a>18.6.5. 复制音频 CD</h3></div></div></div><p>您可以这样复制 CD，把 CD 上面的音频数据解压缩出一系列的文件，
+      再把这些文件写到一张空白 CD 上。
+	这个过程对于 ATAPI 和 SCSI 驱动器来说有些微的不同。
+	</p><div class="procedure"><a id="idp79860560"></a><div class="procedure-title">Procedure 18.1. SCSI 驱动器</div><ol class="procedure" type="1"><li class="step"><p>使用 <code class="command">cdda2wav</code> 来解压缩音频。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cdda2wav -vall -D2,0 -B -Owav</code></strong></pre></li><li class="step"><p>使用 <code class="command">cdrecord</code> 来写
+	    <code class="filename">.wav</code> 文件。</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cdrecord -v dev=2,0 -dao -useinfo  *.wav</code></strong></pre><p>确保 <em class="replaceable"><code>2,0</code></em> 被适当地设置了，
+	    具体方法在 <a class="xref" href="creating-cds.html#cdrecord" title="18.6.4. cdrecord">Section 18.6.4, “cdrecord”</a> 中有所描述。</p></li></ol></div><div class="procedure"><a id="idp79866960"></a><div class="procedure-title">Procedure 18.2. ATAPI 驱动器</div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">借助于 <a class="link" href="creating-cds.html#atapicam" title="18.6.9. 使用 ATAPI/CAM 驱动">ATAPI/CAM 模块</a>，
+            <code class="command">cdda2wav</code> 同样也能在 ATAPI 设备上使用。
+            此工具比起下面推荐的方法通常是个更好的选择(抖动修正，
+            字节序问题， 等等)。</p></div><ol class="procedure" type="1"><li class="step"><p>ATAPI CD 驱动用
+	    <code class="filename">/dev/acddtnn</code>表示每个轨道，
+	    这里 <em class="replaceable"><code>d</code></em> 是驱动器号，
+	    <em class="replaceable"><code>nn</code></em> 是轨道号，由两位小数位组成，省略前缀零。
+	    所以第一个盘片上的第一个轨道就是
+	    <code class="filename">/dev/acd0t01</code>，第二个就是
+	    <code class="filename">/dev/acd0t02</code>，第三个就是
+	    <code class="filename">/dev/acd0t03</code>，等等。</p><p>请务必确认在
+	    <code class="filename">/dev</code> 中出现了对应的文件。
+	    如果您发现有某些项目缺失， 则应强制系统重新识别介质：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/acd0 of=/dev/null count=1</code></strong></pre></li><li class="step"><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dd</span>(1)</span></a> 解压缩每个轨道。当解压缩文件的时候您也必须使用
+	    一个特殊的块大小。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/acd0t01 of=track1.cdr bs=2352</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/acd0t02 of=track2.cdr bs=2352</code></strong>
+...
+</pre></li><li class="step"><p>使用
+	    <code class="command">burncd</code> 把解压缩的文件刻录到光盘上。您必须指定
+	    这些文件是音频文件，这样 <code class="command">burncd</code> 会在刻录完成时
+	    结束光盘。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>burncd -f /dev/acd0 audio track1.cdr track2.cdr ... fixate</code></strong></pre></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="imaging-cd"></a>18.6.6. 复制数据 CD</h3></div></div></div><p>您可以把数据 CD 复制成一个与之等价的映像文件，
+	可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 创建这种文件，
+	或使用它来复制任何数据 CD。 这里给出的例子假定您的 CDROM
+	设备是 <code class="filename">acd0</code>， 您应将其替换为您实际使用的 CDROM 设备。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/acd0 of=file.iso bs=2048</code></strong></pre><p>现在您有一个映像文件了，您可以像上面描述的那样把它刻录成 CD。
+	</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mounting-cd"></a>18.6.7. 使用数据 CD</h3></div></div></div><p>现在您已经创建了一张标准的数据 CDROM，您或许想要
+	挂载来读取上面的设备。
+	默认情况下，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 假定文件系统是
+	<code class="literal">ufs</code> 类型的。如果您尝试下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/cd0 /mnt</code></strong></pre><p>您会得到一条 <span class="errorname">Incorrect super
+	  block</span> 的错误信息，没有挂载成功。CDROM 不是
+	  <code class="literal">UFS</code> 文件系统，所以试图这样挂载它是
+	  是不行的。您需要告诉 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a>
+	  文件系统是 <code class="literal">ISO9660</code> 类型的，这样
+	  就可以了。只需要指定 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 的
+	  <code class="option">-t cd9660</code> 选项。例如，
+	  如果您想要挂载 CDROM 设备，
+	  <code class="filename">/dev/cd0</code> 到
+	  <code class="filename">/mnt</code> 目录，您需要执行：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t cd9660 /dev/cd0 /mnt</code></strong></pre><p>注意您的设备名
+	(在这个例子中是 <code class="filename">/dev/cd0</code>)可能
+	有所不同，取决于您的 CDROM 使用的接口。另外，
+	<code class="option">-t cd9660</code> 选项等同于执行
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_cd9660&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_cd9660</span>(8)</span></a>。上面的例子可以缩短
+	为：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount_cd9660 /dev/cd0 /mnt</code></strong></pre><p>用这种方法您基本可以使用任何买到的数据 CDROM。
+	然而某些有 ISO 9660 扩展的光盘可能会行为古怪。
+	例如，joliet 光盘用两个字节的 unicode 字符存储所有的文件名。
+	FreeBSD 内核并不使用 Unicode， 但 FreeBSD CD9660 驱动可以将
+	Unicode 字符自动转换为内核可以识别的形式。 如果您发现有些非英文字符显示为问号，
+	就绪要使用 <code class="option">-C</code> 选项来指定字符集了。
+	欲了解进一步的详情， 请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount_cd9660&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount_cd9660</span>(8)</span></a>。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果希望通过 <code class="option">-C</code> 选项来进行字符集转换，
+	  则内核会需要加载 <code class="filename">cd9660_iconv.ko</code> 模块。 这项工作可以通过在
+	  <code class="filename">loader.conf</code> 中加入下列配置：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">cd9660_iconv_load="YES"</pre><p xmlns="http://www.w3.org/1999/xhtml">并重新启动计算机来完成， 除此之外， 也可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 来手动加载。</p></div><p>有时候，当您试图挂载 CDROM 的时候，会得到一条 <span class="errorname">Device not
+	configured</span> 的错误信息。这通常
+	表明 CDROM 驱动认为托盘里没有光盘，
+	或者驱动器在总线上不可见。
+	需要几秒钟时间等待 CDROM 驱动器辨别已经接到反馈的信息，
+	请耐心等待。</p><p>有时候，SCSI CDROM 可能会找不到，因为没有足够的
+	时间来应答总线的 reset 信号。如果您有一个 SCSI
+	CDROM 请将下面的选项添加到您的内核
+	配置文件并<a class="link" href="kernelconfig-building.html" title="9.5. 建立并安装一个定制的内核">重建您的内核</a>。</p><pre class="programlisting">options SCSI_DELAY=15000</pre><p>这个告诉您的 SCSI 总线启动时暂停 15 秒钟，
+	给您的 CDROM 驱动器足够的机会来应答
+	总线 reset 信号。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="rawdata-cd"></a>18.6.8. 刻录原始数据 CD</h3></div></div></div><p>您可以选择把一个文件目录刻录到 CD 上而不用
+	创建 ISO 9660 文件系统。有些人这么做是为了备份的
+	目的。这个运行的比刻录一个标准 CD 速度要快得多：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>burncd -f /dev/acd1 -s 12 data archive.tar.gz fixate</code></strong></pre><p>要重新找回这样刻录到 CD 上的数据，
+	  您必须从原始设备节点读取数据：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tar xzvf /dev/acd1</code></strong></pre><p>您不能像挂载一个通常的 CDROM 一样挂载这张光盘。
+	  这样的 CDROM 也不能在除了 FreeBSD 之外的任何操作系统上读出。
+	  如果您想要可以挂载 CD，或者
+	  和另一种操作系统共享数据，您必须像上面描述的那样使用
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="atapicam"></a>18.6.9. 使用 ATAPI/CAM 驱动</h3></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp79927376" class="indexterm"></a><p>这个驱动允许 ATAPI 设备(CD-ROM, CD-RW, DVD
+	驱动器等...)通过 SCSI 子系统访问，
+	这样允许使用像 <span class="package">sysutils/cdrdao</span> 或者
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cdrecord&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cdrecord</span>(1)</span></a> 这样的程序。</p><p>要使用这个驱动， 您需要把下面这行添加到 <code class="filename">/boot/loader.conf</code>
+	文件中：</p><pre class="programlisting">atapicam_load="YES"</pre><p>接下来， 重新启动计算机。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您希望将 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atapicam&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">atapicam</span>(4)</span></a> 以静态联编的形式加入内核，
+	  则需要在内核配置文件中加入这行：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">device atapicam</pre><p xmlns="http://www.w3.org/1999/xhtml">此外还需要在内核配置文件中加入：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">device ata
+device scbus
+device cd
+device pass</pre><p xmlns="http://www.w3.org/1999/xhtml">这些应该已经有了。 然后， 重新联编并安装新内核，
+	  并重新启动计算机。</p></div><p>在引导过程中， 您的刻录机将会出现在内核的提示信息中，
+	就像这样：</p><pre class="screen">acd0: CD-RW &lt;MATSHITA CD-RW/DVD-ROM UJDA740&gt; at ata1-master PIO4
+cd0 at ata1 bus 0 target 0 lun 0
+cd0: &lt;MATSHITA CDRW/DVD UJDA740 1.00&gt; Removable CD-ROM SCSI-0 device
+cd0: 16.000MB/s transfers
+cd0: Attempt to query device size failed: NOT READY, Medium not present - tray closed</pre><p>驱动器现在可以通过
+	<code class="filename">/dev/cd0</code> 设备名访问了，例如要
+	挂载 CD-ROM 到 <code class="filename">/mnt</code>，只需要键入下面的
+	命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount -t cd9660 /dev/cd0 /mnt</code></strong></pre><p>作为 <code class="systemitem">root</code>，您可以运行下面的
+	命令来得到刻录机的 SCSI 地址：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>camcontrol devlist</code></strong>
+&lt;MATSHITA CDRW/DVD UJDA740 1.00&gt;   at scbus1 target 0 lun 0 (pass0,cd0)</pre><p>这样 <code class="literal">1,0,0</code> 就是 SCSI 地址了，可以被
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cdrecord&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cdrecord</span>(1)</span></a> 和其他的 SCSI 程序使用。</p><p>有关 ATAPI/CAM 和 SCSI 系统的更多信息，
+	可以参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=atapicam&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">atapicam</span>(4)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cam&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">cam</span>(4)</span></a> 手册
+	页。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="usb-disks.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="creating-dvds.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.5. USB 存储设备 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.7. 创建和使用光学介质(DVD)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

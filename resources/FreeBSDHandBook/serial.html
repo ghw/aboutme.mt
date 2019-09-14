@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>25.2. 介绍</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="prev" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="next" href="term.html" title="25.3. 终端" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.2. 介绍</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="serialcomms.html">Prev</a> </td><th width="60%" align="center">Chapter 25. 串口通讯</th><td width="20%" align="right"> <a accesskey="n" href="term.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="serial"></a>25.2. 介绍</h2></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， 用于串口的设备节点从
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>；
+	从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户需要根据实际情况对这份文档中的例子进行必要的调整。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serial-terminology"></a>25.2.1. 术语</h3></div></div></div><div class="variablelist"><a id="idp83509968" class="indexterm"></a><dl class="variablelist"><dt><span class="term">bps</span></dt><dd><p>每秒位── 数据的传输速度</p></dd><dt><span class="term">DTE</span></dt><dd><a id="idp83512912" class="indexterm"></a><p>数据终端设备 ── 如您的计算机</p></dd><dt><span class="term">DCE</span></dt><dd><a id="idp83514960" class="indexterm"></a><p>数据通讯设备 ── 如您的modem</p></dd><dt><span class="term">RS-232</span></dt><dd><a id="idp83517008" class="indexterm"></a><p>用于硬件串口通讯的EIA标准</p></dd></dl></div><p>当讨论通讯数据速度的时候，这节不会使用术语
+	<span class="quote">“<span class="quote">baud</span>”</span>。Baud指电气标准传输率，它已经使用了很长时间，
+	而 <span class="quote">“<span class="quote">bps</span>”</span> (bits per second) 才是正确使用的术语
+	(至少它不会打扰那些爱争吵的家伙)。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serial-cables-ports"></a>25.2.2. 线缆和端口</h3></div></div></div><p>要将 modem 或终端与您的 FreeBSD 系统相连，
+	您的计算机需要一个串口， 以及用于连接串口设备所需的线缆。
+	如果您比较熟悉硬件及所需要的电缆， 则可以跳过这节。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-cables"></a>25.2.2.1. 线缆</h4></div></div></div><p>串口线缆有许多不同的种类。 最常见的两种类型是 null-modem
+	  线缆和标准 (<span class="quote">“<span class="quote">直联</span>”</span>) RS-232 线缆。
+	  您的硬件说明书中会介绍应使用的线缆种类。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-cables-null"></a>25.2.2.1.1. Null-modem线缆</h5></div></div></div><a id="idp83527248" class="indexterm"></a><p>null-modem 电缆会直接传送某些信号， 如 <span class="quote">“<span class="quote">Signal
+	    Ground</span>”</span> (信号地)， 但对其他信号进行交换。
+	    例如， <span class="quote">“<span class="quote">Transmitted Data</span>”</span> (数据发送) 引脚是连到另一端
+	    <span class="quote">“<span class="quote">Received Data</span>”</span> (数据接收) 引脚的。</p><p>也可以自行制作 null-modem 电缆给终端使用 (例如， 为了品质的要求)。
+	    下面的表格展示了 RS-232C
+	    <a class="link" href="dialup.html#serialcomms-signal-names" title="Table 25.4. 信号名称">信号</a>，
+	    以及 DB-25 连接器上的引脚。 注意， 标准也要求一根直通引脚 1 到引脚 1
+	    的 <span class="emphasis"><em>保护地 (Protective Ground)</em></span>
+	    线， 但这通常都被省掉。 某些终端在只有引脚 2、 3 和 7 的时候，
+	    就已经能够正常使用了， 而其他一些，
+	    则需要下面例子中所展示的不同的配置。</p><div class="table"><a id="idp83539280"></a><div class="table-title">Table 25.1. DB-25 to DB-25 Null-Modem Cable</div><div class="table-contents"><table summary="DB-25 to DB-25 Null-Modem Cable" width="100%" border="0"><colgroup><col /><col /><col /><col /><col /></colgroup><thead><tr><th align="left">信号</th><th align="left">引脚 #</th><th> </th><th align="left">引脚 #</th><th align="left">信号</th></tr></thead><tbody><tr><td>SG</td><td>7</td><td>连接到</td><td>7</td><td>SG</td></tr><tr><td>TD</td><td>2</td><td>连接到</td><td>3</td><td>RD</td></tr><tr><td>RD</td><td>3</td><td>连接到</td><td>2</td><td>TD</td></tr><tr><td>RTS</td><td>4</td><td>连接到</td><td>5</td><td>CTS</td></tr><tr><td>CTS</td><td>5</td><td>连接到</td><td>4</td><td>RTS</td></tr><tr><td>DTR</td><td>20</td><td>连接到</td><td>6</td><td>DSR</td></tr><tr><td>DTR</td><td>20</td><td>连接到</td><td>8</td><td>DCD</td></tr><tr><td>DSR</td><td>6</td><td>连接到</td><td>20</td><td>DTR</td></tr><tr><td>DCD</td><td>8</td><td>连接到</td><td>20</td><td>DTR</td></tr></tbody></table></div></div><br class="table-break" /><p>这里还有两种目前比较流行的其他接线方式。</p><div class="table"><a id="idp83569872"></a><div class="table-title">Table 25.2. DB-9 到 DB-9 Null-Modem 电缆</div><div class="table-contents"><table summary="DB-9 到 DB-9 Null-Modem 电缆" width="100%" border="0"><colgroup><col /><col /><col /><col /><col /></colgroup><thead><tr><th align="left">信号</th><th align="left">引脚 #</th><th> </th><th align="left">引脚 #</th><th align="left">信号</th></tr></thead><tbody><tr><td>RD</td><td>2</td><td>接到</td><td>3</td><td>TD</td></tr><tr><td>TD</td><td>3</td><td>接到</td><td>2</td><td>RD</td></tr><tr><td>DTR</td><td>4</td><td>接到</td><td>6</td><td>DSR</td></tr><tr><td>DTR</td><td>4</td><td>接到</td><td>1</td><td>DCD</td></tr><tr><td>SG</td><td>5</td><td>接到</td><td>5</td><td>SG</td></tr><tr><td>DSR</td><td>6</td><td>接到</td><td>4</td><td>DTR</td></tr><tr><td>DCD</td><td>1</td><td>接到</td><td>4</td><td>DTR</td></tr><tr><td>RTS</td><td>7</td><td>接到</td><td>8</td><td>CTS</td></tr><tr><td>CTS</td><td>8</td><td>接到</td><td>7</td><td>RTS</td></tr></tbody></table></div></div><br class="table-break" /><div class="table"><a id="idp83612368"></a><div class="table-title">Table 25.3. DB-9 到 DB-25 Null-Modem 电缆</div><div class="table-contents"><table summary="DB-9 到 DB-25 Null-Modem 电缆" width="100%" border="0"><colgroup><col /><col /><col /><col /><col /></colgroup><thead><tr><th align="left">信号</th><th align="left">引脚 #</th><th> </th><th align="left">引脚 #</th><th align="left">信号</th></tr></thead><tbody><tr><td>RD</td><td>2</td><td>DB-9 到 DB-25 Null-Modem 电缆</td><td>2</td><td>TD</td></tr><tr><td>TD</td><td>3</td><td>接到</td><td>3</td><td>RD</td></tr><tr><td>DTR</td><td>4</td><td>接到</td><td>6</td><td>DSR</td></tr><tr><td>DTR</td><td>4</td><td>接到</td><td>8</td><td>DCD</td></tr><tr><td>SG</td><td>5</td><td>接到</td><td>7</td><td>SG</td></tr><tr><td>DSR</td><td>6</td><td>接到</td><td>20</td><td>DTR</td></tr><tr><td>DCD</td><td>1</td><td>接到</td><td>20</td><td>DTR</td></tr><tr><td>RTS</td><td>7</td><td>接到</td><td>5</td><td>CTS</td></tr><tr><td>CTS</td><td>8</td><td>接到</td><td>4</td><td>RTS</td></tr></tbody></table></div></div><br class="table-break" /><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当某一段连接器上的一个引脚需要连接到对端的一对引脚时，
+	      通常是将那一对引脚使用一短线连接，
+	      而使用长线接到另一端的那个引脚。</p></div><p>上面的设计似乎更为流行。 在其他变种中 (在 <span class="emphasis"><em>RS-232 Made
+	      Easy</em></span> 这本书中进行了详细介绍) 则是 SG 接 SG，
+	    TD 接 RD、 RTS 和
+	    CTS 接 DCD、 DTR 接 DSR， 反之亦然。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-cables-std"></a>25.2.2.1.2. 标准RS-232C线缆</h5></div></div></div><a id="idp83653328" class="indexterm"></a><p>标准的串口电缆会直接传送所有 RS-232C 信号。
+	    也就是说， 一头的 <span class="quote">“<span class="quote">Transmitted Data</span>”</span> 引脚，
+	    会直接接到另一头的 <span class="quote">“<span class="quote">Transmitted Data</span>”</span> 引脚。
+	    这包括将调制解调器接到您的
+	    FreeBSD 系统上的那种电缆， 同样也适用于某些型号的终端。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-ports"></a>25.2.2.2. 端口</h4></div></div></div><p>串口是FreeBSD主机与终端传输数据的设备。
+	  这节描述了端口的种类和它们在 FreeBSD 上是如何编址的。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-portkinds"></a>25.2.2.2.1. 端口的种类</h5></div></div></div><p>有好几种串口。 在采购或制作线缆之前，
+	    您应确认它能够适合您的终端以及 FreeBSD 系统。</p><p>绝大多数终端都提供 DB-25 端口。 个人计算机，
+	    也包括运行 FreeBSD 的 PC 机， 通常会有 DB-25 或 DB-9 口。
+	    如果您的 PC 上有多插口串口卡， 则可能有 RJ-12 或
+	    RJ-45 口。</p><p>请参见您硬件的文档以了解所用接口的规格。
+	    此外， 您也可以通过观察外观来了解所用的端口。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="term-portnames"></a>25.2.2.2.2. 端口名称Port Names</h5></div></div></div><p>在FreeBSD中，您可以通过 <code class="filename">/dev</code>
+	    目录中的一个记录来访问每个串口。有两种不同的记录：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>呼入端口的名字是
+		<code class="filename">/dev/ttyuN</code>，
+		其中 <em class="replaceable"><code>N</code></em> 是端口的编号，
+		从零开始计数。 一般来说，
+		您使用呼入端口作为终端。 呼入端口要求数据线使用载波检测
+		(DCD) 信号来工作。</p></li><li class="listitem"><p>呼出端口的名字是
+		<code class="filename">/dev/cuauN</code>。
+		通常并不使用呼出端口作为终端， 而只用于调制解调器。
+		如果串口线或终端不支持载波检测信号，
+		则可能必须要使用呼出端口。</p></li></ul></div><p>如果您已经连接一个终端到第一个串口 (在 <span class="trademark">MS-DOS</span>®
+	    上是<code class="filename">COM1</code>)，
+	    则可以使用 <code class="filename">/dev/ttyu0</code> 来作为终端。
+	    如果它是在第二个串口 (<code class="filename">COM2</code>)，
+	    那就是 <code class="filename">/dev/ttyu1</code>，等等。</p></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83670352"></a>25.2.3. 内核配置</h3></div></div></div><p>FreeBSD默认支持4个串口。 在<span class="trademark">MS-DOS</span>®下，这些是
+	<code class="filename">COM1</code>，
+	<code class="filename">COM2</code>，
+	<code class="filename">COM3</code>，
+	和
+	<code class="filename">COM4</code>。 FreeBSD 目前支持 <span class="quote">“<span class="quote">dumb</span>”</span>
+	多口串口卡，如 BocaBoard 1008 和 2016， 以及许多 Digiboard
+	和 Stallion Technologies 制造的智能多接口卡。 不过，
+	默认的内核只会寻找标准的COM端口。</p><p>要看看您的内核是否支持您的串口，只要在内核启动时查看一下启动信息，
+	或使用 <code class="command">/sbin/dmesg</code> 命令重新检测内核启动信息。
+	特别的，寻找以<code class="literal">sio</code>字符启动的信息。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果想只察看包含
+	<code class="literal">sio</code> 一词的消息， 可以使用下面的命令：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/sbin/dmesg | grep 'sio'</code></strong></pre></div><p>例如，在一个带有4个串口的系统上，这些是串口特定的内核启动信息：</p><pre class="screen">sio0 at 0x3f8-0x3ff irq 4 on isa
+sio0: type 16550A
+sio1 at 0x2f8-0x2ff irq 3 on isa
+sio1: type 16550A
+sio2 at 0x3e8-0x3ef irq 5 on isa
+sio2: type 16550A
+sio3 at 0x2e8-0x2ef irq 9 on isa
+sio3: type 16550A</pre><p>如果内核未能认出所有的串口， 可能需要通过修改
+	<code class="filename">/boot/device.hints</code> 文件来进行一些配置。
+	此外， 也可以注释或完全删除掉您没有的设备。</p><p>请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a> 联机手册来了解关于串口，
+	以及多插口卡配置的进一步细节。 如果您正使用一个在不同版本的
+	FreeBSD 上的文件请务必小心， 因为设备参数和语法发生了变化。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这里端口 <code class="literal">IO_COM1</code> 代替了
+	  <code class="literal">0x3f8</code>，端口 <code class="literal">IO_COM2</code> 代替了
+	  <code class="literal">0x2f8</code>，端口 <code class="literal">IO_COM3</code> 代替了
+	  <code class="literal">0x3e8</code>，端口 <code class="literal">IO_COM4</code> 代替了
+	  <code class="literal">0x2e8</code>，这些都是各自端口相应的端口地址。
+	  中断4，3，5，9都是经常用的中断。也要注意有些正常的串口可能
+	  <span class="emphasis"><em>无法</em></span> 在一些ISA总线的PC上共享中断
+	  (多插口板卡有板载的电子设备，允许在板上所有 16550A
+	  的设备共享一个或两个中断请求)。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83692496"></a>25.2.4. 设备特殊文件</h3></div></div></div><p>在内核中， 大多数设备都是通过 <span class="quote">“<span class="quote">设备特殊文件</span>”</span> 来访问的，
+	这些文件一般位于 <code class="filename">/dev</code> 目录中。
+	<code class="filename">sio</code> 是通过
+	<code class="filename">/dev/ttyuN</code> (呼入)
+	和 <code class="filename">/dev/cuauN</code>
+	(呼出) 设备来访问的。 此外， FreeBSD 也提供了初始化设备
+	（<code class="filename">/dev/ttyuN.init</code> 和
+        <code class="filename">/dev/cuauN.init</code>）
+        以及锁设备
+	（<code class="filename">/dev/ttyuN.lock</code> 和
+        <code class="filename">/dev/cuauN.lock</code>）。
+	初始化设备用于在打开端口时初始化其通讯参数， 例如使用
+	<code class="literal">RTS/CTS</code> 信号进行流控制的调制解调器的
+	<code class="literal">crtscts</code>。 锁设备则用于在端口上提供一个锁标志，
+	防止用户或程序改变特定的参数； 请参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=termios&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">termios</span>(4)</span></a>、
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sio&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sio</span>(4)</span></a>， 以及 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=stty&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">stty</span>(1)</span></a> 的联机手册， 以了解关于终端配置、
+	锁和初始化设备， 以及配置终端参数的详细信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="serial-hw-config"></a>25.2.5. 串口配置</h3></div></div></div><a id="idp83701200" class="indexterm"></a><a id="idp83701840" class="indexterm"></a><p><code class="filename">ttyuN</code> (或
+      <code class="filename">cuauN</code>)
+      设备是您将要打开的应用程序的一般设备。 当进程打开某个设备时，
+      它将有一个终端 I/O 设置的默认配置。 您可以在命令行看看这些设置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>stty -a -f /dev/ttyu1</code></strong></pre><p>当您修改了这个设备的设置，这个设置会生效，除非设备被关闭。
+      当它被重新打开时，它将回到默认设置。 要修改默认设置，您可以打开和调整
+      <span class="quote">“<span class="quote">初始状态</span>”</span> 设备的设置。例如，
+      要为<code class="filename">ttyu5</code> 打开
+      <code class="option">CLOCAL</code> 模式，8位通讯和默认的 <code class="option">XON/XOFF</code> 流控制，
+      输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>stty -f /dev/ttyu5.init clocal cs8 ixon ixoff</code></strong></pre><a id="idp83711440" class="indexterm"></a><p>串口设备的系统级初始化，
+      是由 <code class="filename">/etc/rc.d/serial</code> 来控制的。
+      这个文件会影响串口设备的默认设置。</p><p>为了防止应用程序修改某些设置，
+      应修改 <span class="quote">“<span class="quote">lock state</span>”</span>(锁状态) 设备。 例如， 要把
+      <code class="filename">ttyu5</code> 的速率锁定为 57600 bps， 输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>stty -f /dev/ttyu5.lock 57600</code></strong></pre><p>现在，一个打开<code class="filename">ttyu5</code>
+      和设法改变端口速度的应用程序将被固定在57600bit/s。很自然地，
+      您需要确定初始状态，然后用root帐户锁定状态设备的写入功能。</p><p>很显然，您应该只让 <code class="systemitem">root</code>
+      用户可以初始化或锁定设备的状态。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="serialcomms.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="serialcomms.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="term.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 25. 串口通讯 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 25.3. 终端</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

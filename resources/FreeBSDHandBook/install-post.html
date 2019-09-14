@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.10. 安装后的配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-final-warning.html" title="3.9. 安装确认" /><link rel="next" href="install-trouble.html" title="3.11. 常见问题" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.10. 安装后的配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-final-warning.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-trouble.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-post"></a>3.10. 安装后的配置</h2></div></div></div><p>安装成功后， 就可以进行进一步的配置了。
+      引导新安装的 FreeBSD 系统之后， 使用
+      <code class="command">sysinstall</code> 并选择
+      <span class="guimenuitem">Configure</span>。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="inst-network-dev"></a>3.10.1. 配置网卡</h3></div></div></div><p>如果您之前配置用 PPP 通过 FTP 安装，那么这个画面将不会出现；
+	正像所说的那样，您可以稍后再做配置。</p><p>如果想更多的了解网卡或将FreeBSD配置为网关或路由器，请参考
+	<a class="link" href="advanced-networking.html" title="Chapter 30. 高级网络">Advanced Networking</a>
+	的相关文章。</p><pre class="screen">                      User Confirmation Requested
+   Would you like to configure any Ethernet or PPP network devices?
+
+                             [ Yes ]   No</pre><p>如果要配置网卡，请选择
+	<span class="guibutton">[ Yes ]</span> 然后按 <span class="keycap"><strong>Enter</strong></span>。
+      否则请选择 <span class="guibutton">[ No ]</span> 继续。</p><div class="figure"><a id="ed-config1"></a><div class="figure-title">Figure 3.29. 选择网卡设备</div><div class="figure-contents"><div class="mediaobject"><img src="install/ed0-conf.png" alt="选择网卡设备" /></div></div></div><br class="figure-break" /><p>用方向键选择您要配置的网卡接口，然后按<span class="keycap"><strong>Enter</strong></span>。</p><pre class="screen">                      User Confirmation Requested
+       Do you want to try IPv6 configuration of the interface?
+
+                              Yes   [ No ]</pre><p>目录私人区域网络IP协议<acronym class="acronym">IPv4</acronym>已经足够，所以选择
+	<span class="guibutton">[ No ]</span> 然后按 <span class="keycap"><strong>Enter</strong></span>。</p><p>如果想试试新的IP通信协议 <acronym class="acronym">IPv6</acronym> ，
+	使用 <acronym class="acronym">RA</acronym> 服务，请选择 <span class="guibutton">[ Yes ]</span>
+	然后按 <span class="keycap"><strong>Enter</strong></span>。
+	寻找 RA 服务器将会花费几秒的时间。</p><pre class="screen">                             User Confirmation Requested
+        Do you want to try DHCP configuration of the interface?
+
+                              Yes   [ No ]</pre><p>如果您不需要 DHCP (Dynamic Host Configuration Protocol　动态主机配置协议)
+	，选择 <span class="guibutton">[ No ]</span> 然后按<span class="keycap"><strong>Enter</strong></span>。</p><p>选择 <span class="guibutton">[ Yes ]</span> 会执行<span class="application">dhclient</span>，
+	如果成功，它会自动将网络配置信息填上。更多的信息请参考
+	<a class="xref" href="network-dhcp.html" title="28.5. 网络自动配置 (DHCP)">Section 28.5, “网络自动配置 (DHCP)”</a> 。</p><p>下面的网络配置显示了怎样把以太网设备配置成区域网络网关的角色。</p><div class="figure"><a id="ed-config2"></a><div class="figure-title">Figure 3.30. 配置 ed0接口</div><div class="figure-contents"><div class="mediaobject"><img src="install/ed0-conf2.png" alt="配置 ed0接口" /></div></div></div><br class="figure-break" /><p>使用<span class="keycap"><strong>Tab</strong></span> 键可以在各个栏目之间进行切换，请输入适当
+	的信息：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Host（机器名称）</span></dt><dd><p>完整的机器名称，例如本例中的 <code class="systemitem">k6-2.example.com</code> 。
+		</p></dd><dt><span class="term">Domain（域名）</span></dt><dd><p>您机器所在的域名称，如本例的 <code class="systemitem">example.com</code>
+		</p></dd><dt><span class="term">IPv4 Gateway（IPv4网关）</span></dt><dd><p>输入将数据包传送到远端网络的机器IP地址。
+	      只有当机器是网络上的一个节点时才要输入。
+	      如果这台机器要作为您局域网的网关，
+	      <span class="emphasis"><em>请将此处设为空白</em></span>。IPv4网关，
+	      也被称作默认网关或默认路由器。</p></dd><dt><span class="term">域名服务器</span></dt><dd><p>本地网络中的域名服务器的IP地址。
+	      本例中假设机器所在的网络中没有域名服务器，
+	      所以填入的是ISP提供的域名服务器地址
+	      （<code class="systemitem">208.163.10.2</code>。）</p></dd><dt><span class="term">IPv4 地址</span></dt><dd><p>本机所使用的IP地址。本例为
+	      <code class="systemitem">192.168.0.1</code>。</p></dd><dt><span class="term">子网掩码</span></dt><dd><p>在这个局域网中所使用的地址块是
+	      <code class="systemitem">192.168.0.0</code> -
+	      <code class="systemitem">192.168.0.255</code>，
+	      对应的子网掩码是
+	      <code class="systemitem">255.255.255.0</code>。</p></dd><dt><span class="term"> ifconfig 额外参数设定</span></dt><dd><p>任何<code class="command">ifconfig</code>命令跟网卡接口有关的参数。
+	      本范例中没有。</p></dd></dl></div><p>使用 <span class="keycap"><strong>Tab</strong></span> 键选择 <span class="guibutton">[ OK ]</span>然后按
+	 <span class="keycap"><strong>Enter</strong></span>键。</p><pre class="screen">                      User Confirmation Requested
+        Would you like to bring the ed0 interface up right now?
+
+                             [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 然后按
+	<span class="keycap"><strong>Enter</strong></span> 将会将机器的网卡转为启用状态。
+	机器下次启动的时候即可使用。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="gateway"></a>3.10.2. 配置网关</h3></div></div></div><pre class="screen">                       User Confirmation Requested
+       Do you want this machine to function as a network gateway?
+
+                              [ Yes ]    No</pre><p>如果这台机器要作为本地网络和其它机器之间传送数据包的网关，请选择
+	<span class="guibutton">[ Yes ]</span> 然后按 <span class="keycap"><strong>Enter</strong></span>。
+	如果这台机器只是网络上的普通节点，请选择 <span class="guibutton">[ No ]</span>
+	并按 <span class="keycap"><strong>Enter</strong></span> 继续。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="inetd-services"></a>3.10.3. 配置网络服务</h3></div></div></div><pre class="screen">                      User Confirmation Requested
+Do you want to configure inetd and the network services that it provides?
+
+                               Yes   [ No ]</pre><p>如果选择 <span class="guibutton">[ No ]</span>， 许多网络服务，如
+	 <span class="application">telnetd</span> 将不会启用。 这样， 远端用户将无法
+	<span class="application">telnet</span> 进入这台机器。 本机上的用户还是可以
+	<span class="application">telnet</span>到远端机器的。</p><p>这些服务可以在安装完成后修改<code class="filename">/etc/inetd.conf</code>
+	配置文件来启用它们。请参阅 <a class="xref" href="network-inetd.html#network-inetd-overview" title="28.2.1. 总览">Section 28.2.1, “总览”</a>
+	以获得更多的信息。</p><p>如果您想现在就配置这些网络服务，请选择 <span class="guibutton">[ Yes ]</span>，
+	然后会看到下面的信息：</p><pre class="screen">                      User Confirmation Requested
+The Internet Super Server (inetd) allows a number of simple Internet
+services to be enabled, including finger, ftp and telnetd.  Enabling
+these services may increase risk of security problems by increasing
+the exposure of your system.
+
+With this in mind, do you wish to enable inetd?
+
+                             [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 继续。</p><pre class="screen">                      User Confirmation Requested
+inetd(8) relies on its configuration file, /etc/inetd.conf, to determine
+which of its Internet services will be available.  The default FreeBSD
+inetd.conf(5) leaves all services disabled by default, so they must be
+specifically enabled in the configuration file before they will
+function, even once inetd(8) is enabled.  Note that services for
+IPv6 must be separately enabled from IPv4 services.
+
+Select [Yes] now to invoke an editor on /etc/inetd.conf, or [No] to
+use the current settings.
+
+                             [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 将允许您添加网络服务
+	(或将相应网络服务每行开头的 <code class="literal">#</code> 除掉即可。)</p><div class="figure"><a id="inetd-edit"></a><div class="figure-title">Figure 3.31. 编辑 <code class="filename">inetd.conf</code>配置文件</div><div class="figure-contents"><div class="mediaobject"><img src="install/edit-inetd-conf.png" alt="编辑 inetd.conf配置文件" /></div></div></div><br class="figure-break" /><p>在加入您想启用的服务后，按下 <span class="keycap"><strong>Esc</strong></span>键会出现一个
+	对话框可以让您离开以及保存修改。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ssh-login"></a>3.10.4. 启用 SSH 登录</h3></div></div></div><a id="idp68790480" class="indexterm"></a><pre class="screen">                      User Confirmation Requested
+                  Would you like to enable SSH login?
+                           Yes        [  No  ]</pre><p>选择 <span class="guibutton">[ Yes ]</span> 便会启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a>，
+	也就是 <span class="application">OpenSSH</span> 服务程序。
+	它能够让您以安全的方式从远程访问机器。 如欲了解关于
+	<span class="application">OpenSSH</span> 的进一步详情， 请参见 <a class="xref" href="openssh.html" title="14.10. OpenSSH">Section 14.10, “OpenSSH”</a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ftpanon"></a>3.10.5. 匿名 FTP</h3></div></div></div><a id="idp68795728" class="indexterm"></a><pre class="screen">                      User Confirmation Requested
+ Do you want to have anonymous FTP access to this machine?
+
+                              Yes    [ No ]</pre><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="deny-anon"></a>3.10.5.1. 不允许匿名 FTP访问</h4></div></div></div><p>选择默认的 <span class="guibutton">[ No ]</span> 并按下
+	  <span class="keycap"><strong>Enter</strong></span> 键将仍然可以让在这台机器上有账号的用户访问
+	FTP。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ftpallow"></a>3.10.5.2. 允许匿名 FTP访问</h4></div></div></div><p>如果您选择允许匿名 FTP 存取，
+	  那么网络中任何人都可以使用FTP来访问您的机器。
+	  在启用匿名访问之前应该考虑网络的安全问题。
+	  如果要知道更多有关网络安全的信息，
+	  请参阅 <a class="xref" href="security.html" title="Chapter 14. 安全">Chapter 14, <em>安全</em></a>。</p><p>要启用FTP匿名访问，用方向键选择
+	  <span class="guibutton">[ Yes ]</span> 并按 <span class="keycap"><strong>Enter</strong></span>键。
+	  系统会给出进一步的确认信息：</p><pre class="screen">                       User Confirmation Requested
+ Anonymous FTP permits un-authenticated users to connect to the system
+ FTP server, if FTP service is enabled.  Anonymous users are
+ restricted to a specific subset of the file system, and the default
+ configuration provides a drop-box incoming directory to which uploads
+ are permitted.  You must separately enable both inetd(8), and enable
+ ftpd(8) in inetd.conf(5) for FTP services to be available.  If you
+ did not do so earlier, you will have the opportunity to enable inetd(8)
+ again later.
+
+ If you want the server to be read-only you should leave the upload
+ directory option empty and add the -r command-line option to ftpd(8)
+ in inetd.conf(5)
+
+ Do you wish to continue configuring anonymous FTP?
+
+                          [ Yes ]         No</pre><p>这些信息会告诉您 FTP 服务还需要在
+	  <code class="filename">/etc/inetd.conf</code> 中启用。
+	  假如您希望允许匿名 FTP 连接， 请参见 <a class="xref" href="install-post.html#inetd-services" title="3.10.3. 配置网络服务">Section 3.10.3, “配置网络服务”</a>。 选择 <span class="guibutton">[ Yes ]</span> 并按
+	  <span class="keycap"><strong>Enter</strong></span> 继续； 系统将给出下列信息：</p><div class="figure"><a id="anon-ftp2"></a><div class="figure-title">Figure 3.32. 默认的匿名 FTP 配置</div><div class="figure-contents"><div class="mediaobject"><img src="install/ftp-anon1.png" alt="默认的匿名 FTP 配置" /></div></div></div><br class="figure-break" /><p>使用 <span class="keycap"><strong>Tab</strong></span> 在不同的信息字段之间切换，
+	  并填写必要的信息：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">UID</span></dt><dd><p>用于分配给匿名
+		FTP 用户的用户 ID。 所有上传的文件的属主都将是这个
+		ID。</p></dd><dt><span class="term">Group</span></dt><dd><p>匿名 FTP 用户所在的组。</p></dd><dt><span class="term">Comment</span></dt><dd><p>用于在
+		<code class="filename">/etc/passwd</code> 中描述该用户的说明性信息。</p></dd><dt><span class="term">FTP Root Directory</span></dt><dd><p>可供匿名 FTP 用户使用的文件所在的根目录。</p></dd><dt><span class="term">Upload Subdirectory</span></dt><dd><p>匿名 FTP 用户上传的文件的存放位置。</p></dd></dl></div><p>默认的 FTP 根目录将放在 <code class="filename">/var</code> 目录下。
+	  如果您的 /var 目录空间不足以应付您的FTP需求，
+	  您可以将FTP的根目录改为 <code class="filename">/usr</code> 目录下的
+	  <code class="filename">/usr/ftp</code> 目录。</p><p>当您对一切配置都满意后，请按
+	  <span class="keycap"><strong>Enter</strong></span> 键继续。</p><pre class="screen">                          User Confirmation Requested
+         Create a welcome message file for anonymous FTP users?
+
+                              [ Yes ]    No</pre><p>如果您选择 <span class="guibutton">[ Yes ]</span> 并按下
+	  <span class="keycap"><strong>Enter</strong></span>键，
+	  系统会自动打开文本编辑器让您编辑FTP的欢迎信息。</p><div class="figure"><a id="anon-ftp4"></a><div class="figure-title">Figure 3.33. 编辑FTP欢迎信息</div><div class="figure-contents"><div class="mediaobject"><img src="install/ftp-anon2.png" alt="编辑FTP欢迎信息" /></div></div></div><br class="figure-break" /><p>此文本编辑器叫做 <code class="command">ee</code>。
+	  按照指示修改信息文本或是稍后再用您喜爱的文本编辑器来修改。
+	  请记住画面下方显示的文件位置。</p><p>按 <span class="keycap"><strong>Esc</strong></span> 将弹出一个默认为
+	<span class="guimenuitem">a) leave editor</span>的对话框。按
+	  <span class="keycap"><strong>Enter</strong></span> 退出并继续。再次按
+	  <span class="keycap"><strong>Enter</strong></span> 将保存修改。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="nfsconf"></a>3.10.6. 配置网络文件系统</h3></div></div></div><p>网络文件系统 (NFS) 可以让您可以在网络上共享您的文件。
+	一台机器可以配置成NFS服务器、客户端或两者并存。请参考
+	<a class="xref" href="network-nfs.html" title="28.3. 网络文件系统（NFS）">Section 28.3, “网络文件系统（NFS）”</a> 以获得更多的信息。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="nsf-server-options"></a>3.10.6.1. NFS 服务器</h4></div></div></div><pre class="screen">                       User Confirmation Requested
+ Do you want to configure this machine as an NFS server?
+
+                              Yes    [ No ]</pre><p>如果您不想安装网络文件系统，请选择 <span class="guibutton">[ No ]</span>
+	然后按 <span class="keycap"><strong>Enter</strong></span>键。</p><p>如果您选择 <span class="guibutton">[ Yes ]</span> 将会出现一个对话框提醒您必须先建立一个
+	  <code class="filename">exports</code> 文件。</p><pre class="screen">                               Message
+Operating as an NFS server means that you must first configure an
+/etc/exports file to indicate which hosts are allowed certain kinds of
+access to your local filesystems.
+Press [Enter] now to invoke an editor on /etc/exports
+                               [ OK ]</pre><p>按 <span class="keycap"><strong>Enter</strong></span> 键继续。系统会启动文本编辑器让您编辑
+	 <code class="filename">exports</code> 文件。</p><div class="figure"><a id="nfs-server-edit"></a><div class="figure-title">Figure 3.34. 编辑 <code class="filename">exports</code>文件</div><div class="figure-contents"><div class="mediaobject"><img src="install/nfs-server-edit.png" alt="编辑 exports文件" /></div></div></div><br class="figure-break" /><p>按照指示加入真实输出的文件目录或是稍后用您喜爱的编辑器自行编辑。
+	  请记下画面下方显示的文件名称及位置。</p><p>按下 <span class="keycap"><strong>Esc</strong></span> 键会出现一具对话框，默认选项是
+	  <span class="guimenuitem">a) leave editor</span>。按下
+	  <span class="keycap"><strong>Enter</strong></span> 离开并继续。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="nfs-client-options"></a>3.10.6.2. NFS 客户端</h4></div></div></div><p> NFS 客户端允许您的机器访问NFS服务器。</p><pre class="screen">                       User Confirmation Requested
+ Do you want to configure this machine as an NFS client?
+
+                              Yes   [ No ]</pre><p>按照您的需要，选择 <span class="guibutton">[ Yes ]</span>
+	  或 <span class="guibutton">[ No ]</span> 然后按 <span class="keycap"><strong>Enter</strong></span>。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="console"></a>3.10.7. 配置系统终端</h3></div></div></div><p>系统提供了几个选项可以让您配置终端的表现方式。</p><pre class="screen">                      User Confirmation Requested
+       Would you like to customize your system console settings?
+
+                              [ Yes ]  No</pre><p>要查阅及配置这些选项，请选择 <span class="guibutton">[ Yes ]</span>
+	并按<span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="saver-options"></a><div class="figure-title">Figure 3.35. 系统终端配置选项</div><div class="figure-contents"><div class="mediaobject"><img src="install/console-saver1.png" alt="系统终端配置选项" /></div></div></div><br class="figure-break" /><p>最常用的选项就是屏幕保护程序了。使用方向键将光标移动到
+	 <span class="guimenuitem">Saver</span>
+	 然后按 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="saver-select"></a><div class="figure-title">Figure 3.36. 屏幕保护程序选项</div><div class="figure-contents"><div class="mediaobject"><img src="install/console-saver2.png" alt="屏幕保护程序选项" /></div></div></div><br class="figure-break" /><p>选择您想使用的屏幕保护程序，然后按 <span class="keycap"><strong>Enter</strong></span>。
+	之后回到系统终端配置画面。</p><p>默认开启屏幕保护程序的时间是300秒。如果要更改此时间，请再次选择
+	 <span class="guimenuitem">Saver</span> 。然后选择
+	 <span class="guimenuitem">Timeout</span>
+	 并按 <span class="keycap"><strong>Enter</strong></span>键。系统会弹出一个对话框如下：</p><div class="figure"><a id="saver-timeout"></a><div class="figure-title">Figure 3.37. 屏幕保护时间设置</div><div class="figure-contents"><div class="mediaobject"><img src="install/console-saver3.png" alt="屏幕保护时间设置" /></div></div></div><br class="figure-break" /><p>您可以直接改变这个值，然后选 <span class="guibutton">[ OK ]</span>并按 <span class="keycap"><strong>Enter</strong></span>
+	键回到系统终端配置画面。</p><div class="figure"><a id="saver-exit"></a><div class="figure-title">Figure 3.38. 退出系统终端配置</div><div class="figure-contents"><div class="mediaobject"><img src="install/console-saver4.png" alt="退出系统终端配置" /></div></div></div><br class="figure-break" /><p>选择 <span class="guimenuitem">Exit</span> 然后按下
+	<span class="keycap"><strong>Enter</strong></span> 键会回到安装后的配置画面。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="timezone"></a>3.10.8. 配置时区</h3></div></div></div><p>配置您机器的时区可以让系统自动校正任何区域时间的变更，
+	并且在执行一些跟时区相关的程序时不会出错。</p><p>例子中假设此台机器位于美国东部的时区。
+	请参考您所在的地理位置来配置。</p><pre class="screen">                      User Confirmation Requested
+          Would you like to set this machine's time zone now?
+
+                            [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 并按下
+	<span class="keycap"><strong>Enter</strong></span>键以配置时区。</p><pre class="screen">                       User Confirmation Requested
+ Is this machine's CMOS clock set to UTC? If it is set to local time
+ or you don't know, please choose NO here!
+
+                              Yes   [ No ]</pre><p>这里按照您机器时间的配置，选择 <span class="guibutton">[ Yes ]</span>
+	或 <span class="guibutton">[ No ]</span> 然后按 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="set-timezone-region"></a><div class="figure-title">Figure 3.39. 选择您所处的地理区域</div><div class="figure-contents"><div class="mediaobject"><img src="install/timezone1.png" alt="选择您所处的地理区域" /></div></div></div><br class="figure-break" /><p>请选择适当的区域然后按 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="set-timezone-country"></a><div class="figure-title">Figure 3.40. 选择您所在的国家</div><div class="figure-contents"><div class="mediaobject"><img src="install/timezone2.png" alt="选择您所在的国家" /></div></div></div><br class="figure-break" /><p>选择您所在的国家然后按 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="set-timezone-locality"></a><div class="figure-title">Figure 3.41. 选择您所在的时区</div><div class="figure-contents"><div class="mediaobject"><img src="install/timezone3.png" alt="选择您所在的时区" /></div></div></div><br class="figure-break" /><p>选择您所在的时区然后按 <span class="keycap"><strong>Enter</strong></span>。</p><pre class="screen">                            Confirmation
+            Does the abbreviation 'EDT' look reasonable?
+
+                            [ Yes ]   No</pre><p>检查一下时区的缩写是否正确，如果没错，请按 <span class="keycap"><strong>Enter</strong></span>
+	返回系统安装后的配置画面。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="linuxcomp"></a>3.10.9. Linux 兼容性</h3></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">这节内容只适用于 FreeBSD 7.X 安装过程，
+	  如果您安装的是 FreeBSD 8.X 或更高版本，
+	  系统不会给出这个提示。</p></div><pre class="screen">                      User Confirmation Requested
+          Would you like to enable Linux binary compatibility?
+
+                            [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 并按下<span class="keycap"><strong>Enter</strong></span>	键，
+	将允许您在FreeBSD中执行Linux的软件。安装程序会安装一些为了跟
+	Linux 兼容的软件包。</p><p>如果您是通过FTP安装，那么您必须连到网络上。
+	有时候FTP站并不会包含所有的安装软件包（例如Linux兼容软件包）；
+	不过，稍后您还可以再安装这个项目。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mouse"></a>3.10.10. 配置鼠标</h3></div></div></div><p>此选项可以让您在终端上使用三键鼠标剪贴文字。
+	如果您用的鼠标是两个按钮，请参考手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=moused&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">moused</span>(8)</span></a>；
+	以取得有关模拟三键鼠标的信息。范例中使用的鼠标不是USB接口。
+	（例如ps/2或com接口的鼠标）：</p><pre class="screen">                      User Confirmation Requested
+         Does this system have a PS/2, serial, or bus mouse?
+
+                            [ Yes ]    No </pre><p>如果您使用的是 PS/2、 串口或 Bus 鼠标，请选择 <span class="guibutton">[ Yes ]</span>，
+	如果是 USB 鼠标， 则应选择
+	<span class="guibutton">[ No ]</span> 并按
+	<span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="mouse-protocol"></a><div class="figure-title">Figure 3.42. 选择鼠标类型</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse1.png" alt="选择鼠标类型" /></div></div></div><br class="figure-break" /><p>使用方向键选择 <span class="guimenuitem">Type</span> 然后按
+	<span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="set-mouse-protocol"></a><div class="figure-title">Figure 3.43. 设置鼠标协议</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse2.png" alt="设置鼠标协议" /></div></div></div><br class="figure-break" /><p>在这个例子中使用的类型是ps/2鼠标，所以可以使用默认的
+	<span class="guimenuitem">Auto（自动）</span> 。
+	您可以用方向键选择合适的项目，确定选择了 <span class="guibutton">[ OK ]</span>
+	后按 <span class="keycap"><strong>Enter</strong></span> 键离开此画面。</p><div class="figure"><a id="config-mouse-port"></a><div class="figure-title">Figure 3.44. 配置鼠标端口</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse3.png" alt="配置鼠标端口" /></div></div></div><br class="figure-break" /><p>选择 <span class="guimenuitem">Port</span>
+	然后按 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="set-mouse-port"></a><div class="figure-title">Figure 3.45. 配置鼠标端口</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse4.png" alt="配置鼠标端口" /></div></div></div><br class="figure-break" /><p>假设这台机器用的是ps/2鼠标，您可以采用默认的
+	<span class="guimenuitem">PS/2</span> 选项。请选择适当的项目然后按
+	 <span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="test-daemon"></a><div class="figure-title">Figure 3.46. 启动鼠标服务进程</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse5.png" alt="启动鼠标服务进程" /></div></div></div><br class="figure-break" /><p>选择<span class="guimenuitem">Enable</span>然后按
+	<span class="keycap"><strong>Enter</strong></span> 来启动和测试鼠标。</p><div class="figure"><a id="test-mouse-daemon"></a><div class="figure-title">Figure 3.47. 测试鼠标功能</div><div class="figure-contents"><div class="mediaobject"><img src="install/mouse6.png" alt="测试鼠标功能" /></div></div></div><br class="figure-break" /><p>鼠标指针可以在屏幕上移动，指明鼠标服务已经正常启用。那么请选择
+	<span class="guibutton">[ Yes ]</span> 按 <span class="keycap"><strong>Enter</strong></span>键。否则鼠标没
+	有配置成功 ── 选择	<span class="guibutton">[ No ]</span> 并尝试不同的配置
+	选项。</p><p>选择 <span class="guimenuitem">Exit</span> 并按
+	<span class="keycap"><strong>Enter</strong></span> 退回到系统安装完成后的配置画面。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="packages"></a>3.10.11. 安装预编译的软件包 (package)</h3></div></div></div><p>Package 是事先编译好的二进制文件， 因此，
+	这是安装软件的一种便捷的方式。</p><p>在这里作为例子我们将给出安装一个 package 所需的过程。
+	如果需要， 还可以在这一阶段加入其他 package。 安装完成之后，
+	<code class="command">sysinstall</code> 依然可以用来安装其他
+	package。</p><pre class="screen">                     User Confirmation Requested
+ The FreeBSD package collection is a collection of hundreds of
+ ready-to-run applications, from text editors to games to WEB servers
+ and more. Would you like to browse the collection now?
+
+                            [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 并按
+	<span class="keycap"><strong>Enter</strong></span> 将进入 package 选择界面：</p><div class="figure"><a id="package-category"></a><div class="figure-title">Figure 3.48. 选择 Package 类别</div><div class="figure-contents"><div class="mediaobject"><img src="install/pkg-cat.png" alt="选择 Package 类别" /></div></div></div><br class="figure-break" /><p>在任何时候， 只有当前安装介质上存在的 package 才可以安装。</p><p>如果选择了
+	<span class="guimenuitem">All</span> 或某个特定的分类，
+	则系统会列出全部可用的 package。 用光标键移动光棒选中需要的 package，
+	并按 <span class="keycap"><strong>Enter</strong></span>。</p><p>系统会显示可供选择的 package：</p><div class="figure"><a id="package-select"></a><div class="figure-title">Figure 3.49. 选择 Package</div><div class="figure-contents"><div class="mediaobject"><img src="install/pkg-sel.png" alt="选择 Package" /></div></div></div><br class="figure-break" /><p>如图所示， 我们选择了 <span class="application">bash</span> shell。
+	您可以根据需要使用
+	<span class="keycap"><strong>Space</strong></span> 键来勾选选定的 package。
+	在屏幕左下角会给出 package 的简短说明。</p><p>反复按下 <span class="keycap"><strong>Tab</strong></span> 键，
+	可以在最后选中的 package、 <span class="guibutton">[ OK ]</span> 和 <span class="guibutton">[ Cancel ]</span> 之间来回切换。</p><p>当您把需要的 package 都标记为安装之后，
+	按一下 <span class="keycap"><strong>Tab</strong></span> 切换到 <span class="guibutton">[ OK ]</span>， 随后按下
+	<span class="keycap"><strong>Enter</strong></span> 就可以回到 package 选择菜单了。</p><p>左右方向键可以用于在 <span class="guibutton">[ OK ]</span>
+	和 <span class="guibutton">[ Cancel ]</span> 之间进行切换。 这种方法也可以用来选择 <span class="guibutton">[ OK ]</span>，
+	随后按下 <span class="keycap"><strong>Enter</strong></span> 也可以回到 package 选择菜单。</p><div class="figure"><a id="package-install"></a><div class="figure-title">Figure 3.50. 安装预编译软件包</div><div class="figure-contents"><div class="mediaobject"><img src="install/pkg-install.png" alt="安装预编译软件包" /></div></div></div><br class="figure-break" /><p>使用 <span class="keycap"><strong>Tab</strong></span> 和左右方向键选择
+	<span class="guibutton">[ Install ]</span>
+	并按 <span class="keycap"><strong>Enter</strong></span>。
+	接下来需要确认将要安装的预编译包：</p><div class="figure"><a id="package-install-confirm"></a><div class="figure-title">Figure 3.51. 确认将要安装的预编译包</div><div class="figure-contents"><div class="mediaobject"><img src="install/pkg-confirm.png" alt="确认将要安装的预编译包" /></div></div></div><br class="figure-break" /><p>选择 <span class="guibutton">[ OK ]</span> 并按下 <span class="keycap"><strong>Enter</strong></span>
+	就可以开始预编译包的安装了。在这个过程中您会看到安装的相关信息，
+	直到安装完成为止。请留意观察是否有错误信息出现。</p><p>在完成预编译包的安装之后， 就进入了最后的配置阶段。
+	如果您没有选择任何预编译包， 并希望直接进入最后的配置阶段，
+	则可以选择 <span class="guibutton">Install</span> 来跳过。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="addusers"></a>3.10.12. 添加用户和组</h3></div></div></div><p>在安装系统的过程中， 您应添加至少一个用户， 以避免直接以
+	<code class="systemitem">root</code> 用户的身份登录。
+	用以保存其用户数据的根分区通常很小，
+	因此用 <code class="systemitem">root</code> 身份运行程序可能将其迅速填满。
+	下面的提示信息介绍了这样做可能带来的更大隐患：</p><pre class="screen">                     User Confirmation Requested
+ Would you like to add any initial user accounts to the system? Adding
+ at least one account for yourself at this stage is suggested since
+ working as the "root" user is dangerous (it is easy to do things which
+ adversely affect the entire system).
+
+                            [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span> 并按
+	<span class="keycap"><strong>Enter</strong></span> 即可开始创建用户的过程。</p><div class="figure"><a id="add-user2"></a><div class="figure-title">Figure 3.52. 选择用户</div><div class="figure-contents"><div class="mediaobject"><img src="install/adduser1.png" alt="选择用户" /></div></div></div><br class="figure-break" /><p>用箭头键来选择 <span class="guimenuitem">User</span> 然后按
+	<span class="keycap"><strong>Enter</strong></span>。</p><div class="figure"><a id="add-user3"></a><div class="figure-title">Figure 3.53. 添加用户信息</div><div class="figure-contents"><div class="mediaobject"><img src="install/adduser2.png" alt="添加用户信息" /></div></div></div><br class="figure-break" /><p>下面的描述信息会出现在屏幕的下方，可以使用 <span class="keycap"><strong>Tab</strong></span>
+	键来切换不同的项目，以便输入相关信息：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">Login ID</span></dt><dd><p>新用户的登录名（强制性必须写）</p></dd><dt><span class="term">UID</span></dt><dd><p>这个用户的ID编号（如果不写，系统自动添加）</p></dd><dt><span class="term">Group</span></dt><dd><p>这个用户的登录组名（如果不写，系统自动添加）</p></dd><dt><span class="term">Password</span></dt><dd><p>这个用户的密码（键入这个需要很仔细！）</p></dd><dt><span class="term">Full name</span></dt><dd><p>用户的全名（解释、备注）</p></dd><dt><span class="term">Member groups</span></dt><dd><p>这个用户所在的组</p></dd><dt><span class="term">Home directory</span></dt><dd><p>用户的主目录（如果不写，系统自动添加）</p></dd><dt><span class="term">Login shell</span></dt><dd><p>用户登录的shell（默认是<code class="filename">/bin/sh</code>）。</p></dd></dl></div><p>你可以将登录 shell 由 <code class="filename">/bin/sh</code> 改为
+	<code class="filename">/usr/local/bin/bash</code>，
+	以便使用事先以 package 形式安装的 <span class="application">bash</span>
+	shell。不要使用一个不存在的或您不能登录的shell。
+	最通用的shell是使用 BSD-world 的 C shell，
+	可以通过指定<code class="filename">/bin/tcsh</code>来修改。</p><p>用户也可以被添加到 <code class="systemitem">wheel</code>
+	组中成了一个超级用户，从而拥有 <code class="systemitem">root</code>
+	权限。</p><p>当您感觉满意时，键入 <span class="guibutton">[ OK ]</span> 键，
+	用户和组管理菜单将会重新出现。</p><div class="figure"><a id="add-user4"></a><div class="figure-title">Figure 3.54. 退出用户和组管理</div><div class="figure-contents"><div class="mediaobject"><img src="install/adduser3.png" alt="退出用户和组管理" /></div></div></div><br class="figure-break" /><p>如果有其他的需要，  此时还可以添加其他的组。
+	此外， 还可以通过
+	<code class="command">sysinstall</code> 在安装完成之后添加它们。</p><p>当您完成添加用户的时候，选择<span class="guimenuitem">Exit</span>
+	然后键入<span class="keycap"><strong>Enter</strong></span> 继续下面的安装。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="rootpass"></a>3.10.13. 设置 <code class="systemitem">root</code> 密码</h3></div></div></div><pre class="screen">                        Message
+ Now you must set the system manager's password.
+ This is the password you'll use to log in as "root".
+
+                         [ OK ]
+
+               [ Press enter or space ]</pre><p>键入 <span class="keycap"><strong>Enter</strong></span> 来设置 <code class="systemitem">root</code>
+	密码。</p><p>密码必须正确地输入两次。 毋庸讳言，
+	您需要选择一个不容易忘记的口令。
+	请注意您输入的口令不会回显， 也不会显示星号。</p><pre class="screen">New password:
+Retype new password :</pre><p>密码成功键入后，安装将继续。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="exit-inst"></a>3.10.14. 退出安装</h3></div></div></div><p>如果您需要设置
+	<a class="link" href="install-post.html#network-services" title="3.10.15. 配置其他网络服务">其他网络设备</a>，
+	或需要完成其他的配置工作，
+	可以在此时或者事后通过 <code class="command">sysinstall</code>
+	来进行配置。</p><pre class="screen">                     User Confirmation Requested
+ Visit the general configuration menu for a chance to set any last
+ options?
+
+                              Yes   [ No ]</pre><p>选择 <span class="guibutton">[ No ]</span> 然后键入 <span class="keycap"><strong>Enter</strong></span>
+	返回到主安装菜单。</p><div class="figure"><a id="final-main"></a><div class="figure-title">Figure 3.55. 退出安装</div><div class="figure-contents"><div class="mediaobject"><img src="install/mainexit.png" alt="退出安装" /></div></div></div><br class="figure-break" /><p>选择 <span class="guibutton">[X Exit Install]</span> 然后键入
+	 <span class="keycap"><strong>Enter</strong></span>。您可能需要确认是否真的退出安装：</p><pre class="screen">                     User Confirmation Requested
+ Are you sure you wish to exit? The system will reboot.
+
+                            [ Yes ]   No</pre><p>选择 <span class="guibutton">[ Yes ]</span>。 如果您是从 CDROM 引导的系统，
+	则会出现下面的提示信息要求您取出光盘：</p><pre class="screen">                    Message
+ Be sure to remove the media from the drive.
+
+                    [ OK ]
+           [ Press enter or space ]</pre><p>在系统开始重启之前， CDROM 驱动器是锁住的。
+	CDROM 解锁后就可以取出光盘了 (动作要快)。
+	按 <span class="guibutton">[ OK ]</span> 重启系统。</p><p>此后系统将重新启动， 因此请留意是否会出现一些错误信息。
+	进一步的细节， 请参见 <a class="xref" href="install-post.html#freebsdboot" title="3.10.16. FreeBSD 的启动过程">Section 3.10.16, “FreeBSD 的启动过程”</a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="network-services"></a>3.10.15. 配置其他网络服务</h3></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>如果之前缺少这一领域的经验， 那么配置网络服务对于新手而言，
+	很可能会是一件很有挑战的事情。 网络， 包括 Internet，
+	对于包括 FreeBSD 在内的所有现代操作系统而言都至关重要。
+	因此， 首先对 FreeBSD 提供的丰富的网络性能加以了解会很有帮助。
+	在安装过程中了解这些知识，
+	能够确保用户更好地理解他们可以用到的各种服务。</p><p>网络服务是一些可以接收来自网络上任何地方的人所提交的输入信息的程序。
+	人们一直都在努力确保这些程序不会做任何 <span class="quote">“<span class="quote">有害的</span>”</span> 事情。
+	不幸的是， 程序员们并不是十全十美的完人，因此，网络服务程序中的漏洞，
+	便有可能被攻击者利用来做一些坏事。因而，
+	只启用那些您知道自己需要的服务就很重要了。如果存在疑问，
+	那么就最好不要在您发现需要它之前启动任何网络服务。
+	您可以事后通过再次运行 <span class="application">sysinstall</span>
+	或直接手工配置 <code class="filename">/etc/rc.conf</code>
+	来随时启用这些服务。</p><p>选择 <span class="guimenu">Networking</span>
+	选项将下显示一个类似下面的菜单：</p><div class="figure"><a id="network-configuration"></a><div class="figure-title">Figure 3.56. 网络配置之上层配置</div><div class="figure-contents"><div class="mediaobject"><img src="install/net-config-menu1.png" alt="网络配置之上层配置" /></div></div></div><br class="figure-break" /><p>第一个选项， <span class="guimenuitem">Interfaces</span>，
+	已经在前面的 <a class="xref" href="install-post.html#inst-network-dev" title="3.10.1. 配置网卡">Section 3.10.1, “配置网卡”</a> 中做过配置，
+	因此现在可以略过它。</p><p>选择 <span class="guimenuitem">AMD</span> 选项，
+	将添加对于 <acronym class="acronym">BSD</acronym> 自动挂接程序的支持。
+	这个程序通常会和 <acronym class="acronym">NFS</acronym> 协议
+	(详情参见下文) 配合使用，以便自动挂载远程文件系统。
+	启用它不需要在此时进行特殊的额外配置。</p><p>下一行是 <span class="guimenuitem">AMD Flags</span> 的参数选项。
+	选择它之后，会弹出一个让您选择 <acronym class="acronym">AMD</acronym> 参数的子菜单。
+	菜单中包含一系列的选项：</p><pre class="screen">-a /.amd_mnt -l syslog /host /etc/amd.map /net /etc/amd.map</pre><p><code class="option">-a</code> 选项用来设置默认的挂接位置，这里使用的是
+	<code class="filename">/.amd_mnt</code>目录。<code class="option">-l</code>
+	指定默认的 <code class="filename">日志</code> 文件； 但是，当使用
+	<code class="literal">syslogd</code> 时， 所有在日志中记录的活动，
+	都会发送到系统日志服务去。
+	<code class="filename">/host</code>
+	用来挂接远程主机上输出的文件系统，而
+	<code class="filename">/net</code> 目录则用来挂接从特定
+	<acronym class="acronym">IP</acronym> 地址输出的文件系统。
+	<code class="filename">/etc/amd.map</code> 文件定义了用于
+	<acronym class="acronym">AMD</acronym> 的默认输出选项。</p><a id="idp69077456" class="indexterm"></a><p><span class="guimenuitem">Anon FTP</span> 允许匿名
+	<acronym class="acronym">FTP</acronym> 访问。 选中这个选项，
+	可以使这台机器成为一台匿名 <acronym class="acronym">FTP</acronym> 服务器。
+	要注意启用这个选项的安全风险。
+	系统将使用另外的菜单来说明安全风险和进一步的配置。</p><p><span class="guimenuitem">Gateway</span>
+	选项可以使将本机配置成为一台以前我们介绍过的网关。
+	如果您在安装过程中不小心选中了  <span class="guimenuitem">Gateway</span>，
+	也可以在这里用这个选项来取消。</p><p><span class="guimenuitem">Inetd</span>
+	选项用来配置或完全禁用前面讨论过的
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 服务程序。</p><p><span class="guimenuitem">Mail</span> 用来配置系统默认的
+	<acronym class="acronym">MTA</acronym> 或邮件传输代理。
+	选择这个选项将出现下面的菜单：</p><div class="figure"><a id="mta-selection"></a><div class="figure-title">Figure 3.57. 选择默认的 MTA</div><div class="figure-contents"><div class="mediaobject"><img src="install/mta-main.png" alt="选择默认的 MTA" /></div></div></div><br class="figure-break" /><p>这里给您提供了一个安装<acronym class="acronym">MTA</acronym>
+	并将其配置为默认值的机会。<acronym class="acronym">MTA</acronym>
+	是一种能够将邮件头递给本系统或互联网上的用户的邮件服务。</p><p>选择 <span class="guimenuitem">Sendmail</span>
+	将会安装十分流行的 <span class="application">sendmail</span> 服务，
+	这也是 FreeBSD 的默认配置。<span class="guimenuitem">Sendmail local</span>
+	选项表示将 <span class="application">sendmail</span> 设为默认的
+	<acronym class="acronym">MTA</acronym>，但禁止其从 Internet 上接收邮件的能力。
+	此外还有一些其他选项，<span class="guimenuitem">Postfix</span> 和
+	<span class="guimenuitem">Exim</span> 与 <span class="guimenuitem">Sendmail</span>
+	的功能类似。 它们两者也可以投递邮件； 不过，
+	有些用户会喜欢使用它们代替 <span class="application">sendmail</span>
+	<acronym class="acronym">MTA</acronym>。</p><p>选择 <acronym class="acronym">MTA</acronym> 或决定不挑选 MTA 之后，
+	网络配置菜单的下一项将是
+	<span class="guimenuitem">NFS client</span>。</p><p><span class="guimenuitem">NFS client</span> 客户端可以使系统通过
+	<acronym class="acronym">NFS</acronym> 与服务器进行通信。
+	<acronym class="acronym">NFS</acronym> 服务器通过 <acronym class="acronym">NFS</acronym>
+	协议可以使其它在网络上的机器来访问自己的文件系统。
+	如果这台机器要作为一台独立的服务器，这个选项可以保留不选。
+	如果启用它， 您在之后还需要进行更多的其他配置； 请参见
+	<a class="xref" href="network-nfs.html" title="28.3. 网络文件系统（NFS）">Section 28.3, “网络文件系统（NFS）”</a>
+	  以了解关于配置客户机和服务器的进一步详情。</p><p>接下来的 <span class="guimenuitem">NFS server</span>
+	选项， 可以让您将本机系统配置为
+	<acronym class="acronym">NFS</acronym> 服务器。 这会自动将启动 <acronym class="acronym">RPC</acronym>
+	远程过程调用的信息写入配置文件。 <acronym class="acronym">RPC</acronym>
+	是一种在多个主机和程序之间进行连接组织的机制。</p><p>下一项是 <span class="guimenuitem">Ntpdate</span> 选项，
+	它能够处理时间同步。 当选择它后，
+	会出现一个像下面所似的菜单：</p><div class="figure"><a id="Ntpdate-config"></a><div class="figure-title">Figure 3.58. Ntpdate 配置</div><div class="figure-contents"><div class="mediaobject"><img src="install/ntp-config.png" alt="Ntpdate 配置" /></div></div></div><br class="figure-break" /><p>从这个菜单选择一个离您最近的服务器。
+	选择较近的服务器，有助于提高时间同步的精度，
+	因为较远的服务器的连接延迟可能会比较大。</p><p>下一个选项是 <acronym class="acronym">PCNFSD</acronym>。
+	这个选项将安装第三方软件包
+	<span class="package">net/pcnfsd</span>。
+	它可以用来为无法自行提供 <acronym class="acronym">NFS</acronym>
+	认证服务的操作系统， 如微软的  <span class="trademark">MS-DOS</span>® 提供服务。</p><p>滚屏到下一页看一下其它选项：</p><div class="figure"><a id="Network-configuration-cont"></a><div class="figure-title">Figure 3.59. 网络配置之下层配置</div><div class="figure-contents"><div class="mediaobject"><img src="install/net-config-menu2.png" alt="网络配置之下层配置" /></div></div></div><br class="figure-break" /><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rpcbind&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rpcbind</span>(8)</span></a>， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rpc.statd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rpc.statd</span>(8)</span></a> 和
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rpc.lockd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rpc.lockd</span>(8)</span></a> 这三个程序是用来提供远程过程调用
+	(<acronym class="acronym">RPC</acronym>) 服务的。
+	<code class="command">rpcbind</code> 程序管理 <acronym class="acronym">NFS</acronym>
+	服务器和客户端的通信， 这是 <acronym class="acronym">NFS</acronym>
+	正确工作的必要前提。<span class="application">rpc.statd</span>
+	程序可以和其它主机上 <span class="application">rpc.statd</span> 程序交互，
+	以提供状态监控。这些状态报告默认情况下会保存到
+	 <code class="filename">/var/db/statd.status</code> 文件中。
+	 最后的一项是 <span class="guimenuitem">rpc.lockd</span> 选项，
+	 如果启用，则将提供文件上锁服务。通常将它和
+	 <span class="application">rpc.statd</span> 联用，
+	 以监视哪些主机会请求对文件执行上锁操作， 以及这种操作的频繁程度。
+	 尽管后两项功能对于调试非常有用， 但它们并不是
+	 <acronym class="acronym">NFS</acronym> 服务器和客户端正常运行所必需的。</p><p>下一个项目是<span class="guimenuitem">Routed</span>，这是一个路由程序。
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=routed&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">routed</span>(8)</span></a> 程序管理网络路由表，发现多播路由，
+	并且支持在网络上与它物理相连的主机来复制它的路由表的请求。
+	它被广泛地应用在本地网络中并扮演着网关的角色。
+	当选择它后，一个子菜单会来询问您这个程序的默认位置。
+	默认的位置已经被定义过， 您可以选择 <span class="keycap"><strong>Enter</strong></span> 键，
+	也可以按下其它的键。 这时会出来另一个菜单来询问您传递给
+	<code class="command">routed</code>程序的参数。
+	默认的是 <code class="option">-q</code> 参数。</p><p>接下来是 <span class="guimenuitem">Rwhod</span> 选项，
+	选中它会启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rwhod&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rwhod</span>(8)</span></a> 程序在系统初时化的时候。
+	<code class="command">rwhod</code>程序通过网络周期性的广播系统
+	信息或以<span class="quote">“<span class="quote">客户</span>”</span>的身份来收集这些信息。
+	更多的信息可以查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ruptime&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ruptime</span>(1)</span></a> 和
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rwho&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">rwho</span>(1)</span></a> 手册页。</p><p>倒数第二个选项是<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sshd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sshd</span>(8)</span></a> 程序。它可以通过使用
+	<span class="application">OpenSSH</span> 来提供安全的shell服务，
+	我们推荐通过使用它来使用 <span class="application">telnet</span> 和
+	<acronym class="acronym">FTP</acronym> 服务。 <span class="application">sshd</span>
+	服务通过使用加密技术来创建从一台机器到另一台机器的安全连接。</p><p>最后有一个 <span class="guimenuitem">TCP</span> 扩展选项。
+	这可以用来扩展在 <acronym class="acronym">RFC</acronym> 1323 和
+	<acronym class="acronym">RFC</acronym> 1644 里定义的 <acronym class="acronym">TCP</acronym>
+	功能。当许多主机以高速连接本机时，可能会引起某些连接被丢弃。
+	我们不推荐使用这个选项，
+	但是当使用独立的主机时可以从它上面得到一些好处。</p><p>现在您已经配置完成了网络服务，
+	您可以滚动屏幕到顶部选择 <span class="guimenuitem">X Exit</span>
+	项， 退出进入下一个配置部分， 或简单地选择两次
+	<span class="guimenuitem">X Exit</span> 之后选择
+	<span class="guibutton">[X Exit Install]</span> 来退出
+	<span class="application">sysinstall</span>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdboot"></a>3.10.16. FreeBSD 的启动过程</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdboot-i386"></a>3.10.16.1. FreeBSD/i386 的启动过程</h4></div></div></div><p>如果启动正常，您将看到在屏幕上有很多信息滚动，
+	最后您会看到登录命令行。您可以通过键入
+	<span class="keycap"><strong>Scroll-Lock</strong></span>和使用 <span class="keycap"><strong>PgUp</strong></span>
+	与 <span class="keycap"><strong>PgDn</strong></span>来查看信息，再键入
+	<span class="keycap"><strong>Scroll-Lock</strong></span> 回到命令行。</p><p>记录信息可能不会显示（缓冲区的限制）。您可以通过键入
+	<code class="command">dmesg</code> 来查看。</p><p>使用您在安装过程中设置的用户名/密码来登录。（例子中使用
+	<code class="systemitem">rpratt</code>）。除非必须的时候请不要用
+	<code class="systemitem">root</code> 用户登录。</p><p>典型的启动信息：（忽略版本信息）</p><pre class="screen">Copyright (c) 1992-2002 The FreeBSD Project.
+Copyright (c) 1979, 1980, 1983, 1986, 1988, 1989, 1991, 1992, 1993, 1994
+        The Regents of the University of California. All rights reserved.
+
+Timecounter "i8254"  frequency 1193182 Hz
+CPU: AMD-K6(tm) 3D processor (300.68-MHz 586-class CPU)
+  Origin = "AuthenticAMD"  Id = 0x580  Stepping = 0
+  Features=0x8001bf&lt;FPU,VME,DE,PSE,TSC,MSR,MCE,CX8,MMX&gt;
+  AMD Features=0x80000800&lt;SYSCALL,3DNow!&gt;
+real memory  = 268435456 (262144K bytes)
+config&gt; di sn0
+config&gt; di lnc0
+config&gt; di le0
+config&gt; di ie0
+config&gt; di fe0
+config&gt; di cs0
+config&gt; di bt0
+config&gt; di aic0
+config&gt; di aha0
+config&gt; di adv0
+config&gt; q
+avail memory = 256311296 (250304K bytes)
+Preloaded elf kernel "kernel" at 0xc0491000.
+Preloaded userconfig_script "/boot/kernel.conf" at 0xc049109c.
+md0: Malloc disk
+Using $PIR table, 4 entries at 0xc00fde60
+npx0: &lt;math processor&gt; on motherboard
+npx0: INT 16 interface
+pcib0: &lt;Host to PCI bridge&gt; on motherboard
+pci0: &lt;PCI bus&gt; on pcib0
+pcib1: &lt;VIA 82C598MVP (Apollo MVP3) PCI-PCI (AGP) bridge&gt; at device 1.0 on pci0
+pci1: &lt;PCI bus&gt; on pcib1
+pci1: &lt;Matrox MGA G200 AGP graphics accelerator&gt; at 0.0 irq 11
+isab0: &lt;VIA 82C586 PCI-ISA bridge&gt; at device 7.0 on pci0
+isa0: &lt;ISA bus&gt; on isab0
+atapci0: &lt;VIA 82C586 ATA33 controller&gt; port 0xe000-0xe00f at device 7.1 on pci0
+ata0: at 0x1f0 irq 14 on atapci0
+ata1: at 0x170 irq 15 on atapci0
+uhci0: &lt;VIA 83C572 USB controller&gt; port 0xe400-0xe41f irq 10 at device 7.2 on pci0
+usb0: &lt;VIA 83C572 USB controller&gt; on uhci0
+usb0: USB revision 1.0
+uhub0: VIA UHCI root hub, class 9/0, rev 1.00/1.00, addr 1
+uhub0: 2 ports with 2 removable, self powered
+chip1: &lt;VIA 82C586B ACPI interface&gt; at device 7.3 on pci0
+ed0: &lt;NE2000 PCI Ethernet (RealTek 8029)&gt; port 0xe800-0xe81f irq 9 at
+device 10.0 on pci0
+ed0: address 52:54:05:de:73:1b, type NE2000 (16 bit)
+isa0: too many dependant configs (8)
+isa0: unexpected small tag 14
+fdc0: &lt;NEC 72065B or clone&gt; at port 0x3f0-0x3f5,0x3f7 irq 6 drq 2 on isa0
+fdc0: FIFO enabled, 8 bytes threshold
+fd0: &lt;1440-KB 3.5" drive&gt; on fdc0 drive 0
+atkbdc0: &lt;keyboard controller (i8042)&gt; at port 0x60-0x64 on isa0
+atkbd0: &lt;AT Keyboard&gt; flags 0x1 irq 1 on atkbdc0
+kbd0 at atkbd0
+psm0: &lt;PS/2 Mouse&gt; irq 12 on atkbdc0
+psm0: model Generic PS/2 mouse, device ID 0
+vga0: &lt;Generic ISA VGA&gt; at port 0x3c0-0x3df iomem 0xa0000-0xbffff on isa0
+sc0: &lt;System console&gt; at flags 0x1 on isa0
+sc0: VGA &lt;16 virtual consoles, flags=0x300&gt;
+sio0 at port 0x3f8-0x3ff irq 4 flags 0x10 on isa0
+sio0: type 16550A
+sio1 at port 0x2f8-0x2ff irq 3 on isa0
+sio1: type 16550A
+ppc0: &lt;Parallel port&gt; at port 0x378-0x37f irq 7 on isa0
+ppc0: SMC-like chipset (ECP/EPP/PS2/NIBBLE) in COMPATIBLE mode
+ppc0: FIFO with 16/16/15 bytes threshold
+ppbus0: IEEE1284 device found /NIBBLE
+Probing for PnP devices on ppbus0:
+plip0: &lt;PLIP network interface&gt; on ppbus0
+lpt0: &lt;Printer&gt; on ppbus0
+lpt0: Interrupt-driven port
+ppi0: &lt;Parallel I/O&gt; on ppbus0
+ad0: 8063MB &lt;IBM-DHEA-38451&gt; [16383/16/63] at ata0-master using UDMA33
+ad2: 8063MB &lt;IBM-DHEA-38451&gt; [16383/16/63] at ata1-master using UDMA33
+acd0: CDROM &lt;DELTA OTC-H101/ST3 F/W by OIPD&gt; at ata0-slave using PIO4
+Mounting root from ufs:/dev/ad0s1a
+swapon: adding /dev/ad0s1b as swap device
+Automatic boot in progress...
+/dev/ad0s1a: FILESYSTEM CLEAN; SKIPPING CHECKS
+/dev/ad0s1a: clean, 48752 free (552 frags, 6025 blocks, 0.9% fragmentation)
+/dev/ad0s1f: FILESYSTEM CLEAN; SKIPPING CHECKS
+/dev/ad0s1f: clean, 128997 free (21 frags, 16122 blocks, 0.0% fragmentation)
+/dev/ad0s1g: FILESYSTEM CLEAN; SKIPPING CHECKS
+/dev/ad0s1g: clean, 3036299 free (43175 frags, 374073 blocks, 1.3% fragmentation)
+/dev/ad0s1e: filesystem CLEAN; SKIPPING CHECKS
+/dev/ad0s1e: clean, 128193 free (17 frags, 16022 blocks, 0.0% fragmentation)
+Doing initial network setup: hostname.
+ed0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+        inet 192.168.0.1 netmask 0xffffff00 broadcast 192.168.0.255
+        inet6 fe80::5054::5ff::fede:731b%ed0 prefixlen 64 tentative scopeid 0x1
+        ether 52:54:05:de:73:1b
+lo0: flags=8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; mtu 16384
+        inet6 fe80::1%lo0 prefixlen 64 scopeid 0x8
+        inet6 ::1 prefixlen 128
+        inet 127.0.0.1 netmask 0xff000000
+Additional routing options: IP gateway=YES TCP keepalive=YES
+routing daemons:.
+additional daemons: syslogd.
+Doing additional network setup:.
+Starting final network daemons: creating ssh RSA host key
+Generating public/private rsa1 key pair.
+Your identification has been saved in /etc/ssh/ssh_host_key.
+Your public key has been saved in /etc/ssh/ssh_host_key.pub.
+The key fingerprint is:
+cd:76:89:16:69:0e:d0:6e:f8:66:d0:07:26:3c:7e:2d root@k6-2.example.com
+ creating ssh DSA host key
+Generating public/private dsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_dsa_key.
+Your public key has been saved in /etc/ssh/ssh_host_dsa_key.pub.
+The key fingerprint is:
+f9:a1:a9:47:c4:ad:f9:8d:52:b8:b8:ff:8c:ad:2d:e6 root@k6-2.example.com.
+setting ELF ldconfig path: /usr/lib /usr/lib/compat /usr/X11R6/lib
+/usr/local/lib
+a.out ldconfig path: /usr/lib/aout /usr/lib/compat/aout /usr/X11R6/lib/aout
+starting standard daemons: inetd cron sshd usbd sendmail.
+Initial rc.i386 initialization:.
+rc.i386 configuring syscons: blank_time screensaver moused.
+Additional ABI support: linux.
+Local package initialization:.
+Additional TCP options:.
+
+FreeBSD/i386 (k6-2.example.com) (ttyv0)
+
+login: rpratt
+Password:</pre><p>生成 RSA 和 DSA密钥在比较慢的机器上可能要花很长时间。这只是一个
+	新安装后的首次启动，以后的启动会变得更快一点。</p><p>如果已经完成 X 服务器的配置， 且指定了默认的桌面窗口管理器，
+	就可以在命令行键入 <code class="command">startx</code> 来启动它了。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="shutdown"></a>3.10.17. FreeBSD 关机</h3></div></div></div><p>正确的关闭操作系统是很重要的。不要仅仅关闭电源。
+	首先，您需要成为一个超级用户，通过键入
+	<code class="command">su</code> 命令来实现。然后输入
+	<code class="systemitem">root</code> 密码。这需要用户是
+	<code class="systemitem">wheel</code> 组的一名成员。然后，
+	以<code class="systemitem">root</code>键入
+	<code class="command">shutdown -h now</code>命令。</p><pre class="screen">The operating system has halted.
+Please press any key to reboot.</pre><p>当shutdown命令发出后，屏幕上出现
+	<span class="quote">“<span class="quote">Please press any key to reboot</span>”</span>
+	信息时，您就可以安全的关闭计算机了。如果按下任意一个键，
+	计算机将重新启动。</p><p>您也能够使用
+        <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Del</strong></span>
+	组合键来重新启动计算机，但是不推荐使用这个操作。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-final-warning.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-trouble.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.9. 安装确认 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.11. 常见问题</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

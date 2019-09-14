@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.16. User Lock Down</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-implementing.html" title="16.15. MAC Jail 中的 Nagios" /><link rel="next" href="mac-troubleshoot.html" title="16.17. MAC 框架的故障排除" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.16. User Lock Down</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-implementing.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-troubleshoot.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-userlocked"></a>16.16. User Lock Down</h2></div></div></div><p>这个例子针对的是一个相对较小的存储系统，
+      其用户数少于五十。 用户能够在其上登录，
+      除了存储数据之外， 还可以访问一些其他资源。</p><p>在这个场景中， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 可以与
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_seeotheruids&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_seeotheruids</span>(4)</span></a> 并存， 以达到禁止访问非授权资源，
+      同时隐藏其他用户的进程的目的。</p><p>首先， 在
+      <code class="filename">/boot/loader.conf</code> 中加入：</p><pre class="programlisting">mac_seeotheruids_load="YES"</pre><p>随后， 可以通过下述 rc.conf 变量来启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a>
+      安全策略模块：</p><pre class="programlisting">ugidfw_enable="YES"</pre><p>默认规则保存在
+      <code class="filename">/etc/rc.bsdextended</code> 中，
+      并在系统初始化时加载； 但是， 其中的默认项可能需要进行一些改动。
+      因为这台机器只为获得了授权的用户提供服务， 因此除了最后两项之外，
+      其它内容都应保持注释的状态。 这两项规则将默认强制加载属于用户的系统客体。</p><p>在这台机器上添加需要的用户并重新启动。 出于测试的目的，
+      请在两个控制台上分别以不同的用户身份登录。
+      运行 <code class="command">ps aux</code> 命令来看看是否能看到其他用户的进程。
+      此外， 在其他用户的主目录中运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a> 命令，
+      如果配置正确， 则这个命令会失败。</p><p>不要尝试以 <code class="systemitem">root</code> 用户的身份进行测试，
+      除非您已经修改了特定的 <code class="command">sysctl</code> 来阻止超级用户的访问。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在添加新用户时， 他们的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a>
+	规则不会自动出现在规则集表中。 要迅速更新规则集，
+	只需简单地使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldunload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldunload</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a>
+	工具来卸载并重新加载安全策略模块。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-implementing.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-troubleshoot.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.15. MAC Jail 中的 Nagios </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.17. MAC 框架的故障排除</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

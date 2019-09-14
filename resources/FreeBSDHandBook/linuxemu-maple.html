@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>11.4. 安装Maple™</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="linuxemu.html" title="Chapter 11. Linux二进制兼容模式" /><link rel="prev" href="linuxemu-mathematica.html" title="11.3. 安装Mathematica®" /><link rel="next" href="linuxemu-matlab.html" title="11.5. 安装MATLAB®" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.4. 安装<span class="trademark">Maple</span>™</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="linuxemu-mathematica.html">Prev</a> </td><th width="60%" align="center">Chapter 11. Linux二进制兼容模式</th><td width="20%" align="right"> <a accesskey="n" href="linuxemu-matlab.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="linuxemu-maple"></a>11.4. 安装<span class="trademark">Maple</span>™</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Aaron</span> <span class="surname">Kaplan</span></span>. </span></div><div><span class="authorgroup">Thanks to <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Robert</span> <span class="surname">Getschmann</span></span>. </span></div></div></div><a id="idp75205456" class="indexterm"></a><p><span class="application"><span class="trademark">Maple</span>™</span>是一个类似于<span class="application"><span class="trademark">Mathematica</span>®</span>的商业数学软件。
+    您可以从<code class="uri"><a class="uri" href="http://www.maplesoft.com/" target="_top">http://www.maplesoft.com/</a></code>买到这个软件并注册得到一个使用许可。
+     要在FreeBSD上安装这个软件，请按照下面的步骤：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>从软件的发行包执行<code class="filename">INSTALL</code> shell脚本。当进入安装程序的提示符时，
+	选择<span class="quote">“<span class="quote">RedHat</span>”</span> 选项。典型的安装目录是<code class="filename">/usr/local/maple</code>。</p></li><li class="step"><p>如果您不这样做，可以从Maple Waterloo Software (<code class="uri"><a class="uri" href="http://register.maplesoft.com/" target="_top">http://register.maplesoft.com/</a></code>)
+	为 <span class="application"><span class="trademark">Maple</span>™</span> 订购一个授权许可。
+	然后把它复制到 <code class="filename">/usr/local/maple/license/license.dat</code>。</p></li><li class="step"><p>通过运行<span class="application"><span class="trademark">Maple</span>™</span>中的<code class="filename">INSTALL_LIC</code>安装shell脚本来
+	  安装<span class="application">FLEXlm</span>许可管理器。  指定许可服务器为您的机器名。</p></li><li class="step"><p>像下面这样Patch您的<code class="filename">/usr/local/maple/bin/maple.system.type</code>
+          文件：</p><pre class="programlisting">   ----- snip ------------------
+*** maple.system.type.orig      Sun Jul  8 16:35:33 2001
+--- maple.system.type   Sun Jul  8 16:35:51 2001
+***************
+*** 72,77 ****
+--- 72,78 ----
+          # the IBM RS/6000 AIX case
+          MAPLE_BIN="bin.IBM_RISC_UNIX"
+          ;;
++     "FreeBSD"|\
+      "Linux")
+          # the Linux/x86 case
+        # We have two Linux implementations, one for Red Hat and
+   ----- snip end of patch -----</pre><p>请注意<code class="literal">"FreeBSD"|\</code>后面没有空格。</p><p>这个补丁指示<span class="application"><span class="trademark">Maple</span>™</span>把<span class="quote">“<span class="quote">FreeBSD</span>”</span>识别为一种Linux系统。
+	 <code class="filename">bin/maple</code> shell脚本调用<code class="filename">bin/maple.system.type</code>
+	 脚本执行<code class="command">uname -a</code>来查找操作系统名，根据操作系统名，就知道该使用哪个程序。
+	 </p></li><li class="step"><p>启动许可服务器。</p><p>下面的脚本，安装成<code class="filename">/usr/local/etc/rc.d/lmgrd.sh</code>，
+	是很方便的启动<code class="command">lmgrd</code>的方法：</p><pre class="programlisting">   ----- snip ------------
+
+#! /bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/X11R6/bin
+PATH=${PATH}:/usr/local/maple/bin:/usr/local/maple/FLEXlm/UNIX/LINUX
+export PATH
+
+LICENSE_FILE=/usr/local/maple/license/license.dat
+LOG=/var/log/lmgrd.log
+
+case "$1" in
+start)
+	lmgrd -c ${LICENSE_FILE} 2&gt;&gt; ${LOG} 1&gt;&amp;2
+	echo -n " lmgrd"
+	;;
+stop)
+	lmgrd -c ${LICENSE_FILE} -x lmdown 2&gt;&gt; ${LOG} 1&gt;&amp;2
+	;;
+*)
+	echo "Usage: `basename $0` {start|stop}" 1&gt;&amp;2
+	exit 64
+	;;
+esac
+
+exit 0
+   ----- snip ------------</pre></li><li class="step"><p>开始测试<span class="application"><span class="trademark">Maple</span>™</span>：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cd /usr/local/maple/bin</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>./xmaple</code></strong></pre><p>您应该成功启动起来了。记得写信告诉Maplesoft您想要一个本地FreeBSD版本！</p></li></ol></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75236944"></a>11.4.1. 一些缺陷</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="application">FLEXlm</span>许可管理器可能是一个使用比较困难的工具。
+	关于它的额外的文档可以在<code class="uri"><a class="uri" href="http://www.globetrotter.com/" target="_top">http://www.globetrotter.com/</a></code>找到。</p></li><li class="listitem"><p><code class="command">lmgrd</code>对许可文件非常挑剔，有一点问题就会core dump。
+	正确的许可文件看起来像下面这样：
+	</p><pre class="programlisting"># =======================================================
+# License File for UNIX Installations ("Pointer File")
+# =======================================================
+SERVER chillig ANY
+#USE_SERVER
+VENDOR maplelmg
+
+FEATURE Maple maplelmg 2000.0831 permanent 1 XXXXXXXXXXXX \
+         PLATFORMS=i86_r ISSUER="Waterloo Maple Inc." \
+         ISSUED=11-may-2000 NOTICE=" Technische Universitat Wien" \
+         SN=XXXXXXXXX</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">序列号被'X'代替了。 <code class="systemitem">chillig</code>是主机名。</p></div><p>只要不修改<span class="quote">“<span class="quote">FEATURE</span>”</span>行，编辑后一般都能工作。</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="linuxemu-mathematica.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="linuxemu.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="linuxemu-matlab.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">11.3. 安装<span class="trademark">Mathematica</span>® </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 11.5. 安装<span class="trademark">MATLAB</span>®</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

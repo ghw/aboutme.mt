@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.2. 介绍</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="security.html" title="Chapter 14. 安全" /><link rel="next" href="securing-freebsd.html" title="14.3. 确保 FreeBSD 的安全" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.2. 介绍</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="security.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="securing-freebsd.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="security-intro"></a>14.2. 介绍</h2></div></div></div><p>安全是系统管理员自始至终的基本要求。 由于所有的 BSD <span class="trademark">UNIX</span>®
+      多用户系统都提供了与生俱来的安全性， 因此建立和维护额外的安全机制，
+      确保用户的 <span class="quote">“<span class="quote">诚实</span>”</span>
+      可能也就是最需要系统管理员考虑的艰巨的工作了。
+      机器的安全性取决于您设置的安全设施， 而许多安全方面的考虑，
+      则会与人们使用计算机时的便利性相矛盾。 一般来说， <span class="trademark">UNIX</span>®
+      系统能够胜任数目众多进程并发地处理各类任务，
+      这其中的许多进程是以服务身份运行的 ── 这意味着，
+      外部实体能够与它们互联并产生会话交互。 如今的桌面系统，
+      已经能够达到许多昔日的小型机甚至主机的性能，
+      而随着这些计算机的联网和在更大范围内完成互联，
+      安全也成为了一个日益严峻的课题。</p><p>系统的安全也应能够应付各种形式的攻击， 这也包括那些使系统崩溃，
+      或阻止其正常运转， 并不仅限于试图窃取
+      <code class="systemitem">root</code> 帐号 (<span class="quote">“<span class="quote">破译 root</span>”</span>)
+      的攻击形式。 安全问题大体可分为以下几类：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>拒绝服务攻击。</p></li><li class="listitem"><p>窃取其他用户的帐户。</p></li><li class="listitem"><p> 通过可访问服务窃取root帐户。</p></li><li class="listitem"><p>通过用户帐户窃取root帐户。</p></li><li class="listitem"><p>建立后门。</p></li></ol></div><a id="idp76947536" class="indexterm"></a><a id="idp76952912" class="indexterm"></a><a id="idp76954448" class="indexterm"></a><p>拒绝式服务攻击是侵占机器所需资源的一种行为。
+      通常， DoS 攻击采用暴力(brute-force)手段通过压倒性的流量来破坏服务器和网络栈，
+      以使机器崩溃或无法使用。 某些 DoS 攻击则利用在网络栈中的错误，
+      仅用一个简单的信息包就可以让机器崩溃， 这类情况通常只能通过给内核打补丁来修复。
+      在一些不利的条件下， 对服务器的攻击能够被修复，
+      只要适当地修改一下系统的选项来限制系统对服务器的负荷。
+      顽强的网络攻击是很难对付的。 例如，一个欺骗性信息包的攻击，
+      无法阻止入侵者切断您的系统与Internet的连接。
+      它不会使您的机器死掉，但它会把Internet连接占满。</p><a id="idp76955344" class="indexterm"></a><p>窃取用户帐户要比D.o.S.攻击更加普遍。
+      许多系统管理员仍然在他们的服务器上运行着基本的
+      <span class="application">telnetd</span>，<span class="application">rlogind</span>，
+      <span class="application">rshd</span> 和 <span class="application">ftpd</span>
+      服务。 这些服务在默认情况下不会以加密连接来操作。
+      结果是如果您的系统有中等规模大小的用户群，
+      在通过远程登录的方式登录到您系统的用户中， 一些人的口令会被人窃取。
+      仔细的系统管理员会从那些成功登录系统的远程访问日志中寻找可疑的源地址。</p><p>通常必须假定，如果一个入侵者已经访问到了一个用户的帐户，
+      那么它就可能使自己成为 <code class="systemitem">root</code>。 然而，
+      事实是在一个安全和维护做得很好的系统中，
+      访问用户的帐户不一定会让入侵者成为 <code class="systemitem">root</code>。
+      这个差别是很重要的，因为没有成为
+      <code class="systemitem">root</code> 则入侵者通常是无法隐藏它的轨迹的， 而且，
+      如果走运的话， 除了让用户的文件乱掉和系统崩溃之外，
+      它不能做什么别的事情。 窃取用户帐户是很普遍的事情，
+      因为用户往往不会对系统管理员的警告采取措施。</p><a id="idp76964688" class="indexterm"></a><p>系统管理员必须牢牢记住，可能有许多潜在的方法会使他们机器上的
+      <code class="systemitem">root</code> 用户受到威胁。入侵者可能知道
+      <code class="systemitem">root</code> 的口令，而如果在以
+      <code class="systemitem">root</code> 权限运行的服务器上找到一个缺陷 (bug)，
+      就可以通过网络连接到那台服务器上达到目的；另外，
+      一旦入侵者已经侵入了一个用户的帐户，
+      可以在自己的机器上运行一个 suid-root 程序来发现服务器的漏洞，
+      从而让他侵入到服务器并获取 <code class="systemitem">root</code>。
+      攻击者找到了入侵一台机器上 <code class="systemitem">root</code> 的途径之后，
+      他们就不再需要安装后门了。许多 <code class="systemitem">root</code>
+      漏洞被发现并修正之后， 入侵者会想尽办法去删除日志来消除自己的访问痕迹，
+      所以他们会安装后门。
+      后门能给入侵者提供一个简单的方法来重新获取访问系统的 <code class="systemitem">root</code>
+      权限， 但它也会给聪明的系统管理员一个检测入侵的简便方法。
+      让入侵者无法安装后门事实上对您的系统安全是有害的，
+      因为这样并不会修复那些侵入系统的入侵者所发现的新漏洞。</p><p>安全的管理方法应当使用像 <span class="quote">“<span class="quote">洋葱皮</span>”</span> 一样多层次的方法来实现，
+      这些措施可以按下面的方式进行分类：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>确保 <code class="systemitem">root</code> 和维护人员帐户的安全。</p></li><li class="listitem"><p>确保 <code class="systemitem">root</code> – 以root用户权限运行的服务器和suid/sgid可执行程序的安全。</p></li><li class="listitem"><p>确保用户帐户的安全。</p></li><li class="listitem"><p>确保口令文件的安全。</p></li><li class="listitem"><p>确保内核中核心组件、直接访问设备和文件系统的安全。</p></li><li class="listitem"><p>快速检测系统中发生的不适当的变化。</p></li><li class="listitem"><p>做个偏执狂。</p></li></ol></div><p>这一章的下一节将比较深入地讲述上面提到的每一个条目。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="security.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="securing-freebsd.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 14. 安全 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.3. 确保 FreeBSD 的安全</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

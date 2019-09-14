@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.14. 进程记帐</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="security-advisories.html" title="14.13. FreeBSD 安全公告" /><link rel="next" href="jails.html" title="Chapter 15. Jails" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.14. 进程记帐</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="security-advisories.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="jails.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="security-accounting"></a>14.14. 进程记帐</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp78181328" class="indexterm"></a><p>进程记帐是一种管理员可以使用的跟踪系统资源使用情况的手段，
+      包括它们分配给了哪些用户、 提供系统监视手段，
+      并且可以精细到用户执行的每一个命令。</p><p>当然， 这种做法是兼有利弊的。 它的好处是，
+      查找入侵时可以迅速把范围缩小到攻击者进入的时刻；
+      而这样做的缺点， 则是记帐会产生大量的日志，
+      因而需要很多磁盘空间来存储它们。
+      这一节将带领管理员一步一步地配置基本的进程记帐。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78182864"></a>14.14.1. 启用并利用进程记帐</h3></div></div></div><p>在使用进程记帐之前， 必须先启用它。
+	要完成这项工作， 需要运行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>touch /var/account/acct</code></strong>
+
+<code class="prompt">#</code> <strong class="userinput"><code>accton /var/account/acct</code></strong>
+
+<code class="prompt">#</code> <strong class="userinput"><code>echo 'accounting_enable="YES"' &gt;&gt; /etc/rc.conf</code></strong></pre><p>一旦启用之后， 记帐就会开始跟踪
+	<acronym class="acronym">CPU</acronym> 统计数据、 命令， 等等。
+	所有的记帐日志不是以可读的方式记录的， 要查看它们，
+	需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sa&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sa</span>(8)</span></a> 这个工具。 如果没有给出其他参数， 则
+	<code class="command">sa</code> 将按用户， 以分钟为单位显示他们所使用的时间、
+	总共的 <acronym class="acronym">CPU</acronym> 和用户时间，
+	以及平均的 I/O 操作数目， 等等。</p><p>要显示关于刚刚发出的命令的相关信息，
+	则应使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lastcomm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lastcomm</span>(1)</span></a> 工具。
+	<code class="command">lastcomm</code> 命令可以用来显示在某一 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ttys&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">ttys</span>(5)</span></a>
+	上的用户信息， 例如：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>lastcomm ls
+	trhodes ttyp1</code></strong></pre><p>将会显示出所有已知的 <code class="systemitem">trhodes</code>
+        在 <code class="literal">ttyp1</code> 终端上执行 <code class="command">ls</code> 的情况。</p><p>更多的可用选项在联机手册
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=lastcomm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">lastcomm</span>(1)</span></a>、 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acct&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">acct</span>(5)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sa&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sa</span>(8)</span></a> 中有所介绍。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="security-advisories.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="jails.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.13. FreeBSD 安全公告 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 15. Jails</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

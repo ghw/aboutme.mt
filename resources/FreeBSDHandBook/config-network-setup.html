@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.8. 设置网卡</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc" /><link rel="next" href="configtuning-virtual-hosts.html" title="12.9. 虚拟主机" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.8. 设置网卡</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-rcd.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-virtual-hosts.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="config-network-setup"></a>12.8. 设置网卡</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp75723344" class="indexterm"></a><p>现在我们不可想象一台计算机没有网络连接的情况。
+      添加和配置一块网卡是任何 FreeBSD 系统管理员的一项基本任务。
+    </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75724880"></a>12.8.1. 查找正确的驱动程序</h3></div></div></div><a id="idp75725520" class="indexterm"></a><p>在开始之前，您应该知道您的网卡类型，它用的芯片和它是 PCI
+	还是 ISA 网卡。FreeBSD 支持很多种 PCI 和 ISA 网卡。
+	可以查看您的版本硬件兼容性列表以确定您的网卡被支持。
+      </p><p>确认系统能够支持您的网卡之后， 您还需要为它选择合适的驱动程序。
+	<code class="filename">/usr/src/sys/conf/NOTES</code> 和
+	<code class="filename">/usr/src/sys/arch/conf/NOTES</code>
+	将为您提供所支持的一些网卡和芯片组的信息。
+	如果您怀疑驱动程序是否使所要找的那一个，
+	请参考驱动程序的联机手册。
+	联机手册将提供关于所支持的硬件更详细的信息，
+	甚至还包括可能发生的问题。</p><p>如果您的网卡很常见的话， 大多数时候您不需要为驱动浪费精力。
+	常用的网卡在 <code class="filename">GENERIC</code> 内核中已经支持了，
+	所以您的网卡在启动时就会显示出来，像是：</p><pre class="screen">dc0: &lt;82c169 PNIC 10/100BaseTX&gt; port 0xa000-0xa0ff mem 0xd3800000-0xd38
+000ff irq 15 at device 11.0 on pci0
+miibus0: &lt;MII bus&gt; on dc0
+bmtphy0: &lt;BCM5201 10/100baseTX PHY&gt; PHY 1 on miibus0
+bmtphy0:  10baseT, 10baseT-FDX, 100baseTX, 100baseTX-FDX, auto
+dc0: Ethernet address: 00:a0:cc:da:da:da
+dc0: [ITHREAD]
+dc1: &lt;82c169 PNIC 10/100BaseTX&gt; port 0x9800-0x98ff mem 0xd3000000-0xd30
+000ff irq 11 at device 12.0 on pci0
+miibus1: &lt;MII bus&gt; on dc1
+bmtphy1: &lt;BCM5201 10/100baseTX PHY&gt; PHY 1 on miibus1
+bmtphy1:  10baseT, 10baseT-FDX, 100baseTX, 100baseTX-FDX, auto
+dc1: Ethernet address: 00:a0:cc:da:da:db
+dc1: [ITHREAD]</pre><p>在这个例子中，我们看到有两块使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dc&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">dc</span>(4)</span></a> 驱动的网卡在系统中。</p><p>如果您的网卡没有出现在
+	<code class="filename">GENERIC</code> 中， 则需要手工加载合适的驱动程序。
+	要完成这项工作可以使用下面两种方法之一：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>最简单的办法是用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a> 加载网卡对应的内核模块。
+	    除此之外， 通过在 <code class="filename">/boot/loader.conf</code>
+	    文件中加入适当的设置， 也可以让系统在引导时自动加载这些模块。
+	    不过， 并不是所有的网卡都能够通过这种方法提供支持；
+	    ISA 网卡是比较典型的例子。</p></li><li class="listitem"><p>另外， 您也可以将网卡的支持静态联编进内核。 察看
+	    <code class="filename">/usr/src/sys/conf/NOTES</code>，
+	    <code class="filename">/usr/src/sys/arch/conf/NOTES</code>
+	    以及驱动程序的联机手册以了解需要在您的内核配置文件中加一些什么。
+	    要了解关于重新编译内核的进一步细节， 请参见 <a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>。 如果您的卡在引导时可以被内核
+	    (<code class="filename">GENERIC</code>) 识别，
+	    您应该不需要编译新的内核。</p></li></ul></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="config-network-ndis"></a>12.8.1.1. 使用 <span class="trademark">Windows</span>® NDIS 驱动程序</h4></div></div></div><a id="idp75741520" class="indexterm"></a><a id="idp75742032" class="indexterm"></a><a id="idp75742544" class="indexterm"></a><a id="idp75743440" class="indexterm"></a><a id="idp75744080" class="indexterm"></a><a id="idp75744976" class="indexterm"></a><p>不幸的是， 许多厂商由于认为驱动程序会涉及许多敏感的商业机密，
+	  至今仍不愿意将把驱动程序作为开放源代码形式发布列入他们的时间表。
+	  因此， FreeBSD 和其他操作系统的开发者就只剩下了两种选择：
+	  要么经历长时间的痛苦过程来对驱动进行逆向工程，
+	  要么使用现存的为
+	  <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>® 平台提供的预编译版本的驱动程序。
+	  包括参与 FreeBSD 开发的绝大多数开发人员，
+	  都选择了后一种方法。</p><p>得益于 Bill Paul (wpaul) 的工作， 已经可以 <span class="quote">“<span class="quote">直接地</span>”</span>
+	  支持 网络驱动接口标准 (NDIS, Network Driver Interface Specification) 了。
+	  FreeBSD NDISulator (也被称为 Project Evil) 可以支持二进制形式的
+	  <span class="trademark">Windows</span>® 驱动程序， 并让它相信正在运行的是 <span class="trademark">Windows</span>®。 由于
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ndis&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ndis</span>(4)</span></a> 驱动使用的是用于 <span class="trademark">Windows</span>® 的二进制形式的驱动，
+	  因此它只能在 <span class="trademark">i386</span>™ 和 amd64 系统上使用。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ndis&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ndis</span>(4)</span></a> 驱动在设计时主要提供了
+	    PCI、 CardBus 和 PCMCIA 设备的支持，
+	    而 USB 设备目前则没有提供支持。</p></div><p>要使用 NDISulator， 您需要三件东西：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>内核的源代码</p></li><li class="listitem"><p>二进制形式的 <span class="trademark">Windows</span>® XP 驱动程序
+	    (扩展名为 <code class="filename">.SYS</code>)</p></li><li class="listitem"><p><span class="trademark">Windows</span>® XP 驱动程序配置文件
+	    (扩展名为 <code class="filename">.INF</code>)</p></li></ol></div><p>您需要找到用于您的卡的这些文件。 一般而言，
+	  这些文件可以在随卡附送的 CD 或制造商的网站上找到。
+	  在下面的例子中， 我们用
+	  <code class="filename">W32DRIVER.SYS</code> 和
+	  <code class="filename">W32DRIVER.INF</code> 来表示这些文件。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">不能在 FreeBSD/amd64 上使用 <span class="trademark">Windows</span>®/i386 驱动程序。
+	    必须使用 <span class="trademark">Windows</span>®/amd64 驱动才能在其上正常工作。</p></div><p>接下来的步骤是将二进制形式的驱动程序组装成内核模块。
+	  要完成这一任务， 需要以
+	  <code class="systemitem">root</code> 用户的身份执行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ndisgen&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ndisgen</span>(8)</span></a>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ndisgen /path/to/W32DRIVER.INF /path/to/W32DRIVER.SYS</code></strong></pre><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ndisgen&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ndisgen</span>(8)</span></a> 是一个交互式的程序，
+	  它会提示您输入所需的一些其他的额外信息；
+	  这些工作完成之后， 它会在当前目录生成一个内核模块文件，
+	  这个文件可以通过下述命令来加载：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload ./W32DRIVER_SYS.ko</code></strong></pre><p>除了刚刚生成的内核模块之外，
+	  还必须加载 <code class="filename">ndis.ko</code> 和
+	  <code class="filename">if_ndis.ko</code> 这两个内核模块， 在您加载需要
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ndis&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ndis</span>(4)</span></a> 的模块时， 通常系统会自动完成这一操作。
+	  如果希望手工加载它们， 则可以使用下列命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload ndis</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>kldload if_ndis</code></strong></pre><p>第一个命令会加载  NDIS 袖珍端口驱动封装模块，
+	  而第二条命令则加载实际的网络接口。</p><p>现在请查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a> 来了解是否发生了错误。
+	  如果一切正常， 您会看到类似下面的输出：</p><pre class="screen">ndis0: &lt;Wireless-G PCI Adapter&gt; mem 0xf4100000-0xf4101fff irq 3 at device 8.0 on pci1
+ndis0: NDIS API version: 5.0
+ndis0: Ethernet address: 0a:b1:2c:d3:4e:f5
+ndis0: 11b rates: 1Mbps 2Mbps 5.5Mbps 11Mbps
+ndis0: 11g rates: 6Mbps 9Mbps 12Mbps 18Mbps 36Mbps 48Mbps 54Mbps</pre><p>这之后， 就可以像使用其它网络接口
+	  (例如 <code class="filename">dc0</code>) 一样来使用
+	  <code class="filename">ndis0</code> 设备了。</p><p>与任何其它模块一样， 您也可以配置系统，
+	  令其在启动时自动加载 NDIS 模块。 首先， 将生成的模块
+	  <code class="filename">W32DRIVER_SYS.ko</code> 复制到 <code class="filename">/boot/modules</code> 目录中。
+	  接下来， 在
+	  <code class="filename">/boot/loader.conf</code> 中加入：</p><pre class="programlisting">W32DRIVER_SYS_load="YES"</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75781840"></a>12.8.2. 配置网卡</h3></div></div></div><a id="idp75782480" class="indexterm"></a><p>现在正确的网卡驱动程序已经装载，那么就应该配置它了。
+	跟其他配置一样，网卡可以在安装时用
+	<span class="application"> sysinstall </span> 来配置。</p><p>要显示您系统上的网络接口的配置，输入下列命令：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ifconfig</code></strong>
+dc0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=80008&lt;VLAN_MTU,LINKSTATE&gt;
+        ether 00:a0:cc:da:da:da
+        inet 192.168.1.3 netmask 0xffffff00 broadcast 192.168.1.255
+        media: Ethernet autoselect (100baseTX &lt;full-duplex&gt;)
+        status: active
+dc1: flags=8802&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=80008&lt;VLAN_MTU,LINKSTATE&gt;
+        ether 00:a0:cc:da:da:db
+        inet 10.0.0.1 netmask 0xffffff00 broadcast 10.0.0.255
+        media: Ethernet 10baseT/UTP
+        status: no carrier
+plip0: flags=8810&lt;POINTOPOINT,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+lo0: flags=8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; metric 0 mtu 16384
+        options=3&lt;RXCSUM,TXCSUM&gt;
+        inet6 fe80::1%lo0 prefixlen 64 scopeid 0x4
+        inet6 ::1 prefixlen 128
+        inet 127.0.0.1 netmask 0xff000000
+        nd6 options=3&lt;PERFORMNUD,ACCEPT_RTADV&gt;</pre><p>在这个例子中，显示出了下列设备：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="filename">dc0</code>: 第一个以太网接口
+	    </p></li><li class="listitem"><p><code class="filename">dc1</code>: 第二个以太网接口
+	    </p></li><li class="listitem"><p><code class="filename">plip0</code>： 并口 (如果系统中有并口的话)</p></li><li class="listitem"><p><code class="filename">lo0</code>: 回环设备</p></li></ul></div><p>
+	FreeBSD 使用内核引导时检测到的网卡驱动顺序来命名网卡。例如
+	<code class="filename">sis2</code> 是系统中使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sis&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">sis</span>(4)</span></a>
+	驱动的第三块网卡。
+     </p><p>在这个例子中，<code class="filename">dc0</code>
+	设备启用了。主要表现在：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p><code class="literal">UP</code> 表示这块网卡已经配置完成准备工作。</p></li><li class="listitem"><p>这块网卡有一个 Internet (<code class="literal">inet</code>) 地址
+	    (这个例子中是 <code class="systemitem">192.168.1.3</code>)。</p></li><li class="listitem"><p>它有一个有效的子网掩码 (<code class="literal">netmask</code>；
+	    <code class="systemitem">0xffffff00</code> 等同于
+	    <code class="systemitem">255.255.255.0</code>)。</p></li><li class="listitem"><p>它有一个有效的广播地址 (这个例子中是
+	    <code class="systemitem">192.168.1.255</code>)。</p></li><li class="listitem"><p>网卡的 MAC  (<code class="literal">ether</code>) 地址是
+	    <code class="systemitem">00:a0:cc:da:da:da</code></p></li><li class="listitem"><p>物理传输媒介模式处于自动选择状态
+	    (<code class="literal">media: Ethernet autoselect
+	    (100baseTX &lt;full-duplex&gt;)</code>)。我们看到
+	    <code class="filename">dc1</code> 被配置成运行在
+	    <code class="literal">10baseT/UTP</code> 模式下。
+	    要了解驱动媒介类型的更多信息，
+	    请查阅它们的使用手册。</p></li><li class="listitem"><p>连接状态 (<code class="literal">status</code>)是
+	    <code class="literal">active</code>，也就是说连接信号被检测到了。对于
+	    <code class="filename">dc1</code>，我们看到
+	    <code class="literal">status: no carrier</code>。
+	    这通常是网线没有插好。</p></li></ol></div><p>如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a> 的输出显示了类似于：</p><pre class="screen">dc0: flags=8843&lt;BROADCAST,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=80008&lt;VLAN_MTU,LINKSTATE&gt;
+        ether 00:a0:cc:da:da:da
+        media: Ethernet autoselect (100baseTX &lt;full-duplex&gt;)
+        status: active</pre><p>的信息，那么就是还没有配置网卡。</p><p>要配置网卡，您需要 <code class="systemitem">root</code> 权限。
+	网卡配置可以通过使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a> 命令行方式来完成，
+	但是这样每次启动都要做一遍。放置网卡配置信息的文件是
+	<code class="filename">/etc/rc.conf</code>。</p><p>用您自己喜欢的编辑器打开 <code class="filename">/etc/rc.conf</code>。
+	并且您需要为每一块系统中存在的网卡添加一行，
+	在我们的例子中，添加如下几行：</p><pre class="programlisting">ifconfig_dc0="inet 192.168.1.3 netmask 255.255.255.0"
+ifconfig_dc1="inet 10.0.0.1 netmask 255.255.255.0 media 10baseT/UTP"</pre><p>用自己正确的设备名和地址来替换例子中的
+	<code class="filename">dc0</code>，<code class="filename">dc1</code>
+	等内容。您应该应该查阅网卡驱动和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ifconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ifconfig</span>(8)</span></a>
+	的手册页来了解各选项，也要查看一下 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a>
+	帮助页来了解 <code class="filename">/etc/rc.conf</code> 的语法。</p><p>如果在安装的时候配置了网络，关于网卡的一些行可能已经存在了。
+	所以在添加新行前仔细检查一下 <code class="filename">/etc/rc.conf</code>。</p><p>您也可能需要编辑
+	<code class="filename">/etc/hosts</code> 来添加局域网中不同的机器名称和 IP
+	地址， 如果它们不在那里的话。 请查看联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=hosts&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">hosts</span>(5)</span></a>
+	和 <code class="filename">/usr/share/examples/etc/hosts</code>
+	以了解更多信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果计划通过这台机器访问 Internet，
+	  您还需要手工配置默认网关和域名解析服务器：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'defaultrouter="your_default_router"' &gt;&gt; /etc/rc.conf</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>echo 'nameserver your_DNS_server' &gt;&gt; /etc/resolv.conf</code></strong></pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75836112"></a>12.8.3. 测试和调试</h3></div></div></div><p>对 <code class="filename">/etc/rc.conf</code>
+	做了必要的修改之后应该重启系统以应用对接口的修改，
+	并且确认系统重启后没有任何配置错误。
+	另外您也可以重启网络系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/netif restart</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果在
+	  <code class="filename">/etc/rc.conf</code> 中配置了默认网关，
+	  还需要运行下面的命令：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/routing restart</code></strong></pre></div><p>网络系统重启之后， 应测试网络接口。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75840848"></a>12.8.3.1. 测试以太网卡</h4></div></div></div><a id="idp75841488" class="indexterm"></a><p>为了确认网卡被正确的配置了，在这里我们要做两件事情。首先，
+	  ping 自己的网络接口，接着 ping 局域网内的其他机器。</p><p>首先测试本地接口：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ping -c5 192.168.1.3</code></strong>
+PING 192.168.1.3 (192.168.1.3): 56 data bytes
+64 bytes from 192.168.1.3: icmp_seq=0 ttl=64 time=0.082 ms
+64 bytes from 192.168.1.3: icmp_seq=1 ttl=64 time=0.074 ms
+64 bytes from 192.168.1.3: icmp_seq=2 ttl=64 time=0.076 ms
+64 bytes from 192.168.1.3: icmp_seq=3 ttl=64 time=0.108 ms
+64 bytes from 192.168.1.3: icmp_seq=4 ttl=64 time=0.076 ms
+
+--- 192.168.1.3 ping statistics ---
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 0.074/0.083/0.108/0.013 ms</pre><p>现在我们应该 ping 局域网内的其他机器：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>ping -c5 192.168.1.2</code></strong>
+PING 192.168.1.2 (192.168.1.2): 56 data bytes
+64 bytes from 192.168.1.2: icmp_seq=0 ttl=64 time=0.726 ms
+64 bytes from 192.168.1.2: icmp_seq=1 ttl=64 time=0.766 ms
+64 bytes from 192.168.1.2: icmp_seq=2 ttl=64 time=0.700 ms
+64 bytes from 192.168.1.2: icmp_seq=3 ttl=64 time=0.747 ms
+64 bytes from 192.168.1.2: icmp_seq=4 ttl=64 time=0.704 ms
+
+--- 192.168.1.2 ping statistics ---
+5 packets transmitted, 5 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 0.700/0.729/0.766/0.025 ms</pre><p>您如果您设置了 <code class="filename">/etc/hosts</code>
+	  文件，也可以用机器名来替换 <code class="systemitem">192.168.1.2</code>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75847376"></a>12.8.3.2. 调试</h4></div></div></div><a id="idp75848016" class="indexterm"></a><p>调试硬件和软件配置一直是一件头痛的事情，
+	从最简单的开始可以减轻一些痛苦。
+	例如网线是否插好了？是否配置好了网络服务？防火墙配置正确吗？
+	是否使用了被 FreeBSD 支持的网卡？
+	在发送错误报告之前您应该查看一下硬件说明，
+	升级 FreeBSD 到最新的 STABLE 版本，
+	看一下邮件列表或者在 Internet 上搜索一下。</p><p>如果网卡工作了，
+	但性能低下，应该好好阅读一下 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tuning&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">tuning</span>(7)</span></a> 联机手册。
+	您也可以检查一下网络配置，
+	不正确的设置会导致慢速的网络连接。</p><p>一些用户可能会在一些网卡上经历一到两次
+	<span class="errorname">device timeouts</span>， 这通常是正常现象。
+	如果经常这样甚至引起麻烦， 则应确定一下它跟其他设备没有冲突。
+	仔细检查网线连接， 或者换一块网卡。</p><p>有时用户会看到少量 <span class="errorname">watchdog timeout</span>
+	错误。 这种情况要做的第一件事就是检查线缆连接。
+	一些网卡需要支持总线控制的 PCI 插槽。
+	在一些老的主板上，只有一个 PCI 插槽支持 (一般是 slot 0)。
+	检查网卡和主板说明书来确定是不是这个问题。</p><p><span class="errorname">No route to host</span>
+	通常发生在如果系统不能发送一个路由到目的主机的包的时候。
+	这在没有指定默认路由或者网线没有插上时会发生。
+	检查 <code class="command">netstat -rn</code>
+	的输出并确认有一个有效的路由能到达相应的主机。
+	如果没有，请查阅 <a class="xref" href="advanced-networking.html" title="Chapter 30. 高级网络">Chapter 30, <em>高级网络</em></a>。</p><p><span class="errorname">ping: sendto: Permission denied</span>
+	错误信息经常由防火墙的配置错误引起。
+	如果 <code class="command">ipfw</code> 在内核中启用了但是没有定义规则，
+	那么默认的规则就是拒绝所有通讯，甚至 ping 请求！
+	查阅 <a class="xref" href="firewalls.html" title="Chapter 29. 防火墙">Chapter 29, <em>防火墙</em></a> 以了解更多信息。</p><p>有时网卡性能低下或者低于平均水平，
+	这种情况最好把传输媒介模式从 <code class="literal">autoselect</code>
+	改变为正确的传输介质模式。
+	这通常对大多数硬件有用， 但可能不会解决所有人的问题。
+	接着，检查所有网络设置，并且阅读 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tuning&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">tuning</span>(7)</span></a> 手册页。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-rcd.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-virtual-hosts.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.7. 在 FreeBSD 中使用 rc </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.9. 虚拟主机</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

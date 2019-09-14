@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.12. IPv6</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-plip.html" title="30.11. 并口电缆 IP (PLIP)" /><link rel="next" href="network-atm.html" title="30.13. 异步传输模式 (ATM)" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.12. IPv6</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-plip.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-atm.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-ipv6"></a>30.12. IPv6</h2></div><div><span class="authorgroup">原始作者：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Aaron</span> <span class="surname">Kaplan</span></span>. </span></div><div><span class="authorgroup">重新组织和增加：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span>. </span></div><div><span class="authorgroup">Extended by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Brad</span> <span class="surname">Davis</span></span>. </span></div></div></div><p>IPv6 (也被称作 IPng <span class="quote">“<span class="quote">下一代 IP</span>”</span>)
+      是众所周知的 IP 协议 (也叫
+      <acronym class="acronym">IPv4</acronym>) 的新版本。 和其他现代的 *BSD 系统一样，
+      FreeBSD 包含了 KAME 的 IPv6 参考实现。 因此，
+      您的 FreeBSD 系统包含了尝试 IPv6 所需要的所有工具。
+      这一节主要集中讨论如何配置和使用 IPv6。</p><p>在 1990 年代早期， 人们开始担心可用的 IPv4 地址空间在不断地缩小。 随着
+      Internet 的爆炸式发展， 主要的两个担心是：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>用尽所有的地址。 当然现在这个问题已经不再那样尖锐，
+	  因为 RFC1918 私有地址空间
+	  (<code class="systemitem">10.0.0.0/8</code>、
+	  <code class="systemitem">172.16.0.0/12</code>， 以及
+	  <code class="systemitem">192.168.0.0/16</code>)
+	  和网络地址转换 (<acronym class="acronym">NAT</acronym>) 技术已经被广泛采用。</p></li><li class="listitem"><p>路由表条目变得太大。这点今天仍然是焦点。</p></li></ul></div><p>IPv6 解决这些和其它许多的问题：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>128 位地址空间。换句话，理论上有
+	  340,282,366,920,938,463,463,374,607,431,768,211,456
+	  个地址可以使用。这意味着在我们的星球上每平方米大约有
+	  6.67 * 10^27 个 IPv6 地址。</p></li><li class="listitem"><p>路由器仅在它们的路由表里存放网络地址集，
+	  这就减少路由表的平均空间到 8192 个条目。</p></li></ul></div><p>IPv6 还有其它许多有用的功能，如：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>地址自动配置 (<a class="link" href="http://www.ietf.org/rfc/rfc2462.txt" target="_top">RFC2462</a>)</p></li><li class="listitem"><p>Anycast (任意播) 地址(<span class="quote">“<span class="quote">一对多</span>”</span>)</p></li><li class="listitem"><p>强制的多播地址</p></li><li class="listitem"><p>IPsec (IP 安全)</p></li><li class="listitem"><p>简单的头结构</p></li><li class="listitem"><p>移动的 (Mobile) <acronym class="acronym">IP</acronym></p></li><li class="listitem"><p>IPv6 到 IPv4 的转换机制</p></li></ul></div><p>要更多信息，请查看：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>IPv6 概观，在<a class="link" href="http://playground.sun.com/pub/ipng/html/ipng-main.html" target="_top">
+	  playground.sun.com</a></p></li><li class="listitem"><p><a class="link" href="http://www.kame.net" target="_top">KAME.net</a></p></li></ul></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90436048"></a>30.12.1. 关于 IPv6 地址的背景知识</h3></div></div></div><p>有几种不同类型的 IPv6 地址：Unicast，Anycast 和 Multicast。</p><p>Unicast 地址是为人们所熟知的地址。一个被发送到
+	unicast 地址的包实际上会到达属于这个地址的接口。</p><p>Anycast 地址语义上与 unicast 地址没有差别，
+	只是它们强调一组接口。指定为 anycast 地址的包会到达最近的
+	(以路由为单位) 接口。Anycast 地址可能只被路由器使用。</p><p>Multicast 地址标识一组接口。指定为 multicast
+	地址的包会到达属于 multicast 组的所有的接口。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">IPv4 广播地址 (通常为
+	  <code class="systemitem">xxx.xxx.xxx.255</code>) 由
+	  IPv6 的 multicast 地址来表示。</p></div><div class="table"><a id="idp90439248"></a><div class="table-title">Table 30.3. 保留的 IPv6 地址</div><div class="table-contents"><table summary="保留的 IPv6 地址" border="0"><colgroup><col /><col /><col /><col /></colgroup><thead><tr><th>IPv6 地址</th><th>预定长度 (bits)</th><th>描述</th><th>备注</th></tr></thead><tbody><tr><td><code class="systemitem">::</code></td><td>128 bits</td><td>未指定</td><td>类似 IPv4 中的 <code class="systemitem">0.0.0.0</code></td></tr><tr><td><code class="systemitem">::1</code></td><td>128 bits</td><td>环回地址</td><td>类似 IPv4 中的 <code class="systemitem">127.0.0.1</code></td></tr><tr><td><code class="systemitem">::00:xx:xx:xx:xx</code></td><td>96 bits</td><td>嵌入的 IPv4</td><td>低 32 bits 是 IPv4 地址。这也称作
+		<span class="quote">“<span class="quote">IPv4 兼容 IPv6
+		地址</span>”</span></td></tr><tr><td><code class="systemitem">::ff:xx:xx:xx:xx</code></td><td>96 bits</td><td>IPv4 影射的 IPv6 地址</td><td>低的 32 bits 是 IPv4 地址。 用于那些不支持 IPv6 的主机。</td></tr><tr><td><code class="systemitem">fe80::</code> - <code class="systemitem">feb::</code></td><td>10 bits</td><td>链路环回</td><td>类似 IPv4 的环回地址。</td></tr><tr><td><code class="systemitem">fec0::</code> - <code class="systemitem">fef::</code></td><td>10 bits</td><td>站点环回</td><td> </td></tr><tr><td><code class="systemitem">ff::</code></td><td>8 bits</td><td>多播</td><td> </td></tr><tr><td><code class="systemitem">001</code> (base
+		2)</td><td>3 bits</td><td>全球多播</td><td>所有的全球多播地址都指定到这个地址池中。前三个二进制位是
+		<span class="quote">“<span class="quote">001</span>”</span>。</td></tr></tbody></table></div></div><br class="table-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90474832"></a>30.12.2. IPv6 地址的读法</h3></div></div></div><p>规范形式被描述为：<code class="systemitem">x:x:x:x:x:x:x:x</code>，
+	每一个<span class="quote">“<span class="quote">x</span>”</span>就是一个 16 位的 16 进制值。当然，
+	每个十六进制块以三个<span class="quote">“<span class="quote">0</span>”</span>开始头的也可以省略。如
+	<code class="systemitem">FEBC:A574:382B:23C1:AA49:4592:4EFE:9982</code></p><p>通常一个地址会有很长的子串全部为零，
+	因此每个地址的这种子串常被简写为<span class="quote">“<span class="quote">::</span>”</span>。
+	例如：<code class="systemitem">fe80::1</code>
+	对应的规范形式是
+	<code class="systemitem">fe80:0000:0000:0000:0000:0000:0000:0001</code>。</p><p>第三种形式是以众所周知的用点<span class="quote">“<span class="quote">.</span>”</span>作为分隔符的十进制
+	IPv4 形式，写出最后 32 Bit 的部分。例如
+	<code class="systemitem">2002::10.0.0.1</code>
+	对应的十进制正规表达方式是
+	<code class="systemitem">2002:0000:0000:0000:0000:0000:0a00:0001</code>
+	它也相当于写成
+	<code class="systemitem">2002::a00:1</code>.</p><p>到现在，读者应该能理解下面的内容了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ifconfig</code></strong></pre><pre class="programlisting">rl0: flags=8943&lt;UP,BROADCAST,RUNNING,PROMISC,SIMPLEX,MULTICAST&gt; mtu 1500
+         inet 10.0.0.10 netmask 0xffffff00 broadcast 10.0.0.255
+         inet6 fe80::200:21ff:fe03:8e1%rl0 prefixlen 64 scopeid 0x1
+         ether 00:00:21:03:08:e1
+         media: Ethernet autoselect (100baseTX )
+         status: active</pre><p><code class="systemitem">fe80::200:21ff:fe03:8e1%rl0</code>
+	是一个自动配置的链路环回地址。它作为自动配置的一部分由 MAC 生成。</p><p>关于 IPv6 地址的结构的更多信息，请参看 <a class="link" href="http://www.ietf.org/rfc/rfc3513.txt" target="_top">RFC3513</a>。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90488272"></a>30.12.3. 进行连接</h3></div></div></div><p>目前，有四种方式可以连接到其它 IPv6 主机和网络：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>咨询你的互联网服务提供商是否提供 IPv6。</p></li><li class="listitem"><p><a class="link" href="http://www.sixxs.net" target="_top">SixXS</a>
+	    向全球范围提供通道。</p></li><li class="listitem"><p>使用 6-to-4 通道 (<a class="link" href="http://www.ietf.org/rfc/rfc3068.txt" target="_top">RFC3068</a>)</p></li><li class="listitem"><p>如果您使用的是拨号连接， 则可以使用 <span class="package">net/freenet6</span> port。</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90498384"></a>30.12.4. IPv6 世界里的 DNS</h3></div></div></div><p>对于 IPv6 有两种类型的 DNS 记录：IETF
+	已经宣布 A6 是过时标准；现行的标准是 AAAA 记录。</p><p>使用AAAA记录是很简单的。通过增加下面内容，
+	给您的主机分配置您刚才接收到的新的 IPv6 地址：</p><pre class="programlisting">MYHOSTNAME           AAAA    MYIPv6ADDR</pre><p>到您的主域 DNS 文件里，就可以完成。要是您自已没有
+	<acronym class="acronym">DNS</acronym> 域服务，您可以询问您的 <acronym class="acronym">DNS</acronym>
+	提供商。目前的 <span class="application">bind</span> 版本 (version 8.3 与 9)
+	和 <span class="package">dns/djbdns</span>(含IPv6补丁) 支持 AAAA 记录。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90506576"></a>30.12.5. 在 <code class="filename">/etc/rc.conf</code> 中进行所需的修改</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90507600"></a>30.12.5.1. IPv6 客户机设置</h4></div></div></div><p>这些设置将帮助您把一台您 LAN 上的机器配置为一台客户机， 而不是路由器。
+	  要让 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rtsol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rtsol</span>(8)</span></a> 在启动时自动配置您的网卡， 只需添加：</p><pre class="programlisting">ipv6_enable="YES"</pre><p>要自动地静态指定 IP 地址， 例如 <code class="systemitem">
+	  2001:471:1f11:251:290:27ff:fee0:2093</code>， 到
+	  <code class="filename">fxp0</code> 上， 则写上：</p><pre class="programlisting">ipv6_ifconfig_fxp0="2001:471:1f11:251:290:27ff:fee0:2093"</pre><p>要指定
+	  <code class="systemitem">2001:471:1f11:251::1</code>
+	  作为默认路由， 需要在 <code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">ipv6_defaultrouter="2001:471:1f11:251::1"</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90513232"></a>30.12.5.2. IPv6 路由器/网关配置</h4></div></div></div><p>这将帮助您从隧道提供商那里取得必要的资料，
+	  并将这些资料转化为在重启时能够保持住的设置。 要在启动时恢复您的隧道，
+	  需要在 <code class="filename">/etc/rc.conf</code> 中增加：</p><p>列出要配置的通用隧道接口， 例如
+	  <code class="filename">gif0</code>：</p><pre class="programlisting">gif_interfaces="gif0"</pre><p>配置该接口使用本地端地址
+	  <em class="replaceable"><code>MY_IPv4_ADDR</code></em> 和远程端地址
+	  <em class="replaceable"><code>REMOTE_IPv4_ADDR</code></em>：</p><pre class="programlisting">gifconfig_gif0="<em class="replaceable"><code>MY_IPv4_ADDR REMOTE_IPv4_ADDR</code></em>"</pre><p>应用分配给您用于 IPv6 隧道远端的 IPv6
+	  地址， 需要增加：</p><pre class="programlisting">ipv6_ifconfig_gif0="<em class="replaceable"><code>MY_ASSIGNED_IPv6_TUNNEL_ENDPOINT_ADDR</code></em>"</pre><p>此后十设置 IPv6 的默认路由。 这是 IPv6 隧道的另一端：</p><pre class="programlisting">ipv6_defaultrouter="<em class="replaceable"><code>MY_IPv6_REMOTE_TUNNEL_ENDPOINT_ADDR</code></em>"</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90524368"></a>30.12.5.3. IPv6 隧道配置</h4></div></div></div><p>如果服务器将您的网络通过 IPv6 路由到世界的其他角落，
+	  您需要在 <code class="filename">/etc/rc.conf</code>
+	  中添加下面的配置：</p><pre class="programlisting">ipv6_gateway_enable="YES"</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90526544"></a>30.12.6. 路由宣告和主机自动配置</h3></div></div></div><p>这节将帮助您配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rtadvd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rtadvd</span>(8)</span></a> 来宣示默认的
+	IPv6 路由。</p><p>要启用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rtadvd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rtadvd</span>(8)</span></a> 您需要在
+	<code class="filename">/etc/rc.conf</code> 中添加：</p><pre class="programlisting">rtadvd_enable="YES"</pre><p>指定由哪个网络接口来完成
+	IPv6 路由请求非常重要。 举例来说， 让 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rtadvd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rtadvd</span>(8)</span></a> 使用
+	<code class="filename">fxp0</code>：</p><pre class="programlisting">rtadvd_interfaces="fxp0"</pre><p>接下来我们需要创建配置文件，
+	<code class="filename">/etc/rtadvd.conf</code>。 示例如下：</p><pre class="programlisting">fxp0:\
+	:addrs#1:addr="2001:471:1f11:246::":prefixlen#64:tc=ether:</pre><p>将 <code class="filename">fxp0</code> 改为您打算使用的接口名。</p><p>接下来， 将 <code class="systemitem">2001:471:1f11:246::</code>
+	改为分配给您的地址前缀。</p><p>如果您拥有专用的 <code class="systemitem">/64</code> 子网，
+	则不需要修改其他设置。 反之， 您需要把
+	<code class="literal">prefixlen#</code> 改为正确的值。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-plip.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-atm.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.11. 并口电缆 IP (PLIP) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.13. 异步传输模式 (ATM)</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

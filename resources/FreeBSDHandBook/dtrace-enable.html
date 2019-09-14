@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>24.3. 启用 DTrace 支持</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="dtrace.html" title="Chapter 24. DTrace" /><link rel="prev" href="dtrace-implementation.html" title="24.2. 实现上的差异" /><link rel="next" href="dtrace-using.html" title="24.4. 使用 DTrace" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">24.3. 启用 DTrace 支持</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dtrace-implementation.html">Prev</a> </td><th width="60%" align="center">Chapter 24. DTrace</th><td width="20%" align="right"> <a accesskey="n" href="dtrace-using.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="dtrace-enable"></a>24.3. 启用 DTrace 支持</h2></div></div></div><p>在内核配置文件中加入以下几行来开启对 DTrace 的支持：</p><pre class="programlisting">options         KDTRACE_HOOKS
+options         DDB_CTF</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">使用 AMD64 架构的需要在内核配置文件中加入如下这行：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">options         KDTRACE_FRAME</pre><p xmlns="http://www.w3.org/1999/xhtml">此选项提供了对 <acronym class="acronym">FBT</acronym> 特性的支持。
+        DTrace 可以在没有此选项的情况下正常工作，
+        但是函数边界跟踪便会有所限制。</p></div><p>所有的源代码都必须重新使用 <acronym class="acronym">CTF</acronym>
+      选项编译安装。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 10.0 起， 由于缺省的
+	<code class="filename">GENERIC</code> 内核配置文件中已经包含了
+	<code class="literal">WITH_CTF</code>， 因此已经不再需要手工进行下面这些操作了。</p></div><p>用下面的命令来重新编译 FreeBSD 源代码：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong>
+
+<code class="prompt">#</code> <strong class="userinput"><code>make WITH_CTF=1 kernel</code></strong></pre><p>系统需要重新启动。</p><p>在重新启动和新内核载入内存之后，需要添加 Korn shell
+      的支持。因为 DTrace 工具包有一些工具是由 <code class="command">ksh</code>
+      写的。安装 <span class="package">shells/ksh93</span>。
+      同样也可以通过 <span class="package">shells/pdksh</span>
+      或者 <span class="package">shells/mksh</span>
+      使用这些工具。</p><p>最后是获得最新的 DTrace 工具包。
+      当前版本可以通过下面的链接找到
+      <code class="uri"><a class="uri" href="http://www.opensolaris.org/os/community/dtrace/dtracetoolkit/" target="_top">http://www.opensolaris.org/os/community/dtrace/dtracetoolkit/</a></code>。
+      这个工具包含有一个安装机制，尽管如此，并不需要安装便可使用它们。</p><p>最后是获取最新的 DTrace 工具包。
+      如果您运行的是 FreeBSD 10 或更高版本， 则可在
+      <code class="filename">/usr/share/dtrace</code> 找到 DTrace 工具包。
+      如果不是， 则可以通过
+      <span class="package">sysutils/DTraceToolkit</span>
+      port 来安装 DTrace 工具包。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dtrace-implementation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="dtrace.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dtrace-using.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">24.2. 实现上的差异 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 24.4. 使用 DTrace</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

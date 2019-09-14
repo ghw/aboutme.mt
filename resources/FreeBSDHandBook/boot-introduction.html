@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>13.2. 引导问题</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="boot.html" title="Chapter 13. The FreeBSD 引导过程" /><link rel="prev" href="boot.html" title="Chapter 13. The FreeBSD 引导过程" /><link rel="next" href="boot-blocks.html" title="13.3. 引导管理器和各引导阶段" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">13.2. 引导问题</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="boot.html">Prev</a> </td><th width="60%" align="center">Chapter 13. The FreeBSD 引导过程</th><td width="20%" align="right"> <a accesskey="n" href="boot-blocks.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="boot-introduction"></a>13.2. 引导问题</h2></div></div></div><p>启动计算机并开始运行操作系统是一个有趣的两难问题。
+      按照定义， 在操作系统启动之前， 计算机是不知道如何完成任何一项任务的，
+      显然， 这也包括运行存放在磁盘上的程序。
+      既然计算机在没有操作系统的情况下不能运行来自磁盘的程序，
+      而操作系统程序又保存在磁盘上， 那么操作系统本身又应该如何开始呢？</p><p>在 <em class="citetitle">The Adventures of Baron Munchausen</em>
+      这本书中有一个和这个过程类似的故事。
+      一个人掉到了下水管道里， 然后靠着拉自己的靴襻 (bootstrap)
+      克服重重困难爬了出来。 在早期文献中， 多以术语
+      <em class="firstterm">bootstrap</em> 来指代操作系统的加载机制，
+      如今它逐渐被简写为 <span class="quote">“<span class="quote">booting</span>”</span>。</p><a id="idp76585680" class="indexterm"></a><a id="idp76586192" class="indexterm"></a><p>在 x86 硬件体系中， 基本输入/输出系统 (<acronym class="acronym">BIOS</acronym>) 负责加载操作系统。
+      为了做到这一点， <acronym class="acronym">BIOS</acronym>
+      会在磁盘上一处特别的位置查找寻找主引导记录 Master Boot Record
+      (<acronym class="acronym">MBR</acronym>)。 系统的 <acronym class="acronym">BIOS</acronym>
+      具备足够的能力加载并运行 <acronym class="acronym">MBR</acronym>，
+      而后者则负责在 <acronym class="acronym">BIOS</acronym> 的帮助下完成余下的加载操作系统的任务。</p><a id="idp76594128" class="indexterm"></a><a id="idp76594640" class="indexterm"></a><a id="idp76595152" class="indexterm"></a><p>在 <acronym class="acronym">MBR</acronym> 中具备与用户进行交互能力的那些代码，
+      通常也被称作 <span class="emphasis"><em>引导管理器</em></span>。 这类引导程序通常需要用到保存在磁盘开始部分的
+      <span class="emphasis"><em>磁道</em></span> 中， 或是在一些其他操作系统中位于文件系统中的一些文件中的代码。
+      有时， 引导管理器也会称为 <span class="emphasis"><em>引导加载器</em></span>，
+      并与后者混为一谈， 但在 FreeBSD 中， 后者专指后面的引导阶段。
+      常见的引导管理器包括 <span class="application">boot0</span> (亦称
+      <span class="application">Boot Easy</span>， 这是 FreeBSD 预设的引导管理器)、
+      <span class="application">Grub</span>、 <span class="application">GAG</span>， 以及
+      <span class="application">LILO</span>。
+      其中， 只有 <span class="application">boot0</span> 小到可以直接装得进
+      <acronym class="acronym">MBR</acronym>。</p><p>如果只安装一个操作系统， 那么标准的 PC
+      <acronym class="acronym">MBR</acronym> 就够用了。 这个
+      <acronym class="acronym">MBR</acronym> 会在磁盘上查找第一个可引导的 (active， 亦称“活动的”)
+      分区， 然后运行分区中的代码来加载操作系统的其它部分。
+      在缺省情况下， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fdisk&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fdisk</span>(8)</span></a> 安装的就是这个基于
+      <code class="filename">/boot/mbr</code> 的 <acronym class="acronym">MBR</acronym>。</p><p>如果使用了多个操作系统， 则可以安装一个能列出安装的操作系统列表，
+      并允许您从其中挑选引导哪一个操作系统的其它引导管理器。
+      后面的小节中将讨论两种这样的引导管理器。</p><p>FreeBSD 的引导过程余下的部分可以分为三个阶段。 第一阶段由
+      <acronym class="acronym">MBR</acronym> 负责， 其任务仅限于让计算机进入特定的状态，
+      并开始执行第二阶段。 第二阶段可以完成一些在第三阶段开始之前需要完成，
+      但更为复杂的任务。 第三阶段则是完成加载操作系统的任务。
+      将工作分为三个阶段的原因是
+      PC 标准对第一和第二阶段执行的程序的尺寸有所限制。
+      环环相扣地相继执行这些任务， 使 FreeBSD 能够提供更为灵活强大的引导加载器程序。</p><a id="idp76604240" class="indexterm"></a><a id="idp76604752" class="indexterm"></a><p>接下来内核开始运行， 并开始探测并初始化设备以供系统使用。
+      一旦内核完成了引导任务， 内核便将控制权交给用户进程 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a>，
+      它确认磁盘是否处于可用状态。 接下来， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a> 开始配置用户级资源：
+      挂载文件系统、 配置网卡以便进行网络通讯， 并根据配置开始运行在 FreeBSD
+      系统在启动时所需要的进程。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="boot.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="boot.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="boot-blocks.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 13. The FreeBSD 引导过程 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 13.3. 引导管理器和各引导阶段</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

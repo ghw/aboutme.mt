@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>19.3. RAID0 - 条带</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="GEOM.html" title="Chapter 19. GEOM： 模块化磁盘变换框架" /><link rel="prev" href="GEOM-intro.html" title="19.2. GEOM 介绍" /><link rel="next" href="GEOM-mirror.html" title="19.4. RAID1 - 镜像" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.3. RAID0 - 条带</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="GEOM-intro.html">Prev</a> </td><th width="60%" align="center">Chapter 19. GEOM： 模块化磁盘变换框架</th><td width="20%" align="right"> <a accesskey="n" href="GEOM-mirror.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="GEOM-striping"></a>19.3. RAID0 - 条带</h2></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Murray</span> <span class="surname">Stokely</span></span>. </span></div></div></div><a id="idp81088080" class="indexterm"></a><a id="idp81088848" class="indexterm"></a><p>条带是一种将多个磁盘驱动器合并为一个卷的方法。
+      许多情况下， 这是通过硬件控制器来完成的。 GEOM
+      磁盘子系统提供了 <acronym class="acronym">RAID</acronym>0 的软件支持，
+      它也成为磁盘条带。</p><p>在 <acronym class="acronym">RAID</acronym>0 系统中， 数据被分为多个块，
+      这些块将分别写入阵列的所有磁盘。 与先前需要等待系统将 256k
+      数据写到一块磁盘上不同， <acronym class="acronym">RAID</acronym>0 系统，
+      能够同时分别将打碎的 64k 写到四块磁盘上， 从而提供更好的 I/O
+      性能。 这一性能提升还能够通过使用多个磁盘控制器来进一步改进。</p><p>在 <acronym class="acronym">RAID</acronym>0 条带中的每一个盘的尺寸必须一样，
+      因为 I/O 请求是分散到多个盘上的， 以便让这些盘上的读写并行完成。</p><div class="mediaobject" align="center"><img src="geom/striping.png" align="middle" alt="磁盘条带图" /></div><div class="procedure"><a id="idp81102672"></a><div class="procedure-title">Procedure 19.1. 在未格式化的 ATA 磁盘上建立条带</div><ol class="procedure" type="1"><li class="step"><p>加载 <code class="filename">geom_stripe.ko</code>
+        模块：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kldload geom_stripe</code></strong></pre></li><li class="step"><p>确信存在合适的挂接点 (mount point)。 如果这个卷将成为根分区，
+        那么暂时把它挂接到其他位置i， 如 <code class="filename">/mnt</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /mnt</code></strong></pre></li><li class="step"><p>确定将被做成条带卷的磁盘的设备名，
+	  并创建新的条带设备。 举例而言，
+	  要将两个未用的、 尚未分区的 <acronym class="acronym">ATA</acronym> 磁盘
+	  <code class="filename">/dev/ad2</code> 和
+	  <code class="filename">/dev/ad3</code> 做成一个条带设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>gstripe label -v st0 /dev/ad2 /dev/ad3</code></strong>
+Metadata value stored on /dev/ad2.
+Metadata value stored on /dev/ad3.
+Done.</pre></li><li class="step"><p>接着需要写标准的 label， 也就是通常所说的分区表到新卷上，
+	  并安装标准的引导代码：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>bsdlabel -wB /dev/stripe/st0</code></strong></pre></li><li class="step"><p>上述过程将在
+	  <code class="filename">/dev/stripe</code>
+	  目录中的 <code class="filename">st0</code> 设备基础上建立两个新设备。
+	  这包括 <code class="filename">st0a</code> 和
+	  <code class="filename">st0c</code>。 这时， 就可以在
+	  <code class="filename">st0a</code> 设备上用下述
+	  <code class="command">newfs</code> 命令来建立文件系统了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>newfs -U /dev/stripe/st0a</code></strong></pre><p>在屏幕上将滚过一些数字， 整个操作应该能在数秒内完成。
+	  现在可以挂接刚刚做好的卷了。</p></li></ol></div><p>要挂接刚创建的条带盘：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/stripe/st0a /mnt</code></strong></pre><p>要在启动过程中自动挂接这个条带上的文件系统，
+      需要把关于卷的信息放到
+      <code class="filename">/etc/fstab</code> 文件中。为达到此目的，
+      需要创建一个叫
+      <code class="filename">stripe</code>
+      的永久的挂载点：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /stripe</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>echo "/dev/stripe/st0a /stripe ufs rw 2 2" \</code></strong>
+    <strong class="userinput"><code>&gt;&gt; /etc/fstab</code></strong></pre><p>此外， <code class="filename">geom_stripe.ko</code> 模块也必须通过在
+      <code class="filename">/boot/loader.conf</code> 中增加下述设置，
+      以便在系统初始化过程中自动加载：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'geom_stripe_load="YES"' &gt;&gt; /boot/loader.conf</code></strong></pre></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="GEOM-intro.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="GEOM.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="GEOM-mirror.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.2. GEOM 介绍 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 19.4. RAID1 - 镜像</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

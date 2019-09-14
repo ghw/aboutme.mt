@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>5.2. 软件安装预览</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports" /><link rel="prev" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports" /><link rel="next" href="ports-finding-applications.html" title="5.3. 寻找您要的应用程序" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.2. 软件安装预览</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ports.html">Prev</a> </td><th width="60%" align="center">Chapter 5. 安装应用程序: Packages 和 Ports</th><td width="20%" align="right"> <a accesskey="n" href="ports-finding-applications.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="ports-overview"></a>5.2. 软件安装预览</h2></div></div></div><p>如果您以前使用过 <span class="trademark">UNIX</span>® 系统，那典型的第三方软件安装的步骤是像下面描述的：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>下载这个软件，软件的发行版可能是源代码格式，或是一个二进制包。</p></li><li class="step"><p>解开软件(其中代表性的是用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=compress&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">compress</span>(1)</span></a>, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=gzip&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">gzip</span>(1)</span></a>, 或
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bzip2&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">bzip2</span>(1)</span></a> 压缩过的tar包)。</p></li><li class="step"><p>阅读相关文档，了解如何安装。 (多半一个文件名是<code class="filename">INSTALL</code>或<code class="filename">README</code>，
+	  或在<code class="filename">doc/</code> 目录下的一些文档)</p></li><li class="step"><p>如果软件是以源代码形式发布的，那就需要编译它。可能需要编辑一个
+	  <code class="filename">Makefile</code>文件, 或运行
+	  <code class="command">configure</code>脚本，和其他的一些工作。</p></li><li class="step"><p>测试和安装软件。</p></li></ol></div><p>如果一切顺利的话，就这么简单。如果您在安装一个软件包时发生一些错误，
+      您可能需要编辑一下它的代码，以使它能正常工作。</p><p>您可以继续使用 <span class="quote">“<span class="quote">传统的</span>”</span>方式安装软件。 然而， FreeBSD
+      提供了两种技术： packages 和 ports。 就在写这篇文章的时候，
+      已经有超过 24,000 个第三方的应用程序可以使用了。</p><p>对于任意一个应用程序包，是一个可以下载的FreeBSD package文件。这个
+      FreeBSD package包含了编译好的的副本， 还有一些配置文件或文档。
+      一个下载的包文件可以用 FreeBSD 的包管理命令来操作， 例如
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_add&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_add</span>(1)</span></a>，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_delete&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_delete</span>(1)</span></a>, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pkg_info&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">pkg_info</span>(1)</span></a> 等等。
+      可以使用一个简单的命令安装一个新的应用程序。</p><p>一个FreeBSD的port是一个可以自动从源代码编译成应用程序的文件集合。</p><p>记住，如果您自己来编译的话，需要执行很多步的操作 (解压， 补丁， 编译，
+      安装)。 这些整理 port 的文件集合包含了系统需要完成这个工作的必需信息。
+      您可以运行一些简单的命令， 那些源代码就可以自动地下载， 解开， 打补丁，
+      编译， 直至安装完成。</p><p>实际上，ports 系统也能做出被 <code class="command">pkg_add</code>
+      的程序包和不久就要讲到的其他包管理命令来安装的软件包。</p><p>Packages 和 ports 是互相 <span class="emphasis"><em>依赖</em></span> 的。
+      假设您想安装一个依赖于已经安装的特定库的应用程序。
+      应用程序和那个库都已经应用于 FreeBSD ports 和 packages。
+      如果您使用 <code class="command"></code> 命令或 ports 系统来添加应用程序，
+      两个都必须注意库是否被安装， 如果没有， 它会自动先安装库。</p><p>这里给出的两种技术是很相似的，您可能会奇怪为什么 FreeBSD
+      会弄出这两种技术。 其实， packages 和 ports 都有它们自己的长处，
+      使用哪一种完全取决于您自己的喜好。</p><div class="itemizedlist"><div class="itemizedlist-title">Package Benefits</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>一个压缩的 package 通常要比一个压缩的包含源代码的应用程序小得多。</p></li><li class="listitem"><p>package 不需要进行额外的编译。 对于大型应用程序如
+	  <span class="application">Mozilla</span>， <span class="application">KDE</span> 或
+	  <span class="application">GNOME</span> 来说这显得尤为重要，
+	  特别是在您的系统资源比较差的情况下。</p></li><li class="listitem"><p>package不需要您知道如何在FreeBSD上编译软件的详细过程。</p></li></ul></div><div class="itemizedlist"><div class="itemizedlist-title">Ports Benefits</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>package 在编译时通常使用比较保守的选项，
+	  这是为了保证它们能够运行在大多数的系统上。 通过从 port 安装，
+	  您可以细微调整编译选项来产生适合于处理器的代码 (针对于 Pentium 4
+	  或 AMD 的 Athlon CPU)。</p></li><li class="listitem"><p>一些软件包已经把与它们相关的能做和不能做的事情的选项都编译进去了。
+	  例如， <span class="application">Apache</span> 可能就配置了很多的选项。
+	  从 port 中安装时， 您不一定要接受默认的选项， 可以自己来设置。</p><p>在一些例子中，一个软件有不同的配置存在多个package。 例如，
+	  <span class="application">Ghostscript</span>存在
+	  <code class="filename">ghostscript</code> package 和
+	  <code class="filename">ghostscript-nox11</code> package两个配置package，
+	  这取决于您是否安装了X11服务器。 这样的调整对package是可能的，
+	  但如果一个应用程序有超过一个或两个不同的编译时间选项时， 就不行了。</p></li><li class="listitem"><p>一些软件的许可条件禁止采用二进制形式发行。 它们必须带上源代码。</p></li><li class="listitem"><p>一些人不信任二进制发行形式。 至少有了源代码， (理论上)
+	  可以亲自阅读它，寻找潜在的问题。</p></li><li class="listitem"><p>如果您要自己对软件打补丁，您就需要有源代码。</p></li><li class="listitem"><p>一些人喜欢整天围着源代码转， 所以他们喜欢亲自阅读源代码，
+	  修改源代码等等。</p></li></ul></div><p>保持更新 ports， 订阅邮件列表 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-ports" target="_top">FreeBSD ports 邮件列表</a> 和递交错误报告 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-ports-bugs" target="_top">FreeBSD ports bugs 邮件列表</a>。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">安装任何应用程序之前， 应首先检查 <code class="uri"><a class="uri" href="http://vuxml.freebsd.org/" target="_top">http://vuxml.freebsd.org/</a></code>
+	上是否有关于您所安装的应用程序的安全问题报告。</p><p xmlns="http://www.w3.org/1999/xhtml">您也可以安装 <span class="package">ports-mgmt/portaudit</span>，
+	它能够自动地检查已经安装的应用程序的漏洞；
+	此外， 在您安装程序之前它也会首先检查是否存在已知的漏洞。
+	另外， 您也可以使用 <code class="command">portaudit
+	-F -a</code> 这个命令在安装了某个软件包之后作出检查。</p></div><p>这章的其余部分将介绍在 FreeBSD 上如何使用 packages 和 ports 来安装和管理第三方软件。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ports.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="ports.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ports-finding-applications.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 5. 安装应用程序: Packages 和 Ports </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 5.3. 寻找您要的应用程序</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

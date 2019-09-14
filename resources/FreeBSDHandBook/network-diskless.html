@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>30.7. 无盘操作</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="advanced-networking.html" title="Chapter 30. 高级网络" /><link rel="prev" href="network-aggregation.html" title="30.6. 链路聚合与故障转移" /><link rel="next" href="network-pxe-nfs.html" title="30.8. 从 PXE 启动一个 NFS 根文件系统" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.7. 无盘操作</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-aggregation.html">Prev</a> </td><th width="60%" align="center">Chapter 30. 高级网络</th><td width="20%" align="right"> <a accesskey="n" href="network-pxe-nfs.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-diskless"></a>30.7. 无盘操作</h2></div><div><span class="authorgroup">更新： <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Jean-François</span> <span class="surname">Dockès</span></span>. </span></div><div><span class="authorgroup">重新组织及增强：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Alex</span> <span class="surname">Dupre</span></span>. </span></div><div><span class="authorgroup">中文翻译：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">张</span> <span class="surname">雪平</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">袁</span> <span class="surname">苏义</span></span>. </span></div></div></div><a id="idp89764560" class="indexterm"></a><a id="idp89765328" class="indexterm"></a><p>FreeBSD 主机可以从网络启动而无需本地磁盘就可操作，
+      使用的是从 <acronym class="acronym">NFS</acronym> 服务器装载的文件系统。
+      除了标准的配置文件，无需任何的系统修改。
+      很容易设置这样的系统因为所有必要的元素都很容易得到：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>至少有两种可能的方法从网络加载内核：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p><acronym class="acronym">PXE</acronym>：<span class="trademark">Intel</span>®
+	      的先启动执行环境 (Preboot eXecution Environment)
+	      系统是一种灵活的引导 ROM 模式，这个 ROM
+	      内建在一些网卡或主板的中。查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a>
+	      以获取更多细节。</p></li><li class="listitem"><p><span class="application">Etherboot</span> port (<span class="package">net/etherboot</span>)
+	      产生通过网络加载内核的可 ROM 代码。这些代码可以烧入网卡上的
+	      PROM 上，或从本地软盘 (或硬盘) 驱动器加载，或从运行着的
+	      <span class="trademark">MS-DOS</span>® 系统加载。它支持多种网卡。</p></li></ul></div></li><li class="listitem"><p>一个样板脚本
+	  (<code class="filename">/usr/share/examples/diskless/clone_root</code>)
+	  简化了对服务器上的工作站根文件系统的创建和维护。
+	  这个脚本需要少量的自定义，但您能很快的熟悉它。</p></li><li class="listitem"><p><code class="filename">/etc</code>
+	  存在标准的系统启动文件用于侦测和支持无盘的系统启动。</p></li><li class="listitem"><p>可以向 <acronym class="acronym">NFS</acronym>
+	  文件或本地磁盘进行交换(如果需要的话)。</p></li></ul></div><p>设置无盘工作站有许多方法。
+      有很多相关的元素大部分可以自定义以适合本地情况。
+      以下将介绍一个完整系统的安装，强调的是简单性和与标准
+      FreeBSD 启动脚本的兼容。介绍的系统有以下特性：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>无盘工作站使用一个共享的只读 <code class="filename">/</code>
+	  文件系统和一个共享的只读<code class="filename">/usr</code>。</p><p>root 文件系统是一份标准的 FreeBSD 根文件系统
+	  (一般是服务器的)，只是一些配置文件被特定于无盘操作的配置文件覆盖。</p><p>root 文件系统必须可写的部分被 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 文件系统覆盖。
+	  任何的改写在重启后都会丢失。</p></li><li class="listitem"><p>内核由 <span class="application">etherboot</span> 或
+	  <acronym class="acronym">PXE</acronym> 传送和加载，
+	  有些情况可能会指定使用其中之一。</p></li></ul></div><div xmlns="" class="caution"><h3 class="admontitle">Caution: </h3><p xmlns="http://www.w3.org/1999/xhtml">如上所述，这个系统是不安全的。
+      它应该处于网络的受保护区域并不被其它主机信任。</p></div><p>这部分所有的信息均在
+      5.2.1-RELEASE 上测试过。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89782224"></a>30.7.1. 背景信息</h3></div></div></div><p>设置无盘工作站相对要简单而又易出错。
+	有时分析一些原因是很难的。例如：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>编译时选项在运行时可能产生不同的行为。</p></li><li class="listitem"><p>出错信息经常是加密了的或根本就没有。</p></li></ul></div><p>在这里，
+	涉及到的一些背景知识对于可能出现的问题的解决是很有帮助的。</p><p>要成功地引导系统还有些操作需要做。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>机子需要获取初始的参数，如它的 IP
+	    地址、执行文件、服务器名、根路径。这个可以使用
+	    <acronym class="acronym"></acronym>或 BOOTP 协议来完成。
+	    <acronym class="acronym">DHCP</acronym> 是 BOOTP 的兼容扩展，
+	    并使用相同的端口和基本包格式。</p><p>只使用 BOOTP 来配置系统也是可行的。
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bootpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bootpd</span>(8)</span></a> 服务程序被包含在基本的
+	    FreeBSD 系统里。</p><p>不过，<acronym class="acronym">DHCP</acronym> 相比
+	    BOOTP 有几个好处 (更好的配置文件，使用 <acronym class="acronym">PXE</acronym>
+	    的可能性，以及许多其它并不直接相关的无盘操作)，
+	    接着我们会要描述一个 <acronym class="acronym">DHCP</acronym> 配置，
+	    可能的话会利用与使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=bootpd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">bootpd</span>(8)</span></a>
+	    相同的例子。这个样板配置会使用<span class="application">ISC DHCP</span>
+	    软件包 (3.0.1.r12 发行版安装在测试服务器上)。</p></li><li class="listitem"><p>机子需要传送一个或多个程序到本地内存。
+	    <acronym class="acronym">TFTP</acronym> 或 <acronym class="acronym">NFS</acronym>
+	    会被使用。选择<acronym class="acronym">TFTP</acronym> 还是 <acronym class="acronym">NFS</acronym>
+	    需要在几个地方的<span class="quote">“<span class="quote">编译时间</span>”</span>选项里设置。
+	    通常的错误源是为文件名指定了错误的协议：<acronym class="acronym">TFTP</acronym>
+	    通常从服务器里的一个单一目录传送所有文件，并需要相对这个目录的文件名。
+	    <acronym class="acronym">NFS</acronym> 需要的是绝对文件路径。</p></li><li class="listitem"><p>介于启动程序和内核之间的可能的部分需要被初始化并执行。
+	    在这部分有几个重要的变量：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p><acronym class="acronym">PXE</acronym> 会装入
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a>――它是 FreeBSD 第三阶段装载器的修改版。
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a> 会获得许多参数用于系统启动，
+		并在传送控制之前把它们留在内核环境里。
+		在这种情况下，使用 <code class="filename">GENERIC</code>
+		内核就可能了。</p></li><li class="listitem"><p><span class="application">Etherboot</span>
+		会做很少的准备直接装载内核。
+		您要使用指定的选项建立 (build) 内核。</p></li></ul></div><p><acronym class="acronym">PXE</acronym> 和
+	    <span class="application">Etherboot</span> 工作得一样的好。
+	    不过， 因为一般情况下内核希望 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">loader</span>(8)</span></a>
+	    做了更多的事情， <acronym class="acronym">PXE</acronym> 是推荐的方法。</p><p>如果您的 <acronym class="acronym">BIOS</acronym> 和网卡都支持
+	    <acronym class="acronym">PXE</acronym>， 就应该使用它。</p></li><li class="listitem"><p>最后，机子需要访问它的文件系统。
+	    <acronym class="acronym">NFS</acronym> 使用在所有的情况下。</p></li></ul></div><p>查看 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=diskless&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">diskless</span>(8)</span></a> 手册页。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89838800"></a>30.7.2. 安装说明</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89839440"></a>30.7.2.1. 配置使用<span class="application">ISC DHCP</span></h4></div></div></div><a id="idp89840336" class="indexterm"></a><p><span class="application">ISC DHCP</span>
+	    服务器可以回应 BOOTP 和 <acronym class="acronym">DHCP</acronym>
+	    的请求。</p><p><span class="application">ISC DHCP 4.2</span>
+	    并不属于基本系统。首先您需要安装
+	    <span class="package">net/isc-dhcp42-server</span>
+	    port 或相应的<span class="quote">“<span class="quote">包</span>”</span>。</p><p>一旦安装了 <span class="application">ISC DHCP</span>，
+	    还需要一个配置文件才能运行 (通常名叫
+	    <code class="filename">/usr/local/etc/dhcpd.conf</code>)。
+	    这里有个注释过的例子，里边主机 <code class="systemitem">margaux</code>
+	    使用 <span class="application">Etherboot</span>，
+	    而主机<code class="systemitem">corbieres</code> 使用 <acronym class="acronym">PXE</acronym>：</p><pre class="programlisting">
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+
+option domain-name "example.com";
+option domain-name-servers 192.168.4.1;
+option routers 192.168.4.1;
+
+subnet 192.168.4.0 netmask 255.255.255.0 {
+  use-host-decl-names on; <a id="co-dhcp-host-name"></a><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span>
+  option subnet-mask 255.255.255.0;
+  option broadcast-address 192.168.4.255;
+
+  host margaux {
+    hardware ethernet 01:23:45:67:89:ab;
+    fixed-address margaux.example.com;
+    next-server 192.168.4.4; <a id="co-dhcp-next-server"></a><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span>
+    filename "/data/misc/kernel.diskless"; <a id="co-dhcp-filename"></a><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span>
+    option root-path "192.168.4.4:/data/misc/diskless"; <a id="co-dhcp-root-path"></a><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span>
+  }
+  host corbieres {
+    hardware ethernet 00:02:b3:27:62:df;
+    fixed-address corbieres.example.com;
+    next-server 192.168.4.4;
+    filename "pxeboot";
+    option root-path "192.168.4.4:/data/misc/diskless";
+  }
+}
+          </pre><div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#co-dhcp-host-name"><span><img src="./imagelib/callouts/1.png" alt="1" border="0" /></span></a> </p></td><td valign="top" align="left"><p>这个选项告诉 <span class="application">dhcpd</span>
+		发送<code class="literal">host</code> 里声明的用于无盘主机的主机名的值。
+		另外可能会增加一个
+		<code class="literal">option host-name margaux</code>
+		到 <code class="literal">host</code> 声明里。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-dhcp-next-server"><span><img src="./imagelib/callouts/2.png" alt="2" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">next-server</code> 正式指定
+		<acronym class="acronym">TFTP</acronym> 或 <acronym class="acronym">NFS</acronym>
+		服务用于载入装载器或内核文件
+		(默认使用的是相同的主机作为<acronym class="acronym">DHCP</acronym>
+		服务器)。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-dhcp-filename"><span><img src="./imagelib/callouts/3.png" alt="3" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">filename</code>
+		正式定义这样的文件――<span class="application">etherboot</span>
+		或 <acronym class="acronym">PXE</acronym> 为执行下一步将装载它。
+		根据使用的传输方式，它必须要指定。
+		<span class="application">Etherboot</span> 可以被编译来使用
+		<acronym class="acronym">NFS</acronym> 或 <acronym class="acronym">TFTP</acronym>。
+		FreeBSD port 默认配置了<acronym class="acronym">NFS</acronym>。
+		<acronym class="acronym">PXE</acronym> 使用 <acronym class="acronym">TFTP</acronym>，
+		这就是为什么在这里使用相对文件名 (这可能依赖于
+		<acronym class="acronym">TFTP</acronym> 服务器配置，不过会相当典型)。
+		同样，<acronym class="acronym">PXE</acronym> 会装载 <code class="filename">pxeboot</code>，
+		而不是内核。另外有几个很有意思的可能，如从 FreeBSD CD-ROM
+		的 <code class="filename">/boot</code> 目录装载
+		<code class="filename">pxeboot</code> (因为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a> 能够装载
+		<code class="filename">GENERIC</code> 内核，这就使得可以使用
+		<acronym class="acronym">PXE</acronym> 从远程的 CD-ROM 里启动)。</p></td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#co-dhcp-root-path"><span><img src="./imagelib/callouts/4.png" alt="4" border="0" /></span></a> </p></td><td valign="top" align="left"><p><code class="literal">root-path</code> 选项定义到根
+		(root) 文件系统的路径，通常是 <acronym class="acronym">NFS</acronym>
+		符号。当使用 <acronym class="acronym">PXE</acronym> 时，只要您不启用内核里的
+		BOOTP 选项，可以不管主机的IP。<acronym class="acronym">NFS</acronym>
+		服务器然后就如同 <acronym class="acronym">TFTP</acronym> 一样。</p></td></tr></table></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89873104"></a>30.7.2.2. 配置使用BOOTP</h4></div></div></div><a id="idp89873744" class="indexterm"></a><p>这里紧跟的是一个等效的 <span class="application">bootpd</span>
+	    配置 (减少到一个客户端)。这个可以在
+	    <code class="filename">/etc/bootptab</code> 里找到。</p><p>请注意：为了使用BOOTP，<span class="application">etherboot</span>
+	    必须使用非默认选项 <code class="literal">NO_DHCP_SUPPORT</code>
+	    来进行编译，而且 <acronym class="acronym">PXE</acronym> <span class="emphasis"><em> 需要
+	    </em></span> <acronym class="acronym">DHCP</acronym>。<span class="application">bootpd</span>
+	    的唯一可见的好处是它存在于基本系统中。</p><pre class="programlisting">
+.def100:\
+  :hn:ht=1:sa=192.168.4.4:vm=rfc1048:\
+  :sm=255.255.255.0:\
+  :ds=192.168.4.1:\
+  :gw=192.168.4.1:\
+  :hd="/tftpboot":\
+  :bf="/kernel.diskless":\
+  :rp="192.168.4.4:/data/misc/diskless":
+
+margaux:ha=0123456789ab:tc=.def100</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89879632"></a>30.7.2.3. 使用<span class="application">Etherboot</span>准备启动程序</h4></div></div></div><a id="idp89880656" class="indexterm"></a><p><a class="link" href="http://etherboot.sourceforge.net" target="_top">Etherboot
+	  的网站</a> 包含有<a class="link" href="http://etherboot.sourceforge.net/doc/html/userman/t1.html" target="_top">更多的文档
+	  </a>――主要瞄准的是 Linux 系统，但无疑包含有有用的信息。
+	  如下列出的是关于在 FreeBSD 系统里使用
+	  <span class="application">Etherboot</span>。</p><p>首先您必须安装<span class="package">net/etherboot</span> 包或 port。</p><p>您可以改变 <span class="application">Etherboot</span> 的配置
+	  (如使用 <acronym class="acronym">TFTP</acronym> 来代替 <acronym class="acronym">NFS</acronym>)，
+	  方法是修改 <code class="filename">Config</code> 文件――在
+	  <span class="application">Etherboot</span> 源目录里。</p><p>对于我们的设置，我们要使用一张启动软盘。
+	  对于其它的方法(PROM，或 <span class="trademark">MS-DOS</span>®程序)，
+	  请参考 <span class="application">Etherboot</span> 文档。</p><p>想要使用启动软盘，先插入一张软盘到安装有
+	  <span class="application">Etherboot</span> 的机器的驱动器里，
+	  然后把当前路径改到 <code class="filename">src</code>
+	  目录――在 <span class="application">Etherboot</span> 树下，
+	  接着输入：</p><pre class="screen">
+<code class="prompt">#</code> <strong class="userinput"><code>gmake bin32/devicetype.fd0</code></strong>
+	</pre><p><em class="replaceable"><code>devicetype</code></em>
+	  依赖于无盘工作站上的以太网卡的类型。
+	  参考在同一个目录下的 <code class="filename">NIC</code>
+	  文件确认正确的 <em class="replaceable"><code>devicetype</code></em>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89896016"></a>30.7.2.4. 使用<acronym class="acronym">PXE</acronym>启动</h4></div></div></div><p>默认地，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a> 装载器通过 <acronym class="acronym">NFS</acronym>
+	  装载内核。它可以编译来使用 <acronym class="acronym">TFTP</acronym>――通过在文件
+	  <code class="filename">/etc/make.conf</code> 里指定
+	  <code class="literal">LOADER_TFTP_SUPPORT</code> 选项来代替。 请参见
+	  <code class="filename">/usr/share/examples/etc/make.conf</code> 里的注释
+	  了解如何配置。</p><p>除此之外还有两个未说明的 <code class="filename">make.conf</code>
+	  选项――它可能对于设置一系列控制台无盘机器会有用：
+	  <code class="literal">BOOT_PXELDR_PROBE_KEYBOARD</code>和
+	  <code class="literal">BOOT_PXELDR_ALWAYS_SERIAL</code>。</p><p>当机器启动里，要使用 <acronym class="acronym">PXE</acronym>，
+	  通常需要选择 <code class="literal">Boot from network</code>
+	  选项――在 <acronym class="acronym">BIOS</acronym> 设置里，
+	  或者在 PC 初始化的时候输入一个功能键 (function key)。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89907536"></a>30.7.2.5. 配置 <acronym class="acronym">TFTP</acronym> 和 <acronym class="acronym">NFS</acronym> 服务器</h4></div></div></div><a id="idp89908944" class="indexterm"></a><a id="idp89910096" class="indexterm"></a><p>如果您正在使用 <acronym class="acronym">PXE</acronym> 或
+	  <span class="application">Etherboot</span>――配置使用了
+	  <acronym class="acronym">TFTP</acronym>，那么您需要在文件服务器上启用
+	  <span class="application">tftpd</span>：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>建立一个目录――从那里 <span class="application">tftpd</span>
+	      可以提供文件服务，如 <code class="filename">/tftpboot</code>。</p></li><li class="step"><p>把这一行加入到 <code class="filename">/etc/inetd.conf</code>里：</p><pre class="programlisting">tftp	dgram	udp	wait	root	/usr/libexec/tftpd	tftpd -l -s /tftpboot</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">好像有一些版本的 <acronym class="acronym">PXE</acronym>
+	      需要 <acronym class="acronym">TCP</acronym> 版本的 <acronym class="acronym">TFTP</acronym>。
+	      在这种情况下，加入第二行，使用 <code class="literal">stream tcp</code>
+	      来代替 <code class="literal">dgram udp</code>。</p></div></li><li class="step"><p>让 <span class="application">inetd</span> 重读其配置文件。
+	      要正确执行这个命令， 在 <code class="filename">/etc/rc.conf</code> 文件中必须加入
+	      <code class="option">inetd_enable="YES"</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/inetd restart</code></strong></pre></li></ol></div><p>您可把 <code class="filename">tftpboot</code> 目录放到服务器上的什何地方。
+	  确定这个位置设置在 <code class="filename">inetd.conf</code> 和
+	  <code class="filename">dhcpd.conf</code> 里。</p><p>在所有的情况下，您都需要启用 <acronym class="acronym">NFS</acronym>，
+	并且 <acronym class="acronym">NFS</acronym> 服务器上导出相应的文件系统。</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p>把这一行加入到<code class="filename">/etc/rc.conf</code>里：</p><pre class="programlisting">nfs_server_enable="YES"</pre></li><li class="step"><p>通过往 <code class="filename">/etc/exports</code>
+	      里加入下面几行(调整<span class="quote">“<span class="quote">载入点</span>”</span>列，
+	      并且使用无盘工作站的名字替换
+	      <em class="replaceable"><code>margaux corbieres</code></em>)，
+	      导出文件系统――无盘根目录存在于此：</p><pre class="programlisting"><em class="replaceable"><code>/data/misc</code></em> -alldirs -ro <em class="replaceable"><code>margaux corbieres</code></em></pre></li><li class="step"><p>让 <span class="application">mountd</span>
+	      重读它的配置文件。如果您真的需要启用第一步的
+	      <code class="filename">/etc/rc.conf</code> 里 <acronym class="acronym">NFS</acronym>，
+	      您可能就要重启系统了。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/mountd restart</code></strong></pre></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89940688"></a>30.7.2.6. 建立无盘内核</h4></div></div></div><a id="idp89941328" class="indexterm"></a><p>如果您在使用 <span class="application">Etherboot</span>，
+	  您需要为无盘客户端建立内核配置文件，
+	  使用如下选项(除了常使用的外)：</p><pre class="programlisting">
+options     BOOTP          # Use BOOTP to obtain IP address/hostname
+options     BOOTP_NFSROOT  # NFS mount root filesystem using BOOTP info
+	</pre><p>您可能也想使用 <code class="literal">BOOTP_NFSV3</code>，
+	  <code class="literal">BOOT_COMPAT</code> 和 <code class="literal">BOOTP_WIRED_TO</code>
+	  (参考 <code class="filename">NOTES</code> 文件)。</p><p>这些名字具有历史性，并且有些有些误导，
+	  因为它们实际上启用了内核里 (它可能强制限制 BOOTP 或
+	  <acronym class="acronym">DHCP</acronym> 的使用)，与 <acronym class="acronym">DHCP</acronym>
+	  和 BOOTP 的无关的应用。</p><p>编译内核(参考<a class="xref" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">Chapter 9, <em>配置FreeBSD的内核</em></a>)，
+	  然后将它复制到 <code class="filename">dhcpd.conf</code>
+	  里指定的地方。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">当使用 <acronym class="acronym">PXE</acronym> 里，
+	    使用以上选项建立内核并不做严格要求(尽管建议这样做)。
+	    启用它们会在内核启动时引起更多的 <acronym class="acronym">DHCP</acronym>
+	    提及过的请求，带来的小小的风险是在有些特殊情况下新值和由
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pxeboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pxeboot</span>(8)</span></a> 取回的值之间的不一致性。
+	    使用它们的好处是主机名会被附带设置。否则，
+	    您就需要使用其它的方法来设置主机名，如在客户端指定的
+	    <code class="filename">rc.conf</code> 文件里。</p></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">为了使带有 <span class="application">Etherboot</span>
+	    的内核可引导，就需要把设备提示 (device hint)
+	    编译进去。通常要在配置文件(查看 <code class="filename">NOTES</code>
+	    配置注释文件) 里设置下列选项：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">hints		"GENERIC.hints"</pre></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89952592"></a>30.7.2.7. 准备根(root)文件系统</h4></div></div></div><a id="idp89957456" class="indexterm"></a><p>您需要为无盘工作站建立根文件系统， 它就是
+	  <code class="filename">dhcpd.conf</code> 里的 <code class="literal">root-path</code>
+	  所指定的目录。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89959760"></a>30.7.2.7.1. 使用 <code class="command">make world</code> 来复制根文件系统</h5></div></div></div><p>这种方法可以迅速安装一个彻底干净的系统 (不仅仅是根文件系统) 到
+	    <code class="envar">DESTDIR</code>。 您要做的就是简单地执行下面的脚本：</p><pre class="programlisting">#!/bin/sh
+export DESTDIR=/data/misc/diskless
+mkdir -p ${DESTDIR}
+cd /usr/src; make buildworld &amp;&amp; make buildkernel
+make installworld &amp;&amp; make installkernel
+cd /usr/src/etc; make distribution</pre><p>一旦完成，您可能需要定制 <code class="filename">/etc/rc.conf</code>
+	    和 <code class="filename">/etc/fstab</code>――根据您的需要放到
+	    <code class="envar">DESTDIR</code>里。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89963728"></a>30.7.2.8. 配置 swap(交换)</h4></div></div></div><p>如果需要，位于服务器上的交换文件可以通过
+	  <acronym class="acronym">NFS</acronym> 来访问。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89977552"></a>30.7.2.8.1. <acronym class="acronym">NFS</acronym> 交换区</h5></div></div></div><p>内核并不支持在引导时启用 <acronym class="acronym">NFS</acronym>
+	    交换区。 交换区必须通过启动脚本启用， 其过程是挂接一个可写的文件系统，
+	    并在其上创建并启用交换文件。 要建立尺寸合适的交换文件，
+	    可以这样做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/zero of=/path/to/swapfile bs=1k count=1 oseek=100000</code></strong></pre><p>要启用它，您须要把下面几行加到
+	    <code class="filename">rc.conf</code>里：</p><pre class="programlisting">swapfile=<em class="replaceable"><code>/path/to/swapfile</code></em></pre></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89981776"></a>30.7.2.9. 杂项问题</h4></div></div></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp89982416"></a>30.7.2.9.1. 运行时 <code class="filename">/usr</code> 是只读在</h5></div></div></div><a id="idp89983440" class="indexterm"></a><p>如果无盘工作站是配置来支持 X，
+	      那么您就必须调整 <span class="application">XDM</span>
+	      配置文件，因为它默认把错误信息写到
+	      <code class="filename">/usr</code>。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp90014672"></a>30.7.2.9.2. 使用非 FreeBSD 服务器</h5></div></div></div><p>当用作根文件系统的服务器运行的是不
+	    FreeBSD，您须要在 FreeBSD 机器上建立根文件系统，
+	    然后把它复制到它的目的地，使用的命令可以是
+	    <code class="command">tar</code> 或 <code class="command">cpio</code>。</p><p>在这种情况下，有时对于 <code class="filename">/dev</code>
+	    里的一些特殊的文件会有问题，原因就是不同的
+	    <span class="quote">“<span class="quote">最大/最小</span>”</span>整数大小。
+	    一种解决的方法就是从非 FreeBSD 服务里导出一个目录，
+	    并把它载入 FreeBSD 到机子上， 并使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs</span>(5)</span></a>
+	    来为用户透明地分派设备节点。</p></div></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-aggregation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="advanced-networking.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-pxe-nfs.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">30.6. 链路聚合与故障转移 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 30.8. 从 PXE 启动一个 NFS 根文件系统</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

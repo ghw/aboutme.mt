@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.11. 使用 syslogd 记录远程主机的日志</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-ntp.html" title="28.10. 通过 NTP 进行时钟同步" /><link rel="next" href="firewalls.html" title="Chapter 29. 防火墙" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.11. 使用 <code class="command">syslogd</code> 记录远程主机的日志</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-ntp.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="firewalls.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-syslogd"></a>28.11. 使用 <code class="command">syslogd</code> 记录远程主机的日志</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><p>处理系统日志对于系统安全和管理是一个重要方面。
+      当有多台分布在中型或大型网络的机器，再或者是处于各种不同类型的网络中，
+      监视他们上面的日志文件则显得非常难以操作， 在这种情况下，
+      配置远程日志记录能使整个处理过程变得更加轻松。</p><p>集中记录日志到一台指定的机器能够减轻一些日志文件管理的负担。
+      日志文件的收集， 合并与循环可以在一处配置，
+      使用 FreeBSD 原生的工具， 比如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newsyslog</span>(8)</span></a>。
+      在以下的配置示例中， 主机 <code class="systemitem">A</code>， 命名为
+      <code class="systemitem">logserv.example.com</code>，
+      将用来收集本地网络的日志信息。 主机 <code class="systemitem">B</code>，
+      命名为 <code class="systemitem">logclient.example.com</code>
+      将把日志信息传送给服务器。 在现实中，
+      这两个主机都需要配置正确的正向和反向的 <acronym class="acronym">DNS</acronym>
+      或者在 <code class="filename">/etc/hosts</code> 中记录。
+      否则， 数据将被服务器拒收。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87713616"></a>28.11.1. 日志服务器的配置</h3></div></div></div><p>日志服务器是配置成用来接收远程主机日志信息的机器。
+        在大多数的情况下这是为了方便配置， 或者是为了更好的管理。
+        不论是何原因， 在继续深入之前需要提一些必需条件。</p><p>一个正确配置的日志服务器必须符合以下几个最基本的条件：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>服务器和客户端的防火墙规则允许 514 端口上的
+            <acronym class="acronym">UDP</acronym> 报文通过。</p></li><li class="listitem"><p>syslogd 被配置成接受从远程客户发来的消息。</p></li><li class="listitem"><p>syslogd 服务器和所有的客户端都必须有配有正确的正向和反向
+            <acronym class="acronym">DNS</acronym>， 或者在
+            <code class="filename">/etc/hosts</code> 中有相应配置。</p></li></ul></div><p>配置日志服务器， 客户端必须在
+        <code class="filename">/etc/syslog.conf</code> 中列出,
+        并指定日志的 facility：</p><pre class="programlisting">+logclient.example.com
+*.*     /var/log/logclient.log</pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">更多关于各种被支持并可用的 <span class="emphasis"><em>facility</em></span>
+          能在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">syslog.conf</span>(5)</span></a> 手册页中找到。</p></div><p>一旦加入以后， 所有此类 <code class="literal">facility</code>
+        消息都会被记录到先前指定的文件
+	<code class="filename">/var/log/logclient.log</code>。</p><p>提供服务的机器还需要在其
+	<code class="filename">/etc/rc.conf</code> 中配置：</p><pre class="programlisting">syslogd_enable="YES"
+syslogd_flags="-a logclient.example.com -v -v"</pre><p>第一个选项表示在系统启动时启用 <code class="command">syslogd</code>
+	服务， 第二个选项表示允许服务器接收来自指定日志源客户端的数据。
+	第二行配置中最后的部分， 使用 <code class="option">-v -v</code>，
+	表示增加日志消息的详细程度。 在调整 facility 配置的时候，
+	这个配置非常有用， 因为管理员能够看到哪些消息将作为哪个
+	facility 的内容来记录。</p><p>可以同时指定多个 <code class="option">-a</code> 选项来允许多个客户机。
+	此外， 还可以指定 <acronym class="acronym">IP</acronym>
+	地址或网段， 请参阅
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">syslog</span>(3)</span></a> 联机手册以了解可用配置的完整列表。</p><p>最后， 日志文件应该被创建。 不论你用何种方法创建，
+        比如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=touch&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">touch</span>(1)</span></a> 能很好的完成此类任务：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>touch /var/log/logclient.log</code></strong></pre><p>此时， 应该重启并确认一下 <code class="command">syslogd</code>
+        守护进程：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/syslogd restart</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>pgrep syslog</code></strong></pre><p>如果返回了一个 <acronym class="acronym">PIC</acronym> 的话，
+        服务端应该被成功重启了,  并继续开始配置客户端。
+        如果服务端没有重启的话， 请在
+        <code class="filename">/var/log/messages</code>
+        日志中查阅相关输出。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87733712"></a>28.11.2. 日志客户端配置</h3></div></div></div><p>日志客户端是一台发送日志信息到日志服务器的机器，
+        并在本地保存拷贝。</p><p>与日志服务器类似， 客户端也需要满足一些最基本的条件：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslogd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">syslogd</span>(8)</span></a>
+            必须被配置成发送指定类型的消息到能接收他们的日志服务器。</p></li><li class="listitem"><p>防火墙必须允许 514 端口上的 <acronym class="acronym">UDP</acronym> 包通过；</p></li><li class="listitem"><p>必须配置正向与反向 <acronym class="acronym">DNS</acronym>，
+            或者在 <code class="filename">/etc/hosts</code> 中有正确的记录。</p></li></ul></div><p>相比服务器来说配置客户端更轻松一些。
+        客户端的机器在 <code class="filename">/etc/rc.conf</code>
+        中做如下的设置：</p><pre class="programlisting">syslogd_enable="YES"
+syslogd_flags="-s -v -v"</pre><p>和前面类似， 这些选项会在系统启动过程中启用
+	<code class="command">syslogd</code> 服务， 并增加日志消息的详细程度。
+	而 <code class="option">-s</code>
+	选项则表示禁止服务接收来自其他主机的日志。</p><p>Facility 是描述某个消息由系统的哪部分生成的。 举例来说，
+        <acronym class="acronym">ftp</acronym> 和 <acronym class="acronym">ipfw</acronym> 都是 facility。
+        当这两项服务生成日志消息时， 它们通常在日志消息中包含了这两种工具。
+        Facility 通常带有一个优先级或等级，
+        就是用来标记一个日志消息的重要程度。 最普通的为
+        <code class="literal">warning</code> 和 <code class="literal">info</code>。
+        请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=syslog&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">syslog</span>(3)</span></a> 手册页以获得一个完整可用的
+        facility 与优先级列表。</p><p>日志服务器必须在客户端的 <code class="filename">/etc/syslog.conf</code>
+        中指明。 在此例中， <code class="literal">@</code>
+        符号被用来表示发送日志数据到远程的服务器，
+        看上去差不多如下这样：</p><pre class="programlisting">*.*		@logserv.example.com</pre><p>添加后， 必须重启 <code class="command">syslogd</code>
+        使得上述修改生效：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/syslogd restart</code></strong></pre><p>测试日志消息是否能通过网络发送，
+	在准备发出消息的客户机上用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=logger&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">logger</span>(1)</span></a> 来向
+	<code class="command">syslogd</code> 发出信息：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>logger "Test message from logclient"</code></strong></pre><p>这段消息现在应该同时出现在客户机的
+	<code class="filename">/var/log/messages</code> 以及日志服务器的
+	<code class="filename">/var/log/logclient.log</code> 中。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87772368"></a>28.11.3. 调试日志服务器</h3></div></div></div><p>在某些情况下， 如果日志服务器没有收到消息的话就需要调试一番了。
+        有几个可能的原因， 最常见的两个是网络连接的问题和
+        <acronym class="acronym">DNS</acronym> 的问题。 为了测试这些问题，
+        请确认两边的机器都能使用 <code class="filename">/etc/rc.conf</code>
+        中所设定的主机名访问到对方。 如果这个能正常工作的话，
+        那么就需要对 <code class="filename">/etc/rc.conf</code>
+        中的 <code class="literal">syslogd_flags</code> 选项做些修改了。</p><p>在以下的示例中，
+        <code class="filename">/var/log/logclient.log</code> 是空的，
+        <code class="filename">/var/log/message</code> 中也没有表明任何失败的原因。
+        为了增加调试的输出， 修改 <code class="literal">ayalogd_flags</code>
+        选项至类似于如下的示例， 并重启服务：</p><pre class="programlisting">syslogd_flags="-d -a logclien.example.com -v -v"</pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/syslogd restart</code></strong></pre><p>在重启服务之后， 屏幕上将立刻闪现类似这样的调试数据：</p><pre class="screen">logmsg: pri 56, flags 4, from logserv.example.com, msg syslogd: restart
+syslogd: restarted
+logmsg: pri 6, flags 4, from logserv.example.com, msg syslogd: kernel boot file is /boot/kernel/kernel
+Logging to FILE /var/log/messages
+syslogd: kernel boot file is /boot/kernel/kernel
+cvthname(192.168.1.10)
+validate: dgram from IP 192.168.1.10, port 514, name logclient.example.com;
+rejected in rule 0 due to name mismatch.</pre><p>很明显，消息是由于主机名不匹配而被拒收的。
+        在一点一点的检查了配置文件之后， 发现了
+        <code class="filename">/etc/rc.conf</code> 中如下这行有输入错误：</p><pre class="programlisting">syslogd_flags="-d -a logclien.example.com -v -v"</pre><p>这行应该包涵有 <code class="literal">logclient</code>， 而不是
+        <code class="literal">logclien</code>。
+        在做了正确的修改并重启之后便能见到预期的效果了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/syslogd restart</code></strong>
+logmsg: pri 56, flags 4, from logserv.example.com, msg syslogd: restart
+syslogd: restarted
+logmsg: pri 6, flags 4, from logserv.example.com, msg syslogd: kernel boot file is /boot/kernel/kernel
+syslogd: kernel boot file is /boot/kernel/kernel
+logmsg: pri 166, flags 17, from logserv.example.com,
+msg Dec 10 20:55:02 &lt;syslog.err&gt; logserv.example.com syslogd: exiting on signal 2
+cvthname(192.168.1.10)
+validate: dgram from IP 192.168.1.10, port 514, name logclient.example.com;
+accepted in rule 0.
+logmsg: pri 15, flags 0, from logclient.example.com, msg Dec 11 02:01:28 trhodes: Test message 2
+Logging to FILE /var/log/logclient.log
+Logging to FILE /var/log/messages</pre><p>此刻， 消息能够被正确接收并保存入文件了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87786704"></a>28.11.4. 安全性方面的思考</h3></div></div></div><p>就像其他的网络服务一样， 在实现配置之前需要考虑安全性。
+        有时日志文件也包含了敏感信息， 比如本地主机上所启用的服务，
+        用户帐号和配置数据。 从客户端发出的数据经过网络到达服务器，
+        这期间既没有加密也没有密码保护。 如果有加密需要的话，
+        可以使用 <span class="package">security/stunnel</span>，
+        它将在一个加密的隧道中传输数据。</p><p>本地安全也同样是个问题。 日志文件在使用中或循环转后都没有被加密。
+        本地用户可能读取这些文件以获得对系统更深入的了解。
+        对于这类情况， 给这些文件设置正确的权限是非常有必要的。
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newsyslog&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newsyslog</span>(8)</span></a> 工具支持给新创建和循环的日志设置权限。
+        把日志文件的权限设置为 <code class="literal">600</code>
+        能阻止本地用户不必要的窥探。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-ntp.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="firewalls.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.10. 通过 NTP 进行时钟同步 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 29. 防火墙</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

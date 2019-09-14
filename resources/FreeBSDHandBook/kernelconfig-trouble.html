@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>9.7. 如果出现问题怎么办</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="prev" href="kernelconfig-config.html" title="9.6. 配置文件" /><link rel="next" href="printing.html" title="Chapter 10. 打印" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">9.7. 如果出现问题怎么办</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="kernelconfig-config.html">Prev</a> </td><th width="60%" align="center">Chapter 9. 配置FreeBSD的内核</th><td width="20%" align="right"> <a accesskey="n" href="printing.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="kernelconfig-trouble"></a>9.7. 如果出现问题怎么办</h2></div></div></div><p>在定制一个内核时，可能会出现四种问题。它们是：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="command">config</code>失败：</span></dt><dd><p>如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=config&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">config</span>(8)</span></a> 在给出您的内核描述时失败，
+	    则可能在某些地方引入了一处小的错误。
+	    幸运的是， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=config&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">config</span>(8)</span></a> 会显示出它遇到问题的行号，
+	    这样您就能够迅速地定位错误。 例如， 如果您看到：</p><pre class="screen">config: line 17: syntax error</pre><p>可以通过与 <code class="filename">GENERIC</code> 或其他参考资料对比，
+	    来确定这里的关键词是否拼写正确。</p></dd><dt><span class="term"><code class="command">make</code>失败：</span></dt><dd><p>如果 <code class="command">make</code> 命令失败，
+	    它通常表示内核描述中发生了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=config&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">config</span>(8)</span></a> 无法找出的的错误。
+	    同样地， 仔细检查您的配置， 如果仍然不能解决问题，
+	    发一封邮件到 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-questions" target="_top">FreeBSD 一般问题邮件列表</a> 并附上您的内核配置，
+	    则问题应该很快就能解决。</p></dd><dt><span class="term">内核无法启动：<a id="kernelconfig-noboot"></a></span></dt><dd><p>如果您的内核无法启动， 或不识别您的设备， 千万别慌！
+	    非常幸运的是， FreeBSD 有一个很好的机制帮助您从不兼容的内核恢复。
+	    在 FreeBSD 启动加载器那里简单地选择一下要启动的内核就可以了。
+	    当系统在引导菜单的 10 秒倒计时时进入它， 方法是选择 <span class="quote">“<span class="quote">Escape to a loader
+	    prompt</span>”</span> 选项， 其编号为 6。 输入
+	    <code class="command">unload kernel</code>， 然后输入
+	    <code class="command">boot /boot/kernel.old/kernel</code>，
+            或者其他任何一个可以正确引导的内核即可。
+            当重新配置内核时， 保持一个已经证明能够正常启动的内核永远是一个好习惯。</p><p>当使用好的内核启动之后您可以检查配置文件并重新尝试编译它。
+	    比较有用的资源是 <code class="filename">/var/log/messages</code> 文件，
+	    它会记录每次成功启动所产生的所有内核消息。
+	    此外， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a> 命令也会显示这次启动时产生的内核消息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果在编译内核时遇到麻烦， 请务必保留一个
+	      <code class="filename">GENERIC</code> 或已知可用的其他内核，
+	      并命名为别的名字以免在下次启动时被覆盖。
+	      不要依赖 <code class="filename">kernel.old</code>
+	      因为在安装新内核时， <code class="filename">kernel.old</code>
+	      会被上次安装的那个可能不正常的内核覆盖掉。
+	      另外， 尽快把可用的内核挪到
+	      <code class="filename">/boot/kernel</code>
+	      否则类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a> 这样的命令可能无法正常工作。
+	      为了完成这一点， 需要修改目录的名字：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mv /boot/kernel /boot/kernel.bad</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mv /boot/kernel.good /boot/kernel</code></strong></pre></div></dd><dt><span class="term">内核工作，但是<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a>根本不工作:</span></dt><dd><p>如果您安装了一个与系统中内建工具版本不同的内核，
+	    例如在 -STABLE 系统上安装了 -CURRENT 的内核， 许多用于检查系统状态的工具如
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ps&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ps</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vmstat&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">vmstat</span>(8)</span></a> 都将无法正常使用。
+	    您应该 <a class="link" href="makeworld.html" title="23.7. 重新编译 “world”">重新编译一个和内核版本一致的系统</a>。
+	    这也是为什么一般不鼓励使用与系统其他部分版本不同的内核的一个主要原因。</p></dd></dl></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="kernelconfig-config.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="kernelconfig.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="printing.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">9.6. 配置文件 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 10. 打印</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

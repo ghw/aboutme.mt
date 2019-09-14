@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.13. MAC Biba 模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-mls.html" title="16.12. MAC 多级 (Multi-Level) 安全模块" /><link rel="next" href="mac-lomac.html" title="16.14. MAC LOMAC 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.13. MAC Biba 模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-mls.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-lomac.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-biba"></a>16.13. MAC Biba 模块</h2></div></div></div><a id="idp78951888" class="indexterm"></a><p>模块名： <code class="filename">mac_biba.ko</code></p><p>对应的内核配置： <code class="literal">options MAC_BIBA</code></p><p>引导选项： <code class="literal">mac_biba_load="YES"</code></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_biba&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_biba</span>(4)</span></a> 模块将加载 <acronym class="acronym">MAC</acronym>
+      Biba 策略。 这个策略与
+      <acronym class="acronym">MLS</acronym> 策略非常类似，
+      只是信息流的规则有些相反的地方。
+      通俗地说， 这就是防止敏感信息向下传播， 而 <acronym class="acronym">MLS</acronym>
+      策略则是防止敏感信息的向上传播； 因而，
+      这一节的许多内容都可以同时应用于两种策略。</p><p>在 Biba 环境中， <span class="quote">“<span class="quote">integrity</span>”</span> (完整性) 标签，
+      将设置在每一个主体或客体上。 这些标签是按照层次级别建立的。
+      如果客体或主体的级别被提升， 其完整性也随之提升。</p><p>被支持的标签是 <code class="literal">biba/low</code>，
+      <code class="literal">biba/equal</code> 以及 <code class="literal">biba/high</code>；
+      解释如下：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">biba/low</code> 标签是客体或主体所能拥有的最低完整性级别。
+	  在客体或主体上设置它，
+	  将阻止其在更高级别客体或主体对其进行的写操作，
+	  虽然读仍被允许。</p></li><li class="listitem"><p><code class="literal">biba/equal</code>
+	  标签只应在那些希望排除在策略之外的客体上设置。</p></li><li class="listitem"><p><code class="literal">biba/high</code> 允许向较低标签的客体上写，
+	  但不允许读那些客体。
+	  推荐在那些可能影响整个系统完整性的客体上设置这个标签。</p></li></ul></div><p>Biba 提供了：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>层次式的完整性级别， 并提供了一组非层次式的完整性分类；</p></li><li class="listitem"><p>固定规则： 不允许向上写， 不允许向下读 (与
+	  <acronym class="acronym">MLS</acronym> 相反)。 主体可以在它自己和较低的级别写，
+	  但不能向更高级别实施写操作。 类似地， 主体也可以读在其自己的，
+	  或更高级别的客体， 但不能读取较低级别的客体；</p></li><li class="listitem"><p>完整性 (防止对数据进行不正确的修改)；</p></li><li class="listitem"><p>完整性级别 (而不是 MLS 的敏感度级别)。</p></li></ul></div><p>下列 <code class="command">sysctl</code> 可以用于维护 Biba 策略。</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">security.mac.biba.enabled</code>
+	  可以用来在机器上启用/禁用是否实施 Biba 策略。</p></li><li class="listitem"><p><code class="literal">security.mac.biba.ptys_equal</code>
+	  可以用来在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pty&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pty</span>(4)</span></a> 设备上禁用 Biba 策略。</p></li><li class="listitem"><p><code class="literal">security.mac.biba.revocation_enabled</code>
+	  将在支配主体发生变化时强制撤销对客体的访问权。</p></li></ul></div><p>要操作系统客体上的 Biba 策略，
+      需要使用 <code class="command">setfmac</code> 和 <code class="command">getfmac</code>
+      命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfmac biba/low test</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>getfmac test</code></strong>
+test: biba/low</pre><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78987216"></a>16.13.1. 规划托管完整性</h3></div></div></div><p>与敏感性不同， 完整性是要确保不受信方不能对信息进行篡改。
+	这包括了在主体和客体之间传递的信息。
+	这能够确保用户只能修改甚至访问需要他们的信息。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_biba&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_biba</span>(4)</span></a> 安全策略模块允许管理员指定用户能够看到和执行的文件和程序，
+ 	并确保这些文件能够为系统及用户或用户组所信任， 而免受其他威胁。</p><p>在最初的规划阶段， 管理员必须做好将用户分成不同的等级、
+	级别和区域的准备。 在启动前后， 包括数据以及程序和使用工具在内的客体，
+	用户都会无法访问。 一旦启用了这个策略模块， 系统将默认使用高级别的标签，
+	而划分用户级别和等级的工作则交由管理员来进行配置。
+	与前面介绍的级别限界不同， 好的规划方法可能还包括 topic。
+	例如， 只允许开发人员修改代码库、 使用源代码编译器，
+	以及其他开发工具， 而其他用户则分入其他类别，
+	如测试人员、 设计人员， 以及普通用户，
+	这些用户可能只拥有读这些资料的权限。</p><p>通过其自然的安全控制， 完整性级别较低的主体，
+	就会无法向完整性级别高的主体进行写操作； 而完整性级别较高的主体，
+	也不能观察或读较低完整性级别的客体。 通过将客体的标签设为最低级，
+	可以阻止所有主体对其进行的访问操作。
+	这一安全策略模块预期的应用场合包括受限的 web 服务器、
+	开发和测试机， 以及源代码库。 而对于个人终端、
+	作为路由器的计算机， 以及网络防火墙而言，
+	它的用处就不大了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-mls.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-lomac.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.12. MAC 多级 (Multi-Level) 安全模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.14. MAC LOMAC 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

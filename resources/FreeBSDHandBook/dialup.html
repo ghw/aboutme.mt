@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>25.4. 拨入服务</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="serialcomms.html" title="Chapter 25. 串口通讯" /><link rel="prev" href="term.html" title="25.3. 终端" /><link rel="next" href="dialout.html" title="25.5. 拨出设备" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.4. 拨入服务</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="term.html">Prev</a> </td><th width="60%" align="center">Chapter 25. 串口通讯</th><td width="20%" align="right"> <a accesskey="n" href="dialout.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="dialup"></a>25.4. 拨入服务</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Guy</span> <span class="surname">Helmer</span></span>. </span></div><div><span class="authorgroup">Additions by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Sean</span> <span class="surname">Kelly</span></span>. </span></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">从 FreeBSD 8.0 开始， 用于串口的设备节点从
+	<code class="filename">/dev/cuadN</code> 改为了
+	<code class="filename">/dev/cuauN</code>；
+	从
+	<code class="filename">/dev/ttydN</code> 改为了
+	<code class="filename">/dev/ttyuN</code>。
+	FreeBSD 7.X 用户需要根据实际情况对这份文档中的例子进行必要的调整。</p></div><a id="idp83872336" class="indexterm"></a><p>为拨入服务配置FreeBSD系统与连接到终端是非常相似的，除非您正在使用
+      modem来拨号而不是终端。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83873232"></a>25.4.1. 外置vs.内置modem</h3></div></div></div><p>外置modem看起来很容易拨号。 因为，外置 modem
+	  可以通过储存在非易失性的RAM中的参数来配置，
+	  它们通常提供指示器来显示重要的RS-232信号的状态。
+	  不停闪光的信号灯能给用户留下比较深刻的印象，
+	  而且指示器也可以用来查看modem是否正常地工作。</p><p>内置modem通常缺乏非易失性的RAM，
+	  所以对它们的配置可能会限制在通过 DIP 开关来设置。
+	  如果您的内置modem有指示灯，您也很难看得到。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83878864"></a>25.4.1.1. Modem和线缆</h4></div></div></div><a id="idp83879504" class="indexterm"></a><p>如果您使用一个外置的 modem，那您将需要适当的电缆线。
+	  一个标准的串口线应当足够长以至普通的信号能够连接上：</p><div class="table"><a id="serialcomms-signal-names"></a><div class="table-title">Table 25.4. 信号名称</div><div class="table-contents"><table summary="信号名称" width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th align="left">缩写</th><th align="left">全名</th></tr></thead><tbody><tr><td><acronym class="acronym">RD</acronym></td><td>收到数据 (Received Data)</td></tr><tr><td><acronym class="acronym">TD</acronym></td><td>传出数据 (Transmitted Data)</td></tr><tr><td><acronym class="acronym">DTR</acronym></td><td>数据终端就绪 (Data Terminal Ready)</td></tr><tr><td><acronym class="acronym">DSR</acronym></td><td>数据集就绪 (Data Set Ready)</td></tr><tr><td><acronym class="acronym">DCD</acronym></td><td>数据载波检测 (Data Carrier Detect) (RS-232 的收到线路信号检测器)</td></tr><tr><td><acronym class="acronym">SG</acronym></td><td>信号地 (Signal Ground)</td></tr><tr><td><acronym class="acronym">RTS</acronym></td><td>要求发送数据 (Request to Send)</td></tr><tr><td><acronym class="acronym">CTS</acronym></td><td>允许对方发送数据 (Clear to Send)</td></tr></tbody></table></div></div><br class="table-break" /><p>FreeBSD 对速度超过 2400 bps 的情形需要通过 <acronym class="acronym">RTS</acronym> 和
+	  <acronym class="acronym">CTS</acronym> 信号来完成流控制，
+	  通过 <acronym class="acronym">CD</acronym> 信号来检测呼叫响应和挂机， 并通过
+	  <acronym class="acronym">DTR</acronym> 信号来在会话结束时对调制解调器进行复位。
+	  某些电缆在连接时没有提供全部需要的信号， 这会给您带来问题，
+	  例如在挂断时登录会话不消失， 这就有可能是电缆的问题。</p><p>与其它类 <span class="trademark">UNIX</span>® 操作系统类似， FreeBSD 使用硬件信号来检测呼叫响应，
+	  以及在挂断时挂断并复位调制解调器。 FreeBSD 避免发送命令给调制解调器，
+	  或监视其状态。 如果您熟悉通过调制解调器来连接基于 PC 的 BBS 系统，
+	  这可能看起来有点难用。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83902032"></a>25.4.2. 串口的考虑</h3></div></div></div><p>FreeBSD支持基于 NS8250， NS16450， NS16550 和 NS16550A
+	  的EIA RS-232C通讯接口。 8250和16450设备有单字符缓冲。
+	  16550设备提供了一个 16 个字符的缓冲， 可以提高更多的系统性能。
+	  因为单字符缓冲设备比 16 个字符的缓冲需要更多的系统资源来工作，
+	  所以基于16550A的接口卡可能更好。 如果系统没有活动的串口，
+	  或有较大的负载， 16 字符缓冲的卡对于低错误率的通讯来说更好。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83903184"></a>25.4.3. 快速预览</h3></div></div></div><a id="idp83903824" class="indexterm"></a><p>对于终端， <code class="command">init</code>
+	会在每个配置串口上为每个拨入连接产生一个 <code class="command">getty</code>
+	进程。 例如， 如果一个 modem 被附带在 <code class="filename">/dev/ttyu0</code>
+	中，用命令<code class="command">ps ax</code>可以显示下面这些：</p><pre class="screen"> 4850 ??  I      0:00.09 /usr/libexec/getty V19200 ttyu0</pre><p>当用户拨上modem， 并使用它进行连接时， <acronym class="acronym">CD</acronym>
+	线就会被 modem 认出。 内核注意到载波信号已经被检测到，
+	需要完成 <code class="command">getty</code> 端口的打开。
+	<code class="command">getty</code> 发送一个登录：在指定的初始线速度上的命令行。
+	Getty 会检查合法的字符是否被接收， 在典型的配置中，
+	如果发现 <span class="quote">“<span class="quote">垃圾</span>”</span>， <code class="command">getty</code>
+	就会设法调节线速度，直到它接收到合理的字符。</p><a id="idp83909200" class="indexterm"></a><p>用户在键入他/她的登录名称后，
+	<code class="command">getty</code>执行<code class="filename">/usr/bin/login</code>，
+	这会要求用户输入密码来完成登录， 然后启动用户的shell。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83911376"></a>25.4.4. 配置文件</h3></div></div></div><p>如果希望允许拨入您的 FreeBSD 系统， 在
+	<code class="filename">/etc</code> 目录中有三个系统配置文件需要您关注。 其一是
+	<code class="filename">/etc/gettytab</code>，
+	其中包含用于 <code class="filename">/usr/libexec/getty</code> 服务的配置信息。 其二是
+	<code class="filename">/etc/ttys</code>， 它的作用是告诉
+	<code class="filename">/sbin/init</code> 哪些 <code class="filename">tty</code>
+	设备上应该运行 <code class="command">getty</code>。 最后，
+	关于端口的初始化命令， 应放到
+	<code class="filename">/etc/rc.d/serial</code> 脚本中。</p><p>关于在 <span class="trademark">UNIX</span>® 上配置拨入调制解调器有两种主要的流派。
+	一种是将本地计算机到调制解调器的
+	RS-232 接口配置为固定速率。 这样做的好处是，
+	远程用户总能立即见到系统的登录提示符， 而其缺点则是，
+	系统并不知道用户真实的数据速率是多少， 因而， 类似
+        <span class="application">Emacs</span> 这样的程序，
+        也就无法调整它们绘制屏幕的方式，
+	以便为慢速连接改善响应时间。</p><p>另一种流派将调制解调器的 RS-232 接口速率配置为随远程用户的连接速率变化。 例如， 对
+	V.32bis (14.4 Kbps) 连接，
+	调制解调器会让自己的 RS-232 接口以 19.2 Kbps 的速率运行，
+	而 2400 bps 连接， 则会使调制解调器的 RS-232 接口以 2400 bps
+	的速率运行。 由于
+	<code class="command">getty</code> 并不能识别具体的调制解调器的连接速率反馈信息，
+	因此， <code class="command">getty</code> 会以初始速度给出一个
+	<code class="prompt">login:</code> 提示， 并检查用户的响应字符。
+	如果用户看到乱码， 则他们应知道此时应按下
+	<span class="keycap"><strong>Enter</strong></span> 键， 直到看到可以辨认的提示符为止。
+	如果数据速率不匹配， 则 <code class="command">getty</code>
+	会将用户输入的任何信息均视为 <span class="quote">“<span class="quote">乱码</span>”</span>，
+	并尝试以下一种速率来再次给出 <code class="prompt">login:</code> 提示符。
+	这一过程可能需要令人作呕地重复下去， 不过一般而言，
+	用户只要敲一两下键盘就能看到正确的提示符了。 显然，
+	这种登录过程看起来不如前面所介绍的
+	<span class="quote">“<span class="quote">锁定速率</span>”</span> 方法那样简单明了，
+	但使用低速连接的用户， 却可以在运行全屏幕程序时得到更好的交互响应。</p><p>这一节将尽可能公平地介绍关于配置的信息，
+	但更着力于介绍调制解调器速率随连接速率变化的配置方法。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83924816"></a>25.4.4.1. <code class="filename">/etc/gettytab</code></h4></div></div></div><a id="idp83925584" class="indexterm"></a><p><code class="filename">/etc/gettytab</code>是一个用来配置
+	  <code class="command">getty</code> 信息的 termcap 风格的文件。 请看看
+	  gettytab 的联机手册了解完整的文件格式和功能列表。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83927632"></a>25.4.4.1.1. 锁定速度的配置</h5></div></div></div><p>如果您把您的modem的数据通讯率锁定在一个特殊的速度上，
+	    您不需要对 <code class="filename">/etc/gettytab</code> 文件作任何变化。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83929168"></a>25.4.4.1.2. 匹配速度的配置</h5></div></div></div><p>您将需要在 <code class="filename">/etc/gettytab</code>
+	    中设置一个记录来告诉 <code class="command">getty</code> 您希望在
+	    modem 上使用的速度。 如果您的 modem 的速率是 2400 bit/s，
+	    则可以使用现有的 <code class="literal">D2400</code> 的记录。</p><pre class="programlisting">#
+# Fast dialup terminals, 2400/1200/300 rotary (can start either way)
+#
+D2400|d2400|Fast-Dial-2400:\
+        :nx=D1200:tc=2400-baud:
+3|D1200|Fast-Dial-1200:\
+        :nx=D300:tc=1200-baud:
+5|D300|Fast-Dial-300:\
+        :nx=D2400:tc=300-baud:</pre><p>如果您有一个更高速度的 modem， 必须在
+	    <code class="filename">/etc/gettytab</code> 中添加一个记录。
+	    下面是一个让您可以以最高 19.2 Kbit/s 的用在
+	    14.4 Kbit/s的modem上的接口记录：</p><pre class="programlisting">#
+# Additions for a V.32bis Modem
+#
+um|V300|High Speed Modem at 300,8-bit:\
+        :nx=V19200:tc=std.300:
+un|V1200|High Speed Modem at 1200,8-bit:\
+        :nx=V300:tc=std.1200:
+uo|V2400|High Speed Modem at 2400,8-bit:\
+        :nx=V1200:tc=std.2400:
+up|V9600|High Speed Modem at 9600,8-bit:\
+        :nx=V2400:tc=std.9600:
+uq|V19200|High Speed Modem at 19200,8-bit:\
+        :nx=V9600:tc=std.19200:</pre><p>这样做的结果是 8-数据位， 没有奇偶校验的连接。</p><p>上面使用19.2 Kbit/s的连接速度的例子，也可以使用
+	    9600 bit/s (for V.32)， 2400 bit/s， 1200 bit/s，300 bit/s，
+	    直到 19.2 Kbit/s。 通讯率的调节使用 <code class="literal">nx=</code>
+	    (<span class="quote">“<span class="quote">next table</span>”</span>) 来实现。 每条线使用一个
+	    <code class="literal">tc=</code> (<span class="quote">“<span class="quote">table continuation</span>”</span>)
+	    的记录来加速对于一个特殊传输率的标准设置。</p><p>如果您有28.8 Kbit/s的modem，或您想使用它的 14.4Kbit/s
+	    模式， 就需要使用一个更高的超过 19.2 Kbit/s 的通讯速度的
+	    modem。 这是一个启动 57.6 Kbit/s 的 <code class="filename">gettytab</code>
+	    记录的例子：</p><pre class="programlisting">#
+# Additions for a V.32bis or V.34 Modem
+# Starting at 57.6 Kbps
+#
+vm|VH300|Very High Speed Modem at 300,8-bit:\
+        :nx=VH57600:tc=std.300:
+vn|VH1200|Very High Speed Modem at 1200,8-bit:\
+        :nx=VH300:tc=std.1200:
+vo|VH2400|Very High Speed Modem at 2400,8-bit:\
+        :nx=VH1200:tc=std.2400:
+vp|VH9600|Very High Speed Modem at 9600,8-bit:\
+        :nx=VH2400:tc=std.9600:
+vq|VH57600|Very High Speed Modem at 57600,8-bit:\
+        :nx=VH9600:tc=std.57600:</pre><p>如果您的 CPU 速度较低， 或系统的负荷很重， 而且没有
+	    16550A 的串口，您可能会在57.6 Kbit/s 上得到
+	    <span class="errorname">sio</span> <span class="quote">“<span class="quote">silo</span>”</span>错误。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="dialup-ttys"></a>25.4.4.2. <code class="filename">/etc/ttys</code></h4></div></div></div><a id="idp83942864" class="indexterm"></a><p><code class="filename">/etc/ttys</code>文件的配置在
+	  <a class="xref" href="term.html#ex-etc-ttys" title="Example 25.1. 在 /etc/ttys 中增加终端记录">Example 25.1, “在
+	    <code class="filename">/etc/ttys</code> 中增加终端记录”</a>中介绍过。 配置 modem 是相似的，
+	  但我们必须指定一个不同的终端类型。
+	  锁定速度和匹配速度配置的通用格式是：</p><pre class="programlisting">ttyu0   "/usr/libexec/getty <em class="replaceable"><code>xxx</code></em>"   dialup on</pre><p>上面的第一条是这个记录的设备特定文件 ──
+	  <code class="filename">ttyu0</code> 表示
+          <code class="filename">/dev/ttyu0</code>
+	  是这个 <code class="command">getty</code> 将被监视的文件。 第二条
+	  <code class="literal">"/usr/libexec/getty
+	    xxx"</code>
+	  是将运行在设备上的进程 <code class="command">init</code>。
+	  第三条，dialup，是默认的终端类型。 第四个参数，
+	  <code class="literal">on</code>， 指出了线路是可操作的
+	  <code class="command">init</code>。 也可能会有第五个参数，
+	  <code class="literal">secure</code>， 但它将只被用作拥有物理安全的终端
+	  (如系统终端)。</p><p>默认的终端类型可能依赖于本地参考。 拨号是传统的默认终端类型，
+	  以至用户可以定制它们的登录脚本来注意终端什么时候拨号，
+	  和自动调节它们的终端类型。 然而， 作者发现它很容易在它的站点上指定
+	  <code class="literal">vt102</code> 作为默认的终端类型，
+	  因为用户刚才在它们的远程系统上使用的是VT102模拟器。</p><p>您对<code class="filename">/etc/ttys</code>作修改之后，您可以发送
+	  <code class="command">init</code> 进程给一个 <acronym class="acronym">HUP</acronym>
+	  信号来重读文件。您可以使用下面的命令来发送信号：
+
+	</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>kill -HUP 1</code></strong></pre><p>
+
+	  如果这是您的第一次设置系统， 您可能要在发信号
+	  <code class="command">init</code> 之前等一下， 等到您的 modem
+	  正确地配置并连接好。
+	  </p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83956816"></a>25.4.4.2.1. 锁定速度的配置</h5></div></div></div><p>对于一个锁定速度的配置，您的 <code class="filename">ttys</code>
+	    记录必须有一个为 <code class="command">getty</code> 提供固定速度的记录。
+	    对于一个速度被锁定在 19.2kbit/s 的 modem，
+	    <code class="filename">ttys</code> 记录是这样的：</p><pre class="programlisting">ttyu0   "/usr/libexec/getty std.19200"   dialup on</pre><p>如果您的 modem 被锁定在一个不同的数据速度，
+	    为 std.speed 使用适当的速度来代替 std.19200。
+	    确信您使用了一个在 <code class="filename">/etc/gettytab</code>
+	    中列出的正确的类型。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83968592"></a>25.4.4.2.2. 匹配速度的设置</h5></div></div></div><p>在一个匹配速度的设置中，您的 <code class="filename">ttys</code>
+	    录需要参考在 <code class="filename">/etc/gettytab</code> 适当的起始
+	    <span class="quote">“<span class="quote">auto-baud</span>”</span> 记录。 例如， 如果您为一个以 19.2
+	    Kbit/s 开始的可匹配速度的 modem 添加上面建议的记录， 您的
+	    <code class="filename">ttys</code> 记录可能是这样的：</p><pre class="programlisting">ttyu0   "/usr/libexec/getty V19200"   dialup on</pre></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83971792"></a>25.4.4.3. <code class="filename">/etc/rc.d/serial</code></h4></div></div></div><a id="idp83972560" class="indexterm"></a><p>高速调制解调器， 如使用 V.32、 V.32bis， 以及 V.34 的那些，
+	  需要使用硬件 (<code class="literal">RTS/CTS</code>) 流控制。
+	  您可以在
+	  <code class="filename">/etc/rc.d/serial</code> 中增加
+	  <code class="command">stty</code> 命令来在 FreeBSD 内核中，
+	  为调制解调器设置硬件流控制标志。</p><p>例如， 在 1 号串口
+	  (<code class="filename">COM2</code>) 拨入和拨出设备上配置 <code class="literal">termios</code> 标志
+	  <code class="varname">crtscts</code>， 可以通过在
+	  <code class="filename">/etc/rc.d/serial</code> 增加下面的设置来实现：</p><pre class="programlisting"># Serial port initial configuration
+stty -f /dev/ttyu1.init crtscts
+stty -f /dev/cuau1.init crtscts</pre></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp83978064"></a>25.4.5. Modem 设置</h3></div></div></div><p>如果您有一个 modem， 它的参数能被存储在非易失性的 RAM 中，
+	您将必须使用一个终端程序来设置参数 （比如 <span class="trademark">MS-DOS</span>® 下的
+        <span class="application">Telix</span> 或者 FreeBSD 下的
+        <code class="command">tip</code>）。 使用同样的通讯速度来连接
+	modem 作为初始速度 <code class="command">getty</code> 将使用和配置
+	modem 的非易失性 RAM 来适应这些要求：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>连接时宣告 <acronym class="acronym">CD</acronym></p></li><li class="listitem"><p>操作时宣告 <acronym class="acronym">DTR</acronym>； DTR
+	    消失时挂断线路并复位调制解调器</p></li><li class="listitem"><p><acronym class="acronym">CTS</acronym> 传输数据流控制</p></li><li class="listitem"><p>禁用 <acronym class="acronym">XON/XOFF</acronym> 流控制</p></li><li class="listitem"><p><acronym class="acronym">RTS</acronym> 接收数据流控制</p></li><li class="listitem"><p>宁静模式 (无返回码)</p></li><li class="listitem"><p>无命令回显</p></li></ul></div><p>请阅读您 modem 的文档找到您需要用什么命令和 DIP 接口设置。</p><p>例如，要在一个 <span class="trademark">U.S. Robotics</span>® <span class="trademark">Sportster</span>® 14400 的外置 modem
+	上设置上面的参数，可以用下面这些命令：</p><pre class="programlisting">ATZ
+AT&amp;C1&amp;D2&amp;H1&amp;I0&amp;R2&amp;W</pre><p>您也可能想要在 modem 上寻找机会调节这个设置， 例如它是否使用
+	V.42bis 和 MNP5 压缩。</p><p>外置 modem 也有一些用来设置的 DIP 开关，
+	也许您可以使用这些设置作为一个例子：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>Switch 1: UP ── DTR Normal</p></li><li class="listitem"><p>Switch 2: N/A (Verbal Result Codes/Numeric Result
+	    Codes)</p></li><li class="listitem"><p>Switch 3: UP ── Suppress Result Codes</p></li><li class="listitem"><p>Switch 4: DOWN ── No echo, offline commands</p></li><li class="listitem"><p>Switch 5: UP ── Auto Answer</p></li><li class="listitem"><p>Switch 6: UP ── Carrier Detect Normal</p></li><li class="listitem"><p>Switch 7: UP ── Load NVRAM Defaults</p></li><li class="listitem"><p>Switch 8: N/A (Smart Mode/Dumb Mode)</p></li></ul></div><p>在拨号 modem 上的结果代码应该被 禁用/抑制， 以避免当
+	<code class="command">getty</code> 在 modem 处于命令模式并回显输入时错误地给出
+	<code class="prompt">login:</code> 提示时可能造成的问题。
+	这样可能导致 <code class="command">getty</code> 与 modem
+	之间产生更长的不必要交互。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84007632"></a>25.4.5.1. 锁定速度的配置</h4></div></div></div><p>对于锁定速度的配置， 您需要配置 modem
+	  来获得一个不依赖于通讯率的稳定的 modem到计算机 的传输率。
+	  在一个 <span class="trademark">U.S. Robotics</span>® <span class="trademark">Sportster</span>® 14400 外置 modem 上，
+          这些命令将锁定 modem 到计算机 的传输率：</p><pre class="programlisting">ATZ
+AT&amp;B1&amp;W</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84022608"></a>25.4.5.2. 匹配速度的配置</h4></div></div></div><p>对于一个变速的配置， 您需要配置 modem
+	  调节它的串口传输率匹配接收的传输率。
+	  在一个 <span class="trademark">U.S. Robotics</span>® <span class="trademark">Sportster</span>® 14400 的外置 modem 上，
+          这些命令将锁定 modem 的错误修正传输率适合命令要求的速度，
+	  但允许串口速度适应没有纠错的连接：</p><pre class="programlisting">ATZ
+AT&amp;B2&amp;W</pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84025296"></a>25.4.5.3. 检查modem的配置</h4></div></div></div><p>大多数高速的modem提供了用来查看当前操作参数的命令。
+	  在USR Sportster 14400外置modem上， 命令 <code class="command">ATI5</code>
+	  显示了存储在非易失性RAM中的设置。 要看看正确的 modem 操作参数，
+	  可以使用命令 <code class="command">ATZ</code> 然后是
+	  <code class="command">ATI4</code>。</p><p>如果您有一个不同牌子的 modem， 检查 modem
+	  的使用手册看看如何双重检查您的 modem 的配置参数。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84028240"></a>25.4.6. 问题解答</h3></div></div></div><p>这儿是几个检查拨号modem的步骤。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84029264"></a>25.4.6.1. 检查FreeBSD系统</h4></div></div></div><p>把您的modem连接到FreeBSD系统， 启动系统， 然后， 如果您的
+	  modem 有一个指示灯， 当登录时看看 modem 的 DTR 指示灯是否亮：
+	  会在系统控制台出现命令行――如果它亮， 意味着 FreeBSD
+	  已经在适当的通讯端口启动了一个 <code class="command">getty</code> 进程，
+	  等待 modem 接收一个呼叫。</p><p>如果<acronym class="acronym">DTR</acronym>指示灯不亮， 通过控制台登录到
+	  FreeBSD系统，然后执行一个 <code class="command">ps ax</code>
+	  命令来看 FreeBSD 是否正在正确的端口运行
+	  <code class="command">getty</code>进程。
+	  您将在进程显示中看到像这样的一行：</p><pre class="screen">  114 ??  I      0:00.10 /usr/libexec/getty V19200 ttyu0
+  115 ??  I      0:00.10 /usr/libexec/getty V19200 ttyu1</pre><p>如果您看到是这样的：</p><pre class="screen">  114 d0  I      0:00.10 /usr/libexec/getty V19200 ttyu0</pre><p>modem 不接收呼叫， 这意味着 <code class="command">getty</code>
+	  已经在通讯端口打开了。 这可以指出线缆有问题或 modem 错误配置，
+	  因为 <code class="command">getty</code> 无法打开通讯端口。</p><p>如果您没有看到任何 <code class="command">getty</code> 进程等待打开想要的
+	  <code class="filename">ttyuN</code> 端口，
+	  在 <code class="filename">/etc/ttys</code> 中双击您的记录看看那儿是否有错误。
+	  另外，检查日志文件 <code class="filename">/var/log/messages</code>
+	  看看是否有一些来自 <code class="command">init</code> 或
+	  <code class="command">getty</code> 的问题日志。 如果有任何信息，
+	  仔细检查配置文件 <code class="filename">/etc/ttys</code> 和
+	  <code class="filename">/etc/gettytab</code>，还有相应的设备文件
+	  <code class="filename">/dev/ttyuN</code>，
+	  是否有错误，丢失记录，或丢失了设备指定文件。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp84051280"></a>25.4.6.2. 尝试接入Try Dialing In</h4></div></div></div><p>设法拨入系统。 确信使用8位， 没有奇偶检验， 在远程系统上的1阻止位。
+	  如果您不能立刻得到一个命令行， 试试每隔一秒按一下
+	  <span class="keycap"><strong>Enter</strong></span>。 如果您仍没有看到一个登录： 设法发送一个
+	  <code class="command">BREAK</code>。 如果您正使用一个高速的 modem 来拨号，
+	  请在锁定拨号 modem 的接口速度后再试试。</p><p>如果您不能得到一个登录：prompt，再检查一下
+	  <code class="filename">/etc/gettytab</code>，重复检查：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>在<code class="filename">/etc/ttys</code> 中指定的初始可用的名称与
+	      <code class="filename">/etc/gettytab</code> 的一个可用的相匹配。</p></li><li class="listitem"><p>每个 <code class="literal">nx=</code> 记录与另一个
+	      <code class="filename">gettytab</code> 可用名称匹配。</p></li><li class="listitem"><p>每个 <code class="literal">tc=</code> 记录与另一个
+	      <code class="filename">gettytab</code>可用名称相匹配。</p></li></ul></div><p>如果您拨号但 FreeBSD 系统上的 modem 没有回应， 确信 modem
+	  能回应电话。 如果 modem 看起来配置正确了， 通过检查 modem
+	  的指示灯来确认 <acronym class="acronym">DTR</acronym> 线连接正确。</p><p>如果您做了好几次，它仍然无法工作，打断一会，等会再试试。
+	  如果还不能工作， 也许您应该发一封电子邮件给 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-questions" target="_top">FreeBSD 一般问题邮件列表</a>
+	  寻求帮助。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="term.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="serialcomms.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="dialout.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">25.3. 终端 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 25.5. 拨出设备</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

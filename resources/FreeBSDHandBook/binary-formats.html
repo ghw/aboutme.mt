@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.12. 二进制文件格式</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="basics-devices.html" title="4.11. 设备和设备节点" /><link rel="next" href="basics-more-information.html" title="4.13. 取得更多的资讯" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.12. 二进制文件格式</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="basics-devices.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="basics-more-information.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="binary-formats"></a>4.12. 二进制文件格式</h2></div></div></div><p>要理解为什么 FreeBSD 使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=elf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">elf</span>(5)</span></a> 格式， 您必须首先了解一些 <span class="trademark">UNIX</span>® 系统中的
+      三种 <span class="quote">“<span class="quote">主要</span>”</span> 可执行文件格式的有关知识：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=a.out&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">a.out</span>(5)</span></a></p><p>是最古老和<span class="quote">“<span class="quote">经典的</span>”</span> <span class="trademark">UNIX</span>® 目标文件格式，
+	  这种格式在其文件的开始处有一个短小而又紧凑的首部，
+	  该首部带有一个魔幻数字，用来标识具体的格式(更多详情参见<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=a.out&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">a.out</span>(5)</span></a>)。
+	  这种格式包含3个要装载入内存的段：.text， .data， 和 .bss，以及
+	  一个符号表和一个字符串表。</p></li><li class="listitem"><p><acronym class="acronym">COFF</acronym></p><p>SVR3目标文件格式。其文件头现在包括一个区段表(section table)，
+          因此除了.text，.data，和.bss区段以外，您还可以包含其它的区段。</p></li><li class="listitem"><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=elf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">elf</span>(5)</span></a></p><p><acronym class="acronym">COFF</acronym> 的后继， 其特点是可以有多个区段，
+	  并可以使用32位或64位的值。 它有一个主要的缺点：
+	  <acronym class="acronym">ELF</acronym> 在其设计时假设每个系统体系结构只有一种 ABI。
+	  这种假设事实上相当错误， 甚至在商业化的SYSV世界中都是错误的
+	  (它们至少有三种ABI: SVR4, Solaris, SCO)。</p><p>FreeBSD试图在某种程度上解决这个问题，它提供一个工具，可以
+	  对一个已知的<acronym class="acronym">ELF</acronym>可执行文件
+	  <span class="emphasis"><em>标识</em></span>它所遵从的ABI的信息。
+	  更多这方面的知识可以参见手册页<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=brandelf&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">brandelf</span>(1)</span></a></p></li></ul></div><p>FreeBSD从<span class="quote">“<span class="quote">经典</span>”</span>阵营中来，因此使用了<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=a.out&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">a.out</span>(5)</span></a>格式，
+    	众多BSD版本的发行(直到3.X分支的开始)也证明了这种格式的有效性。
+    	虽然在那以前的某段时间，在FreeBSD系统上创建和运行<acronym class="acronym">ELF</acronym>格式
+    	的二进制可执行文件(和内核)也是可能的，但FreeBSD一开始并不积极<span class="quote">“<span class="quote">进步</span>”</span>
+    	到使用<acronym class="acronym">ELF</acronym>作为其缺省的格式。为什么？噢，当Linux阵营完成了
+    	转换到<acronym class="acronym">ELF</acronym>格式的痛苦历程后，却发现并不足以由此而放弃
+    	<code class="filename">a.out</code>可执行文件格式，因为正是由于它们不灵活的，
+    	基于跳转表的共享库机制，使得销售商和开发者们构建共享库非常困难。
+    	直到已有的<acronym class="acronym">ELF</acronym>工具提供了一种解决共享库问题的办法，
+    	并被普遍认为是<span class="quote">“<span class="quote">前进方向</span>”</span>以后，迁徙的代价在FreeBSD界才被接受，
+    	并由此完成了迁徙。FreeBSD的共享库机制其基础更类似于Sun <span class="trademark">SunOS</span>™的共享库机制，
+    	并且正因为此，其易用性很好。</p><p>那么，为什么会有这么多不同的格式呢？</p><p>回溯到蒙昧和黑暗的过去，那时只有简单的硬件。这种简单的硬件支撑了一个简单
+    	和小型的系统。在这样的简单系统上(PDP-11)<code class="filename">a.out</code>格式
+    	足以胜任表达二进制文件的任务。当人们将<span class="trademark">UNIX</span>®从这种简单的系统中移植出来的时候，
+    	<code class="filename">a.out</code>格式被保留了下来，因为对于早期将<span class="trademark">UNIX</span>®移植到
+    	Motorola 68k，VAXen等系统来说，它还是足够可用的。</p><p>然后，一些聪明的硬件工程师认为，如果可以让软件完成一些简单的聪明操作，
+    	那么他们就可以在硬件设计中减少若干门电路，并可以让CPU核心运行得更快。
+    	当<code class="filename">a.out</code>格式用于这种新型的硬件系统时(现在我们叫它
+    	<acronym class="acronym">RISC</acronym>)，显得并不合适。因此，人们设计了许多新的格式
+    	以便在这样的硬件系统上能获得比简单的<code class="filename">a.out</code>格式更优越
+    	的性能。诸如<acronym class="acronym">COFF</acronym>，<acronym class="acronym">ECOFF</acronym>，还有其它
+    	一些晦涩难懂的格式正是在这个阶段被发明出来的，人们也研究了这些格式的局限性，
+    	慢慢地最终落实到<acronym class="acronym">ELF</acronym>格式。</p><p>同时，程序的大小变得越来越大，磁盘空间(以及物理内存)相对来说却仍然较小，
+	因此共享库的概念便产生了。VM系统也变得越来越复杂了。当所有这些进步都建立在
+	<code class="filename">a.out</code>格式的基础上的时候，它的可用性随着每个新特性
+	的产生就受到了严重考验。并且，人们还希望可以在运行时动态装载某些东西，或者
+	在初始化代码运行以后可以丢弃部分程序代码，以便节约主存储器和交换区。编程语言
+	也变得越来越复杂，人们希望可以在main()函数执行之前自动执行某些代码。为了实现
+	所有这些功能，人们对<code class="filename">a.out</code>格式作了很多改动(hack)，
+	他们在某个阶段里基本也是可行的。随着时间的推移，<code class="filename">a.out</code>格式
+	不得不增加大量的代码和复杂度来满足这些需求。虽然<acronym class="acronym">ELF</acronym>格式
+	解决了许多这样的问题，但是从一个可用的系统迁移到另一个系统却是痛苦的。因此
+	直到继续保留<code class="filename">a.out</code>格式的代价比迁移到<acronym class="acronym">ELF</acronym>格式
+	的代价还大的时候，人们才会最终转换到<acronym class="acronym">ELF</acronym>格式。</p><p>然而，随着时间的推移，FreeBSD系统本身的编译工具(特别是汇编器和装载器)
+    	赖以派生的编译工具，其发展却形成了两个平行的分支。FreeBSD这个分支增加了共享库，
+    	并修改了一些错误。而原先编写了这些工具的GNU人则重写了这些工具，并对交叉编译提供了
+    	更简化的支持，还随意插入了不同格式的支持，等等。虽然很多人希望创建针对FreeBSD的
+    	交叉编译器，但他们却并未如愿以偿，因为FreeBSD的<span class="application">as</span>
+    	和<span class="application">ld</span>的源代码更为老旧，所以无法完成这个任务。
+    	新的GNU工具链(<span class="application">binutils</span>)则确实支持交叉编译，<acronym class="acronym">ELF</acronym>
+    	格式，共享库，C++扩展，等等。并且，由于很多供应商都发布<acronym class="acronym">ELF</acronym>格式的
+    	二进制文件，因而让FreeBSD能够运行它们将是一个很好的事情。</p><p><acronym class="acronym">ELF</acronym>格式比<code class="filename">a.out</code>格式开销要大些，同时也
+    	允许基础系统有更好的扩展性。<acronym class="acronym">ELF</acronym>格式的有关工具有着更好的维护，
+    	并且提供交叉编译支持，这对许多人来说是很重要的。<acronym class="acronym">ELF</acronym>格式可能会稍微
+    	慢一些，但很难测量出来。另外，在这两者之间，有许多细节也是不同的，比如它们映射页面的方式，
+    	处理初始化代码的方式，等等。所有这些都不太重要，但这也确实是不同之处。在将来的适当时候，
+    	<code class="filename">GENERIC</code>内核将不再支持<code class="filename">a.out</code>格式，并且，
+    	当不再需要运行遗留的<code class="filename">a.out</code>格式程序时，内核也将不再提供对其的支持。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="basics-devices.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="basics-more-information.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.11. 设备和设备节点 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.13. 取得更多的资讯</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

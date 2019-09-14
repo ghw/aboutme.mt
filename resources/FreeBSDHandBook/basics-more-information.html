@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.13. 取得更多的资讯</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="binary-formats.html" title="4.12. 二进制文件格式" /><link rel="next" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.13. 取得更多的资讯</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="binary-formats.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="ports.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="basics-more-information"></a>4.13. 取得更多的资讯</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="basics-man"></a>4.13.1. 联机手册</h3></div></div></div><a id="idp70508752" class="indexterm"></a><p>最详细的使用说明文档莫过于 FreeBSD 里的联机手册了。
+	几乎每一个程序都会附上一份简短说明，
+	以介绍这个程序的的基本功能以及参数的用法。
+	我们能通过 <code class="command">man</code> 命令来阅读这些说明， 而使用
+	<code class="command">man</code> 命令却是简单的事情:</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>man command</code></strong></pre><p><code class="literal">command</code> 就是您要了解的命令命称。
+        举个例子，想了解 <code class="command">ls</code> 命令就输入:</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>man ls</code></strong></pre><p>这些在线手册分下列章节:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>用户命令。</p></li><li class="listitem"><p>系统调用以及错误代码。</p></li><li class="listitem"><p>C 库文件里的函数说明。</p></li><li class="listitem"><p>设备驱动程序。</p></li><li class="listitem"><p>文件格式。</p></li><li class="listitem"><p>游戏以及其他娱乐。</p></li><li class="listitem"><p>各种资讯。</p></li><li class="listitem"><p>系统维护以及命令。</p></li><li class="listitem"><p>内核开发情况。</p></li></ol></div><p>在某些情况下，同样的主题也会出现在在线手册的不同章节。
+	举个例子，系统里有<code class="command">chmod</code>这个用户命令，而又有个
+	<code class="function">chmod()</code> 系统调用。 在这种情形下，您应当向
+	<code class="command">man</code> 命令指定需要的内容:
+	</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>man 1 chmod</code></strong></pre><p>这样就会显示出手册里的用户 <code class="command">chmod</code> 命令。
+	传统上，我们在写入文档时把特定详细参考内容在在线手册括号里注明。
+	所以 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">chmod</span>(1)</span></a> 是指 <code class="command">chmod</code> 用户命令，
+	而 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chmod&amp;sektion=2"><span class="citerefentry"><span class="refentrytitle">chmod</span>(2)</span></a> 是指系统调用。
+	</p><p>如果您已经知道命令的名字，只是不知道要怎样使用的话，那就比较好办。
+	但您连名字都不知道呢?这个时候您就可以利用 <code class="command">man</code> 的搜寻功能，
+	它会在手册的介绍部份找寻您要搜寻的关键字，它的选项是 <code class="option">-k</code>：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>man -k mail</code></strong></pre><p>当您使用这个命令的时候，man会把介绍里含有<span class="quote">“<span class="quote">mail</span>”</span>关键字
+      的命令列出来，实际上这和<code class="command">apropos</code>命令的功能是相同的。</p><p>有时您会看到<code class="filename">/usr/bin</code> 下有许多命令但不知他们的用途，
+	您只需这样做:</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cd /usr/bin</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>man -f *</code></strong></pre><p>或者这样做</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cd /usr/bin</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>whatis *</code></strong></pre><p>两个命令是一样的。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="basics-info"></a>4.13.2. GNU Info 文件</h3></div></div></div><a id="idp70543568" class="indexterm"></a><p>FreeBSD许多应用软件以及实用工具来自Free软件基金会(FSF)。
+	  作为手册的扩充，这些程序提供了一种更具有活力的超文档说明<code class="literal">info</code>，
+	  您可用<code class="command">info</code>命令来阅读他们。
+	  假如您装上<span class="application">emacs</span>，也能利用<span class="application">emacs</span>
+	  的info模式来阅读。
+	</p><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=info&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">info</span>(1)</span></a> 这个命令只需简单地输入:</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>info</code></strong></pre><p>想得到简单介绍， 请按 <code class="literal">h</code>。  想快速得到的命令说明，
+	请按 <code class="literal">?</code>。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="binary-formats.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="ports.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.12. 二进制文件格式 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 5. 安装应用程序: Packages 和 Ports</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

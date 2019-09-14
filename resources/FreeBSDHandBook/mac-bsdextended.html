@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.8. MAC bsdextended 模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-seeotheruids.html" title="16.7. MAC seeotheruids 模块" /><link rel="next" href="mac-ifoff.html" title="16.9. MAC ifoff 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.8. MAC bsdextended 模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-seeotheruids.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-ifoff.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-bsdextended"></a>16.8. MAC bsdextended 模块</h2></div></div></div><a id="idp78765392" class="indexterm"></a><p>模块名： <code class="filename">mac_bsdextended.ko</code></p><p>对应的内核配置：
+      <code class="literal">options MAC_BSDEXTENDED</code></p><p>引导选项：
+      <code class="literal">mac_bsdextended_load="YES"</code></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 模块能够强制文件系统防火墙策略。
+      这一模块的策略提供了标准文件系统权限模型的一种扩展，
+      使得管理员能够建立一种类似防火墙的规则集，
+      以文件系统层次结构中的保护文件、 实用程序，以及目录。
+      在尝试访问文件系统客体时， 会遍历规则表，
+      直至找到匹配的规则， 或到达表尾。 这一行为可以通过修改
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 参数，
+      security.mac.bsdextended.firstmatch_enabled 来进行设置。
+      与 FreeBSD 中的其他防火墙设置类似， 也可以建一个文件来配置访问控制策略，
+      并通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 变量的配置在系统引导时加载它。</p><p>规则表可以通过工具 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ugidfw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ugidfw</span>(8)</span></a> 工具来输入，
+      其语法类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ipfw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ipfw</span>(8)</span></a>。 此外还可以通过使用
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=libugidfw&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">libugidfw</span>(3)</span></a> 库来开发其他的工具。</p><p>当使用这一模块模块时应极其小心；
+      不正确的使用将导致文件系统的某些部分无法访问。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78782544"></a>16.8.1. 例子</h3></div></div></div><p>在加载了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 模块之后，
+	下列命令可以用来列出当前的规则配置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ugidfw list</code></strong>
+0 slots, 0 rules</pre><p>如希望的那样， 目前还没有定义任何规则。 这意味着一切都还可以访问。
+	要创建一个阻止所有用户， 而保持
+	<code class="systemitem">root</code> 不受影响的规则，
+	只需运行下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ugidfw add subject not uid root new object not uid root mode n</code></strong></pre><p>这本身可能是一个很糟糕的主意，
+	因为它会阻止所有用户执行哪怕最简单的命令， 例如
+	<code class="command">ls</code>。 更富于爱心的规则可能是：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ugidfw set 2 subject uid user1 object uid user2 mode n</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ugidfw set 3 subject uid user1 object gid user2 mode n</code></strong></pre><p>这将阻止任何 <code class="systemitem">user1</code>
+	对 <code class="systemitem"><em class="replaceable"><code>user2</code></em></code>
+	的主目录的全部访问， 包括目录列表。</p><p><code class="systemitem">user1</code> 可以用
+	<code class="option">not uid <em class="replaceable"><code>user2</code></em></code>
+	代替。 这将同样的强制访问控制实施在所有用户， 而不是单个用户上。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="systemitem">root</code> 用户不会受到这些变动的影响。</p></div><p>我们已经给出了
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 模块如何帮助加强文件系统的大致介绍。
+	要了解更进一步的信息， 请参见
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_bsdextended&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_bsdextended</span>(4)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ugidfw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">ugidfw</span>(8)</span></a> 联机手册。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-seeotheruids.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-ifoff.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.7. MAC seeotheruids 模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.9. MAC ifoff 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

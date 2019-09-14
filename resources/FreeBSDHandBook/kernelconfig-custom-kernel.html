@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>9.2. 为什么需要建立定制的内核?</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="prev" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="next" href="kernelconfig-devices.html" title="9.3. 发现系统硬件" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">9.2. 为什么需要建立定制的内核?</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="kernelconfig.html">Prev</a> </td><th width="60%" align="center">Chapter 9. 配置FreeBSD的内核</th><td width="20%" align="right"> <a accesskey="n" href="kernelconfig-devices.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="kernelconfig-custom-kernel"></a>9.2. 为什么需要建立定制的内核?</h2></div></div></div><p>过去， FreeBSD 采用的是被人们称作
+      <span class="quote">“<span class="quote">单片式</span>”</span> 的内核。 这种内核本身是一个大的程序，
+      它支持的设备不能够动态地加以改变，
+      而当希望改变内核的行为时， 就必须编译一个新的内核，
+      并重新启动计算机才可以使用它。</p><p>如今， FreeBSD 正在迅速地迁移到一种新的模型，
+      其特点是将大量内核功能放进可以动态加载和卸载的内核模块来提供。
+      这使得内核能够适应硬件的调整 (例如笔记本计算机中的 PCMCIA 卡)，
+      以及为内核引入新的功能， 而无需在编译内核时就将其添加进去。
+      这种做法称为模块化内核。</p><p>尽管如此， 仍然有一些功能需要静态地联编进内核。
+      有时， 这是由于这些功能与内核的结合非常紧密而无法实现动态加载，
+      还有一些情况是暂时没有人将这些功能改写为可动态加载的模块。</p><p>联编定制的内核是成为高级 BSD 用户所必须经历的一关。
+      尽管这一过程需要花费一些时间， 但它能够为您的 FreeBSD 系统带来一些好处。
+      与必须支持大量硬件的 <code class="filename">GENERIC</code> 内核不同，
+      定制的内核可以只包含对于
+      <span class="emphasis"><em>您</em></span> PC 硬件的支持。
+      这样做有很多好处， 例如：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>更快地启动。 因为内核只需要检测您系统上的硬件，
+	启动时所花费的时间将大大缩短。</p></li><li class="listitem"><p>使用更少的内存。 由于可以删去不需要的功能和设备驱动，
+	  通常定制的内核会比 <code class="filename">GENERIC</code> 使用的内存更少。
+	  节省内核使用的内存之所以重要是因为内核必须常驻于物理内存中，
+	  从而使应用程序能够用到更多的内存。 正因为这样，
+	  对 RAM 较小的系统来说定制内核就更为重要了。</p></li><li class="listitem"><p>支持更多的硬件。 定制的内核允许您增加类似声卡这样的
+	  <code class="filename">GENERIC</code> 内核没有提供内建支持的硬件。</p></li></ul></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="kernelconfig.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="kernelconfig.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="kernelconfig-devices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 9. 配置FreeBSD的内核 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 9.3. 发现系统硬件</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

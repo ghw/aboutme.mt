@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>28.6. 域名系统 (DNS)</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="network-servers.html" title="Chapter 28. 网络服务器" /><link rel="prev" href="network-dhcp.html" title="28.5. 网络自动配置 (DHCP)" /><link rel="next" href="network-apache.html" title="28.7. Apache HTTP 服务器" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.6. 域名系统 (<acronym class="acronym">DNS</acronym>)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="network-dhcp.html">Prev</a> </td><th width="60%" align="center">Chapter 28. 网络服务器</th><td width="20%" align="right"> <a accesskey="n" href="network-apache.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="network-dns"></a>28.6. 域名系统 (<acronym class="acronym">DNS</acronym>)</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Chern</span> <span class="surname">Lee</span></span>, <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Daniel</span> <span class="surname">Gerzo</span></span>. </span></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87082320"></a>28.6.1. 纵览</h3></div></div></div><a id="idp87082960" class="indexterm"></a><p>FreeBSD 在默认情况下使用一个版本的 BIND (Berkeley
+        Internet Name Domain)， 这是目前最为流行的 <acronym class="acronym">DNS</acronym> 协议实现。
+        <acronym class="acronym">DNS</acronym> 是一种协议， 可以通过它将域名同 <acronym class="acronym">IP</acronym>  地址相互对应。
+        例如， 查询 <code class="systemitem">www.FreeBSD.org</code>
+        将得到 FreeBSD Project 的 web 服务器的 <acronym class="acronym">IP</acronym>  地址， 而查询 <code class="systemitem">ftp.FreeBSD.org</code> 则将得到响应的 <acronym class="acronym">FTP</acronym>  机器的
+        <acronym class="acronym">IP</acronym>  地址。 类似地， 也可以做相反的事情。 查询 <acronym class="acronym">IP</acronym>
+        地址可以得到其主机名。 当然， 完成 <acronym class="acronym">DNS</acronym>
+        查询并不需要在系统中运行域名服务器。</p><p>目前， 默认情况下FreeBSD 使用的是 <acronym class="acronym">BIND</acronym>9
+	<acronym class="acronym">DNS</acronym> 服务软件。 我们内建于系统中的版本提供了增强的安全特性、
+	新的文件目录结构， 以及自动的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 配置。</p><a id="idp87090512" class="indexterm"></a><p>在 Internet 上的 <acronym class="acronym">DNS</acronym> 是通过一套较为复杂的权威根域名系统，
+	顶级域名 (<acronym class="acronym">TLD</acronym>)， 以及一系列小规模的，
+	提供少量域名解析服务并对域名信息进行缓存的域名服务器组成的。</p><p>目前， BIND 由
+	Internet Systems Consortium
+        <code class="uri"><a class="uri" href="https://www.isc.org/" target="_top">https://www.isc.org/</a></code>
+        维护。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87093200"></a>28.6.2. 术语</h3></div></div></div><p>要理解这份文档， 需要首先了解一些相关的
+	 <acronym class="acronym">DNS</acronym> 术语。</p><a id="idp87094608" class="indexterm"></a><a id="idp87095120" class="indexterm"></a><a id="idp87095632" class="indexterm"></a><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>术语</th><th>定义</th></tr></thead><tbody><tr><td>正向 <acronym class="acronym">DNS</acronym></td><td>将域名映射到 IP 地址</td></tr><tr><td>原点 (Origin)</td><td>表示特定域文件所在的域</td></tr><tr><td><span class="application">named</span>, BIND</td><td>在 FreeBSD 中 BIND 域名服务器软件包的常见叫法。</td></tr><tr><td>解析器 (Resolver)</td><td>计算机用以向域名服务器查询域名信息的一个系统进程</td></tr><tr><td>反向 <acronym class="acronym">DNS</acronym></td><td>将 <acronym class="acronym">IP</acronym> 地址映射为主机名</td></tr><tr><td>根域</td><td>Internet 域层次的起点。 所有的域都在根域之下，
+		类似文件系统中， 文件都在根目录之下那样。</td></tr><tr><td>域 (Zone)</td><td>独立的域， 子域， 或者由同一机构管理的 <acronym class="acronym">DNS</acronym> 的一部分。</td></tr></tbody></table></div><a id="idp87109840" class="indexterm"></a><p>域的例子：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="systemitem">.</code> 在本文档中通常指代根域。</p></li><li class="listitem"><p><code class="systemitem">org.</code> 是根域之下的一个顶级域名
+	    (<acronym class="acronym">TLD</acronym>)。</p></li><li class="listitem"><p><code class="systemitem">example.org.</code> 是在
+	    <code class="systemitem">org.</code>
+	    <acronym class="acronym">TLD</acronym> 之下的一个域。</p></li><li class="listitem"><p><code class="systemitem">1.168.192.in-addr.arpa</code> 是一个表示所有
+	    <code class="systemitem">192.168.1.*</code>
+	    <acronym class="acronym">IP</acronym> 地址空间中 <acronym class="acronym">IP</acronym>
+	    地址的域。</p></li></ul></div><p>如您所见， 域名中越细节的部分会越靠左出现。 例如， <code class="systemitem">example.org.</code> 就比
+	<code class="systemitem">org.</code> 范围更小， 类似地 <code class="systemitem">org.</code> 又比根域更小。
+	域名各个部分的格局与文件系统十分类似：
+	<code class="filename">/dev</code> 目录在根目录之下， 等等。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87124816"></a>28.6.3. 运行域名服务器的理由</h3></div></div></div><p>域名服务器通常会有两种形式： 权威域名服务器，
+	以及缓存域名服务器。</p><p>下列情况需要有权威域名服务器：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>想要向全世界提供 <acronym class="acronym">DNS</acronym> 信息，
+	    并对请求给出权威应答。</p></li><li class="listitem"><p>注册了类似 <code class="systemitem">example.org</code>
+	    的域， 而需要将 <acronym class="acronym">IP</acronym> 指定到其下的主机名上。</p></li><li class="listitem"><p>某个 <acronym class="acronym">IP</acronym> 地址块需要反向
+	    <acronym class="acronym">DNS</acronym> 项 (<acronym class="acronym">IP</acronym> 到主机名)。</p></li><li class="listitem"><p>备份服务器， 或常说的从 (slave) 服务器，
+	    会在主服务器出现问题或无法访问时来应答查询请求。</p></li></ul></div><p>下列情况需要有缓存域名服务器：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>本地的 <acronym class="acronym">DNS</acronym> 服务器能够缓存，
+	    并比直接向外界的域名服务器请求更快地得到应答。</p></li></ul></div><p>当有人查询 <code class="systemitem">www.FreeBSD.org</code> 时，解析器通常会向上级
+	<acronym class="acronym">ISP</acronym> 的域名服务器发出请求， 并获得回应。 如果有本地的缓存
+	<acronym class="acronym">DNS</acronym> 服务器， 查询只有在第一次被缓存 <acronym class="acronym">DNS</acronym>
+	服务器发到外部世界。 其他的查询不会发向局域网外，
+	因为它们已经有在本地的缓存了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87136464"></a>28.6.4. DNS 如何运作</h3></div></div></div><p>在 FreeBSD 中， BIND 服务程序被称为
+	<span class="application">named</span>。</p><div class="informaltable"><table width="100%" border="0"><colgroup><col /><col /></colgroup><thead><tr><th>文件</th><th>描述</th></tr></thead><tbody><tr><td><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">named</span>(8)</span></a></td><td>BIND 服务程序</td></tr><tr><td><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rndc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rndc</span>(8)</span></a></td><td>域名服务控制程序</td></tr><tr><td><code class="filename">/etc/namedb</code></td><td>BIND 存放域名信息的位置。</td></tr><tr><td><code class="filename">/etc/namedb/named.conf</code></td><td>域名服务配置文件</td></tr></tbody></table></div><p>随在服务器上配置的域的性质不同，
+	域的定义文件一般会存放到
+	<code class="filename">/etc/namedb</code> 目录中的 <code class="filename">master</code>、 <code class="filename">slave</code>， 或 <code class="filename">dynamic</code> 子目录中。
+	这些文件中提供了域名服务器在响应查询时所需要的 <acronym class="acronym">DNS</acronym> 信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87149392"></a>28.6.5. 启动 BIND</h3></div></div></div><a id="idp87150032" class="indexterm"></a><p>由于 BIND 是默认安装的， 因此配置它相对而言很简单。</p><p>默认的 <span class="application">named</span> 配置， 是在
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a> 环境中提供基本的域名解析服务，
+	并且只限于监听本地 IPv4 回环地址 (127.0.0.1)。
+	如果希望启动这一配置， 可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>/etc/rc.d/named onestart</code></strong></pre><p>如果希望 <span class="application">named</span>
+         服务在每次启动的时候都能够启动， 需要在
+         <code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">named_enable="YES"</pre><p>当然， 除了这份文档所介绍的配置选项之外， 在
+	<code class="filename">/etc/namedb/named.conf</code> 中还有很多其它的选项。
+	不过， 如果您需要了解 FreeBSD 中用于启动 <span class="application">named</span>
+	的那些选项的话， 则可以查看
+	<code class="filename">/etc/defaults/rc.conf</code> 中的
+	<code class="literal">named_*</code> 参数， 并参考
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">rc.conf</span>(5)</span></a> 联机手册。 除此之外，
+	<a class="xref" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc">Section 12.7, “在 FreeBSD 中使用 rc”</a> 也是一个不错的起点。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87158864"></a>28.6.6. 配置文件</h3></div></div></div><a id="idp87163728" class="indexterm"></a><p>目前， <span class="application">named</span> 的配置文件存放于
+	<code class="filename">/etc/namedb</code> 目录，
+	在使用前应根据需要进行修改，
+	除非您只打算让它完成简单的域名解析服务。
+	这个目录同时也是您进行绝大多数配置的地方。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87166032"></a>28.6.6.1. <code class="filename">/etc/namedb/named.conf</code></h4></div></div></div><pre class="programlisting">// $FreeBSD$
+//
+// Refer to the named.conf(5) and named(8) man pages, and the documentation
+// in /usr/share/doc/bind9 for more details.
+//
+// If you are going to set up an authoritative server, make sure you
+// understand the hairy details of how DNS works.  Even with
+// simple mistakes, you can break connectivity for affected parties,
+// or cause huge amounts of useless Internet traffic.
+
+options {
+	// Relative to the chroot directory, if any
+	directory	"/etc/namedb";
+	pid-file	"/var/run/named/pid";
+	dump-file	"/var/dump/named_dump.db";
+	statistics-file	"/var/stats/named.stats";
+
+// If named is being used only as a local resolver, this is a safe default.
+// For named to be accessible to the network, comment this option, specify
+// the proper IP address, or delete this option.
+	listen-on	{ 127.0.0.1; };
+
+// If you have IPv6 enabled on this system, uncomment this option for
+// use as a local resolver.  To give access to the network, specify
+// an IPv6 address, or the keyword "any".
+//	listen-on-v6	{ ::1; };
+
+// These zones are already covered by the empty zones listed below.
+// If you remove the related empty zones below, comment these lines out.
+	disable-empty-zone "255.255.255.255.IN-ADDR.ARPA";
+	disable-empty-zone "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA";
+	disable-empty-zone "1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.IP6.ARPA";
+
+// If you've got a DNS server around at your upstream provider, enter
+// its IP address here, and enable the line below.  This will make you
+// benefit from its cache, thus reduce overall DNS traffic in the Internet.
+/*
+	forwarders {
+		127.0.0.1;
+	};
+*/
+
+// If the 'forwarders' clause is not empty the default is to 'forward first'
+// which will fall back to sending a query from your local server if the name
+// servers in 'forwarders' do not have the answer.  Alternatively you can
+// force your name server to never initiate queries of its own by enabling the
+// following line:
+//	forward only;
+
+// If you wish to have forwarding configured automatically based on
+// the entries in /etc/resolv.conf, uncomment the following line and
+// set named_auto_forward=yes in /etc/rc.conf.  You can also enable
+// named_auto_forward_only (the effect of which is described above).
+//	include "/etc/namedb/auto_forward.conf";</pre><p>正如注释所言， 如果希望从上级缓存中受益，
+	  可以在此处启用 <code class="literal">forwarders</code>。
+	  正常情况下， 域名服务器会逐级地查询
+	  Internet 来找到特定的域名服务器， 直到得到答案为止。
+          这个选项将让它首先查询上级域名服务器 (或另外提供的域名服务器)，
+          从而从它们的缓存中得到结果。 如果上级域名服务器是一个繁忙的高速域名服务器，
+          则启用它将有助于改善服务品质。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="systemitem">127.0.0.1</code>
+            <span class="emphasis"><em>不会</em></span> 正常工作。
+            一定要把地址改为您上级服务器的 <acronym class="acronym">IP</acronym> 地址。</p></div><pre class="programlisting">	/*
+	   Modern versions of BIND use a random UDP port for each outgoing
+	   query by default in order to dramatically reduce the possibility
+	   of cache poisoning.  All users are strongly encouraged to utilize
+	   this feature, and to configure their firewalls to accommodate it.
+
+	   AS A LAST RESORT in order to get around a restrictive firewall
+	   policy you can try enabling the option below.  Use of this option
+	   will significantly reduce your ability to withstand cache poisoning
+	   attacks, and should be avoided if at all possible.
+
+	   Replace NNNNN in the example with a number between 49160 and 65530.
+	*/
+	// query-source address * port NNNNN;
+};
+
+// If you enable a local name server, don't forget to enter 127.0.0.1
+// first in your /etc/resolv.conf so this server will be queried.
+// Also, make sure to enable it in /etc/rc.conf.
+
+// The traditional root hints mechanism. Use this, OR the slave zones below.
+zone "." { type hint; file "named.root"; };
+
+/*	Slaving the following zones from the root name servers has some
+	significant advantages:
+	1. Faster local resolution for your users
+	2. No spurious traffic will be sent from your network to the roots
+	3. Greater resilience to any potential root server failure/DDoS
+
+	On the other hand, this method requires more monitoring than the
+	hints file to be sure that an unexpected failure mode has not
+	incapacitated your server.  Name servers that are serving a lot
+	of clients will benefit more from this approach than individual
+	hosts.  Use with caution.
+
+	To use this mechanism, uncomment the entries below, and comment
+	the hint zone above.
+*/
+/*
+zone "." {
+	type slave;
+	file "slave/root.slave";
+	masters {
+		192.5.5.241;	// F.ROOT-SERVERS.NET.
+	};
+	notify no;
+};
+zone "arpa" {
+	type slave;
+	file "slave/arpa.slave";
+	masters {
+		192.5.5.241;	// F.ROOT-SERVERS.NET.
+	};
+	notify no;
+};
+zone "in-addr.arpa" {
+	type slave;
+	file "slave/in-addr.arpa.slave";
+	masters {
+		192.5.5.241;	// F.ROOT-SERVERS.NET.
+	};
+	notify no;
+};
+*/
+
+/*	Serving the following zones locally will prevent any queries
+	for these zones leaving your network and going to the root
+	name servers.  This has two significant advantages:
+	1. Faster local resolution for your users
+	2. No spurious traffic will be sent from your network to the roots
+*/
+// RFC 1912
+zone "localhost"	{ type master; file "master/localhost-forward.db"; };
+zone "127.in-addr.arpa" { type master; file "master/localhost-reverse.db"; };
+zone "255.in-addr.arpa"	{ type master; file "master/empty.db"; };
+
+// RFC 1912-style zone for IPv6 localhost address
+zone "0.ip6.arpa"	{ type master; file "master/localhost-reverse.db"; };
+
+// "This" Network (RFCs 1912 and 3330)
+zone "0.in-addr.arpa"		{ type master; file "master/empty.db"; };
+
+// Private Use Networks (RFC 1918)
+zone "10.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "16.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "17.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "18.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "19.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "20.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "21.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "22.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "23.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "24.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "25.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "26.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "27.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "28.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "29.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "30.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "31.172.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "168.192.in-addr.arpa"	{ type master; file "master/empty.db"; };
+
+// Link-local/APIPA (RFCs 3330 and 3927)
+zone "254.169.in-addr.arpa"	{ type master; file "master/empty.db"; };
+
+// TEST-NET for Documentation (RFC 3330)
+zone "2.0.192.in-addr.arpa"	{ type master; file "master/empty.db"; };
+
+// Router Benchmark Testing (RFC 3330)
+zone "18.198.in-addr.arpa"	{ type master; file "master/empty.db"; };
+zone "19.198.in-addr.arpa"	{ type master; file "master/empty.db"; };
+
+// IANA Reserved - Old Class E Space
+zone "240.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "241.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "242.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "243.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "244.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "245.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "246.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "247.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "248.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "249.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "250.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "251.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "252.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "253.in-addr.arpa"		{ type master; file "master/empty.db"; };
+zone "254.in-addr.arpa"		{ type master; file "master/empty.db"; };
+
+// IPv6 Unassigned Addresses (RFC 4291)
+zone "1.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "3.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "4.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "5.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "6.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "7.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "8.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "9.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "a.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "b.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "c.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "d.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "e.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "0.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "1.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "2.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "3.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "4.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "5.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "6.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "7.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "8.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "9.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "a.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "b.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "0.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "1.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "2.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "3.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "4.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "5.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "6.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "7.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+
+// IPv6 ULA (RFC 4193)
+zone "c.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "d.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+
+// IPv6 Link Local (RFC 4291)
+zone "8.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "9.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "a.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "b.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+
+// IPv6 Deprecated Site-Local Addresses (RFC 3879)
+zone "c.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "d.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "e.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+zone "f.e.f.ip6.arpa"		{ type master; file "master/empty.db"; };
+
+// IP6.INT is Deprecated (RFC 4159)
+zone "ip6.int"			{ type master; file "master/empty.db"; };
+
+// NB: Do not use the IP addresses below, they are faked, and only
+// serve demonstration/documentation purposes!
+//
+// Example slave zone config entries.  It can be convenient to become
+// a slave at least for the zone your own domain is in.  Ask
+// your network administrator for the IP address of the responsible
+// master name server.
+//
+// Do not forget to include the reverse lookup zone!
+// This is named after the first bytes of the IP address, in reverse
+// order, with ".IN-ADDR.ARPA" appended, or ".IP6.ARPA" for IPv6.
+//
+// Before starting to set up a master zone, make sure you fully
+// understand how DNS and BIND work.  There are sometimes
+// non-obvious pitfalls.  Setting up a slave zone is usually simpler.
+//
+// NB: Don't blindly enable the examples below. :-)  Use actual names
+// and addresses instead.
+
+/* An example dynamic zone
+key "exampleorgkey" {
+	algorithm hmac-md5;
+	secret "sf87HJqjkqh8ac87a02lla==";
+};
+zone "example.org" {
+	type master;
+	allow-update {
+		key "exampleorgkey";
+	};
+	file "dynamic/example.org";
+};
+*/
+
+/* Example of a slave reverse zone
+zone "1.168.192.in-addr.arpa" {
+	type slave;
+	file "slave/1.168.192.in-addr.arpa";
+	masters {
+		192.168.1.1;
+	};
+};
+*/</pre><p>在 <code class="filename">named.conf</code> 中，
+	  还给出了从域、转发域和反解析域的例子。</p><p>如果新增了域， 就必需在 <code class="filename">named.conf</code> 中加入对应的项目。</p><p>例如， 用于
+	  <code class="systemitem">example.org</code> 的域文件的描述类似下面这样：</p><pre class="programlisting">zone "example.org" {
+	type master;
+	file "master/example.org";
+};</pre><p>如 <code class="option">type</code> 语句所标示的那样，
+	  这是一个主域， 其信息保存在
+	  <code class="filename">/etc/namedb/master/example.org</code>
+	  中， 如 <code class="option">file</code> 语句所示。</p><pre class="programlisting">zone "example.org" {
+	type slave;
+	file "slave/example.org";
+};</pre><p>在从域的情形中， 所指定的域的信息会从主域名服务器传递过来，
+	  并保存到对应的文件中。 当主域服务器发生问题或不可达时，
+	  从域名服务器就有一份可用的域名信息， 从而能够对外提供服务。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87191888"></a>28.6.6.2. 域文件</h4></div></div></div><a id="idp87192528" class="indexterm"></a><p>下面的例子展示了用于 <code class="systemitem">example.org</code> 的主域文件 (存放于
+	  <code class="filename">/etc/namedb/master/example.org</code>)：</p><pre class="programlisting">$TTL 3600        ; 1 hour default TTL
+example.org.    IN      SOA      ns1.example.org. admin.example.org. (
+                                2006051501      ; Serial
+                                10800           ; Refresh
+                                3600            ; Retry
+                                604800          ; Expire
+                                300             ; Negative Reponse TTL
+                        )
+
+; DNS Servers
+                IN      NS      ns1.example.org.
+                IN      NS      ns2.example.org.
+
+; MX Records
+                IN      MX 10   mx.example.org.
+                IN      MX 20   mail.example.org.
+
+                IN      A       192.168.1.1
+
+; Machine Names
+localhost       IN      A       127.0.0.1
+ns1             IN      A       192.168.1.2
+ns2             IN      A       192.168.1.3
+mx              IN      A       192.168.1.4
+mail            IN      A       192.168.1.5
+
+; Aliases
+www             IN      CNAME   example.org.</pre><p>请注意以 <span class="quote">“<span class="quote">.</span>”</span> 结尾的主机名是全称主机名， 而结尾没有
+          <span class="quote">“<span class="quote">.</span>”</span> 的则是相对于原点的主机名。 例如，
+          <code class="literal">ns1</code> 将被转换为
+          <code class="literal">ns1.example.org.</code></p><p>域信息文件的格式如下：</p><pre class="programlisting">记录名          IN 记录类型     值</pre><a id="idp87198160" class="indexterm"></a><p>最常用的 DNS 记录：</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">SOA</span></dt><dd><p>域权威开始</p></dd><dt><span class="term">NS</span></dt><dd><p>权威域名服务器</p></dd><dt><span class="term">A</span></dt><dd><p>主机地址</p></dd><dt><span class="term">CNAME</span></dt><dd><p>别名对应的正规名称</p></dd><dt><span class="term">MX</span></dt><dd><p>邮件传递服务器</p></dd><dt><span class="term">PTR</span></dt><dd><p>域名指针 (用于反向 DNS)
+	      </p></dd></dl></div><pre class="programlisting">example.org. IN SOA ns1.example.org. admin.example.org. (
+                        2006051501      ; Serial
+                        10800           ; Refresh after 3 hours
+                        3600            ; Retry after 1 hour
+                        604800          ; Expire after 1 week
+                        300 )           ; Negative Reponse TTL</pre><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="systemitem">example.org.</code></span></dt><dd><p>域名， 同时也是这个域信息文件的原点。</p></dd><dt><span class="term"><code class="systemitem">ns1.example.org.</code></span></dt><dd><p>该域的主/权威域名服务器。</p></dd><dt><span class="term"><code class="literal">admin.example.org.</code></span></dt><dd><p>此域的负责人的电子邮件地址，
+		其中 <span class="quote">“<span class="quote">@</span>”</span>
+		需要换掉 (<code class="email">&lt;<a xmlns="" class="email" href="mailto:admin@example.org">admin@example.org</a>&gt;</code> 对应
+		<code class="literal">admin.example.org</code>)</p></dd><dt><span class="term"><code class="literal">2006051501</code></span></dt><dd><p>文件的序号。 每次修改域文件时都必须增加这个数字。
+		现今， 许多管理员会考虑使用
+		<code class="literal">yyyymmddrr</code> 这样的格式来表示序号。
+		<code class="literal">2006051501</code> 通常表示上次修改于
+		05/15/2006， 而后面的
+		<code class="literal">01</code> 则表示在那天的第一次修改。
+		序号非常重要， 它用于通知从域服务器更新数据。</p></dd></dl></div><pre class="programlisting">       IN NS           ns1.example.org.</pre><p>这是一个 NS 项。 每个准备提供权威应答的服务器都必须有一个对应项。</p><pre class="programlisting">localhost       IN      A       127.0.0.1
+ns1             IN      A       192.168.1.2
+ns2             IN      A       192.168.1.3
+mx              IN      A       192.168.1.4
+mail            IN      A       192.168.1.5</pre><p>A 记录指明了机器名。 正如在前面所看到的，
+          <code class="systemitem">ns1.example.org</code> 将解析为
+          <code class="systemitem">192.168.1.2</code>。</p><pre class="programlisting">                IN      A       192.168.1.1</pre><p>这一行把当前原点 <code class="systemitem">example.org</code>
+	  指定为使用 IP 地址
+	  <code class="systemitem">192.168.1.1</code>。</p><pre class="programlisting">www             IN CNAME        @</pre><p>正规名 (CNAME) 记录通常用于为某台机器指定别名。
+          在这个例子中， 将 <code class="systemitem">www</code>
+          指定成了 <span class="quote">“<span class="quote">主</span>”</span> 机器的一个别名，
+          后者的名字与域名
+	  <code class="systemitem">example.org</code>
+          (<code class="systemitem">192.168.1.1</code>) 相同。
+          CNAME 不能同与之有相同名字的任何其它记录并存。</p><a id="idp87229392" class="indexterm"></a><pre class="programlisting">               IN MX   10      mail.example.org.</pre><p>MX 记录表示哪个邮件服务器负责接收发到这个域的邮件。
+          <code class="systemitem">mail.example.org</code> 是邮件服务器的主机名，
+          而 10 则是它的优先级。</p><p>可以有多台邮件服务器， 其优先级分别是 10、
+          20 等等。 尝试向 <code class="systemitem">example.org</code> 投递邮件的服务器，
+          会首先尝试优先级最高的 MX (优先级数值最小的记录)、
+	  接着尝试次高的， 并重复这一过程直到邮件递达为止。</p><p>in-addr.arpa 域名信息文件 (反向 DNS)， 采用的格式是同样的，
+          只是 PTR 项代替了 A 或 CNAME 的位置。</p><pre class="programlisting">$TTL 3600
+
+1.168.192.in-addr.arpa. IN SOA ns1.example.org. admin.example.org. (
+                        2006051501      ; Serial
+                        10800           ; Refresh
+                        3600            ; Retry
+                        604800          ; Expire
+                        300 )           ; Negative Reponse TTL
+
+        IN      NS      ns1.example.org.
+        IN      NS      ns2.example.org.
+
+1       IN      PTR     example.org.
+2       IN      PTR     ns1.example.org.
+3       IN      PTR     ns2.example.org.
+4       IN      PTR     mx.example.org.
+5       IN      PTR     mail.example.org.</pre><p>这个文件给出了上述假想域中 IP 地址到域名的映射关系。</p><p>需要说明的是， 在 PTR 记录右侧的名字必须是全称域名
+	  (也就是必须以 <span class="quote">“<span class="quote">.</span>”</span> 结束)。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87246928"></a>28.6.7. 缓存域名服务器</h3></div></div></div><a id="idp87247568" class="indexterm"></a><p>缓存域名服务器是一种主要承担解析递归查询角色的域名服务器。
+	它简单地自行进行查询， 并将查询结果记住以备后续使用。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87249232"></a>28.6.8. 安全</h3></div></div></div><p>尽管 BIND 是最为常用的 DNS 实现， 但它总是有一些安全问题。
+        时常会有人发现一些可能的甚至可以利用的安全漏洞。
+      </p><p>尽管 FreeBSD 会自动将
+	<span class="application">named</span> 放到 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=chroot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">chroot</span>(8)</span></a>
+	环境中运行， 但仍有一些其它可用的安全机制来帮助您规避潜在的针对
+	<acronym class="acronym">DNS</acronym> 服务的攻击。</p><p>阅读 <a class="link" href="http://www.cert.org/" target="_top">CERT</a> 的安全公告，
+	并订阅 the <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-security-notifications" target="_top">FreeBSD 安全问题通知邮件列表</a> 是一个有助于帮助您了解最新
+	Internet 及 FreeBSD 安全问题的好习惯。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果发现了问题， 确保源代码是最新的，
+	  并重新联编一份 <span class="application">named</span> 有可能会有所帮助。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp87254992"></a>28.6.9. 进一步阅读</h3></div></div></div><p>BIND/<span class="application">named</span> 联机手册：
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rndc&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rndc</span>(8)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">named</span>(8)</span></a> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">named.conf</span>(5)</span></a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="https://www.isc.org/software/bind" target="_top">官方的 ISC BIND
+	      页面</a></p></li><li class="listitem"><p><a class="link" href="https://www.isc.org/software/guild" target="_top">Official ISC BIND
+	      Forum</a></p></li><li class="listitem"><p><a class="link" href="http://www.oreilly.com/catalog/dns5/" target="_top">O'Reilly
+	      DNS 和 BIND 第 5 版</a></p></li><li class="listitem"><p><a class="link" href="http://www.rfc-editor.org/rfc/rfc1034.txt" target="_top">RFC1034
+	      - 域名 - 概念和工具</a></p></li><li class="listitem"><p><a class="link" href="http://www.rfc-editor.org/rfc/rfc1035.txt" target="_top">RFC1035
+	      - 域名 - 实现及其标准</a></p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="network-dhcp.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="network-servers.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="network-apache.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.5. 网络自动配置 (DHCP) </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 28.7. Apache HTTP 服务器</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

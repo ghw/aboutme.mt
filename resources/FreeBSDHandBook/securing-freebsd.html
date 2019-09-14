@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>14.3. 确保 FreeBSD 的安全</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="security.html" title="Chapter 14. 安全" /><link rel="prev" href="security-intro.html" title="14.2. 介绍" /><link rel="next" href="crypt.html" title="14.4. DES、 Blowfish、 MD5， 以及 Crypt" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.3. 确保 FreeBSD 的安全</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="security-intro.html">Prev</a> </td><th width="60%" align="center">Chapter 14. 安全</th><td width="20%" align="right"> <a accesskey="n" href="crypt.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="securing-freebsd"></a>14.3. 确保 FreeBSD 的安全</h2></div></div></div><a id="idp76982864" class="indexterm"></a><div xmlns="" class="note"><h3 class="admontitle">命令与协议: </h3><p xmlns="http://www.w3.org/1999/xhtml">在这份文档中，我们使用
+       <span class="application">粗体</span> 来表示应用程序，
+       并使用 <code class="command">单倍距</code> 字体来表示命令。
+       这样的排版区分能够有效地区分类似 ssh 这样的概念，
+       因为它既可以表示命令，又可以表示协议。</p></div><p>接下来的几节中， 将介绍在这一章中 <a class="link" href="security-intro.html" title="14.2. 介绍">前一节</a> 中所介绍的那些加强
+      FreeBSD 系统安全性的手段。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="securing-root-and-staff"></a>14.3.1. 确保 <code class="systemitem">root</code> 和维护人员帐户的安全 </h3></div></div></div><a id="idp76988240" class="indexterm"></a><p>首先，如果您没有确保 <code class="systemitem">root</code> 帐户的安全，
+	就没必要先劳神确保用户帐户的安全了。绝大多数系统都会指派一个口令给
+	<code class="systemitem">root</code> 帐户。 我们的第一个假定是，口令
+	<span class="emphasis"><em>总是</em></span> 不安全的。 这并不意味着您要把口令删掉。
+	口令通常对访问机器的控制台来说是必须的。 也就是说，
+	您应该避免允许在控制台以外的地方使用口令，
+	甚至包括使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=su&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">su</span>(1)</span></a> 命令的情形。
+	例如，确信您的 pty 终端在 <code class="filename">/etc/ttys</code>
+	文件中被指定为 insecure (不安全)，这将使直接通过
+	<code class="command">telnet</code> 或 <code class="command">rlogin</code> 登录
+	<code class="systemitem">root</code> 会不被接受。 如果使用如
+	<span class="application">sshd</span> 这样的其他登录服务，
+	也要确认直接登录 root 是关闭的。您可以通过编辑
+	<code class="filename">/etc/ssh/sshd_config</code> 文件来做到这一点，确信
+	<code class="literal">PermitRootLogin</code> 被设置成 <code class="literal">no</code>。
+	考虑到每一种访问方法 ── 如FTP这样的服务，
+	以免因为它们而导致安全性的损失。
+	直接登录 <code class="systemitem">root</code> 只有通过系统控制台才被允许。</p><a id="idp76995664" class="indexterm"></a><p>当然， 作为一个系统管理员， 您应当获得
+	<code class="systemitem">root</code>身份， 因此， 我们开了一些后门来允许自己进入。
+	但这些后门只有在经过了额外的口令确认之后才能使用。
+	一种让 <code class="systemitem">root</code>
+	可访问的方法是增加适当的用户帐户到
+	<code class="systemitem">wheel</code> 组 (在
+	<code class="filename">/etc/group</code> 中)。<code class="systemitem">wheel</code>
+	组中的用户成员可以使用 <code class="command">su</code>
+	命令来成为 <code class="systemitem">root</code>。
+	绝对不应该通过在口令项中进行设置来赋予维护人员天然的
+	<code class="systemitem">wheel</code> 组成员身份。 维护人员应被放置在
+	<code class="systemitem">staff</code> 组中，然后通过
+	<code class="filename">/etc/group</code> 文件加入到 <code class="systemitem">wheel</code>
+	组。事实上，只有那些需要以 <code class="systemitem">root</code> 身份进行操作的用户才需要放进
+	<code class="systemitem">wheel</code> 组中。 当然，也可以通过
+	某种其它的验证手段，例如 Kerberos，可以通过 <code class="systemitem">root</code>
+	帐户中的 <code class="filename">.k5login</code> 文件来允许执行
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ksu&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ksu</span>(1)</span></a> 成为 <code class="systemitem">root</code> ，而不必把它们放进
+	<code class="systemitem">wheel</code> 组。 这可能是一种更好的解决方案，
+	因为 <code class="systemitem">wheel</code> 机制仍然可能导致入侵者获得
+	<code class="systemitem">root</code> ，如果他拿到了口令文件，并能够进入职员的帐户。
+	尽管有 <code class="systemitem">wheel</code> 比什么都没有要强一些，
+	但它并不是一种绝对安全的办法。</p><p>可以使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pw</span>(8)</span></a> 命令来完全禁止某一个帐号：</p><pre class="screen"><code class="prompt">#</code><strong class="userinput"><code>pw lock staff</code></strong></pre><p>这将阻止用户使用任何方法登录，包括 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a>。</p><p>另一个阻止某个帐户访问的方法是使用一个
+	<span class="quote">“<span class="quote"><code class="literal">*</code></span>”</span> 字符替换掉加密后的口令。
+	这将不会与任何加密后的口令匹配，从而阻止了用户的访问。
+	举例说明：</p><pre class="programlisting">foobar:R9DT/Fa1/LV9U:1000:1000::0:0:Foo Bar:/home/foobar:/usr/local/bin/tcsh</pre><p>应被改为：</p><pre class="programlisting">foobar:*:1000:1000::0:0:Foo Bar:/home/foobar:/usr/local/bin/tcsh</pre><p>这会阻止用户 <code class="systemitem">foobar</code> 使用传统的方式登录。
+	但是对于使用了 <span class="application">Kerberos</span>
+	或者配置了 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ssh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ssh</span>(1)</span></a> 公钥/密钥对的情况下，用户依然可以访问。</p><p>这些安全机制同样假定，
+	从严格受限的机器向限制更宽松的机器上登录。 例如，
+	如果您的服务器运行了所有的服务，那么，工作站应该什么都不运行。
+	为了让工作站尽可能地安全，应该避免运行任何没有必要的服务，
+	甚至不运行任何服务。 另外， 也应该考虑使用带口令保护功能的屏幕保护程序。
+	毋庸置疑， 如果攻击者能够物理地接触您的工作站，
+	那么他就有能力破坏任何安全设施，这确实是我们需要考虑的一个问题，但同样地，
+	真正能够物理接触您的工作站或服务器并实施攻击的人在现实生活中并不常见，
+	绝大多数攻击来自于网络， 而攻击者往往无法物理地接触服务器或工作站。</p><p>使用类似 Kerberos 这样的工具，也为我们提供了使用一个工具来禁用某个用户，
+	或修改他们的口令， 并在所有机器上立即生效的方法。 如果员工的帐号被窃取，
+	能够在所有的其他机器上生效的口令变更将很有意义。如果口令分散地保存在多个机器上，
+	一次修改 N 台机器上的口令很可能是一件痛苦的事情。
+	此外， Kerberos 还能够提供更多的限制，除了 Kerberos 令牌有很好的过期机制之外，
+	它还能够强制用户在某个特定的期限内修改口令(比如说，每月一次). </p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77053008"></a>14.3.2. 确保以root用户权限运行的服务器和suid/sgid可执行程序的安全</h3></div></div></div><a id="idp77053648" class="indexterm"></a><a id="idp77058768" class="indexterm"></a><a id="idp77059664" class="indexterm"></a><a id="idp77060560" class="indexterm"></a><a id="idp77061328" class="indexterm"></a><a id="idp77062224" class="indexterm"></a><a id="idp77063120" class="indexterm"></a><a id="idp77064016" class="indexterm"></a><p>谨慎的管理员只运行他们需要的服务， 不多， 不少。
+	要当心第三方的服务程序很可能有更多的问题。 例如， 运行旧版的
+	<span class="application">imapd</span> 或
+	<span class="application">popper</span> 无异于将
+	<code class="systemitem">root</code> 令牌拱手送给全世界的攻击者。
+	永远不要运行那些您没有仔细检查过的服务程序， 另外也要知道，
+	许多服务程序并不需要以 <code class="systemitem">root</code> 的身份运行。
+	例如， <span class="application">ntalk</span>、
+	<span class="application">comsat</span>， 以及
+	<span class="application">finger</span> 这些服务，
+	都能够以一种被称作 <em class="firstterm">沙盒</em> 的特殊用户的身份运行。
+	除非您已经解决掉了许多麻烦的问题， 否则沙盒就不是完美的，
+	但洋葱式安全规则仍然成立： 如果有人设法攻破了在沙盒中运行的程序，
+	那么在做更多坏事之前， 他们还必须想办法攻破沙盒本身的限制。
+	攻击者需要攻破的层次越多， 他们成功的可能性就越小。
+	过去， 破解 root 的漏洞几乎在所有以 <code class="systemitem">root</code>
+	身份运行的服务上都发现过， 包括那些基本的系统服务。
+	如果您的机器只打算向外界提供
+	<span class="application">sshd</span> 登录， 而用户不会使用
+	<span class="application">telnetd</span> 或
+	<span class="application">rshd</span> 甚至
+	<span class="application">rlogind</span> 登录，
+	就应该毫不犹豫地关闭它们！</p><p>FreeBSD 现在默认在沙盒中运行
+	<span class="application">ntalkd</span>,
+	<span class="application">comsat</span>, 以及
+	<span class="application">finger</span>。此外， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=named&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">named</span>(8)</span></a> 也可以这样运行。
+	<code class="filename">/etc/defaults/rc.conf</code> 中包括了如何如此运行
+	<span class="application">named</span> 的方法，只是这些内容被注释掉了。
+	如何升级或安装系统将决定这些沙盒所使用的特殊用户是否被自动安装。
+	谨慎的系统管理员将根据需要研究并实现沙盒。</p><a id="idp77077968" class="indexterm"></a><p>此外，还有一些服务通常并不在沙盒中运行：
+	<span class="application">sendmail</span>,
+	<span class="application">popper</span>,
+	<span class="application">imapd</span>, <span class="application">ftpd</span>,
+	以及一些其他的服务。当然，它们有一些替代品，但安装那些服务可能需要做更多额外的工作。
+	可能必须以 <code class="systemitem">root</code> 身份运行这些程序，
+	并通过其他机制来检测入侵。</p><p>系统中另一个比较大的 <code class="systemitem">root</code> 漏洞
+	是安装在其中的 suid-root 和 sgid 的可执行文件。 绝大多数这类程序，
+	例如 <span class="application">rlogin</span>
+	会放在 <code class="filename">/bin</code>、 <code class="filename">/sbin</code>、 <code class="filename">/usr/bin</code>， 或 <code class="filename">/usr/sbin</code> 目录中。
+	尽管并没有 100% 的安全保证，但系统默认的 suid 和 sgid 可执行文件通常是相对安全的。
+	当然，偶尔也会发现一些存在于这些可执行文件中的
+	<code class="systemitem">root</code> 漏洞。1998年，<code class="literal">Xlib</code>
+	中发现了一处 <code class="systemitem">root</code> 漏洞，这使得
+	<span class="application">xterm</span> (通常是做了suid的) 变得可以入侵。
+	做得安全些， 总比出现问题再后悔要强。
+	因此，谨慎的管理员通常会限制 suid 可执行文件，
+	并保证只有员工帐号能够执行它们，或只开放给特定的用户组，甚至彻底干掉
+	(<code class="command">chmod 000</code>) 任何 suid 可执行文件，
+	以至于没有人能够执行它们。没有显示设备的服务器通常不会需要
+	<span class="application">xterm</span> 可执行文件。 sgid 可执行文件通常同样地危险。
+	一旦入侵者攻克了sgid-kmem，那么他就能够读取
+	<code class="filename">/dev/kmem</code> 并进而读取经过加密的口令文件，
+	从而窃取任何包含口令的帐号。另外，攻破了 <code class="literal">kmem</code>
+	的入侵者能够监视通过 pty 传送的按键序列，即使用户使用的是安全的登录方式。
+	攻破了 <code class="systemitem">tty</code> 组的用户则能够向几乎所有用户的
+	tty 写入数据。如果用户正在运行一个终端程序，或包含了键盘模拟功能的终端仿真程序，
+	那么，入侵者能够以那个用户的身份执行任何命令。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="secure-users"></a>14.3.3. 确保用户帐户的安全</h3></div></div></div><p>用户帐号的安全通常是最难保证的。虽然您可以为您的员工设置严苛的登录限制，
+	并用 <span class="quote">“<span class="quote">星号</span>”</span> 替换掉他们的口令， 但您可能无法对普通的用户这么做。
+	如果有足够的决策权， 那么在保证用户帐号安全的斗争中或许会处于优势，
+	但如果不是这样， 您能做的只是警惕地监控这些帐号的异动。
+	让用户使用 ssh 或 Kerberos 可能会有更多的问题，
+	因为需要更多的管理和技术支持， 尽管如此， 与使用加密的口令文件相比，
+	这仍不失为一个好办法。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77090128"></a>14.3.4. 确保口令文件的安全</h3></div></div></div><p>能够确保起作用的唯一一种方法， 是将口令文件中尽可能多的口令用星号代替，
+	并通过 ssh 或 Kerberos 来使用这些账号。 即使只有
+	<code class="systemitem">root</code> 用户能够读取加密过的口令文件 (<code class="filename">/etc/spwd.db</code>)，
+	入侵者仍然可能设法读到它的内容，
+	即使他暂时还无法写入这个文件。</p><p>您的安全脚本应该经常检查并报告口令文件的异动 (参见后面的 <a class="link" href="securing-freebsd.html#security-integrity" title="14.3.6. 检查文件完整性: 可执行文件，配置文件和其他文件">检查文件完整性</a> 一节)。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77093072"></a>14.3.5. 确保内核中内核设备、直接访问设备和文件系统的安全</h3></div></div></div><p>如果攻击者已经拿到了 <code class="systemitem">root</code> 那么他就有能力作任何事情，
+	当然， 有一些事情是他们比较喜欢干的。
+	例如， 绝大多数现代的内核都包括一个内建的听包设备。
+	在 FreeBSD 中，这个设备被称作
+	<code class="filename">bpf</code> 。攻击者通常会尝试在攻克的系统上运行它。
+	如果您不需要 <code class="filename">bpf</code> 设备提供的功能，那么，就不要把它编入内核。</p><a id="idp77095504" class="indexterm"></a><p>但是， 即使您关闭了 <code class="filename">bpf</code>
+	设备， 仍需要关注
+	<code class="filename">/dev/mem</code> 和
+	<code class="filename">/dev/kmem</code>。 就事论事地说，
+	入侵者仍然能通过直接访问的方式写入磁盘设备。 另外，
+	还有一个称作模块加载器的内核机制， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=kldload&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">kldload</span>(8)</span></a>。
+	有进取心的入侵者， 可以经由这一机制，
+	在正在运行的内核中通过 KLD 模块来安装自己的 <code class="filename">bpf</code>，
+	或其它听包设备。 为了避免这些问题， 您必须将内核的安全级别提高到至少 1。</p><p>内核的安全级别可以通过多种方式来设置。 最简单的设置正在运行的内核安全级的方法，
+	是使用 <code class="command">sysctl</code> 来设置内核变量
+	<code class="varname">kern.securelevel</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl kern.securelevel=1</code></strong></pre><p>默认情况下， FreeBSD 内核启动时的安全级别是 -1。
+	除非管理员或 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a> 由于启动脚本加以改变， 安全级别会继续保持为 -1。
+	在系统启动过程中， 可以在 <code class="filename">/etc/rc.conf</code> 文件中，
+	将变量 <code class="varname">kern_securelevel_enable</code> 变量设置为
+	<code class="literal">YES</code> 并将 <code class="varname">kern_securelevel</code>
+	变量设置为希望的安全级别来提高它。</p><p>默认情况下， 在启动脚本执行完之后， FreeBSD 的安全级别设置是 -1。
+	这称作 <span class="quote">“<span class="quote">不安全模式</span>”</span>， 因为文件的不可修改标记 (immutable flag)
+	可以改为关闭， 而且全部设备可以直接进行读写， 等等。</p><p>一旦将安全级别设置为 1 或更高， 则只允许追加 (append-only)
+	和不可修改标记会被执行， 而且不可以关闭。 直接访问裸设备则会被拒绝。
+	更高的安全级别会施加进一步的访问限制。 关于安全级别的完整介绍，
+	请参阅联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=security&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">security</span>(7)</span></a> (对于 FreeBSD 7.0 之前的版本，
+	则是联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=init&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">init</span>(8)</span></a>)。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">将安全级别调整到 1 或更高可能会导致 X11
+	  (访问 <code class="filename">/dev/io</code> 会被阻止)， 或从源代码联编 FreeBSD
+	  (这一过程中的 <code class="buildtarget">installworld</code>
+	  部分需要临时取消一些文件上的只允许追加和不可修改标记) 出现一些问题，
+	  并导致一些其他小问题。 有些时候， 例如 X11 的情况，
+	  可以通过在引导过程中较早的阶段启动 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=xdm&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">xdm</span>(1)</span></a>
+	  来绕过， 因为这时安全级别还很低。 类似这样的方法，
+	  对于某些安全级别或限制有可能不可用。 提前做好计划可能会是个好主意。
+	  理解不同的安全级别所施加的限制非常重要，
+	  因为一些限制可能让系统变得很难使用。 另外，
+	  了解它们也有助于理性地配置默认设定。</p></div><p>如果内核的安全级别设为 1 或更高，
+	在重要的启动程序、 目录和脚本文件上设置 <code class="literal">schg</code> 标记
+	(也就是在系统启动到设置安全级别之前运行的程序和它们的配置) 就有意义了。
+	然而， 这样做也可能有些过火， 而由于系统运行于较高的安全级别，
+	升级系统也会变得困难的多。 作为妥协， 可以让系统以较高的安全级别运行，
+	但并不将所有的启动文件都配置 <code class="literal">schg</code> 标记。
+	另一种方法是将 <code class="filename">/</code> 和 <code class="filename">/usr</code> 以只读模式挂载。
+	请注意， 过分严苛的安全配置很可能限制您检测入侵的能力。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="security-integrity"></a>14.3.6. 检查文件完整性: 可执行文件，配置文件和其他文件</h3></div></div></div><p>当实施严格的限制时，往往会在使用的方便性上付出代价。例如，使用
+	<code class="command">chflags</code> 来把 <code class="literal">schg</code> 标记
+	应用到 <code class="filename">/</code> 和
+	<code class="filename">/usr</code> 中的绝大多数文件上可能会起到反作用，
+	因为尽管它能够保护那些文件， 但同时也使入侵检测无法进行。
+	层次化安全的最后一层可能也是最重要的 ── 检测。
+	如果无法检测出潜在的入侵行为，
+	那么安全的其他部分可能相对来讲意义可能就不那么大了 (或者，更糟糕的事情是，
+	那些措施会给您安全的假象)。
+	层次化安全最重要的功能是减缓入侵者， 而不是彻底不让他们入侵，
+	这样才可能当场抓住入侵者。</p><p>检测入侵的一种好办法是查找那些被修改、 删除或添加的文件。
+	检测文件修改的最佳方法是与某个 (通常是中央的) 受限访问的系统上的文件进行比对。
+	在一台严格限制访问的系统上撰写您的安全脚本通常不能够被入侵者察觉，
+	因此，这非常重要。为了最大限度地发挥这一策略的优势，通常会使用只读的 NFS，
+	或者设置 ssh 钥匙对以便为其他机器提供访问。除了网络交互之外，
+	NFS可能是一种很难被察觉的方法 ── 它允许您监控每一台客户机上的文件系统，
+	而这种监控几乎是无法察觉的。如果一台严格受限的服务器和客户机是通过交换机连接的，
+	那么 NFS 将是一种非常好的方式。 不过，如果那台监控服务器和客户机之间通过集线器
+	(Hub)，或经过许多层的路由来连接，则这种方式就很不安全了，
+	此时，应考虑使用 ssh ，即使这可以在审计记录中查到。</p><p>一旦为这个受限的机器赋予了至少读取它应监控的客户系统的权限，
+	就应该为实际的监控撰写脚本。以 NFS 挂接为例，可以用类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=find&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">find</span>(1)</span></a>
+	和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md5&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">md5</span>(1)</span></a> 这样的命令为基础来完成我们所需的工作。
+	最好能够每天对被控机的所有执行文件计算一遍 md5，同时，还应以更高的频率测试那些
+	<code class="filename">/etc</code> 和
+	<code class="filename">/usr/local/etc</code>
+	中的控制文件。一旦发现了不匹配的情形，监控机应立即通知系统管理员。
+	好的安全脚本也应该检查在系统分区，如 <code class="filename">/</code> 和
+	<code class="filename">/usr</code>
+	中是否有新增或删除的可执行文件，以及不适宜的 suid 。</p><p>如果打算使用 ssh 来代替 NFS，那么撰写安全脚本将变得困难许多。
+	本质上，需要在脚本中使用 <code class="command">scp</code> 在客户端复制文件，
+	另一方面，用于检查的执行文件 (例如 find) 也需要使用
+	<code class="command">scp</code> 传到客户端，因为
+	<span class="application">ssh</span> 客户程序很可能已经被攻陷。
+	总之，在一条不够安全的链路上 ssh 可能是必须的，
+	但也必须应付它所带来的难题。</p><p>安全脚本还应该检查用户以及职员成员的权限设置文件：
+	<code class="filename">.rhosts</code>、 <code class="filename">.shosts</code>、
+	<code class="filename">.ssh/authorized_keys</code> 等等。
+	这些文件可能并非通过
+	<code class="literal">MD5</code> 来进行检查。</p><p>如果您的用户磁盘空间很大， 检查这种分区上面的文件可能非常耗时。
+	这种情况下， 采用标志来禁止使用 suid 可执行文件将是一个好主意。
+	您可能会想看看 <code class="literal">nosuid</code> 选项 （参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a>）。
+	尽管如此， 这些扫描仍然应该至少每周进行一次， 这样做的意义并不是检测有效的攻击，
+	而是检查攻击企图。</p><p>进程记帐 (参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=accton&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">accton</span>(8)</span></a>) 是一种相对成本较低的，
+	可以帮助您在被入侵后评估损失的机制。
+	对于找出入侵者是如何进入系统的这件事情来说，
+	它会非常的有所助益，特别是当入侵者什么文件都没有修改的情况下。</p><p>最后， 安全脚本应该处理日志文件， 而日志文件本身应该通过尽可能安全的方法生成
+	── 远程 syslog 可能非常有用。 入侵者会试图掩盖他们的踪迹，
+	而日志文件对于希望了解入侵发生时间的系统管理员来说则显得尤为重要。
+	保持日志文件的永久性记录的一种方法是在串口上运行系统控制台，
+	并在一台安全的机器上收集这些信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77133136"></a>14.3.7. 偏执</h3></div></div></div><p>带点偏执不会带来伤害。作为一种惯例，
+	系统管理员在不影响使用的便利的前提下可以启用任何安全特性，此外，
+	在经过深思熟虑之后，也可以增加一些
+	<span class="emphasis"><em>确实会</em></span> 让使用变得不那么方便的安全特性。
+	更重要的是，有安全意识的管理员应该学会混合不同的安全策略 ──
+	如果您逐字逐句地按照这份文档来配置您的机器，
+	那无异于向那些同样能得到这份文档的攻击者透露了更多的信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77134672"></a>14.3.8. 拒绝服务攻击</h3></div></div></div><a id="idp77135312" class="indexterm"></a><p>这一节将介绍拒绝服务攻击。 DoS 攻击通常是基于数据包的攻击，
+	尽管几乎没有任何办法来阻止大量的伪造数据包耗尽网络资源，
+	但通常可以通过一些手段来限制这类攻击的损害，使它们无法击垮服务器：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>限制服务进程 fork。</p></li><li class="listitem"><p>限制 springboard 攻击 (ICMP 响应攻击， ping
+	    广播，等等)。</p></li><li class="listitem"><p>使内核路由缓存过载。</p></li></ol></div><p>一种比较常见的 DoS 攻击情形， 是通过攻击复制进程 (fork)
+	的服务， 使其产生大量子进程， 从而是其运行的机器耗尽内存、 文件描述符等资源，
+	直到服务器彻底死掉。 <span class="application">inetd</span>
+	(参见 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a>) 提供了许多选项来限制这类攻击。
+	需要注意的是， 尽管能够阻止一台机器彻底垮掉，
+	但通常无法防止服务本身被击垮。
+	请仔细阅读 <span class="application">inetd</span> 的联机手册，
+	特别是它的 <code class="option">-c</code>、 <code class="option">-C</code> 以及
+	<code class="option">-R</code> 这三个选项。 伪造 IP 攻击能够绕过
+	<span class="application">inetd</span> 的 <code class="option">-C</code> 选项，
+	因此， 这些选项需要配合使用。 某些独立的服务器也有类似的限制参数。</p><p>例如， <span class="application">Sendmail</span> 就提供了自己的
+	<code class="option">-OMaxDaemonChildren</code> 选项， 它通常比 <span class="application">Sendmail</span> 的负载限制选项更为有效，
+	因为服务器负载的计算有滞后性。 您可以在启动 <span class="application">sendmail</span> 时指定一个
+	<code class="literal">MaxDaemonChildren</code> 参数； 把它设的足够高以便承载您所需要的负荷，
+	当然， 不要高到足以让运行 <span class="application">Sendmail</span> 的机器死掉。
+	此外， 以队列模式
+	(<code class="option">-ODeliveryMode=queued</code>) 运行 <span class="application">Sendmail</span> 并把服务程序
+	(<code class="command">sendmail -bd</code>) 和队列执行程序分别执行
+	(<code class="command">sendmail -q15m</code>) 也是一个好主意。
+	如果您希望保证队列的实时性， 可以考虑使用更短的间隔， 例如
+	<code class="option">-q1m</code>， 但同时也需要指定一个合理的子进程数， 也就是通过
+	<code class="literal">MaxDaemonChildren</code> 选项以免
+	<span class="emphasis"><em>那个</em></span> <span class="application">Sendmail</span> 造成重叠的故障。</p><p><span class="application">Syslogd</span> 可以被直接地攻击，因此，
+	强烈建议只要可行，就在启动它的时候加上 <code class="option">-s</code> 参数，
+	其他情况下，则至少应该加上 <code class="option">-a</code>。</p><p>对于基于连接的服务，例如
+	<span class="application">TCP Wrapper</span> 的 reverse-identd， 都应该格外的小心，
+	因为它们都可能直接遭受攻击。 一般情况下， 基于安全考虑， 不应使用 <span class="application">TCP Wrapper</span>
+	所提供的 reverse-ident 这样的功能。</p><p>此外， 将内部服务保护起来， 阻止来自其他主机的访问也十分重要，
+	这些工作可以通过设置边界路由器来完成。
+	主要的想法， 是阻止来自您的	LAN 以外的访问， 这有助于避免
+	<code class="systemitem">root</code> 受到攻击。
+	尽可能配置排他式的防火墙， 例如，
+	<span class="quote">“<span class="quote">用防火墙阻止所有的网络流量 <span class="emphasis"><em>除了</em></span> 端口 A、B、
+	C、D，以及 M-Z</span>”</span>。 通过采用这种方法， 您可以很容易地将低端口的访问阻止在外，
+	而又不难配置使防火墙放过那些明确需要开放的服务， 例如
+	<span class="application">named</span> (如果您的机器准备作为域的主要解析服务器)，
+	<span class="application">ntalkd</span>，
+	<span class="application">sendmail</span>，以及其他可以从 Internet 访问的服务。
+	如果您尝试以其他方式配置防火墙
+	── 采用比较宽松的策略， 那么您将很有可能忘记
+	<span class="quote">“<span class="quote">关掉</span>”</span> 一两个服务，
+	或者在增加了一些服务之后忘记更新防火墙策略。
+	尽管如此， 仍然可以考虑允许让数据进入编号较高的那一部分端口，
+	这将保证那些需要这样特性的服务能够正常工作，
+	而又不影响低端口服务的安全性。
+	此外， 还应注意到 FreeBSD 允许您来控制动态绑定的端口的范围，
+	即一系列 <code class="varname">net.inet.ip.portrange</code> 变量，通过
+	<code class="command">sysctl</code> 来完成设置。 (<code class="command">sysctl -a | fgrep
+	portrange</code>)。 这使得您完成较复杂的防火墙策略变得易如反掌。
+	例如， 您可能希望普通的高段端口的起止范围是
+	4000 到 5000， 而更高范围则是 49152 到
+	65535， 随后在防火墙中阻止低于 4000 的所有端口
+	(当然， 除了那些特地为 Internet 访问而开设的端口)。</p><p>另一种常被称作 springboard 的攻击也是非常常见的 DoS 攻击
+	── 它通过使服务器产生其无法处理的响应来达到目的。
+	最常见的攻击就是 <span class="emphasis"><em>ICMP ping 广播攻击</em></span>。
+	攻击者通过伪造 ping 包， 将其源 IP 设置为希望攻击的机器的 IP。
+	如果您的边界路由器没有进行禁止 ping 广播地址的设置， 则您的网络将最终陷于响应伪造的
+	ping 包之中， 特别是当攻击者同时使用了多个不同的网络时。
+	广播攻击能够产生超过 120 兆位的瞬时流量。
+	另一种常见的针对 ICMP 错误报告系统的 springboard 攻击，
+	通过建立可以生成 ICMP 出错响应的包， 攻击者能够攻击服务器的网络下行资源，
+	并导致其上行资源耗尽。 这种类型的攻击也可以通过耗尽内存来使得使得被攻击的服务器崩溃，
+	特别是当这些服务器无法足够快地完成
+	ICMP 响应的时候。 较新的内核可以通过调整 <span class="application">sysctl</span>
+	变量 <code class="literal">net.inet.icmp.icmplim</code> 来限制这种攻击。
+	最后一类主要的 springboard 是针对某些
+	<span class="application">inetd</span> 的内部服务， 例如
+	udp echo 服务进行的。 攻击者简单地伪造一个来自服务器 A 的
+	echo 口的 UDP 包， 然后将这个包发到 B 的 echo 口。
+	于是， 两台服务器将不停地将包弹给对方。
+	攻击者能够将两台服务器的这种服务都耗竭，
+	并且通过这种方式， 只需要很少的包就可以让 LAN 超载。
+	类似的问题对
+	<span class="application">chargen</span> 口也是存在的。
+	好的系统管理员应该关闭这些 inetd 的测试服务。</p><p>伪造的包攻击也可以用来使内核的路由缓存过载。
+	请参考 <code class="varname">net.inet.ip.rtexpire</code>，
+	<code class="varname">rtminexpire</code>， 以及 <code class="varname">rtmaxcache</code>
+	<code class="command">sysctl</code> 参数。 伪造的包可以用随机的源 IP 攻击，
+	使得内核在路由表中产生一个临时的缓存项， 它可以通过
+	<code class="command">netstat -rna | fgrep W3</code> 看到。 这些路由通常需要
+	1600 秒才会过期。 如果内核发现路由表变得太大， 它会动态地降低
+	<code class="varname">rtexpire</code> 但以
+	<code class="varname">rtminexpire</code> 为限。 这引发了两个问题：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>在访问量不大的服务器上， 内核对于突然袭击的反应不够快。</p></li><li class="listitem"><p><code class="varname">rtminexpire</code> 的值没有低到让内核在此类攻击时活下去的程度。</p></li></ol></div><p>如果您的服务器通过 T3 或更快的线路接入 Internet，
+        那么通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 来手动地降低
+	<code class="varname">rtexpire</code> 和 <code class="varname">rtminexpire</code>
+	就非常必要。 当然，绝不要把它们设置为零 (除非您想让机器崩溃)
+	将这两个参数设置为 2 通常已经足以抵御这类攻击了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp77239248"></a>14.3.9. Kerberos 和 SSH 的访问问题</h3></div></div></div><a id="idp77239888" class="indexterm"></a><p>如果您打算使用， 那么 Kerberos 和 ssh 都有一些需要解决的问题。
+	Kerberos 5 是一个很棒的验证协议， 但使用了它的
+	<span class="application">telnet</span> 和
+	<span class="application">rlogin</span> 应用程序有一些 bug，
+	使得它们不适合处理二进制流。
+	而且， 除非使用了 <code class="option">-x</code> 选项， 否则默认情况下
+	Kerberos 并不加密会话。
+	 <span class="application">ssh</span>
+	在默认时加密所有的会话内容。</p><p>除了默认转发加密密钥之外， ssh 在所有的其他方面都做得很好。
+	这意味着如果您持有供您访问系统其他部分密钥的工作站作了很好的安全防护，
+	而您连到了一台不安全的机器上， 则您的密钥可能被别人获得。
+	尽管实际的密钥并没有被泄漏， 但由于 ssh 会在您登录的过程中启用一个转发端口，
+	如果攻击者拿到那台不安全的机器上的
+	<code class="systemitem">root</code> 那么他将能够利用那个端口来使用您的密钥，
+	从而访问您能够访问的那些机器。</p><p>我们建议您在使用 ssh 时配合
+	Kerberos 来完成工作人员的登录过程。
+	<span class="application">Ssh</span> 在编译时可以加入 Kerberos 支持。
+	在减少了潜在地暴露 ssh 密钥的机会的同时， 它还能够通过 Kerberos 来保护口令。
+	Ssh 密钥只有在做过安全防护的机器上执行自动操作时才应使用
+	(这是 Kerberos 不适合的情形)。 此外，我们还建议您要么在
+	ssh 配置中关闭密钥转发， 要么在 <code class="filename">authorized_keys</code> 中增加
+	<code class="literal">from=IP/DOMAIN</code> 选项， 来限制这些密钥能够登录的来源机器。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="security-intro.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="security.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="crypt.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.2. 介绍 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 14.4. DES、 Blowfish、 MD5， 以及 Crypt</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>23.6. 同步源代码</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="prev" href="current-stable.html" title="23.5. 追踪开发分支" /><link rel="next" href="makeworld.html" title="23.7. 重新编译 “world”" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.6. 同步源代码</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="current-stable.html">Prev</a> </td><th width="60%" align="center">Chapter 23. 更新与升级 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="makeworld.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="synching"></a>23.6. 同步源代码</h2></div></div></div><p>您可以通过互联网或电子邮件与 FreeBSD 项目的部分源代码 （或全部源代码）
+        保持同步， 这取决与您的需求。 我们主要提供
+        <a class="link" href="svn.html" title="A.5. 使用 Subversion">Subversion</a> 和 <a class="link" href="ctm.html" title="A.4. 使用 CTM">CTM</a>
+        这两种源代码同步服务。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">虽然支持仅更新部分源代码树， 但唯一官方支持的更新过程是更新整个源代码树，
+            并重新编译所有在用户空间运行的程序， （如在 <code class="filename">/bin</code> 和
+            <code class="filename">/sbin</code> 目录下的程序） 和内核源码。
+            如果仅更新部分代码树、 仅内核，
+            或仅更新用户空间运行的程序源代码往往会导致问题， 比如： 编译出错、
+            内核崩溃和数据损坏等。</p></div><a id="idp82853968" class="indexterm"></a><p><span class="application">Subversion</span> 采用 <span class="emphasis"><em>pull</em></span>
+        方式来更新源代码。 用户或 <code class="command">cron</code> 脚本，
+        调用 <code class="command">svn</code> 程序来更新源代码。
+        （ <span class="application">Subversion</span> 方式是更新本地源代码树的首选方式。）
+        它们都是由服务器动态生成的都是最新的数据， 由用户控制何时下载更新。</p><a id="idp82856912" class="indexterm"></a><p><span class="application">CTM</span>
+        不能通过交互方式的对比主归档服务器与本地源代码的差异并主动的获取源代码。
+        相反的， 会有一个脚本专门用来识别变更过的档案，
+        这个脚本由 CTM 服务器每天数次执行。 它将会自上次运行以来的变更档案加以压缩，
+        并分配一个序列号， 然后对电子邮件采用可打印的 ASCII 编码进行编码后发送出去。
+        当您接收到这些 <span class="quote">“<span class="quote">CTM deltas</span>”</span> 档案的时候， 将会交由
+        <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ctm_rmail&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ctm_rmail</span>(1)</span></a> 程序自动进行解压， 校验和应用这些变更。 这种方式比
+        <span class="application">Subversion</span> 方式更有效， 并且因为它采用了
+        <span class="emphasis"><em>push</em></span> 方式， 而不是 <span class="emphasis"><em>pull</em></span> 方式，
+        可以有效减轻服务器压力。</p><p>当然， 还有个问题是需要注意的。 如果您不小心破坏了本地存档的某部分，
+        <span class="application">Subversion</span> 会检测并重建被破坏的部分。
+        而 <span class="application">CTM</span> 并不会为您做这些事情。
+        如果您删除了代码树的某一部分而没有事前备份， 那么您将不得不从头开始，
+        使用最近的 CTM <span class="quote">“<span class="quote">base delta</span>”</span> ， 并使用
+        <span class="application">CTM</span> 重建它。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="current-stable.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="updating-upgrading.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="makeworld.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.5. 追踪开发分支 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 23.7. 重新编译 <span class="quote">“<span class="quote">world</span>”</span></td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

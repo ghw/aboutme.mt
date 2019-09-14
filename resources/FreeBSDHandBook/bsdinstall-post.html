@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>2.9. 安装后的配置</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="prev" href="bsdinstall-final-warning.html" title="2.8. 安装确认" /><link rel="next" href="bsdinstall-install-trouble.html" title="2.10. 故障排除" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.9. 安装后的配置</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsdinstall-final-warning.html">Prev</a> </td><th width="60%" align="center">Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</th><td width="20%" align="right"> <a accesskey="n" href="bsdinstall-install-trouble.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="bsdinstall-post"></a>2.9. 安装后的配置</h2></div></div></div><p>成功安装 FreeBSD 后， 还需要依次进行一些配置。
+      在重启进入新系统前， 这些配置始终可以通过最终的配置菜单进行修改。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-post-root"></a>2.9.1. 设置 <code class="systemitem">root</code> 密码</h3></div></div></div><p>必须设置 <code class="systemitem">root</code> 密码。 请注意输入密码时，
+        被输入的字符并不会在屏幕上显示， 因此为防止输入错误，
+        必须再次输入相同的字符。</p><div class="figure"><a id="bsdinstall-post-set-root-passwd"></a><div class="figure-title">Figure 2.21. 设置 <code class="systemitem">root</code> 密码</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-post-root-passwd.png" alt="设置 root 密码" /></div></div></div><br class="figure-break" /><p>成功设置密码后， 安装将继续进行。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-config-network-dev"></a>2.9.2. 配置网络接口</h3></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果已经在 <span class="emphasis"><em>bootonly</em></span> 安装时配置过网络接口，
+	  则可略过此步。</p></div><p>这里将显示一个网络接口列表，
+	其中的接口都是在当前计算机上侦测到的， 请选择一个进行配置。</p><div class="figure"><a id="bsdinstall-configure-net-interface"></a><div class="figure-title">Figure 2.22. 选择一个网络接口</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface.png" alt="选择一个网络接口" /></div></div></div><br class="figure-break" /><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-configure-net-wireless"></a>2.9.2.1. 配置无线网络接口</h4></div></div></div><p>如果选择了无线网络接口，
+	  则必须输入相关的无线网络验证及安全参数，
+	  以允许其连接至特定的网络。</p><p>无线网络是通过 Service Set Identifier（服务集标识符，
+	  简写为 <acronym class="acronym">
+	  SSID</acronym>）来表示的，
+	  它是唯一表示无线网络的短字符串。</p><p>大多数无线网络都会以加密方式传输数据，
+	  藉此保护信息不被未经授权者查看。 强烈建议采用 <acronym class="acronym">WPA2</acronym> 加密。
+	  旧式的加密类型， 如
+	  <acronym class="acronym">WEP</acronym>，
+	  几乎没有任何安全性可言。</p><p>若要连接至一个无线网络， 首先需要扫描无线接入点。</p><div class="figure"><a id="bsdinstall-wireless-scan"></a><div class="figure-title">Figure 2.23. 扫描无线接入点</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-wireless-scan.png" alt="扫描无线接入点" /></div></div></div><br class="figure-break" /><p>扫描完成后， 会列出所有发现的
+	  <acronym class="acronym">SSID</acronym>
+	  以及它们支持的加密类型说明。
+	  如果需要连接的 <acronym class="acronym">SSID</acronym> 没有列出，
+	  请选择 <span class="guibutton">[ Rescan ]</span> 再次扫描。
+	  如果还没有出现， 请检查天线， 或将计算机移至更靠近接入点的地方。
+	  在做过这些改善措施之后， 再重新扫描。</p><div class="figure"><a id="bsdinstall-wireless-accesspoints"></a><div class="figure-title">Figure 2.24. 选择一个无线网络</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-wireless-accesspoints.png" alt="选择一个无线网络" /></div></div></div><br class="figure-break" /><p>选择所要连接的无线网络， 即可输入连接所需的加密信息。
+	  对于 <acronym class="acronym">WPA2</acronym>， 只需输入一个密码 （也叫预共享密钥，(
+	  简称 <acronym class="acronym">PSK</acronym>）。 为安全起见，
+	  在输入框中键入的字符将显示为星号。</p><div class="figure"><a id="bsdinstall-wireless-wpa2"></a><div class="figure-title">Figure 2.25. WPA2 设置</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-wireless-wpa2setup.png" alt="WPA2 设置" /></div></div></div><br class="figure-break" /><p>在选择了无线网络并输入了连接所需的信息后，
+	  网络配置将继续进行。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-ipv4"></a>2.9.2.2. 配置 IPv4 网络</h4></div></div></div><p>选择是否使用 IPv4 网络。 这是最常见的网络连接类型。</p><div class="figure"><a id="bsdinstall-configure-net-ipv4"></a><div class="figure-title">Figure 2.26. 选择 IPv4 网络</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-ipv4.png" alt="选择 IPv4 网络" /></div></div></div><br class="figure-break" /><p>有两种配置 IPv4 的方式。
+	  <em class="firstterm"><acronym class="acronym">DHCP</acronym></em> 会自动地为网络接口进行正确的配置，
+	  通常情况下， 这是首选的方式。 而 <em class="firstterm">Static</em>
+	  （静态） 方式则需要手工输入网络的配置信息。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">不要随意输入网络的配置信息， 因为这样的话网络就无法正常工作。
+	    请向网络管理员或服务提供商那里取得
+	    <a class="xref" href="bsdinstall-pre.html#bsdinstall-collect-network-information" title="2.3.3. 收集网络配置信息">Section 2.3.3, “收集网络配置信息”</a>
+	    所列出的配置信息。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-net-ipv4-dhcp-config"></a>2.9.2.2.1. 使用 DHCP 方式</h5></div></div></div><p>若存在可用的 DHCP 服务器， 请选择
+	    <span class="guibutton">[ Yes ]</span> 以自动配置网络接口。</p><div class="figure"><a id="bsdinstall-net-ipv4-dhcp"></a><div class="figure-title">Figure 2.27. 选择 DHCP 配置 IPv4</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-ipv4-dhcp.png" alt="选择 DHCP 配置 IPv4" /></div></div></div><br class="figure-break" /></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-net-ipv4-static-config"></a>2.9.2.2.2. 使用静态配置方式</h5></div></div></div><p>网络接口的静态配置需要输入相关的 IPv4 配置信息。</p><div class="figure"><a id="bsdinstall-net-ipv4-static"></a><div class="figure-title">Figure 2.28. 静态配置 IPv4</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-ipv4-static.png" alt="静态配置 IPv4" /></div></div></div><br class="figure-break" /><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">IP Address</code> - IP 地址，
+		即给当前计算机手动分配的 IPv4 地址。 此地址必须是唯一的，
+		并且在本地网络上还没有被其他设备使用。</p></li><li class="listitem"><p><code class="literal">Subnet Mask</code> - 子网掩码， 用于本地网络。
+		通常是 <code class="literal">255.255.255.0</code>。</p></li><li class="listitem"><p><code class="literal">Default Router</code>（默认路由）
+		- 网络上默认路由的 IP 地址。 通常，
+		这是将本地网络连接至 Internet
+		的路由器或其他网络设备的地址。 也称作 <span class="emphasis"><em>default
+		  gateway （默认网关）</em></span>。</p></li></ul></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-ipv6"></a>2.9.2.3. 配置 IPv6 网络</h4></div></div></div><p>IPv6 是一种新的网络配置方式。 如果您有可用的
+	  IPv6 连接， 并需要使用它， 选择
+	  <span class="guibutton">[ Yes ]</span> 来开始配置。</p><div class="figure"><a id="bsdinstall-net-ipv6"></a><div class="figure-title">Figure 2.29. 选择 IPv6 网络</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-ipv6.png" alt="选择 IPv6 网络" /></div></div></div><br class="figure-break" /><p>IPv6 也有两种配置方式。
+	  <em class="firstterm"><acronym class="acronym">SLAAC</acronym> </em>， 或
+	  <span class="emphasis"><em>StateLess Address AutoConfiguration</em></span>
+	  （无状态地址自动配置）
+	  方式能够自动配置正确的网络接口， 而 <em class="firstterm">Static（静态）</em>
+	  配置方式则需要手动输入网络信息。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-net-ipv6-slaac-config"></a>2.9.2.3.1. 使用 Stateless Address Autoconfiguration 方式</h5></div></div></div><p><acronym class="acronym">SLAAC</acronym> 允许 IPv6
+	    组件从本地路由器请求自动配置信息， 详情参见 <a class="link" href="http://tools.ietf.org/html/rfc4862" target="_top">RFC4862</a>。</p><div class="figure"><a id="bsdinstall-net-ipv6-slaac"></a><div class="figure-title">Figure 2.30. 选择 SLAAC 配置 IPv6</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-slaac.png" alt="选择 SLAAC 配置 IPv6" /></div></div></div><br class="figure-break" /></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-net-ipv6-static-config"></a>2.9.2.3.2. 使用静态配置方式</h5></div></div></div><p>网络接口的静态配置需要输入相关的 IPv6 配置信息。</p><div class="figure"><a id="bsdinstall-net-ipv6-static"></a><div class="figure-title">Figure 2.31. 静态配置 IPv6</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-interface-ipv6-static.png" alt="静态配置 IPv6" /></div></div></div><br class="figure-break" /><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">IPv6 Address</code> （IPv6地址） -
+		为当前计算机手工分配的 <acronym class="acronym">IP</acronym> 地址。
+		这个地址必须是唯一的， 并且没有被其他本地网络设备使用。</p></li><li class="listitem"><p><code class="literal">Default Router</code> （默认路由） -
+		网络上默认路由的地址。 通常，
+		这是将本地网络连接至 Internet
+		的路由器或其他网络设备的地址。 也称作 <span class="emphasis"><em>default
+		  gateway （默认网关）</em></span>。</p></li></ul></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-net-dns"></a>2.9.2.4. 配置 <acronym class="acronym">DNS</acronym></h4></div></div></div><p><em class="firstterm">Domain Name System</em> （域名系统，简称
+	  <span class="emphasis"><em><acronym class="acronym">DNS</acronym></em></span>）
+	  解析器用于主机名和网络地址间的相互转换。 如果使用的是
+	  <acronym class="acronym">DHCP</acronym> 或 <acronym class="acronym">SLAAC</acronym>，
+	  那么其配置很可能已经存在； 否则， 请在 Search 字段中输入本地网络的域名，
+	  在 <acronym class="acronym">DNS</acronym> #1 和 <acronym class="acronym">DNS</acronym> #2 中输入本地
+	  <acronym class="acronym">DNS</acronym> 服务器的 <acronym class="acronym">IP</acronym> 地址。
+	  至少需要配置一个 <acronym class="acronym">DNS</acronym> 服务器。</p><div class="figure"><a id="bsdinstall-net-dns-config"></a><div class="figure-title">Figure 2.32. DNS 配置</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-configure-network-ipv4-dns.png" alt="DNS 配置" /></div></div></div><br class="figure-break" /></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-timezone"></a>2.9.3. 设置时区</h3></div></div></div><p>为您的机器设置时区将允许其自动校时，
+	并正确执行一些与时区相关的操作。</p><p>示例中的机器位于美国东部时区。 根据所处的地理位置，
+	您的选择可能会有所不同。</p><div class="figure"><a id="bsdinstall-local-utc"></a><div class="figure-title">Figure 2.33. 选择本地或 UTC 时钟</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-set-clock-local-utc.png" alt="选择本地或 UTC 时钟" /></div></div></div><br class="figure-break" /><p>选择 <span class="guibutton">[ Yes ]</span>
+	或 <span class="guibutton">[ No ]</span> 以确定机器时钟的配置方式，
+	然后按 <span class="keycap"><strong>Enter</strong></span> 键。 如果您并不知道系统使用的是
+	UTC 还是本地时间， 请选择 <span class="guibutton">[ No ]</span>
+	以使用更为常见的本地时间。</p><div class="figure"><a id="bsdinstall-timezone-region"></a><div class="figure-title">Figure 2.34. 选择地区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-timezone-region.png" alt="选择地区" /></div></div></div><br class="figure-break" /><p>使用方向键选择合适的地区后按下 <span class="keycap"><strong>Enter</strong></span> 键。</p><div class="figure"><a id="bsdinstall-timezone-country"></a><div class="figure-title">Figure 2.35. 选择国家</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-timezone-country.png" alt="选择国家" /></div></div></div><br class="figure-break" /><p>用方向键选择合适的国家后按下 <span class="keycap"><strong>Enter</strong></span> 键。</p><div class="figure"><a id="bsdinstall-timezone-zone"></a><div class="figure-title">Figure 2.36. 选择时区</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-timezone-zone.png" alt="选择时区" /></div></div></div><br class="figure-break" /><p>用方向键选择合适的时区后按下 <span class="keycap"><strong>Enter</strong></span> 键。</p><div class="figure"><a id="bsdinstall-timezone-confirmation"></a><div class="figure-title">Figure 2.37. 确认时区选择</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-timezone-confirm.png" alt="确认时区选择" /></div></div></div><br class="figure-break" /><p>确认时区的缩写是正确的， 然后按 <span class="keycap"><strong>Enter</strong></span>
+	键以继续安装后的配置。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-sysconf"></a>2.9.4. 选择需要开启的服务</h3></div></div></div><p>可以开启额外的系统服务， 它们会在系统启动时自动运行。
+	所有这些服务都是可选的。</p><div class="figure"><a id="bsdinstall-config-serv"></a><div class="figure-title">Figure 2.38. 选择需要开启的服务</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-config-services.png" alt="选择需要开启的服务" /></div></div></div><br class="figure-break" /><div class="itemizedlist"><div class="itemizedlist-title">额外的系统服务</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">sshd</code> - Secure Shell（即
+	    <acronym class="acronym">SSH</acronym>） 守护进程，
+	    提供安全的远程访问。</p></li><li class="listitem"><p><code class="literal">moused</code> - 支持在系统控制台中使用鼠标。</p></li><li class="listitem"><p><code class="literal">ntpd</code> - Network Time Protocol（网络时间协议，
+	    简称 <acronym class="acronym">NTP</acronym>） 守护进程，
+	    提供时钟自动同步。</p></li><li class="listitem"><p><code class="literal">powerd</code> - 系统电量控制程序，
+	    用于控制电量及节能。</p></li></ul></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-crashdump"></a>2.9.5. 启用崩溃转储</h3></div></div></div><p><span class="application">bsdinstall</span>
+	将询问是否在目标系统上启用崩溃转储。 由于在调试系统时非常有用，
+	因此鼓励用户尽可能地启用崩溃转储。
+	选择 <span class="guibutton">[ Yes ]</span> 以启用崩溃转储，
+	或选择 <span class="guibutton">[ No ]</span> 以不启用崩溃转储。</p><div class="figure"><a id="bsdinstall-config-crashdump"></a><div class="figure-title">Figure 2.39. 启用崩溃转储</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-config-crashdump.png" alt="启用崩溃转储" /></div></div></div><br class="figure-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-addusers"></a>2.9.6. 添加用户</h3></div></div></div><p>在安装过程中， 应至少添加一位普通用户， 而不要始终以
+	<code class="systemitem">root</code> 身份登入。 当以
+	<code class="systemitem">root</code> 身份登入系统时，
+	系统几乎不会对其操作提供任何限制或保护。
+	以普通用户身份登录更为安全。</p><p>选择 <span class="guibutton">[ Yes ]</span> 来添加新用户。</p><div class="figure"><a id="bsdinstall-add-user1"></a><div class="figure-title">Figure 2.40. 添加用户帐号</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-adduser1.png" alt="添加用户帐号" /></div></div></div><br class="figure-break" /><p>为需要添加的用户输入信息。</p><div class="figure"><a id="bsdinstall-add-user2"></a><div class="figure-title">Figure 2.41. 输入用户信息</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-adduser2.png" alt="输入用户信息" /></div></div></div><br class="figure-break" /><div class="itemizedlist"><div class="itemizedlist-title">用户信息</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">Username</code> - 用户名， 即登入时用户所输入的名称。
+	    通常是名的首字母加姓的组合。</p></li><li class="listitem"><p><code class="literal">Full name</code> - 用户的全名。</p></li><li class="listitem"><p><code class="literal">Uid</code> - 用户 ID。 通常留空以自动分配。</p></li><li class="listitem"><p><code class="literal">Login group</code> - 用户组。
+	    通常留空以接受默认取值。</p></li><li class="listitem"><p><code class="literal">Invite user into
+	    other groups?</code> - 是否同时将用户加入其他权限组？
+	    如果需要， 请输入权限组名称。</p></li><li class="listitem"><p><code class="literal">Login class</code> - 登录类别。
+	    通常留空以接受默认取值。</p></li><li class="listitem"><p><code class="literal">Shell</code> - 用户 shell。
+	    在本例中选择的是 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=csh&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">csh</span>(1)</span></a>。</p></li><li class="listitem"><p><code class="literal">Home directory</code> - 用户主目录。
+	    通常留空以接受默认取值。</p></li><li class="listitem"><p><code class="literal">Home directory permissions</code> -
+	    用户主目录的权限。 通常留空以接受默认取值。</p></li><li class="listitem"><p><code class="literal">Use password-based authentication?</code> -
+	    是否使用基于密码的认证？ 通常为 “yes”。</p></li><li class="listitem"><p><code class="literal">Use an empty password?</code> - 是否使用空密码？
+	    通常为 “no”。</p></li><li class="listitem"><p><code class="literal">Use a random password?</code> - 是否使用随机密码？
+	    通常为 “no”。</p></li><li class="listitem"><p><code class="literal">Enter password</code> - 用户的实际密码。
+	    输入的字符不会在屏幕上显示。</p></li><li class="listitem"><p><code class="literal">Enter password again</code> -
+	    必须再次输入密码以进行验证。</p></li><li class="listitem"><p><code class="literal">Lock out the account after
+	    creation?</code> - 创建后锁定帐号？ 通常为 “no”。</p></li></ul></div><p>全部信息输入完成后， 系统会显示摘要并询问是否正确。
+	如果发现了错误， 可以输入 <code class="literal">no</code> 后进行修改；
+	如果没有错误， 请输入 <code class="literal">yes</code> 以创建新用户。</p><div class="figure"><a id="bsdinstall-add-user3"></a><div class="figure-title">Figure 2.42. 退出用户与组管理</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-adduser3.png" alt="退出用户与组管理" /></div></div></div><br class="figure-break" /><p>若需添加更多用户， 请在问题“Add another user?”后输入
+	 <code class="literal">yes</code>； 输入 <code class="literal">no</code>
+	 以完成用户添加并继续安装。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-final-conf"></a>2.9.7. 最终配置</h3></div></div></div><p>所有的安装及配置完成后， 仍有机会对其进行修改。</p><div class="figure"><a id="bsdinstall-final-config"></a><div class="figure-title">Figure 2.43. 最终的配置菜单</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-finalconfiguration.png" alt="最终的配置菜单" /></div></div></div><br class="figure-break" /><p>使用此菜单， 可以在完成安装前添加或修改任何配置。</p><div class="itemizedlist"><div class="itemizedlist-title">最终的配置选项</div><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">Add User</code> - 添加用户，
+	    详见 <a class="xref" href="bsdinstall-post.html#bsdinstall-addusers" title="2.9.6. 添加用户">Section 2.9.6, “添加用户”</a>。</p></li><li class="listitem"><p><code class="literal">Root Password</code> - root 密码，
+	    详见 <a class="xref" href="bsdinstall-post.html#bsdinstall-post-root" title="2.9.1. 设置 root 密码">Section 2.9.1, “设置 <code class="systemitem">root</code> 密码”</a>。</p></li><li class="listitem"><p><code class="literal">Hostname</code> - 主机名，
+	    详见 <a class="xref" href="using-bsdinstall.html#bsdinstall-hostname" title="2.5.2. 设置主机名">Section 2.5.2, “设置主机名”</a>。</p></li><li class="listitem"><p><code class="literal">Network</code> - 网络，
+	    详见 <a class="xref" href="bsdinstall-post.html#bsdinstall-config-network-dev" title="2.9.2. 配置网络接口">Section 2.9.2, “配置网络接口”</a>。</p></li><li class="listitem"><p><code class="literal">Services</code> - 服务，
+	    详见 <a class="xref" href="bsdinstall-post.html#bsdinstall-sysconf" title="2.9.4. 选择需要开启的服务">Section 2.9.4, “选择需要开启的服务”</a>.</p></li><li class="listitem"><p><code class="literal">Time Zone</code> - 时区，
+	    详见 <a class="xref" href="bsdinstall-post.html#bsdinstall-timezone" title="2.9.3. 设置时区">Section 2.9.3, “设置时区”</a>。</p></li><li class="listitem"><p><code class="literal">Handbook</code> - 手册，将下载并安装
+	    FreeBSD 使用手册（即本书）。</p></li></ul></div><p>完成了最终配置后，
+	请选择 <span class="guibutton">Exit</span> 以继续安装。</p><div class="figure"><a id="bsdinstall-final-modification-shell"></a><div class="figure-title">Figure 2.44. 手动配置</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-final-modification-shell.png" alt="手动配置" /></div></div></div><br class="figure-break" /><p><span class="application">bsdinstall</span>
+	会询问重启前是否还需要额外的配置： 选择
+	<span class="guibutton">[ Yes ]</span> 进入 shell
+	做这些配置， 选择
+	<span class="guibutton">[ No ]</span> 以执行安装的最后一步。</p><div class="figure"><a id="bsdinstall-final-main"></a><div class="figure-title">Figure 2.45. 完成安装</div><div class="figure-contents"><div class="mediaobject"><img src="bsdinstall/bsdinstall-mainexit.png" alt="完成安装" /></div></div></div><br class="figure-break" /><p>如果需要进一步的配置或特殊的设置，
+	可以选择 <span class="guibutton">[ Live CD ]</span>
+	来进入安装介质的 Live CD 模式。</p><p>安装完成后，选择
+	<span class="guibutton">[ Reboot ]</span> 重启计算机，
+	并开始使用全新的 FreeBSD 系统。 请不要忘记移除 FreeBSD 的安装
+	CD、 DVD 或 USB 记忆棒， 否则计算机可能会再次从这些介质启动。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-freebsdboot"></a>2.9.8. FreeBSD 的启动与关闭</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-freebsdboot-i386"></a>2.9.8.1. FreeBSD/i386 的启动</h4></div></div></div><p>FreeBSD 启动时会显示许多相关信息， 正常情况下屏幕会不断滚动，
+	而启动完成后则会显示一个登录提示符。 如果需要查看启动时的相关信息，
+	可以按下 <span class="keycap"><strong>Scroll-Lock</strong></span> 键开启
+	<span class="emphasis"><em>scroll-back buffer（回滚缓存）</em></span>，
+	然后使用 <span class="keycap"><strong>PageUp</strong></span> 键、 <span class="keycap"><strong>PageDown</strong></span>
+	键与方向键行翻阅； 再次按下 <span class="keycap"><strong>Scroll Lock</strong></span>
+	键将关闭回滚缓存并返回正常的屏幕。</p><p>在 <code class="prompt">login:</code> 提示符处输入安装时添加的用户名来登录系统，
+	本例中是 <code class="systemitem">asample</code>。 除非有必要，否则请勿作为
+	<code class="systemitem">root</code> 登录。</p><p>上述的回滚缓存大小有限， 因而未必全部可见。 登入系统后，
+	在提示符处输入 <code class="command">dmesg | less</code>，
+	能够查看到绝大部分的启动信息， 查看后按
+	<span class="keycap"><strong>q</strong></span> 键返回命令行。</p><p>典型的启动信息（此处略去了版本信息）：</p><pre class="screen">Copyright (c) 1992-2011 The FreeBSD Project.
+Copyright (c) 1979, 1980, 1983, 1986, 1988, 1989, 1991, 1992, 1993, 1994
+        The Regents of the University of California. All rights reserved.
+FreeBSD is a registered trademark of The FreeBSD Foundation.
+
+    root@farrell.cse.buffalo.edu:/usr/obj/usr/src/sys/GENERIC amd64
+CPU: Intel(R) Core(TM)2 Duo CPU     E8400  @ 3.00GHz (3007.77-MHz K8-class CPU)
+  Origin = "GenuineIntel"  Id = 0x10676  Family = 6  Model = 17  Stepping = 6
+  Features=0x783fbff&lt;FPU,VME,DE,PSE,TSC,MSR,PAE,MCE,CX8,APIC,SEP,MTRR,PGE,MCA,CMOV,PAT,PSE36,MMX,FXSR,SSE,SSE2&gt;
+  Features2=0x209&lt;SSE3,MON,SSSE3&gt;
+  AMD Features=0x20100800&lt;SYSCALL,NX,LM&gt;
+  AMD Features2=0x1&lt;LAHF&gt;
+real memory  = 536805376 (511 MB)
+avail memory = 491819008 (469 MB)
+Event timer "LAPIC" quality 400
+ACPI APIC Table: &lt;VBOX   VBOXAPIC&gt;
+ioapic0: Changing APIC ID to 1
+ioapic0 &lt;Version 1.1&gt; irqs 0-23 on motherboard
+kbd1 at kbdmux0
+acpi0: &lt;VBOX VBOXXSDT&gt; on motherboard
+acpi0: Power Button (fixed)
+acpi0: Sleep Button (fixed)
+Timecounter "ACPI-fast" frequency 3579545 Hz quality 900
+acpi_timer0: &lt;32-bit timer at 3.579545MHz&gt; port 0x4008-0x400b on acpi0
+cpu0: &lt;ACPI CPU&gt; on acpi0
+pcib0: &lt;ACPI Host-PCI bridge&gt; port 0xcf8-0xcff on acpi0
+pci0: &lt;ACPI PCI bus&gt; on pcib0
+isab0: &lt;PCI-ISA bridge&gt; at device 1.0 on pci0
+isa0: &lt;ISA bus&gt; on isab0
+atapci0: &lt;Intel PIIX4 UDMA33 controller&gt; port 0x1f0-0x1f7,0x3f6,0x170-0x177,0x376,0xd000-0xd00f at device 1.1 on pci0
+ata0: &lt;ATA channel 0&gt; on atapci0
+ata1: &lt;ATA channel 1&gt; on atapci0
+vgapci0: &lt;VGA-compatible display&gt; mem 0xe0000000-0xe0ffffff irq 18 at device 2.0 on pci0
+em0: &lt;Intel(R) PRO/1000 Legacy Network Connection 1.0.3&gt; port 0xd010-0xd017 mem 0xf0000000-0xf001ffff irq 19 at device 3.0 on pci0
+em0: Ethernet address: 08:00:27:9f:e0:92
+pci0: &lt;base peripheral&gt; at device 4.0 (no driver attached)
+pcm0: &lt;Intel ICH (82801AA)&gt; port 0xd100-0xd1ff,0xd200-0xd23f irq 21 at device 5.0 on pci0
+pcm0: &lt;SigmaTel STAC9700/83/84 AC97 Codec&gt;
+ohci0: &lt;OHCI (generic) USB controller&gt; mem 0xf0804000-0xf0804fff irq 22 at device 6.0 on pci0
+usbus0: &lt;OHCI (generic) USB controller&gt; on ohci0
+pci0: &lt;bridge&gt; at device 7.0 (no driver attached)
+acpi_acad0: &lt;AC Adapter&gt; on acpi0
+atkbdc0: &lt;Keyboard controller (i8042)&gt; port 0x60,0x64 irq 1 on acpi0
+atkbd0: &lt;AT Keyboard&gt; irq 1 on atkbdc0
+kbd0 at atkbd0
+atkbd0: [GIANT-LOCKED]
+psm0: &lt;PS/2 Mouse&gt; irq 12 on atkbdc0
+psm0: [GIANT-LOCKED]
+psm0: model IntelliMouse Explorer, device ID 4
+attimer0: &lt;AT timer&gt; port 0x40-0x43,0x50-0x53 on acpi0
+Timecounter "i8254" frequency 1193182 Hz quality 0
+Event timer "i8254" frequency 1193182 Hz quality 100
+sc0: &lt;System console&gt; at flags 0x100 on isa0
+sc0: VGA &lt;16 virtual consoles, flags=0x300&gt;
+vga0: &lt;Generic ISA VGA&gt; at port 0x3c0-0x3df iomem 0xa0000-0xbffff on isa0
+atrtc0: &lt;AT realtime clock&gt; at port 0x70 irq 8 on isa0
+Event timer "RTC" frequency 32768 Hz quality 0
+ppc0: cannot reserve I/O port range
+Timecounters tick every 10.000 msec
+pcm0: measured ac97 link rate at 485193 Hz
+em0: link state changed to UP
+usbus0: 12Mbps Full Speed USB v1.0
+ugen0.1: &lt;Apple&gt; at usbus0
+uhub0: &lt;Apple OHCI root HUB, class 9/0, rev 1.00/1.00, addr 1&gt; on usbus0
+cd0 at ata1 bus 0 scbus1 target 0 lun 0
+cd0: &lt;VBOX CD-ROM 1.0&gt; Removable CD-ROM SCSI-0 device
+cd0: 33.300MB/s transfers (UDMA2, ATAPI 12bytes, PIO 65534bytes)
+cd0: Attempt to query device size failed: NOT READY, Medium not present
+ada0 at ata0 bus 0 scbus0 target 0 lun 0
+ada0: &lt;VBOX HARDDISK 1.0&gt; ATA-6 device
+ada0: 33.300MB/s transfers (UDMA2, PIO 65536bytes)
+ada0: 12546MB (25694208 512 byte sectors: 16H 63S/T 16383C)
+ada0: Previously was known as ad0
+Timecounter "TSC" frequency 3007772192 Hz quality 800
+Root mount waiting for: usbus0
+uhub0: 8 ports with 8 removable, self powered
+Trying to mount root from ufs:/dev/ada0p2 [rw]...
+Setting hostuuid: 1848d7bf-e6a4-4ed4-b782-bd3f1685d551.
+Setting hostid: 0xa03479b2.
+Entropy harvesting: interrupts ethernet point_to_point kickstart.
+Starting file system checks:
+/dev/ada0p2: FILE SYSTEM CLEAN; SKIPPING CHECKS
+/dev/ada0p2: clean, 2620402 free (714 frags, 327461 blocks, 0.0% fragmentation)
+Mounting local file systems:.
+vboxguest0 port 0xd020-0xd03f mem 0xf0400000-0xf07fffff,0xf0800000-0xf0803fff irq 20 at device 4.0 on pci0
+vboxguest: loaded successfully
+Setting hostname: machine3.example.com.
+Starting Network: lo0 em0.
+lo0: flags=8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; metric 0 mtu 16384
+        options=3&lt;RXCSUM,TXCSUM&gt;
+        inet6 ::1 prefixlen 128
+        inet6 fe80::1%lo0 prefixlen 64 scopeid 0x3
+        inet 127.0.0.1 netmask 0xff000000
+        nd6 options=21&lt;PERFORMNUD,AUTO_LINKLOCAL&gt;
+em0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; metric 0 mtu 1500
+        options=9b&lt;RXCSUM,TXCSUM,VLAN_MTU,VLAN_HWTAGGING,VLAN_HWCSUM&gt;
+        ether 08:00:27:9f:e0:92
+        nd6 options=29&lt;PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL&gt;
+        media: Ethernet autoselect (1000baseT &lt;full-duplex&gt;)
+        status: active
+Starting devd.
+Starting Network: usbus0.
+DHCPREQUEST on em0 to 255.255.255.255 port 67
+DHCPACK from 10.0.2.2
+bound to 192.168.1.142 -- renewal in 43200 seconds.
+add net ::ffff:0.0.0.0: gateway ::1
+add net ::0.0.0.0: gateway ::1
+add net fe80::: gateway ::1
+add net ff02::: gateway ::1
+ELF ldconfig path: /lib /usr/lib /usr/lib/compat /usr/local/lib
+32-bit compatibility ldconfig path: /usr/lib32
+Creating and/or trimming log files.
+Starting syslogd.
+No core dumps found.
+Clearing /tmp (X related).
+Updating motd:.
+Configuring syscons: blanktime.
+Generating public/private rsa1 key pair.
+Your identification has been saved in /etc/ssh/ssh_host_key.
+Your public key has been saved in /etc/ssh/ssh_host_key.pub.
+The key fingerprint is:
+10:a0:f5:af:93:ae:a3:1a:b2:bb:3c:35:d9:5a:b3:f3 root@machine3.example.com
+The key's randomart image is:
++--[RSA1 1024]----+
+|    o..          |
+|   o . .         |
+|  .   o          |
+|       o         |
+|    o   S        |
+|   + + o         |
+|o . + *          |
+|o+ ..+ .         |
+|==o..o+E         |
++-----------------+
+Generating public/private dsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_dsa_key.
+Your public key has been saved in /etc/ssh/ssh_host_dsa_key.pub.
+The key fingerprint is:
+7e:1c:ce:dc:8a:3a:18:13:5b:34:b5:cf:d9:d1:47:b2 root@machine3.example.com
+The key's randomart image is:
++--[ DSA 1024]----+
+|       ..     . .|
+|      o  .   . + |
+|     . ..   . E .|
+|    . .  o o . . |
+|     +  S = .    |
+|    +  . = o     |
+|     +  . * .    |
+|    . .  o .     |
+|      .o. .      |
++-----------------+
+Starting sshd.
+Starting cron.
+Starting background file system checks in 60 seconds.
+
+Thu Oct  6 19:15:31 MDT 2011
+
+FreeBSD/amd64 (machine3.example.com) (ttyv0)
+
+login:</pre><p>在较慢的机器上， 生成 RSA 和 DSA 密钥可能需要一些时间。
+	  这种情况只会在开启了 <span class="application">sshd</span>
+	  的新系统首次启动时发生， 之后的启动速度不受影响。</p><p>FreeBSD 默认情况下并不会安装图形环境，
+	  但提供了多种不同的选择。 请参阅 <a class="xref" href="x11.html" title="Chapter 6. X Window 系统">Chapter 6, <em>X Window 系统</em></a>
+	  了解详情。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-shutdown"></a>2.9.9. 关闭 FreeBSD</h3></div></div></div><p>正常关闭 FreeBSD 有助于保护数据及系统硬件不受损坏。
+	不要直接关闭电源。 如果用户是 <code class="systemitem">wheel</code>
+	组的成员， 首先在命令行中输入 <code class="command">su</code>
+	后键入 <code class="systemitem">root</code> 密码成为超级用户。
+	此外， 也可作为 <code class="systemitem">root</code> 登录， 然后使用命令
+	<code class="command">shutdown -p now</code>。
+	这样系统将安全地自行关闭。</p><p>虽然也可以使用组合键
+	<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>Del</strong></span>
+	重启系统， 但正常情况下并不推荐这样做。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsdinstall-final-warning.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="bsdinstall.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="bsdinstall-install-trouble.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.8. 安装确认 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.10. 故障排除</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

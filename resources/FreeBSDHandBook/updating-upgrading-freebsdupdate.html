@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>23.2. FreeBSD 更新</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="prev" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="next" href="updating-upgrading-portsnap.html" title="23.3. Portsnap： 一个 Ports Collection 更新工具" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.2. FreeBSD 更新</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="updating-upgrading.html">Prev</a> </td><th width="60%" align="center">Chapter 23. 更新与升级 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="updating-upgrading-portsnap.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="updating-upgrading-freebsdupdate"></a>23.2. FreeBSD 更新</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div><div><span class="authorgroup">Based on notes provided by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Colin</span> <span class="surname">Percival</span></span>. </span></div></div></div><a id="idp82434640" class="indexterm"></a><a id="idp82435152" class="indexterm"></a><p>应用安全补丁是计算机软件维护的一个重要组成部分， 特别是针对操作系统来说。
+        长期以来， 对于 FreeBSD 来说， 这都不是一件很容易做到的事情。
+        必须先把补丁修补到源代码上， 再编译成二进制代码， 然后才安装补丁。</p><p>现在， FreeBSD 引入 <code class="command">freebsd-update</code> 工具， 应用补丁不再那么麻烦。
+        这个工具提供两种功能： 首先支持直接把二进制的安全更新与勘误更新
+        （errata updates） 应用到 FreeBSD 基本系统， 而不需要重新编译安装。
+        其次是这个工具还支持主要与次要发行版本间的升级。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">目前， 二进制更新支持所有安全小组所支持的所有架构的正式发行版。
+            在升级到一个新的正式发行版本之前， 应先阅读目标正式发行版的发行公告，
+            因为它们可能包含有关目标升级版本的重要消息。
+            这些发行公告可以通过以下链接查阅：
+            <code class="uri"><a class="uri" href="http://www.FreeBSD.org/releases/" target="_top">http://www.FreeBSD.org/releases/</a></code> 。</p></div><p>如果 <code class="command">crontab</code> 中存在有用到 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=freebsd-update&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">freebsd-update</span>(8)</span></a>
+        特性的部分， 那么在下面的操作开始以前， 必须先禁用它们。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-config-file"></a>23.2.1. 配置文件</h3></div></div></div><p>有些用户可能希望调整 <code class="filename">/etc/freebsd-update.conf</code>
+          中的默认配置， 从而更好的控制升级过程。 可用的选项在文档中有详细介绍，
+          但下面这些可能需要更多的解释：</p><pre class="programlisting"># Components of the base system which should be kept updated.
+Components src world kernel</pre><p>这个参数是控制 FreeBSD 的哪些部分会被更新。 默认更新源代码、
+          整个基本系统和内核。 组件同样也是可控制的， 举个例子，
+          这里加入 <code class="literal">world/games</code> 就会允许应用游戏相关的补丁。
+          使用 <code class="literal">src/bin</code> 则是允许更新
+          <code class="filename">src/bin</code> 目录中的源代码。</p><p>这个选项最好保持默认值， 因为如果指定了任何参数，
+          那么就需要用户列出所有需要更新的项目。
+          这可能会带来灾难性的后果，
+          因为未指定部分的源代码和二进制程序将得不到更新。</p><pre class="programlisting"># Paths which start with anything matching an entry in an IgnorePaths
+# statement will be ignored.
+IgnorePaths</pre><p>添加指定路径， 比如 <code class="filename">/bin</code> 或
+          <code class="filename">/sbin</code> 这将能让这些指定的目录在更新过程中不被修改。
+          这个选项能够防止本地的修改被 <code class="command">freebsd-update</code> 工具覆盖。</p><pre class="programlisting"># Paths which start with anything matching an entry in an UpdateIfUnmodified
+# statement will only be updated if the contents of the file have not been
+# modified by the user (unless changes are merged; see below).
+UpdateIfUnmodified /etc/ /var/ /root/ /.cshrc /.profile</pre><p>更新时跳过指定目录或配置文件。 用户指定的配置文件都会使这些文件的自动更新失效。
+          还有另外一个选项， <code class="literal">KeepModifiedMetadata</code> ，
+          这能让 <code class="command">freebsd-update</code>  在合并时另存修改。</p><pre class="programlisting"># When upgrading to a new FreeBSD release, files which match MergeChanges
+# will have any local changes merged into the version from the new release.
+MergeChanges /etc/ /var/named/etc/</pre><p><code class="command">freebsd-update</code> 会尝试合并列表中配置文件。
+          文件合并的过程是一系列类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mergemaster&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mergemaster</span>(8)</span></a> 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=diff&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">diff</span>(1)</span></a> 补丁格式，
+          但更少选项。 要么接受合并， 要么打开一个文件编辑器，
+          或者终止 <code class="command">freebsd-update</code> 。
+          如果不能确定， 可以先备份 <code class="filename">/etc</code> ， 然后接受合并。
+          有关 <code class="command">mergemaster</code> 的更多信息请参阅：
+          <a class="xref" href="makeworld.html#mergemaster" title="23.7.12.1. mergemaster">Section 23.7.12.1, “<code class="command">mergemaster</code>”</a> 。</p><pre class="programlisting"># Directory in which to store downloaded updates and temporary
+# files used by FreeBSD Update.
+# WorkDir /var/db/freebsd-update</pre><p>这个目录是存放所有补丁和临时文件的地方。
+          一般情况下， 用户做一个版本间升级时，
+          则至少要保证这个目录有 1 GB 的可用磁盘空间。</p><pre class="programlisting"># When upgrading between releases, should the list of Components be
+# read strictly (StrictComponents yes) or merely as a list of components
+# which *might* be installed of which FreeBSD Update should figure out
+# which actually are installed and upgrade those (StrictComponents no)?
+# StrictComponents no</pre><p>当这个选项设置成 <code class="literal">yes</code> 时，
+          <code class="command">freebsd-update</code> 将假设这个
+          <code class="literal">组件 （Components）</code> 列表是完整的，
+          不再尝试修改此列表以外的。 默认情况下，
+          <code class="command">freebsd-update</code> 将会尝试更新
+          <code class="literal">组件</code> 列表里的每一个文件。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-security-patches"></a>23.2.2. 安全补丁</h3></div></div></div><p>FreeBSD 安全补丁可以通过以下命令下载并安装补丁：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update fetch</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>freebsd-update install</code></strong></pre><p>如果补丁涉及到内核， 那么系统需要重启以应用补丁。 否则，
+          则可以将应用补丁的任务可以交给 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a> 由其每夜执行
+          <code class="command">freebsd-update</code> 更新。
+          这可以在 <code class="filename">/etc/crontab</code> 中添加：</p><pre class="programlisting">@daily                                  root    freebsd-update cron</pre><p>这条记录说明由 <code class="option">cron</code> 每天运行一次
+          <code class="command">freebsd-update</code> 工具。
+          使用 <code class="command">freebsd-update</code> 检测是否有可用更新，
+          如果有可用更新， 那么它们会被自动下载到本地磁盘，
+          但它们不会被自动更新。
+          <code class="systemitem">root</code>
+          用户将会收到一份需要手动安装更新的电子邮件。</p><p>如果更新出错， 可以使用以下命令让
+          <code class="command">freebsd-update</code> 回滚到更新前：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update rollback</code></strong></pre><p>一旦完成更新， 如果内核或任何一个内核模块被修改的话， 就需要重启系统。
+          让 FreeBSD 加载新的二进制文件。</p><p>使用 <code class="filename">GENERIC</code> 内核的情况下，
+          <code class="command">freebsd-update</code> 会自行更新内核， 无需用户干涉。
+          如果使用的是自定义内核， 则它必须重新编译并安装新内核。
+          不过这种情况下， <code class="command">freebsd-update</code>
+          依旧会检测是否存在 <code class="filename">GENERIC</code> 内核，
+          如果 <code class="filename">/boot/GENERIC</code> 存在，
+          即使它不是正在运行的系统内核， 也会更新它。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">保存一份 <code class="filename">GENERIC</code> 内核的副本在
+              <code class="filename">/boot/GENERIC</code> 目录中是个明智的选择。
+              这可以诊断很多问题，
+              以及在 <a class="xref" href="updating-upgrading-freebsdupdate.html#freebsdupdate-upgrade" title="23.2.3. 主要和次要版本的升级">Section 23.2.3, “主要和次要版本的升级”</a> 中介绍的使用
+              <code class="command">freebsd-update</code> 更新系统时会很有用。</p></div><p>除非修改了 <code class="filename">/etc/freebsd-update.conf</code> 里的默认配置，
+          否则， <code class="command">freebsd-update</code> 会更新的内核源代码以及其余部分。
+          重新编译并安装自定义内核， 可以按照通常方式进行。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">通过 <code class="command">freebsd-update</code>
+              分发的补丁并不是每次都会涉及内核更新。
+              如果执行 <code class="command">freebsd-update install</code> 时内核源码没有变动，
+              就必要重新构建内核了。 不过， 由于 <code class="command">freebsd-update</code>
+              每次都会更新 <code class="filename">/usr/src/sys/conf/newvers.sh</code> 文件，
+              补丁版本号 （<code class="command">uname -r</code> 报告的 <code class="literal">-p</code> 数字）
+              就是来自这个文件， 因此， 即使内核没有发生变化，
+              重新编译内核也可以让 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uname&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">uname</span>(1)</span></a> 准确报告补丁版本。
+              这在维护多个系统的时候这样会比较有用，
+              因为这一信息可以迅速反映判定更新情况。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-upgrade"></a>23.2.3. 主要和次要版本的升级</h3></div></div></div><p>升级 FreeBSD 时， 从一个次要版本升级到另一个次要版本，
+          就像 FreeBSD 9.0 升级到 FreeBSD 9.1 ，
+          被称作次要版本升级。
+          <span class="emphasis"><em>次要版本</em></span>升级后已安装的应用程序一般都可以继续工作。</p><p>当 FreeBSD 从一个 <span class="emphasis"><em>主要版本</em></span> 升级到另一个主要版本时，
+          就像 FreeBSD 8.X 升级到 FreeBSD 9.X ， 这个过程中会删除旧的目标文件和库，
+          这将导致绝大部分第三方应用程序无法继续使用，
+          所以建议在升级前卸载所有已安装的 ports 软件，
+          或者升级完成后使用 <span class="package">ports-mgmt/portmaster</span> 工具，
+          强制重装所有已安装应用程序。 输入以下命令重装所有软件：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -af</code></strong></pre><p>这将确保所有的第三方应用程序都会被正确的安装。
+          请注意将环境变量 <code class="varname">BATCH</code> 被设置为 <code class="literal">yes</code> 时，
+          整个过程中出现的所有询问， 都会自动应答 <code class="literal">yes</code> ，
+          重建过程将不再需要人工干预。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsd-update-custom-kernel"></a>23.2.3.1. 使用自定义内核的情况</h4></div></div></div><p>如果您正在使用一个自定义内核， 那么升级过程会稍微复杂些，
+        而且根据使用的 FreeBSD 版本的不同， 可能升级过程也会有些差异。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsd-update-custom-kernel-8x"></a>23.2.3.1.1. FreeBSD 8.X 版本的自定义内核</h5></div></div></div><p>您需要将一份 <code class="filename">GENERIC</code> 内核副本放到
+          <code class="filename">/boot/GENERIC</code> 。
+          如果系统中没有 <code class="filename">GENERIC</code> 内核，
+          可以通过以下方法获取：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果只编译过一次内核， 则 <code class="filename">/boot/kernel.old</code>
+                中的内核实际上就是 <code class="filename">GENERIC</code> 内核。
+                重命名为 <code class="filename">/boot/GENERIC</code> 就可以了。</p></li><li class="listitem"><p>如果可以直接接触到物理计算机，
+                则可以通过安装介质直接安装 <code class="filename">GENERIC</code> 内核。
+                从安装介质执行以下命令安装：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /cdrom</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /cdrom/X.Y-RELEASE/kernels</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>./install.sh GENERIC</code></strong></pre><p>替换 <code class="filename">X.Y-RELEASE</code> 为您正使用的版本。
+              <code class="filename">GENERIC</code> 内核默认会被安装到
+              <code class="filename">/boot/GENERIC</code> 目录中。</p></li><li class="listitem"><p>如果以上方法都不可行， 则还可以使用源代码来重新编译和安装
+                <code class="filename">GENERIC</code> 内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>env DESTDIR=/boot/GENERIC make kernel __MAKE_CONF=/dev/null SRCCONF=/dev/null</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mv /boot/GENERIC/boot/kernel/* /boot/GENERIC</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>rm -rf /boot/GENERIC/boot</code></strong></pre><p>如果希望 <code class="command">freebsd-update</code> 工具能够正确识别
+              <code class="filename">GENERIC</code> 内核，
+              您必须确保没有对 <code class="filename">GENERIC</code> 内核配置文件进行过任何修改。
+              此外， 建议您取消任何其他特殊的编译选项。</p></li></ul></div><p>上述步骤并不需要使用这个
+          <code class="filename">GENERIC</code> 内核来重新引导系统。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsd-update-custom-kernel-9x"></a>23.2.3.1.2. FreeBSD 9.X 或更高版本的自定义内核</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>如果只编译过一次内核， 则 <code class="filename">/boot/kernel.old</code>
+                内核实际上就是 <code class="filename">GENERIC</code> 内核。
+                重命名为 <code class="filename">/boot/kernel</code> 就可以了。</p></li><li class="listitem"><p>如果可以直接接触到物理计算机，
+                则可以通过安装介质直接安装 <code class="filename">GENERIC</code> 内核。
+                从安装介质执行以下命令安装：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /cdrom</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>cd /cdrom/usr/freebsd-dist</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tar -C/ -xvf kernel.txz boot/kernel/kernel</code></strong></pre></li><li class="listitem"><p>如果以上方法都不可用， 还可以使用源代码来重新编译和安装
+                <code class="filename">GENERIC</code> 内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/src</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make kernel __MAKE_CONF=/dev/null SRCCONF=/dev/null</code></strong></pre><p>如果希望 <code class="command">freebsd-update</code> 工具能够正确识别
+              <code class="filename">GENERIC</code> 内核，
+              您必须确保没有对 <code class="filename">GENERIC</code> 内核配置文件进行过任何修改。
+              此外， 建议您取消任何其他特殊的编译选项。</p></li></ul></div><p>上述步骤并不需要使用这个
+          <code class="filename">GENERIC</code> 内核来重新引导系统。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-using"></a>23.2.3.2. 开始升级</h4></div></div></div><p>主要和次要版本都是可以通过在 <code class="command">freebsd-update</code>
+        命令后面指定一个正式发行版的参数来升级的，
+        以下是一个升级到 FreeBSD 9.1 的例子：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update -r 9.1-RELEASE upgrade</code></strong></pre><p>这个命令被执行后， <code class="command">freebsd-update</code>
+        工具将会解析配置文件并评估当前的系统， 以获取执行升级所需的必要信息。
+        并回显已检测到的和未检测到的组件列表。 例如：</p><pre class="screen">Looking up update.FreeBSD.org mirrors... 1 mirrors found.
+Fetching metadata signature for 9.0-RELEASE from update1.FreeBSD.org... done.
+Fetching metadata index... done.
+Inspecting system... done.
+
+The following components of FreeBSD seem to be installed:
+kernel/smp src/base src/bin src/contrib src/crypto src/etc src/games
+src/gnu src/include src/krb5 src/lib src/libexec src/release src/rescue
+src/sbin src/secure src/share src/sys src/tools src/ubin src/usbin
+world/base world/info world/lib32 world/manpages
+
+The following components of FreeBSD do not seem to be installed:
+kernel/generic world/catpages world/dict world/doc world/games
+world/proflibs
+
+Does this look reasonable (y/n)? y</pre><p>此时， <code class="command">freebsd-update</code> 工具将会尝试下载所有升级所需文件。
+        某些情况下， 用户可能被问及需安装些什么和如何进行之类的问题。</p><p>当使用自定义内核时， 上面的步骤会产生类似下面的警告：</p><pre class="screen">WARNING: This system is running a "<em class="replaceable"><code>MYKERNEL</code></em>" kernel, which is not a
+kernel configuration distributed as part of FreeBSD 9.0-RELEASE.
+This kernel will not be updated: you MUST update the kernel manually
+before running "/usr/sbin/freebsd-update install"</pre><p>此时， 您可以暂时安全地无视这个警告。 更新的 <code class="filename">GENERIC</code>
+        内核将会在升级过程的中间步骤中使用。</p><p>在下载完成针对本地系统的补丁之后， 这些补丁会被应用到系统上。
+        这个过程需要消耗的时间取决于您计算机的性能及负载情况。
+        这个过程中将会对配置文件所做的改动进行合并， 文件可能会自动合并，
+        也可能在屏幕上显示一个编辑器， 用于手工完成合并操作。
+        在处理过程中， 合并成功的结果会显示给用户。 失败或被忽略的合并，
+        则会导致这一过程终止。 用户可能会希望保留一份 <code class="filename">/etc</code> 的备份，
+        并在这之后手工合并重要的文件， 例如 <code class="filename">master.passwd</code> 和
+        <code class="filename">group</code> 文件。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">系统至此尚未被修改， 所有的补丁和合并工作都是在另外一个目录中进行的。
+            当所有的补丁都被成功的应用上了以后， 所有的配置文件都被合并后，
+            一旦这个步骤完成后， 使用以下的命令将升级后的文件安装到磁盘上：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update install</code></strong></pre></div><p>内核和内核模块会被首先应用上补丁。 此时， 您必须重新启动计算机。
+        如果您使用的是自定义内核， 请使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=nextboot&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">nextboot</span>(8)</span></a> 命令临时指定下一次引导使用
+        <code class="filename">/boot/GENERIC</code> 内核：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>nextboot -k GENERIC</code></strong></pre><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在使用 <code class="filename">GENERIC</code> 内核启动前，
+            请确保它包含了用于引导系统所需的全部驱动程序
+            （ 如果您是远程进行升级操作， 还应确保网卡驱动也是存在的 ）。
+            需要特别注意的是，
+            如果之前的内核中静态编译了通常以内核模块形式存在的驱动程序，
+            则一定要通过 <code class="filename">/boot/loader.conf</code> 机制来将这些模块加载到
+            <code class="filename">GENERIC</code> 内核上。
+            此外， 通常建议您您临时禁用不太重要的服务、 磁盘和网络挂载服务等等，
+            直至升级过程完成。</p></div><p>现在可以重启更新内核了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>shutdown -r now</code></strong></pre><p>在系统重新上线后， 需要再次运行 <code class="command">freebsd-update</code> 工具。
+        这会删除所有旧的共享库和目标文件， 但是升级状态会被保存，
+        这样再次运行 <code class="command">freebsd-update</code> 工具就不需要重头开始了。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update install</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">取决于是否有库版本更新， 通常只有 2 个而不是 3 个安装阶段。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-portsrebuild"></a>23.2.3.3. 主要版本升级完成后重建 Ports 应用程序</h4></div></div></div><p>一个主要版本升级完成后， 所有的第三方软件都应该被重新编译和安装。
+        这是因为已安装的软件可能依赖于已在升级过程中被删除的库。
+        这个重建过程可以使用 <span class="package">ports-mgmt/portmaster</span>
+        工具自动化实现：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>portmaster -f</code></strong></pre><p>一旦完成这个步骤， 再最后一次运行 <code class="command">freebsd-update</code>
+        工具来结束升级过程。 执行以下命令处理升级中的所有细节：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update install</code></strong></pre><p>如果您使用临时的 <code class="filename">GENERIC</code> 内核来引导系统的，
+        那么现在可以按照通常方法重新编译并安装新自定义内核了。</p><p>重新启动计算机进入新版本的 FreeBSD ， 至此升级过程全部完成。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="freebsdupdate-system-comparison"></a>23.2.4. 系统状态对照</h3></div></div></div><p><code class="command">freebsd-update</code>
+          工具也可被用来对照当前系统与一个已知完好的 FreeBSD 拷贝的差异。
+          这个工具可以评估的系统工具， 库和配置文件。 使用以下的命令开始对照：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>freebsd-update IDS &gt;&gt; outfile.ids</code></strong></pre><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">这个命令的名称是 <acronym class="acronym">IDS</acronym> ，
+              它并不能代替真正的入侵检测系统 （如： <span class="package">security/snort</span>） ，
+              因为 <code class="command">freebsd-update</code> 工具的数据存储在磁盘上，
+              很显然它们有被篡改的可能。 当然也可以使用一些方法来降低被篡改的可能性，
+              比如设置 <code class="varname">kern.securelevel</code>
+              和不使用时将 <code class="command">freebsd-update</code>
+              工具的数据存储在只读文件系统上，
+              例如 <acronym class="acronym">DVD</acronym> 或安全的外置 <acronym class="acronym">USB</acronym>
+              磁盘上。</p></div><p>系统会立即开始检测， 并生成一份包含了文件和它们的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sha256&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sha256</span>(1)</span></a>
+          哈希值的清单， 已知发行版中的值与当前系统中安装的值将会被输出送到
+          <code class="filename">outfile.ids</code> 文件中。</p><p>这个文件行数非常冗长， 但输出的格式很清晰。 举例来说，
+    要获得一份与发行版中不同哈希值的文件列表， 可使用以下命令获得：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cat outfile.ids | awk '{ print $1 }' | more</code></strong>
+/etc/master.passwd
+/etc/motd
+/etc/passwd
+/etc/pf.conf</pre><p>这份输出时删节缩短后的， 其实是有更多的文件。 其中有些文件并非人为修改，
+          比如 <code class="filename">/etc/passwd</code> 被修改可能是系统添加了新用户。
+          在某些情况下， 还有另外的一些文件， 诸如内核模块与
+          <code class="command">freebsd-update</code> 数据不同是因为它们被更新过了。
+          为了将指定的文件或目录排除在外， 可以把它们加到
+          <code class="filename">/etc/freebsd-update.conf</code> 中的
+          <code class="literal">IDSIgnorePaths</code> 参数中。</p><p>除了前面讨论过的部分之外， 这也能被当作是对升级方法的一种详细补充。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="updating-upgrading.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="updating-upgrading.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="updating-upgrading-portsnap.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 23. 更新与升级 FreeBSD </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 23.3. Portsnap： 一个 Ports Collection 更新工具</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

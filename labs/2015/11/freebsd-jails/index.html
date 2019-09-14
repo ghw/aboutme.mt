@@ -1,0 +1,424 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>将应用服务关进 Jails 以增加服务器安全性 &#8211; Haowu Ge</title>
+<meta name="description" content="The application service shut Jails to increase server security">
+<meta name="keywords" content="FreeBSD, Jail, Open Source, Service, Security">
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="将应用服务关进 Jails 以增加服务器安全性">
+<meta name="twitter:description" content="The application service shut Jails to increase server security">
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.gehaowu.com/labs/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:type" content="article">
+<meta property="og:title" content="将应用服务关进 Jails 以增加服务器安全性">
+<meta property="og:description" content="The application service shut Jails to increase server security">
+<meta property="og:url" content="https://www.gehaowu.com/labs/2015/11/freebsd-jails/">
+<meta property="og:site_name" content="Haowu Ge">
+
+<meta property="og:image" content="https://www.gehaowu.com/labs/images/default-thumb.png">
+
+
+
+
+
+
+<link rel="canonical" href="https://www.gehaowu.com/labs/2015/11/freebsd-jails/">
+<link href="https://www.gehaowu.com/labs/feed.xml" type="application/atom+xml" rel="alternate" title="Haowu Ge Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="https://www.gehaowu.com/labs/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="https://www.gehaowu.com/labs/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="https://www.gehaowu.com/labs/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="https://www.gehaowu.com/labs/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+<script type="text/javascript" src="/js/google-analytics.js" async="async" defer="defer"></script>
+<script type="text/javascript" src="/js/baidu-analytics.js" async="async" defer="defer"></script>
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="/favicon.ico">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="https://www.gehaowu.com/labs/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="https://www.gehaowu.com/labs/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="https://www.gehaowu.com/labs/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://www.gehaowu.com/labs/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="https://www.gehaowu.com/labs/">Haowu Ge</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				    <li><a href="https://www.gehaowu.com/labs/posts/" >Archives</a></li>
+				
+				    
+				    <li><a href="https://www.gehaowu.com/labs/aboutsite/" >About Sites</a></li>
+				
+				    
+				    <li><a href="https://www.gehaowu.com/aboutme/" target="_blank">About Me</a></li>
+				
+				    
+				    <li><a href="https://www.gehaowu.com/" target="_blank">Home Page</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+<div itemscope itemtype="http://schema.org/Person">
+
+
+	<img src="https://www.gehaowu.com/labs/images/myphoto.jpg" class="bio-photo" alt="Haowu Ge bio photo">
+
+
+  <h3 itemprop="name">Haowu Ge</h3>
+  <p>Welcome to My Labs!</p>
+<h5 itemprop="name">Powered:</h5>
+  <a href="/go/namesilo" class="author-social" target="_blank"><i class="fa fa-fw fa-codepen"></i> NameSilo</a>
+  <a class="author-social"><i class="fa fa-fw fa-codepen"></i> DNSPod</a>
+  <a href="/go/aliyun" class="author-social" target="_blank"><i class="fa fa-fw fa-codepen"></i> Aliyun</a>
+  <a href="/go/digitalocean" class="author-social" target="_blank"><i class="fa fa-fw fa-codepen"></i> DigitalOcean</a>
+  <a class="author-social"><i class="fa fa-fw fa-codepen"></i> FreeBSD</a>
+  <a class="author-social"><i class="fa fa-fw fa-codepen"></i> NGINX</a>
+  <a href="/go/qiniu" class="author-social" target="_blank"><i class="fa fa-fw fa-codepen"></i> Qiniu</a>
+  <h5 itemprop="name">TechBacking:</h5>
+  <a href="http://anonymous744wjcx.onion" class="author-social" target="_blank"><i class="fa fa-fw fa-user-secret"></i> anoncoward</a>
+  <a href="http://easun.org" class="author-social" target="_blank"><i class="fa fa-fw fa-user-secret"></i> Easun</a>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="https://www.gehaowu.com/labs/2015/11/freebsd-jails/" rel="bookmark" title="将应用服务关进 Jails 以增加服务器安全性">将应用服务关进 Jails 以增加服务器安全性</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3>全文概览</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#jails-" id="markdown-toc-jails-">Jails 是什么？</a></li>
+  <li><a href="#section" id="markdown-toc-section">如何安装？</a></li>
+  <li><a href="#section-1" id="markdown-toc-section-1">如何配置？</a>    <ul>
+      <li><a href="#jails--etcjailconf" id="markdown-toc-jails--etcjailconf">Jails 的主配置文件 /etc/jail.conf</a></li>
+      <li><a href="#freebsd--jails" id="markdown-toc-freebsd--jails">安装 FreeBSD 基本系统到 Jails</a>        <ul>
+          <li><a href="#freebsd-" id="markdown-toc-freebsd-">获取 FreeBSD 基本系统，并释放到刚创建的目录中</a></li>
+          <li><a href="#jails--1" id="markdown-toc-jails--1">升级 Jails 主机基本系统</a></li>
+          <li><a href="#jails--2" id="markdown-toc-jails--2">配置 Jails 主机启动管理项</a></li>
+          <li><a href="#jails--dns-" id="markdown-toc-jails--dns-">添加 Jails 主机 DNS 服务器</a></li>
+          <li><a href="#fstab-" id="markdown-toc-fstab-">创建 fstab 文件</a></li>
+          <li><a href="#pf-" id="markdown-toc-pf-">配置 PF 防火墙转发规则</a></li>
+          <li><a href="#section-2" id="markdown-toc-section-2">配置母机服务</a></li>
+        </ul>
+      </li>
+      <li><a href="#jails--3" id="markdown-toc-jails--3">启动 Jails 服务管理</a></li>
+    </ul>
+  </li>
+  <li><a href="#section-3" id="markdown-toc-section-3">后续管理</a></li>
+  <li><a href="#section-4" id="markdown-toc-section-4">没了，，就扯辣麽多！！！</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<h3 id="jails-">Jails 是什么？</h3>
+
+<p><strong>FreeBSD Jail</strong> 是 <em>chroot</em> 的改进版本，几乎能提供一个完整操作系统所具有的功能。</p>
+
+<p><img src="https://www.gehaowu.com/labs/images/2015/11/jails.png" alt="FreeBSD Jails" /></p>
+
+<h3 id="section">如何安装？</h3>
+
+<p>当前官方仍然支持的所有版本都默认支持 jail 功能，可以直接使用。</p>
+
+<h3 id="section-1">如何配置？</h3>
+
+<h4 id="jails--etcjailconf">Jails 的主配置文件 /etc/jail.conf</h4>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">allow.raw_sockets <span class="o">=</span> 1<span class="p">;</span>
+exec.clean<span class="p">;</span>
+exec.start <span class="o">=</span> <span class="s2">&quot;/bin/sh /etc/rc&quot;</span><span class="p">;</span>
+exec.stop <span class="o">=</span> <span class="s2">&quot;/bin/sh /etc/rc.shutdown&quot;</span><span class="p">;</span>
+exec.consolelog <span class="o">=</span> <span class="s2">&quot;/var/log/jail_${name}_console.log&quot;</span><span class="p">;</span>
+mount.devfs<span class="p">;</span>
+mount.fstab <span class="o">=</span> <span class="s2">&quot;/etc/fstab.$name&quot;</span><span class="p">;</span>
+allow.mount<span class="p">;</span>
+allow.set_hostname <span class="o">=</span> 0<span class="p">;</span>
+allow.sysvipc <span class="o">=</span> 0<span class="p">;</span>
+<span class="nv">path</span> <span class="o">=</span> <span class="s2">&quot;/usr/jails/${name}&quot;</span><span class="p">;</span>
+<span class="nv">interface</span> <span class="o">=</span> vtnet0<span class="p">;</span>
+NGINX <span class="o">{</span>
+    <span class="nv">jid</span> <span class="o">=</span> 1<span class="p">;</span>
+    host.hostname <span class="o">=</span> NginxDigital.daemon.xin<span class="p">;</span>
+    ip4.addr <span class="o">=</span> 192.168.7.1<span class="p">;</span>
+    ip6.addr <span class="o">=</span> 0:0:0:0:0:0:C0A8:0701<span class="p">;</span>
+<span class="o">}</span>
+HEXO <span class="o">{</span>
+    <span class="nv">jid</span> <span class="o">=</span> 5<span class="p">;</span>
+    host.hostname <span class="o">=</span> HexoDigital.daemon.xin<span class="p">;</span>
+    ip4.addr <span class="o">=</span> 192.168.9.1<span class="p">;</span>
+    ip6.addr <span class="o">=</span> 0:0:0:0:0:0:C0A8:0901<span class="p">;</span>
+<span class="o">}</span></code></pre></figure>
+
+<p>每个 Jails 相当于一个完整主机，所以完整系统需要的东西它也应该也有，比如 IP 地址。</p>
+
+<p>相关参数：<br />
+<strong>NGINX,HEXO</strong>    他们是 Jails 配置名称，可以随意，不过得跟 rc.conf 中的匹配<br />
+<strong>jid</strong>           这个是 Jails ID，XD<br />
+<strong>host.hostname</strong> 是 Jails 的主机名<br />
+<strong>interface</strong>     写上你的网络设备接口，你也可以直接写 <em>lo0</em> 啥的<br />
+<strong>ip4.addr</strong>      你的 Jails 内网 IP，可以随意指定，比如我这里是 <em>192.168.7.1</em><br />
+<strong>ip6.addr</strong>      这个是 IPv6 的内网 IP，当然如果你没有 IPv6 支持，则可以不写</p>
+
+<h4 id="freebsd--jails">安装 FreeBSD 基本系统到 Jails</h4>
+
+<h5 id="freebsd-">获取 FreeBSD 基本系统，并释放到刚创建的目录中</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">mkdir -p mkdir /usr/jails/NGINX
+fetch -o /tmp/base.txz http://ftp.freebsd.org/pub/FreeBSD/releases/amd64/10.2-RELEASE/base.txz
+tar xf /tmp/base.txz -C /usr/jails/NGINX</code></pre></figure>
+
+<h5 id="jails--1">升级 Jails 主机基本系统</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">freebsd-update -b /usr/jails/NGINX fetch
+freebsd-update -b /usr/jails/NGINX install</code></pre></figure>
+
+<h5 id="jails--2">配置 Jails 主机启动管理项</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">cat &gt; /usr/jails/NGINX/etc/rc.conf <span class="s">&lt;&lt;EOF</span>
+<span class="s">syslogd_flags=&quot;-ssC&quot;</span>
+<span class="s">clear_tmp_enable=&quot;YES&quot;</span>
+<span class="s">sendmail_enable=&quot;NONE&quot;</span>
+<span class="s">cron_flags=&quot;$cron_flags -J 60&quot;</span>
+<span class="s">EOF</span></code></pre></figure>
+
+<h5 id="jails--dns-">添加 Jails 主机 DNS 服务器</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">cat &gt; /usr/jails/NGINX/etc/resolv.conf <span class="s">&lt;&lt;EOF</span>
+<span class="s">nameserver 114.114.114.114</span>
+<span class="s">nameserver 119.29.29.29</span>
+<span class="s">nameserver 8.8.8.8</span>
+<span class="s">nameserver 8.8.4.4</span>
+<span class="s">EOF</span></code></pre></figure>
+
+<h5 id="fstab-">创建 fstab 文件</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">touch /etc/fstab.NGINX</code></pre></figure>
+
+<p>需要挂载的项目可以直接写这里</p>
+
+<h5 id="pf-">配置 PF 防火墙转发规则</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">cat &gt;&gt; /etc/pf.conf &lt;&lt;EOF
+<span class="c"># The OpenBSD Packet Filter Configuration file</span>
+<span class="nv">ext_if</span> <span class="o">=</span> <span class="s2">&quot;vtnet0&quot;</span>
+<span class="nv">ext_if_ipv4</span> <span class="o">=</span> <span class="s2">&quot;188.166.224.72&quot;</span>
+<span class="nv">ext_if_ipv6</span> <span class="o">=</span> <span class="s2">&quot;2400:6180:0:d0::13d:7001&quot;</span>
+<span class="nv">jail_webser_ipv4</span> <span class="o">=</span> <span class="s2">&quot;192.168.7.1&quot;</span>
+<span class="nv">jail_webser_ipv6</span> <span class="o">=</span> <span class="s2">&quot;::192.168.7.1&quot;</span>
+nat on <span class="nv">$ext_if</span> inet from <span class="nv">$jail_webser_ipv4</span> to any -&gt; <span class="nv">$ext_if_ipv4</span> round-robin
+nat on <span class="nv">$ext_if</span> inet6 from <span class="nv">$jail_webser_ipv6</span> to any -&gt; <span class="nv">$ext_if_ipv6</span> round-robin
+rdr pass on <span class="nv">$ext_if</span> inet proto tcp from any to <span class="nv">$ext_if_ipv4</span> <span class="nv">port</span> <span class="o">=</span> http -&gt; <span class="nv">$jail_webser_ipv4</span>
+rdr pass on <span class="nv">$ext_if</span> inet proto tcp from any to <span class="nv">$ext_if_ipv4</span> <span class="nv">port</span> <span class="o">=</span> https -&gt; <span class="nv">$jail_webser_ipv4</span>
+rdr pass on <span class="nv">$ext_if</span> inet6 proto tcp from any to <span class="nv">$ext_if_ipv6</span> <span class="nv">port</span> <span class="o">=</span> http -&gt; <span class="nv">$jail_webser_ipv6</span>
+rdr pass on <span class="nv">$ext_if</span> inet6 proto tcp from any to <span class="nv">$ext_if_ipv6</span> <span class="nv">port</span> <span class="o">=</span> https -&gt; <span class="nv">$jail_webser_ipv6</span></code></pre></figure>
+
+<p>因为 Jails 主机类似内网主机，所以需要母机转发相关数据到 Jails 主机，
+并将 Jails 主机外发的数据转发出去。</p>
+
+<h5 id="section-2">配置母机服务</h5>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="nv">jail_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+<span class="nv">jail_parallel_start</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+<span class="nv">jail_list</span><span class="o">=</span><span class="s2">&quot;NGINX HEXO&quot;</span>
+<span class="nv">pf_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+<span class="nv">gateway_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span>
+<span class="nv">ipv6_gateway_enable</span><span class="o">=</span><span class="s2">&quot;YES&quot;</span></code></pre></figure>
+
+<p>允许 Jails 随机启动，开启 PF 防火墙随机启动，并开启 IP 转发服务。</p>
+
+<h4 id="jails--3">启动 Jails 服务管理</h4>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">service jail start
+service jail stop
+service jail restart</code></pre></figure>
+
+<p>以上三条指令分别是启动，停止和重启 Jails 服务</p>
+
+<h3 id="section-3">后续管理</h3>
+<p>#### 如何登陆主机？</p>
+
+<p>通过 jls 命令，列出 Jails 主机 ID ，</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh"><span class="o">[</span>ghw@AliyunHost.pts/1<span class="o">]</span> ~/labs % jls
+JID  IP Address      Hostname                      Path
+<span class="m">1</span>  192.168.7.1     NginxAliyun.daemon.xin        /usr/jails/NGINX
+<span class="m">2</span>  192.168.8.1     HoneypotAliyun.daemon.xin     /usr/jails/HONEYPOT
+<span class="o">[</span>ghw@AliyunHost.pts/1<span class="o">]</span> ~/labs %</code></pre></figure>
+
+<p>如果我要登陆 JID 为 1 的 Jails 主机，那么只需要输入</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">sudo jexec <span class="m">1</span> tcsh</code></pre></figure>
+
+<p>这样就能直接获得一个 Shell， 供您管理器 Jails 主机了， 进入主机后所有操作与本机相同。</p>
+
+<p><strong>提示：</strong>
+试试以下命令行？</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">sudo jexec <span class="m">1</span> service nginx restart</code></pre></figure>
+
+<p>对了，您还能使用 SSH 直接远程登陆，（如果你的 Jails 主机开启了 SSH 服务）</p>
+
+<h2 id="section-4">没了，，就扯辣麽多！！！</h2>
+<p><img src="https://www.gehaowu.com/labs/images/2015/11/jails2.png" alt="FreeBSD Jails" /></p>
+
+<p><a href="/resources/FreeBSDHandBook/jails.html#jails-synopsis" class="btn btn-success">《FreeBSD Handbook》 Jails 概述</a></p>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="social-share">
+  <h4>Share on</h4>
+  <ul>
+    <li>
+      <a href="https://twitter.com/intent/tweet?text=https://www.gehaowu.com/labs/2015/11/freebsd-jails/" class="twitter" title="Share on Twitter"><i class="fa fa-twitter"></i><span> Twitter</span></a>
+    </li>
+    <li>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.gehaowu.com/labs/2015/11/freebsd-jails/" class="facebook" title="Share on Facebook"><i class="fa fa-facebook"></i><span> Facebook</span></a>
+    </li>
+    <li>
+      <a href="https://plus.google.com/share?url=https://www.gehaowu.com/labs/2015/11/freebsd-jails/" class="google-plus" title="Share on Google Plus"><i class="fa fa-google-plus"></i><span> Google+</span></a>
+    </li>
+  </ul>
+</div><!-- /.social-share -->
+        <p class="byline"><strong>将应用服务关进 Jails 以增加服务器安全性</strong> was published on <time datetime="2015-11-15T00:00:00+08:00">November 15, 2015</time> and last modified on <time datetime="2015-11-09">November 09, 2015</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+    <section id="disqus_thread"></section><!-- /#disqus_thread -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  
+  <div class="related-articles">
+  <h4>You might also enjoy <small class="pull-right">(<a href="https://www.gehaowu.com/labs/posts/">View all posts</a>)</small></h4>
+    <ul>
+    
+      <li><a href="https://www.gehaowu.com/labs/2015/11/letsencrypt-https-certificate/" title="使用 Let&rsquo;s Encrypt 开源 SSL 证书">使用 Let&rsquo;s Encrypt 开源 SSL 证书</a></li>
+    
+    </ul>
+    <hr />
+  </div><!-- /.related-articles -->
+  
+  <footer>
+    
+
+<span>Copyright &copy; 2011-2015 Haowu Ge. All rights reserved.</span>
+<!--<span>&copy; 2015 Haowu Ge. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>-->
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//dn-glibs.qbox.me/jquery-2.1.4/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="https://www.gehaowu.com/labs/assets/js/vendor/jquery-2.1.4.min.js"><\/script>')</script>
+<script src="https://www.gehaowu.com/labs/assets/js/scripts.min.js"></script>
+
+
+  
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'gehaowu'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>2.10. 故障排除</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="prev" href="bsdinstall-post.html" title="2.9. 安装后的配置" /><link rel="next" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.10. 故障排除</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsdinstall-post.html">Prev</a> </td><th width="60%" align="center">Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</th><td width="20%" align="right"> <a accesskey="n" href="install.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="bsdinstall-install-trouble"></a>2.10. 故障排除</h2></div></div></div><a id="idp67916752" class="indexterm"></a><p>下面将介绍如何排除基本的安装故障，
+      例如用户经常报告的问题。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67918288"></a>2.10.1. 遇到错误时该如何处理</h3></div></div></div><p>由于 PC 架构的各种限制， 硬件检测不可能 100% 地可靠探测，
+	然而， 当此类现象发生时， 您有可能可以通过一些操作来自行解决它们。</p><p>首先应该根据所安装的 FreeBSD 版本核对 <a class="link" href="http://www.FreeBSD.org/releases/index.html" target="_top">硬件兼容说明</a>
+	文档， 以确保其支持您的硬件。</p><p>如果使用被支持的硬件时仍遇到了死机或其他问题， 请联编一个
+	<a class="link" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核">自定义内核</a>，
+	这样即可为那些 <code class="filename">GENERIC</code> 内核中不存在的设备提供支持。
+	引导盘上的内核假定绝大多数硬件的 IRQ、 IO 地址和 DMA 通道均为出厂设置，
+	如果您的硬件被重新配置过， 就很可能需要修改内核配置文件并重新编译内核，
+	以支持 FreeBSD 侦测这些硬件。</p><p>还可能出现一种情况，
+	检测某个不存在的设备会导致稍后对其他存在的设备检测失败。
+	在这种情况下， 应该禁止检测引起冲突的设备所对应的驱动程序。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">有些安装问题可以通过更新硬件固件来避免或改善， 尤其是主板。
+	  主板固件通常被称作 <acronym class="acronym">BIOS</acronym>，
+	  大多数主板和计算机制造商都拥有提供升级和相关信息的网站。</p><p xmlns="http://www.w3.org/1999/xhtml">制造商通常建议， 除非有类似关键更新这种必要的原因，
+	  否则应避免升级主板 <acronym class="acronym">BIOS</acronym>。 升级过程一旦出现错误，
+	  <acronym class="acronym">BIOS</acronym>信息将遭到破坏， 从而导致计算机无法工作。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67924560"></a>2.10.2. 故障排除问答</h3></div></div></div><div class="qandaset"><a id="idp67925200"></a><dl><dt>2.10.2.1. <a href="bsdinstall-install-trouble.html#idp67925456">在启动时， 我的系统在检测硬件时挂起，
+	      或在安装过程中行为异常。</a></dt></dl><table border="0" style="width: 100%;"><colgroup><col align="left" width="1%" /><col /></colgroup><tbody><tr class="question"><td align="left" valign="top"><a id="idp67925456"></a><a id="idp67925712"></a><p><strong>2.10.2.1.</strong></p></td><td align="left" valign="top"><p>在启动时， 我的系统在检测硬件时挂起，
+	      或在安装过程中行为异常。</p></td></tr><tr class="answer"><td align="left" valign="top"></td><td align="left" valign="top"><p>在 i386、 amd64 和 ia64 平台的启动过程中， FreeBSD 广泛使用了
+	      ACPI 服务来检测系统配置， 不幸的是 ACPI 驱动和主板
+	      <acronym class="acronym">BIOS</acronym> 中仍存在一些 bug。 在第三阶段引导加载器中，
+	      可以通过设置 <code class="literal">hint.acpi.0.disabled</code>
+	      来禁用 ACPI：</p><pre class="screen"><strong class="userinput"><code>set hint.acpi.0.disabled="1"</code></strong></pre><p>这一设置会在系统重启后失效， 因此必须将
+	      <code class="literal">hint.acpi.0.disabled="1"</code> 添加至文件
+	      <code class="filename">/boot/loader.conf</code> 中。
+	      关于引导加载器的更多信息， 请参见
+	      <a class="xref" href="boot.html#boot-synopsis" title="13.1. 概述">Section 13.1, “概述”</a>。</p></td></tr></tbody></table></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsdinstall-post.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="bsdinstall.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.9. 安装后的配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. 安装 FreeBSD</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>10.6. 替换标准后台打印</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="printing.html" title="Chapter 10. 打印" /><link rel="prev" href="printing-using.html" title="10.5. 使用打印机" /><link rel="next" href="printing-troubleshooting.html" title="10.7. 疑难问题" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">10.6. 替换标准后台打印</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="printing-using.html">Prev</a> </td><th width="60%" align="center">Chapter 10. 打印</th><td width="20%" align="right"> <a accesskey="n" href="printing-troubleshooting.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="printing-lpd-alternatives"></a>10.6. 替换标准后台打印</h2></div></div></div><p>如果您已经通读过了这个手册，
+      那么到现在您应该已经了解了关于 FreeBSD 包含的后台打印系统
+      <span class="application">LPD</span>
+      的一切。 您可能发现了它很多的缺点，
+      它们很自然的让您提出这样的问题：
+      <span class="quote">“<span class="quote">这里还有什么后台打印系统吗 (并且可以工作在
+        FreeBSD 上) ？</span>”</span></p><div class="variablelist"><dl class="variablelist"><dt><span class="term">LPRng</span></dt><dd><a id="idp74892368" class="indexterm"></a><p><span class="application">LPRng</span>， 它的意思是
+	    <span class="quote">“<span class="quote">LPR： 下一代</span>”</span>，
+	    是一个完全重写的 PLP。 Patrick Powell
+	    和 Justin Mason (PLP 维护的主要负责人) 合作完成了
+	    <span class="application">LPRng</span>。
+	    <span class="application">LPRng</span> 的主站是 <code class="uri"><a class="uri" href="http://www.lprng.org/" target="_top">http://www.lprng.org/</a></code>。</p></dd><dt><span class="term">CUPS</span></dt><dd><a id="idp74896336" class="indexterm"></a><p><span class="application">CUPS</span>， 通用 UNIX 打印系统，
+	    提供了一个轻便的打印层给 <span class="trademark">UNIX</span>®-基础的操作系统。
+	    它是由 Easy Software
+	    Products 开发的， 并且成为了 <span class="trademark">UNIX</span>®
+	    供应商和用户的标准打印解决方案。</p><p><span class="application">CUPS</span> 使用 Internet 打印协议
+	    (<acronym class="acronym">IPP</acronym>) 作为管理打印任务和队列的基础。
+	    行式打印机守护程序
+	    (<acronym class="acronym">LPD</acronym>) 服务器消息块
+	    (<acronym class="acronym">SMB</acronym>)， 和 AppSocket (a.k.a. JetDirect)
+	    协议的部分功能也被支持。 CUPS
+	    增加了基于浏览网络打印机和 PostScript 打印机描述
+	    (<acronym class="acronym">PPD</acronym>) 的打印选项来支持
+	    <span class="trademark">UNIX</span>® 下的真实打印。</p><p><span class="application">CUPS</span> 的主站是 <code class="uri"><a class="uri" href="http://www.cups.org/" target="_top">http://www.cups.org/</a></code>。</p></dd><dt><span class="term">HPLIP</span></dt><dd><a id="idp74907728" class="indexterm"></a><p><span class="application">HPLIP</span>， HP <span class="trademark">Linux</span>® 成像及打印系统 (Imaging and
+	    Printing system)， 是一套由 HP 开发的用于支持 HP 的打印、
+	    扫描和传真设备的工具。 这套程序利用 <span class="application">CUPS</span>
+	    打印系统作为后端来提供一些打印方面的功能。</p><p><span class="application">HPLIP</span>
+	    的主页位于 <code class="uri"><a class="uri" href="http://hplipopensource.com/hplip-web/index.html" target="_top">http://hplipopensource.com/hplip-web/index.html</a></code>。</p></dd></dl></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="printing-using.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="printing.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="printing-troubleshooting.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">10.5. 使用打印机 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 10.7. 疑难问题</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

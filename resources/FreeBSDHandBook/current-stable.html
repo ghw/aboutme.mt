@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>23.5. 追踪开发分支</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="updating-upgrading.html" title="Chapter 23. 更新与升级 FreeBSD" /><link rel="prev" href="updating-upgrading-documentation.html" title="23.4. 更新系统附带的文档" /><link rel="next" href="synching.html" title="23.6. 同步源代码" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.5. 追踪开发分支</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="updating-upgrading-documentation.html">Prev</a> </td><th width="60%" align="center">Chapter 23. 更新与升级 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="synching.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="current-stable"></a>23.5. 追踪开发分支</h2></div></div></div><a id="idp82769360" class="indexterm"></a><a id="idp82769872" class="indexterm"></a><p>FreeBSD 有两个开发分支: FreeBSD-CURRENT 和 FreeBSD-STABLE 。
+        本节将简介它们， 并介绍如何让它们保持最新。
+        我们将先讨论 FreeBSD-CURRENT ， 然后再是 FreeBSD-STABLE 。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="current"></a>23.5.1. 使用最新的 FreeBSD CURRENT</h3></div></div></div><p>FreeBSD-CURRENT 是 FreeBSD 的开发的 <span class="quote">“<span class="quote">最前沿</span>”</span> 。
+          FreeBSD-CURRENT 用户需要有较高的技术能力， 并应具有自己解决复杂系统问题的能力。
+          如果您是 FreeBSD 新手， 推荐使用 FreeBSD-STABLE 。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82772304"></a>23.5.1.1. 什么是 FreeBSD-CURRENT ？</h4></div></div></div><a id="idp82772944" class="indexterm"></a><p>FreeBSD-CURRENT 是由 FreeBSD 的最新源代码构建的。
+        包含了可能出现或也可能不出现在下一个正式发行版里的仍在开发阶段、
+        实验性质的修改， 过渡性机制。 尽管每天都有许多 FreeBSD 开发者编译
+        FreeBSD-CURRENT 源代码， 但有时这些代码仍有可能不能通过编译。
+        虽然这些问题通常很快会得到解决， 但 FreeBSD-CURRENT 带来的是破坏或功能改善，
+        这很可能完全取决于您获取源代码的时机。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82773968"></a>23.5.1.2. 谁需要 FreeBSD-CURRENT ？</h4></div></div></div><p>FreeBSD-CURRENT 主要适合以下三类人：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>FreeBSD 社区成员： 积极工作在源代码树的某部分的人和视保持
+              <span class="quote">“<span class="quote">最新</span>”</span> 版本为绝对需求的人。</p></li><li class="listitem"><p>FreeBSD 社区成员： 愿花时间去解决问题， 促使 FreeBSD-CURRENT
+              保持尽可能的稳定的。 以及提出有关 FreeBSD
+              改进和建设性建议的并提供补丁实现它们的人。</p></li><li class="listitem"><p>只是关注或参考目的的人。 这些人也偶尔做做注释或贡献代码。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82778320"></a>23.5.1.3. FreeBSD-CURRENT <span class="emphasis"><em>不能</em></span> 什么？</h4></div></div></div><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>追求新功能， 获得下一个正式发行版的新功能。
+              预发行功能还没有经过完整测试， 最有可能包含 bug 。</p></li><li class="listitem"><p>快速修复 bug 。因为在修复 bug 的同时又可能产生新的 bug 。</p></li><li class="listitem"><p>无所不在的 <span class="quote">“<span class="quote">官方支持</span>”</span> 。</p></li></ol></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82782544"></a>23.5.1.4. 使用 FreeBSD-CURRENT</h4></div></div></div><a id="idp82783184" class="indexterm"></a><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-current" target="_top">freebsd-current</a> 和 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/svn-src-head" target="_top">svn-src-head</a> 邮件列表。
+            这不仅仅是建议， 而是 <span class="emphasis"><em>必须</em></span> 的。
+            以便用户了解当前系统状态，
+            并接收可能对系统的持续健康运行有至关重要影响的公告信息。</p><p><a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/svn-src-head" target="_top">svn-src-head</a> 邮件列表允许您查看每个变化的提交记录，
+            因为这些提交记录记录了变更内容以及可能的产生的副作用的相关信息。</p><p>需要订阅这些邮件列表， 请访问 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo" target="_top">http://lists.FreeBSD.org/mailman/listinfo</a> ，
+            并点击您想订阅的项目。 并按照说明进行操作。
+            为了跟踪整个源代码树的变更信息， 可以订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/svn-src-all" target="_top">svn-src-all</a>
+            邮件列表。</p></li><li class="listitem"><p>选择以下一种方式从 FreeBSD <a class="link" href="mirrors.html" title="Appendix A. 获取 FreeBSD">镜像站</a>
+              获取源代码：</p><div class="orderedlist"><ol class="orderedlist" type="a"><li class="listitem"><p>使用 <a class="link" href="svn.html" title="A.5. 使用 Subversion">svn</a><a id="idp82795600" class="indexterm"></a>
+		  <a id="idp82796368" class="indexterm"></a>
+          签出所需的开发版或正式发行版分支的源代码。 它是访问 FreeBSD 开发库的首选方式。
+          -CURRENT 分支源代码可以选择一个
+          <a class="link" href="svn-mirrors.html" title="A.6. Subversion 镜像站">Subversion 镜像站</a> 的
+          <code class="literal">head</code> 分支检出。 受仓库大小影响， 推荐仅检出子分支树。</p></li><li class="listitem"><p>使用 <span class="application">CTM</span><a id="idp82803920" class="indexterm"></a> 工具。 如果您的网络性能不好， 如高价网络连接或只能通过电子邮件获取，
+        那么 <span class="application">CTM</span> 将是一个很好的选择。
+        但它没有 <span class="application">Subversion</span> 可靠。 因此，
+        <span class="application">Subversion</span>
+        依旧是所有已接入互联网的系统获取源代码首选方式。</p></li></ol></div></li><li class="listitem"><p>如果您获取源码是用于运行， 而不只是阅读，
+              那么就应该获取 <span class="emphasis"><em>完整</em></span> FreeBSD-CURRENT 源代码，
+              而不是获取一部分。 源代码的各个部分会依赖于其他部分，
+              如果您仅试着编译其中一部分的话， 那么几乎可以肯定是会出问题的。</p><p>在编译 FreeBSD-CURRENT<a id="idp82808016" class="indexterm"></a> 之前， 请仔细阅读 <code class="filename">/usr/src/Makefile</code> 文件。
+    作为的升级过程的一部分， 您至少也要首先了解 <a class="link" href="makeworld.html" title="23.7. 重新编译 “world”">
+        安装一个新的内核和重新编译 world</a> 。
+    此外， 还必须多多阅读 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-current" target="_top">FreeBSD-CURRENT 邮件列表</a> 以及 <code class="filename">/usr/src/UPDATING</code> ，
+    这样才能知道目前的进度以及下一版本会有什么新的进展。</p></li><li class="listitem"><p>热心一点！ 如果您正运行着 FreeBSD-CURRENT ，
+              我们很希望知道您关于它的一些想法，
+              尤其是关于 bug 修复或增进的建议。 非常欢迎附带补丁的建议！</p></li></ol></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="stable"></a>23.5.2. 使用最新的 FreeBSD Stable</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82813264"></a>23.5.2.1. 什么是 FreeBSD-STABLE ？</h4></div></div></div><a id="idp82813904" class="indexterm"></a><p>FreeBSD-STABLE 是我们的开发分支， 我们的正式发行版就由此发展而来。
+        这个分支会以不同速度变化， 并且假定这些是第一次进入 FreeBSD-CURRENT 进行测试。
+        然而， 这 <span class="emphasis"><em>仍然</em></span> 是个开发分支， 意味着在一定的时候，
+        FreeBSD-STABLE 源代码可能或不可能满足一些特殊的要求。
+        它只不过是另一个工程发展途径， 并不是终端用户的资源。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82815312"></a>23.5.2.2. 谁需要 FreeBSD-STABLE ？</h4></div></div></div><p>如果您有兴趣追随 FreeBSD 的开发过程或为其做点贡献，
+        尤其是和下一个 <span class="quote">“<span class="quote">非计划</span>”</span> 的 FreeBSD 发行版有关时，
+        您应该考虑使用 FreeBSD-STABLE 。</p><p>尽管安全更新也会进入 FreeBSD-STABLE 分支，
+        但您并不需要因此 <span class="emphasis"><em>必须</em></span>  使用 FreeBSD-STABLE 。
+        每一个 FreeBSD 安全公告都会介绍如何修复受此问题影响的尚未停止支持的正式发行版上的问题
+
+	  <a href="#ftn.idp82817360" class="footnote" id="idp82817360"><sup class="footnote">[6]</sup></a> 。</p><p>尽管我们尽力确保 FreeBSD-STABLE 分支能在任何时候都能正确编译和运行，
+      但没人可以保证它永远不出问题。 此外， 代码进入 FreeBSD-STABLE 之前都会经过
+      FreeBSD-CURRENT 的测试， 但 FreeBSD-CURRENT 用户总是比 FreeBSD-STABLE 用户少些。
+      有些 FreeBSD-CURRENT 上并没有暴露出来的问题可能在经过 FreeBSD-STABLE
+      测试的过程中才暴露出来。</p><p>基于这些原因，我们 <span class="emphasis"><em>不推荐</em></span> 您盲目追随 FreeBSD-STABLE ，
+      在尚未进行完整的开发或测试之前， 千万不能将生产服务器更新至 FreeBSD-STABLE 。</p><p>如果您没有更多时间和精力的话， 那推荐您使用最新的 FreeBSD 正式发行版，
+      并使用二进制更新机制来完成版本间的升级与迁移。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp82820432"></a>23.5.2.3. 使用 FreeBSD-STABLE</h4></div></div></div><a id="idp82821072" class="indexterm"></a><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-stable" target="_top">freebsd-stable</a> 邮件列表。 他可以让您随时了解 FreeBSD-STABLE
+              的软件编译依赖以及其他需要特别注意的问题。 对于那些有争议的修复或更新，
+              开发者就会在这个邮件列表里发表声明， 听取用户意见。</p><p>订阅您所关心的分支的 <span class="application">svn</span> 提交日志。
+              比如您关心 9-STABLE 分支，
+              可以订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/svn-src-stable-9" target="_top">svn-src-stable-9</a> 这个邮件列表。
+              这个邮件列表会记录每一个提交日志信息， 包括变更原因，
+              及可能出现的问题等等。</p><p>需要订阅这些邮件列表， 请访问 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo" target="_top">http://lists.FreeBSD.org/mailman/listinfo</a> ，
+              并点击您想订阅的项目。 并按照说明进行操作。
+              为了跟踪整个源代码树的变更信息，
+              可以订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/svn-src-all" target="_top">svn-src-all</a> 邮件列表。</p></li><li class="listitem"><p>如果您需要全新安装一个 FreeBSD-STABLE 每月编译快照版本，
+              请参阅 <a class="link" href="../../../../snapshots/" target="_top">快照</a> 页面，
+              以了解更多信息。 另外您也可以从 FreeBSD-STABLE 发行版的
+              <a class="link" href="mirrors.html" title="Appendix A. 获取 FreeBSD">镜像站</a> 安装最新版本，
+              并按照其中的说明更新 FreeBSD-STABLE 源代码。</p><p>有几种方法可以通过 FreeBSD <a class="link" href="mirrors.html" title="Appendix A. 获取 FreeBSD">镜像站</a>
+              将系统升级为最新版 FreeBSD ：</p><div class="orderedlist"><ol class="orderedlist" type="a"><li class="listitem"><p>使用 <a class="link" href="svn.html" title="A.5. 使用 Subversion">svn</a><a id="idp82834384" class="indexterm"></a>签出所需的开发版或正式发行版分支的源代码。
+        它是访问 FreeBSD 开发库的首选种方法。
+        最新开发版分支使用 <code class="literal">head</code> 分支名，
+        其他版本形式请参考 <a class="link" href="../../../../releng/" target="_top">项目发布页面</a> 。
+        主要形式有： <code class="literal">stable/9</code><a id="idp82836304" class="indexterm"></a>
+          或 <code class="literal">releng/9.2</code> 等。
+          可用的 URL 地址可以在 <span class="application">Subversion</span>
+          可用的基本系统 <a class="link" href="svn-mirrors.html" title="A.6. Subversion 镜像站">Subversion 镜像站</a> 上找到。
+          受仓库大小影响， 推荐仅检出子分支树。</p></li><li class="listitem"><p>考虑使用 <span class="application">CTM</span><a id="idp82840144" class="indexterm"></a> 如果您的没有快速互联网网络。</p></li></ol></div></li><li class="listitem"><p>在编译 FreeBSD-STABLE<a id="idp82842320" class="indexterm"></a> 之前， 请仔细阅读 <code class="filename">/usr/src/Makefile</code> 文件。
+    作为的升级过程的一部分， 您至少也要首先了解 <a class="link" href="makeworld.html" title="23.7. 重新编译 “world”">
+        安装一个新的内核和重新编译 world</a> 。
+    此外， 还必须多多阅读 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-current" target="_top">FreeBSD-CURRENT 邮件列表</a> 以及 <code class="filename">/usr/src/UPDATING</code> ，
+    这样才能知道目前的进度以及下一版本会有什么新的进展。</p></li></ol></div></div></div><div class="footnotes"><br /><hr class="footnote-hr" /><div id="ftn.idp82817360" class="footnote"><p><a href="#idp82817360" class="para"><sup class="para">[6] </sup></a>更多有关当前旧 FreeBSD 正式发行版的支持策略，
+              请参阅 <a class="link" href="../../../../security/" target="_top">
+                  http://www.FreeBSD.org/security/</a> 。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="updating-upgrading-documentation.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="updating-upgrading.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="synching.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.4. 更新系统附带的文档 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 23.6. 同步源代码</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.10. 文本编辑器</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="shells.html" title="4.9. Shells" /><link rel="next" href="basics-devices.html" title="4.11. 设备和设备节点" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.10. 文本编辑器</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="shells.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="basics-devices.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="editors"></a>4.10. 文本编辑器</h2></div></div></div><a id="idp70436944" class="indexterm"></a><a id="idp70437456" class="indexterm"></a><p>FreeBSD 的很多配置都可以通过编辑文本文件来完成。
+      因此， 最好能熟悉某种文本编辑器。
+      FreeBSD 基本系统中提供了一些， 您也可以从 Ports Collection
+      安装其它编辑器。</p><a id="idp70438352" class="indexterm"></a><a id="idp70439248" class="indexterm"></a><p>最容易学的而又简单的编辑器是
+      <span class="application">ee</span>编辑器， 是个标准的简易编辑器。  要启动
+      <span class="application">ee</span>，首先就要在命令行输入
+      <code class="command">ee filename</code>，
+      <em class="replaceable"><code>filename</code></em> 是一个要编辑的文件名。
+      例如，要编辑 <code class="filename">/etc/rc.conf</code>就要输入
+      <code class="command">ee /etc/rc.conf</code>，在
+      <code class="command">ee</code>的控制内， 编辑器所有功能的操作方法都显示在最上方。
+      这个<code class="literal">^</code> 字符代表
+      键盘上的<span class="keycap"><strong>Ctrl</strong></span> 键， 所以<code class="literal">^e</code> 就是
+      <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>e</strong></span>组合键。
+      假如想离开<span class="application">ee</span>，
+      按<span class="keycap"><strong>Esc</strong></span>键，就可选择离开编辑器。
+      当您修改了内容的时候，编辑器会提示您保存。</p><a id="idp70446672" class="indexterm"></a><a id="idp70447568" class="indexterm"></a><a id="idp70448848" class="indexterm"></a><a id="idp70449744" class="indexterm"></a><p>FreeBSD本身也带许可多有强大功能的文本编辑器， 例如
+      <span class="application">vi</span>。还有其他在FreeBSD Ports里几种， 像
+      <span class="application">emacs</span> 和 <span class="application">vim</span>。
+      这些编辑器有着强大的功能，但同时学习起来比较复杂。
+      不管怎样，假如您从事文字编辑方面的工作，
+      学习如<span class="application">vim</span> 或 <span class="application">emacs</span>
+      这些有强大功能的编辑器用法，
+      在长时间工作里会帮您节省不少的时间。</p><p>很多需要修改文件或打字输入的应用程序都会自动打开一个文本编辑器。
+      更改默认使用的编辑器， 请设置 <code class="envar">EDITOR</code>
+      环境变量。 参阅 <a class="link" href="shells.html" title="4.9. Shells">shells</a>
+      以获取更多详细信息。</p></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="shells.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="basics-devices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.9. Shells </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.11. 设备和设备节点</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

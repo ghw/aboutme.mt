@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>3.12. 高级安装指南</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="install.html" title="Chapter 3. 安装 FreeBSD" /><link rel="prev" href="install-trouble.html" title="3.11. 常见问题" /><link rel="next" href="install-diff-media.html" title="3.13. 准备您自己的安装介质" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.12. 高级安装指南</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="install-trouble.html">Prev</a> </td><th width="60%" align="center">Chapter 3. 安装 FreeBSD</th><td width="20%" align="right"> <a accesskey="n" href="install-diff-media.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="install-advanced"></a>3.12. 高级安装指南</h2></div><div><span class="authorgroup">原作 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Valentino</span> <span class="surname">Vaschetto</span></span>. </span></div><div><span class="authorgroup">更新 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><p>这节主要描述在一些特殊情况下如何安装FreeBSD。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="headless-install"></a>3.12.1. 在一个没有显示器或键盘的系统上安装FreeBSD</h3></div></div></div><a id="idp69276112" class="indexterm"></a><a id="idp69277264" class="indexterm"></a><p>这种类型的安装叫做 <span class="quote">“<span class="quote">headless install（无头安装）</span>”</span>，
+	因您正要安装FreeBSD的机器不是没带显示器，就是没有显卡。
+	您可能会问那怎么安装？ 可以使用一个串行控制台。
+	串行控制台基本上是使用另外一台机器来充当主显示设备和键盘。
+	要这样做，只要执行下面的步骤： 创建安装 USB 记忆棒，请看 <a class="xref" href="install-pre.html#install-boot-media" title="3.3.7. 准备引导介质">Section 3.3.7, “准备引导介质”</a>一节说明； 此外，
+	也可下载 ISO 映像文件， 具体请参阅 <a class="xref" href="install-diff-media.html#install-cdrom" title="3.13.1. 创建一张安装光盘">Section 3.13.1, “创建一张安装光盘”</a>。</p><p>要将安装介质改为使用串口控制台， 需要按下面这些步骤来操作
+	(如果使用 CDROM 则可跳过第一步)：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p class="title"><strong>令安装 USB 记忆棒引导并进入串口控制台</strong></p><a id="idp69280720" class="indexterm"></a><p>如果使用刚刚制作的 USB 记忆棒引导系统，
+	      则 FreeBSD 会进入正常的安装模式。
+	      我们希望引导到串口控制台来完成安装。
+	      为了做到这一点， 需要在 FreeBSD 中使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 挂载
+	      USB 盘。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount /dev/da0a /mnt</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">您需要根据实际情况修改挂点的名称。</p></div><p>现在挂好了记忆棒， 您需要对其进行配置令其进入串口控制台。
+	      为此， 需要在 USB 记忆棒中的 <code class="filename">loader.conf</code>
+	      文件中加入下面的这行配置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'console="comconsole"' &gt;&gt; /mnt/boot/loader.conf</code></strong></pre><p>这样就完成了对 USB 记忆棒的配置， 您应使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">umount</span>(8)</span></a>
+	      命令将其卸下：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>umount /mnt</code></strong></pre><p>现在就可以拔下 USB 记忆棒并进入这一过程的第三步了。</p></li><li class="step"><p class="title"><strong>令安装 CD 引导并进入串口控制台</strong></p><a id="idp69293520" class="indexterm"></a><p>如果您直接使用 ISO 映像 (see <a class="xref" href="install-diff-media.html#install-cdrom" title="3.13.1. 创建一张安装光盘">Section 3.13.1, “创建一张安装光盘”</a>) 制作的 CD 引导，
+	      则 FreeBSD 会引导进入正常的安装模式。
+	      我们希望引导到串口控制台来完成安装。
+	      为了做到这一点， 您需要展开、 修改并重新生成 ISO
+	      文件， 然后再刻录光盘。</p><p>在保存例如
+	      <code class="filename">FreeBSD-8.1-RELEASE-i386-disc1.iso</code>
+	      ISO 的 FreeBSD 系统上用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tar&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">tar</span>(1)</span></a> 工具提取全部文件：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkdir /path/to/headless-iso</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tar -C /path/to/headless-iso -pxvf FreeBSD-8.1-RELEASE-i386-disc1.iso</code></strong></pre><p>接下来需要对其进行配置令其进入串口控制台。
+	      为此， 需要在从 ISO 映像中提取的 <code class="filename">loader.conf</code>
+	      文件中加入下面的这行配置：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>echo 'console="comconsole"' &gt;&gt; /path/to/headless-iso/boot/loader.conf</code></strong></pre><p>最后， 从修改好的目录树中创建新的 ISO 映像。
+	      这里我们使用通过 <span class="package">sysutils/cdrtools</span> port 安装的
+	      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mkisofs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mkisofs</span>(8)</span></a> 工具来完成：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mkisofs -v -b boot/cdboot -no-emul-boot -r -J -V "Headless_install" \
+	    -o Headless-FreeBSD-8.1-RELEASE-i386-disc1.iso /path/to/headless-iso</code></strong></pre><p>这样就完成了对 ISO 映像的配置，
+	      您可以使用您熟悉的工具将其刻录到 CD-R 上了。</p></li><li class="step"><p class="title"><strong>连接 Null-modem 线</strong></p><a id="idp69332816" class="indexterm"></a><p>现在需要一根
+	      <a class="link" href="serial.html#term-cables-null" title="25.2.2.1.1. Null-modem线缆">null-modem 线</a>
+	      来连接两台机器。 只要连接两台机器的串口。
+	      <span class="emphasis"><em>这里不能使用普通的串口线</em></span>，
+	      而必须使用 null-modem
+	      线， 因为它需要一些内部交叉的连线。</p></li><li class="step"><p class="title"><strong>开始启动安装</strong></p><p>现在可以开始安装了。
+	      将 USB 记忆棒插到您准备进行 headless 安装的机器上，
+	      然后开机。 如果您使用的是 CDROM，
+	      则在开机之后立即将光盘放进光驱。</p></li><li class="step"><p class="title"><strong>连接您的无头机器</strong></p><a id="idp69336528" class="indexterm"></a><p>现在您已经通过<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cu&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">cu</span>(1)</span></a>连接到了那台机器。</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu -l /dev/cuau0</code></strong></pre><p>在 FreeBSD 7.X 上应使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cu -l /dev/cuad0</code></strong></pre></li></ol></div><p>这样就可以了！ 您现在可以通过 <code class="command">cu</code>
+	会话来控制那台 headless 的机器了。 接着系统会提示选择终端类型。 选择
+	FreeBSD 彩色控制台并继续安装！</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="install-trouble.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="install.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="install-diff-media.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.11. 常见问题 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 3.13. 准备您自己的安装介质</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

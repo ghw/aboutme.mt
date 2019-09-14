@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>17.2. 本章中的一些关键术语</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="audit.html" title="Chapter 17. 安全事件审计" /><link rel="prev" href="audit.html" title="Chapter 17. 安全事件审计" /><link rel="next" href="audit-install.html" title="17.3. 安装审计支持" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.2. 本章中的一些关键术语</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="audit.html">Prev</a> </td><th width="60%" align="center">Chapter 17. 安全事件审计</th><td width="20%" align="right"> <a accesskey="n" href="audit-install.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="audit-inline-glossary"></a>17.2. 本章中的一些关键术语</h2></div></div></div><p>在开始阅读这章之前， 我们需要解释一下与审计有关的一些关键的术语：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><span class="emphasis"><em>事件 (event)</em></span>：
+	  可审计事件是指能够被审计子系统记录的任何事件。
+	  举例说来， 与安全有关的事件包括创建文件、
+	  建立网络连接， 以及以某一用户身份登录， 等等。
+	  任何事件必要么是 <span class="quote">“<span class="quote">有主 (attributable)</span>”</span> 的，
+	  即可以最终归于某一已通过验证的用户的身份， 反之， 则称该事件是
+	  <span class="quote">“<span class="quote">无主 (non-attributable)</span>”</span> 的。
+	  无主事件可以是发生在登录过程成功之前的任何事件， 例如尝试一次无效密码等。</p></li><li class="listitem"><p><span class="emphasis"><em>类 (class)</em></span>： 事件类是指相关事件的一个命名集合，
+	  通常在筛选表达式中使用。 常用的事件类包括 <span class="quote">“<span class="quote">创建文件</span>”</span> (fc)、
+	  <span class="quote">“<span class="quote">执行</span>”</span> (ex) 和 <span class="quote">“<span class="quote">登入和注销</span>”</span>
+	  (lo)。</p></li><li class="listitem"><p><span class="emphasis"><em>记录 (record)</em></span>： 记录是指描述一个安全事件的日志项。
+	  记录包括记录事件类型、 执行操作的主体 (用户) 信息、
+	  日期和事件信息， 以及与之相关的对象或参数信息， 最后是操作成功或失败。</p></li><li class="listitem"><p><span class="emphasis"><em>账目 (trail)</em></span>： 审计账目， 或日志文件，
+	  包含了一系列描述安全事件的审计记录。 典型情况下，
+	  审计账目基本上是以事件发生的时间顺序记录的。 只有获得授权的进程，
+	  才能够向审计账目中提交记录。</p></li><li class="listitem"><p><span class="emphasis"><em>筛选表达式 (selection expression)</em></span>：
+	  筛选表达式是包含一系列前缀和审计事件类名字，
+	  用以匹配事件的字符串。</p></li><li class="listitem"><p><span class="emphasis"><em>预选 (preselection)</em></span>： 系统通过这一过程来识别事件是否是管理员所感兴趣的，
+	  从而避免为他们不感兴趣的事件生成记录。 预选配置使用一系列选择表达式，
+	  用以识别事件类别、 要审计的用户， 以及适用于验证过用户身份， 以及未验证用户身份的进程的全局配置。</p></li><li class="listitem"><p><span class="emphasis"><em>浓缩 (reduction)</em></span>： 从现有的审计记帐中筛选出用于保留、
+	  打印或分析的过程。 除此之外， 它也表示从审计记帐中删去不需要的审计记录的过程。
+	  通过使用浓缩操作， 管理员可以实现预留审计数据的策略。 例如， 详细的审计记帐信息，
+	  可能会保留一个月之久， 但在这之后， 则对这些记帐信息执行浓缩操作，
+	  只保留登录信息用于存档。</p></li></ul></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="audit.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="audit.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="audit-install.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 17. 安全事件审计 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 17.3. 安装审计支持</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

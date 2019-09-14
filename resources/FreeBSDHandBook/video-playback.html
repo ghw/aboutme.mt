@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>8.4. 视频回放</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="multimedia.html" title="Chapter 8. 多媒体" /><link rel="prev" href="sound-mp3.html" title="8.3. MP3音频" /><link rel="next" href="tvcard.html" title="8.5. 安装电视卡" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.4. 视频回放</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="sound-mp3.html">Prev</a> </td><th width="60%" align="center">Chapter 8. 多媒体</th><td width="20%" align="right"> <a accesskey="n" href="tvcard.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="video-playback"></a>8.4. 视频回放</h2></div><div><span class="authorgroup">贡献者<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Ross</span> <span class="surname">Lippert</span></span>. </span></div></div></div><p>视频回放是个很新并且迅速发展中的应用领域。
+      一定要有耐心，因为不是所有的事情都象处音频那么顺利。</p><p>在开始之前，您要了解显卡的类型以及它所用的芯片的类型。
+      尽管 <span class="application">Xorg</span>
+      支持大量的显卡， 但能达到好的回放效果的却寥寥无几。
+      在X11运行时，您可以使用命令 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=xdpyinfo&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">xdpyinfo</span>(1)</span></a>
+      获得使用您的显卡的X服务器所支持的扩展列表。</p><p>为了评估各种播放器和设置，您需要有一小段用作测试的MPEG文件。
+      由于一些DVD播放器会默认地在
+      <code class="filename">/dev/dvd</code> 里去找DVD文件， 因此，
+      您会发现建立符号链接到恰当的设备会很有用：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>ln -sf /dev/acd0 /dev/dvd</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>ln -sf /dev/acd0 /dev/rdvd</code></strong></pre><p>注意：由于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs</span>(5)</span></a> 本身的原因，
+      像这样手工建立的链接在重启后将不会存在。
+      想要无论什么时候您启动系统都能自动建立符号链接，
+      那就把下边这行加到 <code class="filename">/etc/devfs.conf</code> 里边：</p><pre class="programlisting">link acd0 dvd
+link acd0 rdvd</pre><p>另外，DVD解密要求调用专用的DVD-ROM函数，要求把许可定到DVD设备里。</p><p>为了改善 X11 界面使用共享内存的能力， 建议提高一些 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 变量的值：</p><pre class="programlisting">kern.ipc.shmmax=67108864
+kern.ipc.shmall=32768</pre><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-interface"></a>8.4.1. 测定视频的性能</h3></div></div></div><a id="idp72346448" class="indexterm"></a><a id="idp72346960" class="indexterm"></a><a id="idp72347472" class="indexterm"></a><p>在X11下有几种可以显示图像的方式。
+      到底哪个能工作很大程度上依赖于硬件。 首先，
+      下边描述的每一种方法在不同的硬件上都会有不同的品质。
+      其次， 在X11里的图像显示近来引起普遍的关注，
+      随着 <span class="application">Xorg</span> 的每一个版本，
+      都会有很大的突破。</p><p>常见图像接口列表：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>X11: 一般性的使用共享内存的X11输出。</p></li><li class="listitem"><p>XVideo: 一种X11接口扩展，支持任何X11图像的可拖拉。</p></li><li class="listitem"><p>SDL: 简单直接媒体层。</p></li><li class="listitem"><p>DGA: 直接图片存取。</p></li><li class="listitem"><p>SVGAlib: 低层次掌控图片层。</p></li></ol></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-interface-xvideo"></a>8.4.1.1. XVideo</h4></div></div></div><p><span class="application">Xorg</span>
+        有种扩展叫做 <span class="emphasis"><em>XVideo</em></span>
+        (或称Xvideo, Xv, xv)，
+        它可以通过一个特殊的加速器直接把图像显示在可拖拉的对象里。
+        即使在低端的计算机 (例如我的PIII 400 Mhz膝上电脑)，
+        这个扩展也提供了很好的播放质量。</p><p>要了解这一扩展是否在正常工作， 使用
+      <code class="command">xvinfo</code> 命令：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>xvinfo</code></strong></pre><p>如果显示结果如下，那您的显卡就支持XVideo：</p><pre class="screen">X-Video Extension version 2.2
+screen #0
+  Adaptor #0: "Savage Streams Engine"
+    number of ports: 1
+    port base: 43
+    operations supported: PutImage
+    supported visuals:
+      depth 16, visualID 0x22
+      depth 16, visualID 0x23
+    number of attributes: 5
+      "XV_COLORKEY" (range 0 to 16777215)
+              client settable attribute
+              client gettable attribute (current value is 2110)
+      "XV_BRIGHTNESS" (range -128 to 127)
+              client settable attribute
+              client gettable attribute (current value is 0)
+      "XV_CONTRAST" (range 0 to 255)
+              client settable attribute
+              client gettable attribute (current value is 128)
+      "XV_SATURATION" (range 0 to 255)
+              client settable attribute
+              client gettable attribute (current value is 128)
+      "XV_HUE" (range -180 to 180)
+              client settable attribute
+              client gettable attribute (current value is 0)
+    maximum XvImage size: 1024 x 1024
+    Number of image formats: 7
+      id: 0x32595559 (YUY2)
+        guid: 59555932-0000-0010-8000-00aa00389b71
+        bits per pixel: 16
+        number of planes: 1
+        type: YUV (packed)
+      id: 0x32315659 (YV12)
+        guid: 59563132-0000-0010-8000-00aa00389b71
+        bits per pixel: 12
+        number of planes: 3
+        type: YUV (planar)
+      id: 0x30323449 (I420)
+        guid: 49343230-0000-0010-8000-00aa00389b71
+        bits per pixel: 12
+        number of planes: 3
+        type: YUV (planar)
+      id: 0x36315652 (RV16)
+        guid: 52563135-0000-0000-0000-000000000000
+        bits per pixel: 16
+        number of planes: 1
+        type: RGB (packed)
+        depth: 0
+        red, green, blue masks: 0x1f, 0x3e0, 0x7c00
+      id: 0x35315652 (RV15)
+        guid: 52563136-0000-0000-0000-000000000000
+        bits per pixel: 16
+        number of planes: 1
+        type: RGB (packed)
+        depth: 0
+        red, green, blue masks: 0x1f, 0x7e0, 0xf800
+      id: 0x31313259 (Y211)
+        guid: 59323131-0000-0010-8000-00aa00389b71
+        bits per pixel: 6
+        number of planes: 3
+        type: YUV (packed)
+      id: 0x0
+        guid: 00000000-0000-0000-0000-000000000000
+        bits per pixel: 0
+        number of planes: 0
+        type: RGB (packed)
+        depth: 1
+        red, green, blue masks: 0x0, 0x0, 0x0</pre><p>同时注意：列出来的格式(YUV2, YUV12, 等等) 并不总是随着
+      XVdieo的每一次执行而存在。没有它们可能会迷惑某些人。</p><p>如果结果看起来是这样：</p><pre class="screen">X-Video Extension version 2.2
+screen #0
+no adaptors present</pre><p>那么您的显卡可以就不支持XVideo功能。</p><p>如果您的卡不支持XVideo，
+      则只是说明您的显示器在满足刷新图像的计算要求上存在更大的困难。
+      尽管显卡和处理器很重要，您仍然会有个不错的显示效果。
+      此外， 您也可以参考我们提供的文献， 在 <a class="xref" href="video-playback.html#video-further-reading" title="8.4.3. 进一步了解">Section 8.4.3, “进一步了解”</a> 中有所介绍。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-interface-SDL"></a>8.4.1.2. 简单直接媒体层</h4></div></div></div><p>简单直接媒体层(SDL)，原意是做为 <span class="trademark">Microsoft</span>® <span class="trademark">Windows</span>®、BeOS 以及 <span class="trademark">UNIX</span>®
+      之间的端口层，允许跨平台应用发展，更高效地利用声卡和图形卡。SDL
+      层可以在低层访问硬件， 有时这样做就比 X11 接口层更为高效。</p><p>关于 SDL， 可以参考 <span class="package">devel/sdl12</span>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-interface-DGA"></a>8.4.1.3. 直接图形存取</h4></div></div></div><p>直接图形存取 (Direct Graphics Access) 是一种 X11 扩展，
+      通过它， 应用程序能够绕过 X 服务， 并直接修改画面缓存 (framebuffer)。
+      由于它依赖一种底层的内存映射来实现其功能，
+      因此使用它的程序必须以
+      <code class="systemitem">root</code> 身份来执行。</p><p>DGA 扩展可以通过
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dga&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dga</span>(1)</span></a> 来完成测试和性能测量。 运行
+      <code class="command">dga</code> 时， 它将随按键改变现实的颜色。
+      按 <span class="keycap"><strong>q</strong></span> 退出这个程序。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-ports"></a>8.4.2. Ports 和 包(Packages) 对视频的解决</h3></div></div></div><a id="idp72516432" class="indexterm"></a><a id="idp72516944" class="indexterm"></a><p>这部份主要讨论在 FreeBSD Ports 集中提供的可用于视频回放的软件。
+      视频回放在软件发展中是个很活跃的领域，
+      并且各种不同程序的功能可能与这里的描述不尽相同。</p><p>首先要弄清楚的重要一点是在 FreeBSD 上使用的视频程序其发展与在
+      Linux 里使用的是一样的。 大部份程序都还处在β阶段。使用 FreeBSD
+      的包可能面对的问题：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>一个应用程序不能播放其它程序制作的文件。</p></li><li class="listitem"><p>一个应用程序不能播放其自已制作的文件。</p></li><li class="listitem"><p>不同机上的同样的程序，各自重新建立(rebuild)了一次，
+          播放同一个文件结果也会有不同。</p></li><li class="listitem"><p>一个看起来没什么的过滤器， 如图像尺寸的调整，
+          也有可能因为一个调整例程的问题变得很不象样。</p></li><li class="listitem"><p>应用程序频繁地留下垃圾(dumps core)。</p></li><li class="listitem"><p>没有随 port 一起安装的文档可以在网上或者
+          port 的 <code class="filename">work</code>
+          目录中找到。</p></li></ol></div><p>这些程序中许多也体现了 <span class="quote">“<span class="quote">Linux主义</span>”</span>。即，
+      有些问题来自于(程序)使用的标准库存在于Linux的发行版中，
+      或者有些是 Linux 内核的功能， 而该程序的作者事先所假定了的是
+      Linux内核。这些问题并不总是被 port 编护人员注意到或处理过，
+      这也就可能导致如下问题：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>使用<code class="filename">/proc/cpuinfo</code>去检测处理器的特性。</p></li><li class="listitem"><p>滥用线程可能导致一个程序悬挂完成，而不是完全中止。</p></li><li class="listitem"><p>软件还不属于FreeBSD Ports集，而又与其它程序经常地一起使用。</p></li></ol></div><p>现在，这些程序的开发人员也已同 port 的维护人员进行了联合，
+        以减少制作port时出错。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-mplayer"></a>8.4.2.1. MPlayer</h4></div></div></div><p><span class="application">MPlayer</span>
+        是近来开发的同时也正迅速发展着的一个视频播放器。
+        <span class="application">MPlayer</span> 团队的目标是在
+        Linux 和其它 UNIX 系统中的速度和机动性能。
+        在团队的创始人实在受不了当时可用的播放器的性能时，
+        这个计划就开始了。 有人也许会说图形接口已经成为新型设计的牺牲品。
+        但是一旦您习惯了命令行选项和按键控制方式，它就能表现得很好。</p><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-mplayer-building"></a>8.4.2.1.1. 创建MPlayer</h5></div></div></div><a id="idp72530640" class="indexterm"></a><p><span class="application">MPlayer</span> 可以从 <span class="package">multimedia/mplayer</span> 找到。
+	  <span class="application">MPlayer</span> 在联编过程中会进行许多硬件检测，
+	  而得到的可执行文件因此将无法移植到其他系统中使用。
+	  因此， 从 ports 完成联编而不是安装预编译的包就很重要。
+	  另外， 在 <code class="command">make</code> 命令行还可以指定许多选项，
+	  在 <code class="filename">Makefile</code> 中有所描述， 接下来我们开始联编：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /usr/ports/multimedia/mplayer</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>make</code></strong>
+N - O - T - E
+
+Take a careful look into the Makefile in order
+to learn how to tune mplayer towards you personal preferences!
+For example,
+make WITH_GTK1
+builds MPlayer with GTK1-GUI support.
+If you want to use the GUI, you can either install
+/usr/ports/multimedia/mplayer-skins
+or download official skin collections from
+http://www.mplayerhq.hu/homepage/dload.html
+</pre><p>默认的 port 选项对于绝大多数用户来说是够用了。
+	  不过， 如果您需要 XviD 编解码器， 则必须指定
+	  <code class="varname">WITH_XVID</code> 这个命令行选项。
+	  默认的 DVD 设备也可以用 <code class="varname">WITH_DVD_DEVICE</code>
+	  选项来定义， 其默认值是 <code class="filename">/dev/acd0</code>。</p><p>撰写这一章的时候， <span class="application">MPlayer</span> port 的联编过程包括了
+          HTML 文档和两个可执行文件，
+          <code class="command">mplayer</code> 和
+          <code class="command">mencoder</code>， 后者是一个视频再编码工具。</p><p><span class="application">MPlayer</span> 的 HTML 文档提供了丰富的内容。
+          如果读者发现本章中缺少关于视频硬件的一些信息，
+          则 <span class="application">MPlayer</span> 的文档将是十分详尽的补充。
+          如果您正在找关于 <span class="trademark">UNIX</span>® 中的视频支持的资料，
+          您绝对应该花一些时间来阅读 <span class="application">MPlayer</span>
+          的文档。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-mplayer-using"></a>8.4.2.1.2. 使用MPlayer</h5></div></div></div><a id="idp72558160" class="indexterm"></a><p>任何 <span class="application">MPlayer</span> 用户必须在其用户主目录下建立一个叫
+	  <code class="filename">.mplayer</code> 的子目录。
+	  输入下边的内容来建立这个必须的子目录：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>cd /usr/ports/multimedia/mplayer</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>make install-user</code></strong></pre><p>在 <code class="command">mplayer</code> 的手册里列出了它的命令选项。
+	  HTML文档里有更为详细的信息。 这部份里， 我们只是描述了很少的常见应用。</p><p>要播放一个文件，如
+	  <code class="filename">testfile.avi</code>，
+	  可以通过各种视频接口当中的某一个去设置 <code class="option">-vo</code> 选项：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mplayer -vo xv testfile.avi</code></strong></pre><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mplayer -vo sdl testfile.avi</code></strong></pre><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mplayer -vo x11 testfile.avi</code></strong></pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mplayer -vo dga testfile.avi</code></strong></pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mplayer -vo 'sdl:dga' testfile.avi</code></strong></pre><p>所有这些选项都是值得一试的，
+	  因为它们的性能依赖很多因素，并且都与硬件密切相关。</p><p>要播放 DVD， 需要把
+	 <code class="filename">testfile.avi</code> 改为
+	 <code class="option">dvd://<em class="replaceable"><code>N</code></em> -dvd-device
+	 <em class="replaceable"><code>DEVICE</code></em></code>。 这里 <em class="replaceable"><code>N</code></em>
+	 是要播放的节目编号， 而
+	 <code class="filename">DEVICE</code> 则是
+	 DVD-ROM 的设备节点。 例如， 要播放 <code class="filename">/dev/dvd</code>
+	 的第三个节目：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mplayer -vo xv dvd://3 -dvd-device /dev/dvd</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">可以在编译 <span class="application">MPlayer</span> 时， 通过
+	    <code class="varname">WITH_DVD_DEVICE</code> 来指定默认的
+	    DVD 设备。 系统内定的默认设备是 <code class="filename">/dev/acd0</code>。
+	    更多细节， 请参考 port 的
+	    <code class="filename">Makefile</code>。</p></div><p>要停止、暂停、前进等等，可以参考设定的按键---这些可以通过
+	  <code class="command">mplayer -h</code> 得到或查看手册。</p><p>另外，回放的重要选项是：用于全屏模式的 <code class="option">-fs -zoom</code>
+	  和起辅助完成作用的<code class="option">-framedrop</code>。</p><p>为了让 mplayer 的命令行不是太长，使用者可以通过建立一个文件
+	  <code class="filename">.mplayer/config</code> 来设定如下默认选项：</p><pre class="programlisting">vo=xv
+fs=yes
+zoom=yes</pre><p>最后，<code class="command">mplayer</code> 可以把DVD题目(title)抓取成为
+	  <code class="filename">.vob</code> 文件。为了从DVD中导出第二个题目，请输入：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mplayer -dumpstream -dumpfile out.vob dvd://2 -dvd-device /dev/dvd</code></strong></pre><p>输出文件 <code class="filename">out.vob</code> 将是 MPEG
+	  并且可以被这部份描述的其它 <span class="quote">“<span class="quote">包</span>”</span> 利用。</p></div><div class="sect4"><div xmlns="" class="titlepage"><div><div><h5 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-mencoder"></a>8.4.2.1.3. mencoder</h5></div></div></div><a id="idp72591184" class="indexterm"></a><p>在使用
+         <code class="command">mencoder</code> 之前， 首先熟悉其 HTML
+	 文档中所介绍的选项是一个不错的主意。 它提供了联机手册，
+	 但如果没有 HTML 文档则帮助不大。 有无数种方法来提高视频品质、
+	 降低比特率、 修改格式， 而这些技巧可能会影响性能。
+	 下面是几个例子， 第一个是简单地复制：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mencoder input.avi -oac copy -ovc copy -o output.avi</code></strong></pre><p>不正确的命令选项组合可能使生成的文件不能被
+	   <code class="command">mplayer</code> 播放。因此，如果您只是想抓取文件，
+	   一定在 <code class="command">mplayer</code> 里使用
+	   <span class="quote">“<span class="quote"><code class="option">-dumpfile</code></span>”</span>。</p><p>转换 <code class="filename">input.avi</code>
+	   成为带有MPEG3音频编码 (要求
+	   <span class="package">audio/lame</span> )
+	   的MPEG4编码：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>mencoder input.avi -oac mp3lame -lameopts br=192 \
+	 -ovc lavc -lavcopts vcodec=mpeg4:vhq -o output.avi</code></strong></pre><p>这样就产生了可被 <code class="command">mplayer</code> 和 <code class="command">xine</code>播放的输出。</p><p><code class="filename">input.avi</code> 可以换成
+	   <code class="option">dvd://1 -dvd-device /dev/dvd</code> 并以
+	   <code class="systemitem">root</code> 的身份来执行， 以重新对 DVD 节目进行编码。
+	   由于您第一次做这样的工作时很可能会对结果不太满意，
+	   建议您首先把节目复制成文件， 然后对它进行操作。</p></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-xine"></a>8.4.2.2. xine视频播放器</h4></div></div></div><p><span class="application">xine</span> 视频播放器是一个关注范围很广的项目，
+      它不仅看准多合一的视频解决，
+      而且出品了一个可再用的基本库和一个可扩展插件的可执行模块。
+      发行有 <span class="quote">“<span class="quote">包</span>”</span> 和port版本--
+      <span class="package">multimedia/xine</span>。</p><p><span class="application">xine</span> 播放器仍然很粗糙，
+      但这很显然与好开头无关。实际上 <span class="application">xine</span>
+      要求你有快速的 CPU 和快速的显卡来运行，或者需要支持 XVideo 扩展。
+      图形界面(GUI)可以使用，但很勉强。</p><p>到写这章时，还没有可用于播放CSS编码的DVD文件的输入模块随同
+	   <span class="application">xine</span> 一起发行。
+	   第三方的建造(builds)里内建有这样的模块，
+	   但都不属于FreeBSD Ports 集。</p><p>与<span class="application">MPlayer</span> 相比，
+      <span class="application">xine</span> 为用户考虑得更多，
+      但同时，对用户来说也少了很多有条理的控制方式。
+      <span class="application">xine</span> 播放器在XVideo接口上做得不错。</p><p>默认情况下，播放器 <span class="application">xine</span>
+      启动的时候会使用图形界面。那么就可以使用菜单打开指定的文件：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>xine</code></strong></pre><p>另外，没有图形界面也可以使用如下命令立即打开播放文件：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>xine -g -p mymovie.avi</code></strong></pre></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-ports-transcode"></a>8.4.2.3. 使用transcode</h4></div></div></div><p><span class="application">transcode</span> 这个软件并不是播放器，
+      而是一系列用于对视频和音频文件进行重新编码的工具。
+      通过使用 <span class="application">transcode</span>，
+      就可以拥有使用带 <code class="filename">stdin/stdout</code>
+      接口的命令行工具来合并视频文件， 以及修复坏损文件的能力。</p><p>在联编 <span class="package">multimedia/transcode</span> port 时可以指定大量选项，
+      我们建议使用下面的命令行来构建
+      <span class="application">transcode</span>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>make WITH_OPTIMIZED_CFLAGS=yes WITH_LIBA52=yes WITH_LAME=yes WITH_OGG=yes \
+WITH_MJPEG=yes -DWITH_XVID=yes</code></strong></pre><p>对于多数用户而言， 前述配置已经足够了。</p><p>为了说明 <code class="command">transcode</code> 的功能，
+      下面的例子展示了如何将 DivX 转换为 PAL MPEG-1 文件 (PAL VCD)：</p><pre class="screen"><code class="prompt">%</code> <strong class="userinput"><code>transcode -i input.avi -V --export_prof vcd-pal -o output_vcd</code></strong>
+<code class="prompt">%</code> <strong class="userinput"><code>mplex -f 1 -o output_vcd.mpg output_vcd.m1v output_vcd.mpa</code></strong></pre><p>生成的 MPEG 文件，
+      <code class="filename">output_vcd.mpg</code>， 可以通过
+      <span class="application">MPlayer</span> 来播放。
+      您甚至可以直接将这个文件刻录到 CD-R 介质上来创建 Video CD，
+      如果希望这样做的话， 需要安装 <span class="package">multimedia/vcdimager</span> 和 <span class="package">sysutils/cdrdao</span> 这两个程序。</p><p><code class="command">transcode</code> 提供了联机手册， 但您仍应参考 <a class="link" href="http://www.transcoding.org/cgi-bin/transcode" target="_top">transcode
+      wiki</a> 以了解更多信息和例子。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="video-further-reading"></a>8.4.3. 进一步了解</h3></div></div></div><p>FreeBSD里不同的视频软件包正迅速发展中。
+      很可能在不久的将来，这里所谈到的问题都将得到解决。
+      同时，有些人想超越FreeBSD的音/像(A/V)能力，
+      那他们就不得不从一些FAQ和指南里学知识，
+      并使用一些不同的应用程序。
+      这里就给这些读者指出一些补充信息。</p><p><a class="link" href="http://www.mplayerhq.hu/DOCS/" target="_top"> MPlayer 文档 </a>
+      是很技术性的。
+      这些文档可以给那些希望获得关于<span class="trademark">UNIX</span>®视频高级技术的人们提供参考。
+      <span class="application">MPlayer</span> 邮件列表很不喜欢没耐心阅读文档的人，
+      如果您发现什么问题想报告给他们，请首先RTFM。</p><p><a class="link" href="http://dvd.sourceforge.net/xine-howto/en_GB/html/howto.html" target="_top">xine HOWTO</a>
+      里边有一章是关于提高性能的，对所有的播放器都很适应。</p><p>最后是一些很有前途的程序，读者可以试一下：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="http://avifile.sourceforge.net/" target="_top">Avifile</a>，它就是 <span class="package">multimedia/avifile</span> port。</p></li><li class="listitem"><p><a class="link" href="http://www.dtek.chalmers.se/groups/dvd/" target="_top">Ogle</a>
+	   它就是 <span class="package">multimedia/ogle</span> port。</p></li><li class="listitem"><p><a class="link" href="http://xtheater.sourceforge.net/" target="_top">Xtheater</a></p></li><li class="listitem"><p><span class="package">multimedia/dvdauthor</span>，
+	   一个制作 DVD 节目的源码开放包。</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="sound-mp3.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="multimedia.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="tvcard.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.3. MP3音频 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 8.5. 安装电视卡</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

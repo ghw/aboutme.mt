@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.16. 使用和调试 FreeBSD ACPI</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="acpi-overview.html" title="12.15. 电源和资源管理" /><link rel="next" href="boot.html" title="Chapter 13. The FreeBSD 引导过程" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.16. 使用和调试 FreeBSD <acronym class="acronym">ACPI</acronym></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="acpi-overview.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="boot.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="ACPI-debug"></a>12.16. 使用和调试 FreeBSD <acronym class="acronym">ACPI</acronym></h2></div><div><span class="authorgroup">撰写人：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Nate</span> <span class="surname">Lawson</span></span>. </span></div><div><span class="authorgroup">协力：<span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Peter</span> <span class="surname">Schultz</span></span> and <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp76343888" class="indexterm"></a><p><acronym class="acronym">ACPI</acronym> 是一种全新的发现设备、 管理电源使用、
+      以及提供过去由 <acronym class="acronym">BIOS</acronym> 管理的访问不同硬件的标准化方法。
+      让 <acronym class="acronym">ACPI</acronym> 在各种系统上都能正确使用的工作一直在进行，
+      但许多主板的 <em class="firstterm"><acronym class="acronym">ACPI</acronym> 机器语言</em>
+      (<acronym class="acronym">AML</acronym>) 字节代码中的 bug，  FreeBSD 的内核中子系统设计的不完善，
+      以及  <span class="trademark">Intel</span>®
+      <acronym class="acronym">ACPI-CA</acronym> 解释器中的 bug 仍然不时会出现。</p><p>这份文档期望能够帮助您协助 FreeBSD
+      <acronym class="acronym">ACPI</acronym> 的维护人员来找到您所观察到的问题的根源，
+      并通过调试找到其解决方法。 感谢您阅读这份文档，
+      我们也希望能够解决您的系统上的问题。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-submitdebug"></a>12.16.1. 提交调试信息</h3></div></div></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">在提交问题之前， 请确认您已经在运行最新的
+	  <acronym class="acronym">BIOS</acronym> 版本， 此外， 也包括嵌入式控制器的固件版本。</p></div><p>如果您希望提交一个问题，
+	请确保将下述信息发到
+	<a class="link" href="mailto:freebsd-acpi@FreeBSD.org" target="_top">
+	freebsd-acpi@FreeBSD.org</a>:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>问题行为的描述， 包括系统类型、型号，以及任何触发问题的相关信息。
+	    另外， 请注意尽可能准确地描述这一问题是否对您是陌生的。</p></li><li class="listitem"><p>在 <span class="quote">“<span class="quote">boot
+	    -v</span>”</span> 之后得到的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a> 输出， 以及任何在重现
+	    bug 时出现的错误信息。</p></li><li class="listitem"><p>在禁用了 <acronym class="acronym">ACPI</acronym> 之后的 <span class="quote">“<span class="quote">boot
+	    -v</span>”</span> 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a> 输出， 如果您发现禁用 ACPI
+	    能够帮助消除问题。</p></li><li class="listitem"><p>来自 <code class="command">sysctl hw.acpi</code>的输出。
+	    这也是找到您的系统所提供的功能的一种好办法。</p></li><li class="listitem"><p>能够得到您的 <em class="firstterm"><acronym class="acronym">ACPI</acronym> Source Language</em>
+	    (<acronym class="acronym">ASL</acronym>) 的 <acronym class="acronym">URL</acronym>。
+	    <span class="emphasis"><em>不要</em></span> 把
+	    <acronym class="acronym">ASL</acronym> 直接发到邮件列表中，
+	    因为它们可能非常大。
+	    为了得到 <acronym class="acronym">ASL</acronym>
+	    您可以运行这个命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>acpidump -dt &gt; name-system.asl</code></strong></pre><p>(把
+	    <em class="replaceable"><code>name</code></em> 改为您的登录名，
+	    并把
+	    <em class="replaceable"><code>system</code></em> 改为您的硬件制造商及其型号。 例如：
+	    <code class="filename">njl-FooCo6000.asl</code>)</p></li></ul></div><p>许多开发者也会订阅 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-current" target="_top">FreeBSD-CURRENT 邮件列表</a>
+        但还是请发到 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-acpi" target="_top">freebsd-acpi</a> 这样它会被更多人看到。
+	请耐心等待， 因为我们都有全职的其他工作。
+	如果您的 bug 不是显而易见的， 我们可能会要求您通过
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=send-pr&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">send-pr</span>(1)</span></a> 来提交一个 <acronym class="acronym">PR</acronym>。
+	在输入 <acronym class="acronym">PR</acronym> 时，请将同样的信息包含进去。
+	这将帮助我们来追踪和解决问题。
+	不要在给 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-acpi" target="_top">freebsd-acpi</a> 写信之前发送
+	<acronym class="acronym">PR</acronym> 因为我们把它当作已知文体的备忘录而不是报告机制。
+	您的问题很可能已经被其他人报告过了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-background"></a>12.16.2. 背景</h3></div></div></div><a id="idp76377808" class="indexterm"></a><p><acronym class="acronym">ACPI</acronym> 存在于采用
+	ia32 (x86)、 ia64 (安腾)、 以及 amd64 (AMD) 架构的所有现代计算机上。
+	完整的标准具有大量的各式功能， 包括
+	<acronym class="acronym">CPU</acronym> 性能管理、 电源控制、 温度监控、
+	电池系统、 嵌入式控制器以及总线枚举。
+	绝大多数系统实现比完整标准的功能要少一些。 例如，
+	桌面系统通常只实现总线枚举部分， 而笔记本则通常支持降温和电源管理功能。
+	笔记本通常还提供休眠和唤醒支持， 并提供与此适应的复杂功能。</p><p>符合 <acronym class="acronym">ACPI</acronym> 的系统中有许多组件。
+	<acronym class="acronym">BIOS</acronym> 和芯片组制造商提供一些固定的表
+	(例如， <acronym class="acronym">FADT</acronym>) 在存储器中， 以提供类似
+	<acronym class="acronym">APIC</acronym> 映射 (用于 <acronym class="acronym">SMP</acronym>)、
+	配置寄存器、 以及简单的配置值等等。 另外，
+	一个字节代码 (bytecode) 表
+	(<em class="firstterm">系统区别描述表</em>
+	<acronym class="acronym">DSDT</acronym>)
+	则提供了通过树状命名空间来指定设备及其功能的方法。</p><p><acronym class="acronym">ACPI</acronym> 驱动必须要处理固定表，
+	实现字节码解释器， 并修改驱动程序和内核， 以接受来自
+	<acronym class="acronym">ACPI</acronym> 子系统的信息。 对于 FreeBSD， <span class="trademark">Intel</span>®
+	提供了一个解释器 (<acronym class="acronym">ACPI-CA</acronym>)，
+	它在 Linux 和 NetBSD 也可以使用。
+	<acronym class="acronym">ACPI-CA</acronym> 源代码可以在
+	<code class="filename">src/sys/contrib/dev/acpica</code>
+	找到。 用于在 FreeBSD 中允许 <acronym class="acronym">ACPI-CA</acronym>
+	正确运转的代码则在
+	<code class="filename">src/sys/dev/acpica/Osd</code>。
+	最后， 用于实现 <acronym class="acronym">ACPI</acronym> 设备的驱动可以在
+	<code class="filename">src/sys/dev/acpica</code> 找到。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-comprob"></a>12.16.3. 常见问题</h3></div></div></div><a id="idp76396368" class="indexterm"></a><p>要让 <acronym class="acronym">ACPI</acronym> 正常工作，
+	它的每一部分都必须工作正常。 下面是一些常见的问题，
+	按照出新的频繁程度排序， 并给出了一些绕过或修正它们的方法。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76398288"></a>12.16.3.1. 鼠标问题</h4></div></div></div><p>某些时候， 唤醒操作会导致鼠标不再正常工作。
+	  已知的绕过这一问题的方法， 是在
+	  <code class="filename">/boot/loader.conf</code> 文件中添加
+	  <code class="literal">hint.psm.0.flags="0x3000"</code> 设置。
+	  如果这样做不能解决问题， 请考虑按前面介绍的方法提交问题报告。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76400336"></a>12.16.3.2. 休眠/唤醒</h4></div></div></div><p><acronym class="acronym">ACPI</acronym> 提供了三种休眠到
+	  <acronym class="acronym">RAM</acronym> (<acronym class="acronym">STR</acronym>) 的状态，
+	  <code class="literal">S1</code>-<code class="literal">S3</code>，
+	  以及一个休眠到磁盘的状态 (<code class="literal">STD</code>)，
+	  称作 <code class="literal">S4</code>。 <code class="literal">S5</code> 是
+	  <span class="quote">“<span class="quote">软关机</span>”</span> 同时也是系统接好电源但没有开机时的正常状态。
+	  <code class="literal">S4</code> 实际上可以用两种不同的方法来实现。
+	  <code class="literal">S4</code><acronym class="acronym">BIOS</acronym> 是一种由
+	  <acronym class="acronym">BIOS</acronym> 辅助的挂起到磁盘方法， 而
+	  <code class="literal">S4</code><acronym class="acronym">OS</acronym>
+	  则是完全由操作系统实现的。</p><p>可以使用 <code class="command">sysctl hw.acpi</code>
+	  来查看与休眠有关的项目。
+	  这里是我的 Thinkpad 上得到的结果。</p><pre class="screen">hw.acpi.supported_sleep_state: S3 S4 S5
+hw.acpi.s4bios: 0</pre><p>这表示我可以使用 <code class="command">acpiconf -s</code>
+	  来测试 <code class="literal">S3</code>，
+	  <code class="literal">S4</code><acronym class="acronym">OS</acronym>， 以及
+	  <code class="literal">S5</code>。 如果 <code class="option">s4bios</code> 是一
+	  (<code class="literal">1</code>)， 则可以使用
+	  <code class="literal">S4</code><acronym class="acronym">BIOS</acronym>
+	  来代替 <code class="literal">S4</code>
+	  <acronym class="acronym">OS</acronym>。</p><p>当测试休眠/唤醒时， 从
+	  <code class="literal">S1</code> 开始， 如果它被支持的话。
+	  这个状态是最可能正常工作的状态， 因为它不需要太多的驱动支持。
+	  没有人实现 <code class="literal">S2</code> 但如果您有它的支持，
+	  则应该和 <code class="literal">S1</code> 类似。 下一件值得尝试的是
+	  <code class="literal">S3</code>。 这是最深的
+	  <acronym class="acronym">STR</acronym> 状态，
+	  并需要一系列驱动的支持才能够正常地重新初始化您的硬件。
+	  如果您在唤醒系统时遇到问题， 请不要吝惜发邮件给 <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-acpi" target="_top">freebsd-acpi</a>
+	  邮件列表， 尽管不要指望问题一定会很快解决，
+	  因为有许多驱动程序/硬件需要进行更多的测试和改进。</p><p>休眠和唤醒操作最常见的问题是某些设备驱动程序不会保存、
+	  恢复或正确地重新初始化其固件、 寄存器或设备内存。
+	  尝试调试这些问题时， 首先可以尝试：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sysctl debug.bootverbose=1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>sysctl debug.acpi.suspend_bounce=1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>acpiconf -s 3</code></strong></pre><p>这个测试会模拟休眠和恢复过程而不真的进入 <code class="literal">S3</code>
+	  状态。 有时， 您会用这种方式很容易地抓住问题
+	  (例如， 丢失固件状态、 设备 watchdog 超时， 以及一直重试等)。
+	  注意系统不会真的进入
+	  <code class="literal">S3</code> 状态， 这意味着这些设备可能不会掉电，
+	  而许多设备在完全不提供休眠和恢复方法时仍可正常工作，
+	  而不像使用真的 <code class="literal">S3</code>
+	  状态那样。</p><p>较难的情况则需要更多的硬件， 例如用于串口控制台的串口/线，
+	  以及用于 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dcons&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">dcons</span>(4)</span></a> 的火线口/线和内核调试技能。</p><p>为了帮助隔离问题， 请在内核中删去尽可能多的驱动。
+	  如果这样做能够解决问题， 请尝试逐个加载驱动直到问题再次出现。
+	  通常预编译的驱动程序如
+	  <code class="filename">nvidia.ko</code>、 X11
+	  显示驱动， 以及 <acronym class="acronym">USB</acronym> 的问题最多，
+	  而以太网卡的驱动则通常工作的很好。
+	  如果您能够通过加载和卸载驱动使系统正常工作，
+	  您可以通过将适当的命令放到
+	  <code class="filename">/etc/rc.suspend</code> 和
+	  <code class="filename">/etc/rc.resume</code> 来将这个过程自动化。
+	  在这两个文件中有一个注释掉的卸载和加载驱动程序的例子供您参考。
+	  另外您还可以将 <code class="option">hw.acpi.reset_video</code> 设置为零
+	  (<code class="literal">0</code>)， 如果您的显示在唤醒之后显得很混乱。
+	  此外您还可以尝试更长或更短的
+	  <code class="option">hw.acpi.sleep_delay</code> 值看看是否有所助益。</p><p>另一件值得一试的事情是使用一个比较新的包含
+	  <acronym class="acronym">ACPI</acronym> 支持的 Linux 发行版来试试看他们的
+	  休眠/唤醒 功能是否在同样的硬件上能够正常工作。
+	  如果在 Linux 下正常， 则很可能是 FreeBSD 驱动程序的问题，
+	  而隔离问题并找到存在问题的驱动有助于解决它。
+	  需要注意的是 <acronym class="acronym">ACPI</acronym> 的维护人员通常并不维护其他驱动
+	  (例如 声音、 <acronym class="acronym">ATA</acronym>， 等等)
+	  因此如果最终发现是驱动的问题最好还是发到
+	  <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-current" target="_top">freebsd-current</a> 邮件列表并发给驱动程序的维护者。
+	  如果您喜欢冒险， 则可以加一些 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=printf&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">printf</span>(3)</span></a>
+	  到有问题的驱动中， 以找到它的恢复功能发生问题的位置。</p><p>最后， 试试看禁用 <acronym class="acronym">ACPI</acronym>
+	  并代之以启用 <acronym class="acronym">APM</acronym>。
+	  如果 休眠/唤醒 能够在 <acronym class="acronym">APM</acronym> 下正常工作，
+	  使用 <acronym class="acronym">APM</acronym> 可能会更好，
+	  特别是对于较老的硬件 (2000年以前)。
+	  硬件制造商需要一些时间来让老硬件的
+	  <acronym class="acronym">ACPI</acronym> 工作正常，
+	  而 <acronym class="acronym">ACPI</acronym> 的问题十之八九是
+	  <acronym class="acronym">BIOS</acronym> 中的毛病引发的。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76434384"></a>12.16.3.3. 系统停止响应 (暂时或永久性地)</h4></div></div></div><a id="idp76435024" class="indexterm"></a><p>绝大多数系统停止响应是由于未能及时响应中断或发生了中断风暴导致的。
+	  芯片组有很多问题最终会溯源到 <acronym class="acronym">BIOS</acronym>
+	  如何在引导系统之前配置中断， <acronym class="acronym">APIC</acronym>
+	  (<acronym class="acronym">MADT</acronym>) 表的正确性， 以及
+	  <em class="firstterm">系统控制中断</em>
+	  (<acronym class="acronym">SCI</acronym>) 如何路由。</p><p>通过察看 <code class="command">vmstat -i</code>
+	  的输出中包括 <code class="literal">acpi0</code>
+	  的那一行可以区分中断风暴和未能及时响应中断。
+	  如果每秒计数器增长的速度多于一两个，
+	  则您是遇到了中断风暴。 如果系统停止了响应，
+	  您可以尝试停止内核并进入 <acronym class="acronym">DDB</acronym>
+	  (在控制台上按 <span class="keycap"><strong>CTRL</strong></span>+<span class="keycap"><strong>ALT</strong></span>+<span class="keycap"><strong>ESC</strong></span>)
+	  并输入 <code class="literal">show interrupts</code>。</p><a id="idp76445520" class="indexterm"></a><p>处理中断问题的救命稻草是尝试禁用
+	  <acronym class="acronym">APIC</acronym> 支持， 这是通过在
+	  <code class="filename">loader.conf</code> 中加入
+	  <code class="literal">hint.apic.0.disabled="1"</code>
+	  完成的。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76448336"></a>12.16.3.4. 崩溃</h4></div></div></div><p>崩溃对于 <acronym class="acronym">ACPI</acronym> 是比较罕见的情况，
+	  如果发现， 我们将会非常重视并很快修复它。
+	  您要做的第一件事是设法隔离出能够重现崩溃 (如果可能的话)
+	  的操作并获取一份调用堆栈。 请启用
+	  <code class="option">options DDB</code> 并设置串行控制台
+	  (参见 <a class="xref" href="serialconsole-setup.html#serialconsole-ddb" title="25.6.5.3. 通过串口线进入DDB调试器">Section 25.6.5.3, “通过串口线进入DDB调试器”</a>)
+	  或配置一个 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dump</span>(8)</span></a> 分区。 您将在
+	  <acronym class="acronym">DDB</acronym> 中通过 <code class="option">tr</code>
+	  得到调用堆栈。 如果您只能用手抄的方法记录它，
+	  一定要记下头五 (5) 行和最后五 (5) 行。</p><p>然后， 尝试通过在启动时禁用
+	  <acronym class="acronym">ACPI</acronym> 来隔离故障。 如果这样做能够正常工作，
+	  请通过设置 <code class="option">debug.acpi.disable</code>
+	  的那组数值来隔离具体是哪个 <acronym class="acronym">ACPI</acronym>
+	  子系统的问题。 请参见
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a> 联机手册中给出的那些例子。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76454608"></a>12.16.3.5. 系统在休眠或关机之后又启动了</h4></div></div></div><p>首先请尝试在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=loader.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">loader.conf</span>(5)</span></a> 中设置
+	  <code class="option">hw.acpi.disable_on_poweroff=</code><span class="quote">“<span class="quote">0</span>”</span>。
+	  这将让 <acronym class="acronym">ACPI</acronym> 不再在关机过程中禁用一些事件。
+	  基于同样的原因， 一些系统需要把这个值设置为 <span class="quote">“<span class="quote">1</span>”</span>
+	  (这是默认值)。
+	  这通常能够修复在休眠或关机时立即再次启动的问题。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76457936"></a>12.16.3.6. 其他问题</h4></div></div></div><p>如果您有 <acronym class="acronym">ACPI</acronym> 的其他问题
+	  (同 docking station 协同工作、 无法检测设备， 等等)，
+	  请把描述发给邮件列表； 不过， 这些问题也有可能和
+	  <acronym class="acronym">ACPI</acronym> 中尚未完成的部分有关，
+	  它们可能需要时间才能被实现。 请给点耐心，
+	  并准备测试我们可能会发给您的补丁。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-aslanddump"></a>12.16.4. <acronym class="acronym">ASL</acronym>、<code class="command">acpidump</code>， 以及
+        <acronym class="acronym">IASL</acronym></h3></div></div></div><a id="idp76465872" class="indexterm"></a><p>最常见的问题是 <acronym class="acronym">BIOS</acronym>
+	制造商提供的不正确 (甚至完全错误的!) 字节代码。
+	这通常会以类似下面这样的内核消息显示在控制台上：</p><pre class="screen">ACPI-1287: *** Error: Method execution failed [\\_SB_.PCI0.LPC0.FIGD._STA] \\
+(Node 0xc3f6d160), AE_NOT_FOUND</pre><p>许多时候， 您可以通过将
+	<acronym class="acronym">BIOS</acronym> 升级到最新版本来解决此类问题。
+	绝大多数控制台消息是无害的， 但如果您有其他问题例如电池工作不正常，
+	则从 <acronym class="acronym">AML</acronym> 开始查找问题将是一条捷径。
+	字节代码， 或常说的 <acronym class="acronym">AML</acronym>，
+	是从一种叫做 <acronym class="acronym">ASL</acronym> 的语言写成的源代码进行编译得到的结果。
+	<acronym class="acronym">AML</acronym> 一般存放在
+	<acronym class="acronym">DSDT</acronym> 表中。 要得到您系统的
+	<acronym class="acronym">ASL</acronym>， 需要使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpidump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">acpidump</span>(8)</span></a>。
+	需要同时指定 <code class="option">-t</code> (显示固定标的内容)
+	和 <code class="option">-d</code> (将 <acronym class="acronym">AML</acronym> 反编译成
+	<acronym class="acronym">ASL</acronym>) 两个选项。 请参见
+	<a class="link" href="ACPI-debug.html#ACPI-submitdebug" title="12.16.1. 提交调试信息">如何提交调试信息</a>
+	一节了解如何使用它。</p><p>最方便的初步检查是尝试重新编译
+	<acronym class="acronym">ASL</acronym> 来看看是否有错误。
+	通常可以忽略这一过程中产生的警告，
+	但错误一般就都是 bug， 它们通常就是导致
+	<acronym class="acronym">ACPI</acronym> 无法正常工作的原因。
+	要重新编译您的 <acronym class="acronym">ASL</acronym>，
+	可以使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>iasl your.asl</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-fixasl"></a>12.16.5. 修复 <acronym class="acronym">ASL</acronym></h3></div></div></div><a id="idp76477904" class="indexterm"></a><p>我们的长期目标是让每一个人都能够在不需要任何用户干预的情况下使用
+	<acronym class="acronym">ACPI</acronym>。 然而， 目前我们仍然在开发绕过
+	<acronym class="acronym">BIOS</acronym> 制造商常见错误的方法。
+	<span class="trademark">Microsoft</span>® 解释器 (<code class="filename">acpi.sys</code> 和
+	<code class="filename">acpiec.sys</code>) 并不会严格地检查是否遵守了标准，
+	因此许多只在 <span class="trademark">Windows</span>® 中测试 <acronym class="acronym">ACPI</acronym> 的
+	<acronym class="acronym">BIOS</acronym> 制造商很可能永远不会修正他们的
+	<acronym class="acronym">ASL</acronym>。 我们希望不断地找出并用文档说明
+	<span class="trademark">Microsoft</span>® 的解释器到底允许那些不标准的行为，
+	并在 FreeBSD 进行对应的修改使它能够正常工作而不需要用户修正
+	<acronym class="acronym">ASL</acronym>。 作为一项临时缓解问题的方法，
+	并帮助我们确认其行为， 您可以手工修正
+	<acronym class="acronym">ASL</acronym>。 如果这样能够解决问题，
+	请把新旧 <acronym class="acronym">ASL</acronym> 的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=diff&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">diff</span>(1)</span></a>
+	发给我们， 这样我们就有可能绕过 <acronym class="acronym">ACPI-CA</acronym>
+	中的错误行为， 从而不再需要您来手工修正。</p><a id="idp76486224" class="indexterm"></a><p>下面是一些常见的错误信息， 它们的原因，
+	以及如何修正。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76487760"></a>12.16.5.1. _OS dependencies (_OS 依赖)</h4></div></div></div><p>某些 <acronym class="acronym">AML</acronym> 假定世界是由不同版本的
+	  <span class="trademark">Windows</span>® 组成的。 您可以让 FreeBSD 声称自己是任意
+	  <acronym class="acronym">OS</acronym> 来看一看是否能够修正问题。
+	  比较简单的办法是设置
+	  <code class="option">hw.acpi.osname</code>="Windows 2001"
+	  到 <code class="filename">/boot/loader.conf</code> 中， 或使用您在
+	  <acronym class="acronym">ASL</acronym> 中找到的其他字符串。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76499792"></a>12.16.5.2. Missing Return statements (缺少返回语句)</h4></div></div></div><p>一些方法可能没按照标准要求的那样显式地返回值。
+	  尽管 <acronym class="acronym">ACPI-CA</acronym> 无法处理它，
+	  但 FreeBSD 提供了一个绕过它并允许其暗含地返回值的方法。
+	  您也可以增加一个显式的
+	  Return 语句， 如果您知道那里需要返回一个值的话。
+	  要强制 <code class="command">iasl</code> 编译
+	  <acronym class="acronym">ASL</acronym>， 需要使用 <code class="option">-f</code>
+	  标志。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76502480"></a>12.16.5.3. 替换默认的 <acronym class="acronym">AML</acronym></h4></div></div></div><p>在定制 <code class="filename">your.asl</code> 之后，
+	  您可以通过下面的命令编译它：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>iasl your.asl</code></strong></pre><p>可以使用 <code class="option">-f</code> 标志来强制创建
+	  <acronym class="acronym">AML</acronym>， 即使在编译过程中发生了错误。
+	  请注意某些错误 (例如， 缺少 Return 语句)
+	  会自动被解释器忽略掉。</p><p><code class="filename">DSDT.aml</code> 是
+	  <code class="command">iasl</code> 命令的默认输出文件名。
+	  可以加载它来取代您 <acronym class="acronym">BIOS</acronym>
+	  中存在问题的副本 (它仍然存在于闪存中)，
+	  其方法是按下面的说明编辑
+	  <code class="filename">/boot/loader.conf</code>：</p><pre class="programlisting">acpi_dsdt_load="YES"
+acpi_dsdt_name="/boot/DSDT.aml"</pre><p>一定要把您的 <code class="filename">DSDT.aml</code> 复制到
+	  <code class="filename">/boot</code> 目录中。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-debugoutput"></a>12.16.6. 从
+	<acronym class="acronym">ACPI</acronym> 中获取调试输出信息</h3></div></div></div><a id="idp76511184" class="indexterm"></a><a id="idp76512336" class="indexterm"></a><p><acronym class="acronym">ACPI</acronym> 驱动程序提供了非常灵活的调试机制。
+	这允许您指定一组子系统， 以及所需要的详细信息。
+	需要调试的子系统可以按 <span class="quote">“<span class="quote">layers(层)</span>”</span>
+	来指定， 并分为	<acronym class="acronym">ACPI-CA</acronym> 组件 (ACPI_ALL_COMPONENTS)
+	和 <acronym class="acronym">ACPI</acronym> 硬件支持 (ACPI_ALL_DRIVERS)。
+	调试输出的详细程度可以通过
+	<span class="quote">“<span class="quote">level(详细度)</span>”</span> 来指定， 其范围是
+	ACPI_LV_ERROR (只报告错误) 到 ACPI_LV_VERBOSE (显示所有)。
+	<span class="quote">“<span class="quote">level</span>”</span> 是一个位掩码因此可以一次设置多个选项，
+	中间用空格分开。 实际使用中您应该考虑使用串行控制台来记录输出，
+	如果它太长以至于冲掉了控制台消息缓冲的话。
+	不同的层和输出详细度的完整列表可以在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a> 联机手册中找到。</p><p>调试输出默认并不开启。 要起用它， 您需要在内核设置中添加
+	<code class="literal">options ACPI_DEBUG</code>， 如果您的内核中编入了
+	<acronym class="acronym">ACPI</acronym> 的话。 您还可以在
+	<code class="filename">/etc/make.conf</code> 中加入
+	<code class="literal">ACPI_DEBUG=1</code> 来在全局起用它。
+	如果它只是模块， 您可以用下面的方法来重新编译
+	<code class="filename">acpi.ko</code>：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /sys/modules/acpi/acpi
+&amp;&amp; make clean &amp;&amp;
+make ACPI_DEBUG=1</code></strong></pre><p>安装 <code class="filename">acpi.ko</code> 到
+	<code class="filename">/boot/kernel</code> and add your
+	并把所需的详细度和层在 <code class="filename">loader.conf</code> 中指定。
+	这个例子将启用所有
+	<acronym class="acronym">ACPI-CA</acronym> 组件以及所有
+	<acronym class="acronym">ACPI</acronym> 硬件驱动
+	(<acronym class="acronym">CPU</acronym>、 <acronym class="acronym">LID</acronym>， 等等) 的消息。
+	只输出错误信息， 也就是最低的详细度。</p><pre class="programlisting">debug.acpi.layer="ACPI_ALL_COMPONENTS ACPI_ALL_DRIVERS"
+debug.acpi.level="ACPI_LV_ERROR"</pre><p>如果您需要的信息是由某个特定的事件触发的
+	(比如说， 休眠之后的唤醒)， 您可以不修改
+	<code class="filename">loader.conf</code> 而转而使用
+	<code class="command">sysctl</code>
+	来在启动和为那个事件准备系统之后再指定层和详细度。
+	这些 <code class="command">sysctl</code> 的名字和
+	<code class="filename">loader.conf</code> 中的一致。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="ACPI-References"></a>12.16.7. 参考文献</h3></div></div></div><p>关于 <acronym class="acronym">ACPI</acronym> 的更多信息可以从下面这些地方找到：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>The <a class="link" href="http://lists.FreeBSD.org/mailman/listinfo/freebsd-acpi" target="_top">FreeBSD ACPI 邮件列表</a></p></li><li class="listitem"><p><acronym class="acronym">ACPI</acronym> 邮件列表存档
+	    <code class="uri"><a class="uri" href="http://lists.freebsd.org/pipermail/freebsd-acpi/" target="_top">http://lists.freebsd.org/pipermail/freebsd-acpi/</a></code></p></li><li class="listitem"><p>旧的 <acronym class="acronym">ACPI</acronym> 邮件列表存档
+            <code class="uri"><a class="uri" href="http://home.jp.FreeBSD.org/mail-list/acpi-jp/" target="_top">http://home.jp.FreeBSD.org/mail-list/acpi-jp/</a></code></p></li><li class="listitem"><p>The <acronym class="acronym">ACPI</acronym> 2.0 标准
+	    <code class="uri"><a class="uri" href="http://acpi.info/spec.htm" target="_top">http://acpi.info/spec.htm</a></code></p></li><li class="listitem"><p>FreeBSD 手册页: <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi</span>(4)</span></a>,
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpi_thermal&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">acpi_thermal</span>(4)</span></a>, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpidump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">acpidump</span>(8)</span></a>, <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=iasl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">iasl</span>(8)</span></a>,
+	    <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=acpidb&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">acpidb</span>(8)</span></a></p></li><li class="listitem"><p><a class="link" href="http://www.cpqlinux.com/acpi-howto.html#fix_broken_dsdt" target="_top">
+	    <acronym class="acronym">DSDT</acronym> 调试资源</a>.
+	    (使用 Compaq 作为例子但通常情况下都很有用。)</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="acpi-overview.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="boot.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.15. 电源和资源管理 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 13. The FreeBSD 引导过程</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>2.3. 安装前的准备工作</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="bsdinstall.html" title="Chapter 2. 安装 FreeBSD（适用于 9.x 及以后版本）" /><link rel="prev" href="bsdinstall-hardware.html" title="2.2. 硬件需求" /><link rel="next" href="bsdinstall-start.html" title="2.4. 开始安装" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">2.3. 安装前的准备工作</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bsdinstall-hardware.html">Prev</a> </td><th width="60%" align="center">Chapter 2. 安装 FreeBSD（适用于 9.<em class="replaceable"><code>x</code></em> 及以后版本）</th><td width="20%" align="right"> <a accesskey="n" href="bsdinstall-start.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="bsdinstall-pre"></a>2.3. 安装前的准备工作</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67245264"></a>2.3.1. 备份您的数据</h3></div></div></div><p>在将 FreeBSD 安装至目标机器前，
+	应首先备份其上的重要数据并对备份进行测试。
+	FreeBSD 安装程序对硬盘做任何改动前都会进行询问，
+	而一旦操作开始就无法撤销。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-where"></a>2.3.2. 决定将 FreeBSD 安装在何处</h3></div></div></div><p>如果整个硬盘上仅安装 FreeBSD 一个操作系统， 那么请直接跳过此节；
+	但如果需要让 FreeBSD 与其他操作系统并存，
+	那么首先应当了解 FreeBSD 的硬盘布局结构。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-where-i386"></a>2.3.2.1. FreeBSD/i386 与
+	  FreeBSD/amd64 的硬盘布局</h4></div></div></div><p>硬盘可以分割成多个区域，
+	  这些区域称作 <em class="firstterm">partition（分区）</em>。</p><p>有两种硬盘分区方式。
+	  传统的 <em class="firstterm">Master Boot Record</em>
+	  (<acronym class="acronym">MBR</acronym>， 主引导记录)
+	  的分区表中可以定义四个 <em class="firstterm">primary
+	    partitions (主分区)</em>。 (由于历史原因， FreeBSD
+	  中将主分区称作 <em class="firstterm">slice</em>。)
+	  为了突破四个分区的限制， 可以将其中一个主分区创建为
+	  <em class="firstterm">extended partition (扩展分区)</em>，
+	  并在其中建立
+	  <em class="firstterm">logical partitions (逻辑分区)</em>。
+	  正如您看到的那样， 这种方法十分笨拙。</p><p>新式的 <em class="firstterm">GUID Partition Table (GUID 分区表)</em>
+	  (<acronym class="acronym">GPT</acronym>)
+	  提供了更为简便的磁盘分区方法。
+	  与传统的 MBR 分区相比， <acronym class="acronym">GPT</acronym> 功能更为强大。 常见的
+	  <acronym class="acronym">GPT</acronym> 实现可以在一块磁盘上支持多达 128
+	  个分区， 从而无需再采用类似逻辑分区这样迭床架屋的结构。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">一些旧式的操作系统， 如 <span class="trademark">Windows</span>® XP
+	    并不兼容 <acronym class="acronym">GPT</acronym>
+	    分区格式。 如果需要让 FreeBSD 与这样的操作系统共用一块硬盘，
+	    就必须使用 <acronym class="acronym">MBR</acronym> 分区了。</p></div><p>FreeBSD 的标准引导加载器需要使用一个主分区或
+	  <acronym class="acronym">GPT</acronym> 分区。 (有关 FreeBSD 引导过程的详情，
+	  请参阅 <a class="xref" href="boot.html" title="Chapter 13. The FreeBSD 引导过程">Chapter 13, <em>The FreeBSD 引导过程</em></a>。) 如果所有的主分区或
+	  <acronym class="acronym">GPT</acronym> 分区都已在使用中，
+	  则必须为 FreeBSD 腾出一个来使用。</p><p>最小安装的 FreeBSD 只需
+	  1 GB 磁盘空间。 不过， 这是
+	  <span class="emphasis"><em>非常</em></span> 基本的安装，
+	  而且也不会留下多少可用的空间。 比较实用的情况下，
+	  如果不使用图形界面， 最小安装应分配至少 3 GB 的空间，
+	  而使用图形界面， 则应分配至少 5 GB 的空间。
+	  此外， 第三方应用程序可能还需要更多的空间。</p><p>有很多 <a class="link" href="http://en.wikipedia.org/wiki/List_of_disk_partitioning_software" target="_top">
+	    免费或商业的分区调整工具</a> 可供使用。 例如，
+	  以 Live CD 形式提供的 <a class="link" href="http://gparted.sourceforge.net/livecd.php" target="_top">GParted
+	  Live</a> 中的 GParted
+	  分区编辑器。 此外， GParted 也可以在许多其它
+	  Linux Live CD 发行版中找到。</p><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">磁盘分区程序有可能会破坏现有的数据。 在修改磁盘分区之前，
+	    应先做一次完整的备份并校验其完整性。</p></div><p>调整 <span class="trademark">Microsoft</span>® Vista 分区大小时可能会遇到一些问题。
+	  如果要这样做， 请提前准备好 Vista 安装光盘。</p><div class="example"><a id="idp67274448"></a><div class="example-title">Example 2.1. 使用现有的分区</div><div class="example-contents"><p>假设一台安装了 <span class="trademark">Windows</span>® 的计算机上有一块 40 GB 的硬盘，
+	    分成了两个 20 GB 的分区。 <span class="trademark">Windows</span>®
+	    将它们分别叫做 <code class="filename">C:</code> 和
+	    <code class="filename">D:</code>。 
+	    <code class="filename">C:</code> 分区包含了 10 GB
+	    数据， 而 <code class="filename">D:</code> 分区包含了
+	    5 GB 数据。</p><p>将数据从 <code class="filename">D:</code> 移动到
+	    <code class="filename">C:</code>， 就可将第二个分区腾出来供
+	    FreeBSD 使用了。</p></div></div><br class="example-break" /><div class="example"><a id="idp67283536"></a><div class="example-title">Example 2.2. 缩小现有的分区</div><div class="example-contents"><p>假设一台安装了 <span class="trademark">Windows</span>® 的计算机上有一块 40 GB 的硬盘，
+	    一个大的分区使用了整块磁盘的全部空间。 <span class="trademark">Windows</span>®
+	    将这个 40 GB 分区叫做
+	    <code class="filename">C:</code>。 目前占用了 15 GB 空间。
+	    现希望将 <span class="trademark">Windows</span>® 分区减少到
+	    20 GB， 并将余下的 20 GB
+	    分给 FreeBSD 使用。</p><p>可以在以下两种方法中任选一种：</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><p>备份 <span class="trademark">Windows</span>® 数据。 接着， 重新安装
+		<span class="trademark">Windows</span>®， 在安装过程中建立一个 20 GB 的分区。</p></li><li class="listitem"><p>使用类似 <span class="application">GParted</span> 这样的分区调整工具来缩小
+		<span class="trademark">Windows</span>® 分区， 并腾出空间给 FreeBSD 使用。</p></li></ol></div></div></div><br class="example-break" /><p>包含不同操作系统的磁盘分区令您能够在任何时候使用其中的一种。
+	  如果希望同时运行多种不同的操作系统， 可以使用在
+	  <a class="xref" href="virtualization.html" title="Chapter 21. 虚拟化">Chapter 21, <em>虚拟化</em></a> 中介绍的方法。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-collect-network-information"></a>2.3.3. 收集网络配置信息</h3></div></div></div><p>某些 FreeBSD 安装方式需要通过网络连接下载相关文件。
+	若要连接至以太网 (或电视电缆/DSL 调制解调器上的以太网接口)，
+	则需要向安装程序提供必要的网络配置信息。</p><p><em class="firstterm"><acronym class="acronym">DHCP</acronym></em>
+	可以用来提供自动配置网络的信息。 假如没有可用的
+	<acronym class="acronym">DHCP</acronym>， 则必须从局域网管理员，
+	或网络服务提供商那里获得必要的配置信息：</p><div class="orderedlist"><div class="orderedlist-title">网络配置信息</div><ol class="orderedlist" type="1"><li class="listitem"><p><acronym class="acronym">IP</acronym>
+	    地址</p></li><li class="listitem"><p>子网掩码</p></li><li class="listitem"><p>默认网关的 <acronym class="acronym">IP</acronym> 地址</p></li><li class="listitem"><p>本地网络域名</p></li><li class="listitem"><p><acronym class="acronym">DNS</acronym>
+	    服务器的 <acronym class="acronym">IP</acronym> 地址</p></li></ol></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp67300816"></a>2.3.4. 检查 FreeBSD 发行勘误</h3></div></div></div><p>尽管 FreeBSD 项目会确保每个发行版尽可能地稳定，
+	但 bug 总是在所难免。 极少数情况下， 这些 bug 甚至会影响安装。
+	一旦这些问题被发现并修正后， 就会列在 FreeBSD 网站的 <a class="link" href="../../../../releases/9.0R/errata.html" target="_top">FreeBSD 发行勘误</a> 中。
+	在安装之前， 应首先检查这些勘误， 以确保安装可以顺利进行。</p><p>有关所有发行版的信息及勘误， 可以在
+	<a class="link" href="../../../../index.html" target="_top">FreeBSD 网站</a> 的
+	<a class="link" href="../../../../releases/index.html" target="_top">发行版信息</a>
+	一节中找到。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="bsdinstall-installation-media"></a>2.3.5. 准备安装介质</h3></div></div></div><p>FreeBSD 的安装介质包括 CD、 DVD 及 USB 记忆棒。
+	若要开始安装， 只需使用安装介质引导计算机即可；
+	注意不能通过在其他操作系统中执行安装程序这种方式进行安装。</p><p>标准的安装介质中包含了 FreeBSD 安装所需的全部文件，
+	除此之外， 还有一种 <span class="emphasis"><em>bootonly</em></span> 安装介质。
+	这种介质并不在其中直接包含安装所需的全部文件，
+	而是在需要时通过网络进行下载。 因此， 与标准的安装介质相比，
+	bootonly安装介质体积更小。</p><p>FreeBSD 安装介质的副本可以从
+	<a class="link" href="../../../../where.html#download" target="_top">FreeBSD 网站</a> 获取。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您已经有 FreeBSD 的安装 CD、 DVD 或 USB 记忆棒，
+	则可以跳过此节。</p></div><p>FreeBSD 的安装 CD 或 DVD 映像均为可引导的 ISO 文件。 只需要
+	CD 或 DVD 其中的一种即可完成安装操作。
+	任选一种在当前操作系统中刻录成可引导光盘即可。</p><p>若要创建可引导的记忆棒， 请执行以下操作：</p><div class="procedure"><ol class="procedure" type="1"><li class="step"><p class="title"><strong>获取记忆棒映像</strong></p><p>FreeBSD 9.0-RELEASE 和更高版本的记忆棒映像文件可以在
+	    <code class="literal">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/arch/arch/ISO-IMAGES/version/FreeBSD-version-RELEASE-arch-memstick.img</code>
+	    中的
+	    <code class="filename">ISO-IMAGES/</code>
+	    目录中找到， 其中， <em class="replaceable"><code>arch</code></em>
+	    是指要安装的架构， 而
+	    <em class="replaceable"><code>version</code></em>
+	    则是指要安装的版本号。 举例来说， FreeBSD/i386 9.0-RELEASE
+	    的记忆棒映像位于 <code class="uri"><a class="uri" href="ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/i386/ISO-IMAGES/9.0/FreeBSD-9.0-RELEASE-i386-memstick.img" target="_top">ftp://ftp.FreeBSD.org/pub/FreeBSD/releases/i386/i386/ISO-IMAGES/9.0/FreeBSD-9.0-RELEASE-i386-memstick.img</a></code>
+	    找到。</p><div xmlns="" class="tip"><h3 class="admontitle">Tip: </h3><p xmlns="http://www.w3.org/1999/xhtml">在 FreeBSD 8.<em class="replaceable"><code>X</code></em> 以及更早的版本中，
+	      映像文件的下载位置略有不同。 关于 FreeBSD 8.<em class="replaceable"><code>X</code></em>
+	      和更早版本的安装操作请参阅 <a class="xref" href="install.html" title="Chapter 3. 安装 FreeBSD">Chapter 3, <em>安装 FreeBSD</em></a>。</p></div><p>记忆棒映像的扩展名为 <code class="filename">.img</code>。
+	    在 <code class="filename">ISO-IMAGES/</code>
+	    目录中提供了多个不同的映像， 可以根据需要的 FreeBSD 版本，
+	    有时也包括安装对象的硬件状况进行选择。</p><div xmlns="" class="important"><h3 class="admontitle">Important: </h3><p xmlns="http://www.w3.org/1999/xhtml">执行以下步骤前， 应 <span class="emphasis"><em>备份</em></span> USB
+	    记忆棒上的数据， 因为之后的操作将 <span class="emphasis"><em>擦除</em></span>
+	    这些数据。</p></div></li><li class="step"><p class="title"><strong>将映像文件写入记忆棒</strong></p><div class="procedure"><a id="idp67325648"></a><div class="procedure-title">Procedure 2.1. 在 FreeBSD 中操作</div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">在下面的例子中， 目标记忆棒对应的设备节点是 <code class="filename">/dev/da0</code>。
+		操作前请仔细确认目标设备是否正确，
+		以免损坏现有的数据。</p></div><ul class="procedure"><li class="step"><p class="title"><strong>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dd</span>(1)</span></a> 写入映像</strong></p><p>扩展名为 <code class="filename">.img</code> 的映像文件
+		<span class="emphasis"><em>不是</em></span> 一种普通的文件。
+		它是对记忆棒上完整内容所做的 <span class="emphasis"><em>映像</em></span>，
+		因此 <span class="emphasis"><em>不能</em></span> 只是像普通文件一样简单的复制，
+		而应使用
+		<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dd&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">dd</span>(1)</span></a> 将其直接写入目标设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=FreeBSD-9.0-RELEASE-i386-memstick.img of=/dev/da0 bs=64k</code></strong></pre></li></ul></div><div class="procedure"><a id="idp67332816"></a><div class="procedure-title">Procedure 2.2. 在 <span class="trademark">Windows</span>® 中操作</div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">操作前请确认是否为目标设备选择了正确的驱动器号，
+		否则可能会覆盖并损坏您的现有数据。</p></div><ol class="procedure" type="1"><li class="step"><p class="title"><strong>获取 <span class="application">Image Writer for
+		  <span class="trademark">Windows</span>®</span></strong></p><p><span class="application">Image Writer for
+		  <span class="trademark">Windows</span>®</span> 是一种能将映像正确写入到记忆棒中的免费应用程序。
+		从 <code class="uri"><a class="uri" href="https://launchpad.net/win32-image-writer/" target="_top">https://launchpad.net/win32-image-writer/</a></code>
+		下载并将其提取至任意文件夹后即可开始使用。</p></li><li class="step"><p class="title"><strong>使用 Image Writer 写入映像</strong></p><p>双击图标 <span class="application">Win32DiskImager</span>
+		运行程序后， 确定 <code class="computeroutput">Device</code>
+		下面显示的驱动器号所对应的是记忆棒。
+		点击文件夹图标以选择需要写入的映像文件，
+		然后点击 <span class="guibutton">[ Save ]</span> 接受选择。
+		在确认所有操作无误且没有其他窗口访问记忆棒后，
+		点击 <span class="guibutton">[ Write ]</span> 将映像文件写入记忆棒。</p></li></ol></div></li></ol></div><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">系统不再支持从软盘进行安装了。</p></div><p>您现在可以开始安装 FreeBSD 了。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bsdinstall-hardware.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="bsdinstall.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="bsdinstall-start.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">2.2. 硬件需求 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 2.4. 开始安装</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.4. 改变您的邮件传输代理程序</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="sendmail.html" title="27.3. sendmail 配置" /><link rel="next" href="mail-trouble.html" title="27.5. 疑难解答" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.4. 改变您的邮件传输代理程序</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="sendmail.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="mail-trouble.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mail-changingmta"></a>27.4. 改变您的邮件传输代理程序</h2></div><div><span class="authorgroup">Written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Andrew</span> <span class="surname">Boothman</span></span>. </span></div><div><span class="authorgroup">Information taken from e-mails written by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Gregory</span> <span class="surname">Neil Shapiro</span></span>. </span></div></div></div><a id="idp85520336" class="indexterm"></a><p>先前已经提到，FreeBSD 中的
+      <span class="application">sendmail</span> 已经安装了您的
+      MTA (邮件传输代理程序)。因此它负责着您的收发邮件的工作。</p><p>然而，基于不同的理由，一些系统管理员想要改变他们系统的
+      MTA。这些理由从简单的想要尝试另一个 MTA，到需要一个特殊的特性或者
+      package 依赖某个邮寄程序等等。幸运的是，不管是什么理由，FreeBSD
+      都能容易的改变它。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85522768"></a>27.4.1. 安装一个新的 MTA</h3></div></div></div><p>对于可用的 MTA 您有很多的选择。一个好的出发点是
+	<a class="link" href="ports.html" title="Chapter 5. 安装应用程序: Packages 和 Ports">FreeBSD Ports Collection</a>，在那里您能找到很多。
+	当然您可以从任何位置不受任何限制的使用 MTA，只要您能让它运行在
+	FreeBSD 下。</p><p>开始安装您的新 MTA。一旦它被安装，
+	它可以让您有机会判定它是否能满足您的需要， 并且在它接管
+	<span class="application">sendmail</span> 之前让您有机会配置您的新软件。
+	当完成这些之后，您应该确信安装的新软件不会尝试更改系统的二进制文件例如
+	<code class="filename">/usr/bin/sendmail</code>。 除此以外，
+	您的新邮件软件启用之前要已经配置好它。</p><p>具体配置请参考您所选择的 MTA 软件的配置文档或其它相关资料。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mail-disable-sendmail"></a>27.4.2. 禁用 <span class="application">sendmail</span></h3></div></div></div><div xmlns="" class="warning"><h3 class="admontitle">Warning: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果您打算禁用 <span class="application">sendmail</span>
+	    的邮件发出服务， 保持系统中有一个替代它的、
+	    可用的邮件递送系统就非常重要。 如果您不这样做的话，
+	    类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=periodic&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">periodic</span>(8)</span></a> 这样的系统功能就无法如预期的那样，
+	    通过邮件来传送其执行结果。 您系统中的许多部分可能都假定有可用的
+	    <span class="application">sendmail</span>-兼容 系统。 如果这些应用程序继续使用
+	    <span class="application">sendmail</span> 的执行文件来发送邮件，
+	    而您又禁用了它， 则邮件将进入 <span class="application">sendmail</span>
+	    的非活跃 (inactive) 队列， 而永远不会被送达。</p></div><p>要彻底禁用包括邮件送出服务在内的所有
+	  <span class="application">sendmail</span> 功能，
+	  必须将</p><pre class="programlisting">sendmail_enable="NO"
+sendmail_submit_enable="NO"
+sendmail_outbound_enable="NO"
+sendmail_msp_queue_enable="NO"</pre><p>写入 <code class="filename">/etc/rc.conf</code>。</p><p>如果只是想要停止
+	  <span class="application">sendmail</span> 的接收邮件服务，
+	  您应该在 <code class="filename">/etc/rc.conf</code> 文件中设置</p><pre class="programlisting">sendmail_enable="NO"</pre><p>更多的有关
+	  <span class="application">sendmail</span> 可用的启动选项，参看
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rc.sendmail&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rc.sendmail</span>(8)</span></a> 联机手册.</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85535440"></a>27.4.3. 机器引导时运行您的新 MTA</h3></div></div></div><p>可以向 <code class="filename">/etc/rc.conf</code>
+        中加入配置项使新的 MTA 在系统启动时运行，
+        下面是一个 postfix 的例子：</p><pre class="screen"><code class="prompt">#</code> echo '<em class="replaceable"><code>postfix</code></em>_enable=<span class="quote">“<span class="quote">YES</span>”</span>' &gt;&gt; /etc/rc.conf</pre><p>这样 MTA 就能在系统启动是自动运行了。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85547088"></a>27.4.4. 替换系统默认的邮寄程序 <span class="application">sendmail</span></h3></div></div></div><p>因为 <span class="application">sendmail</span> 程序是一个在
+	<span class="trademark">UNIX</span>® 系统下普遍存在的一个标准的软件，一些软件就假定它已经被安装并且配置好。
+	基于这个原因，许多其它的 MTA 提供者都提供了兼容
+	<span class="application">sendmail</span> 的命令行界面来执行。
+	这使它们像<span class="quote">“<span class="quote">混入</span>”</span><span class="application">sendmail</span>
+	一样变的很容易掌握。</p><p>因此，如果您使用其它的邮寄程序，
+	您必须确定这个软件是去尝试运行标准的
+	<span class="application">sendmail</span> 二进制，就象
+	<code class="filename">/usr/bin/sendmail</code>，还是运行您自己选择的替换邮寄程序。
+	幸运的是，FreeBSD 提供了一个系统调用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mailwrapper&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mailwrapper</span>(8)</span></a>，它能为您做这件工作。</p><p>当 <span class="application">sendmail</span> 安装后被运行，您可以在
+	<code class="filename">/etc/mail/mailer.conf</code> 中找到如下行：</p><pre class="programlisting">sendmail	 /usr/libexec/sendmail/sendmail
+send-mail	/usr/libexec/sendmail/sendmail
+mailq		/usr/libexec/sendmail/sendmail
+newaliases	/usr/libexec/sendmail/sendmail
+hoststat	/usr/libexec/sendmail/sendmail
+purgestat	/usr/libexec/sendmail/sendmail</pre><p>这个的意思就是当这些公共命令
+	(例如 <code class="filename">sendmail</code> 它本身) 运行时，
+	系统实际上调用了一个 <code class="filename">sendmail</code> 指定的
+	mailwrapper 的副本，它检查 <code class="filename">mailer.conf</code>
+	并且运行 <code class="filename">/usr/libexec/sendmail/sendmail</code>
+	做为替代。当默认的 <code class="filename">sendmail</code> 功能被调用，
+	系统将很容易的改变实际上运行的二进制文件。</p><p>因此如果您想要
+	<code class="filename">/usr/local/supermailer/bin/sendmail-compat</code>
+	替换 <span class="application">sendmail</span> 被运行，您应该改变
+	<code class="filename">/etc/mail/mailer.conf</code> 文件为：</p><pre class="programlisting">sendmail	 /usr/local/supermailer/bin/sendmail-compat
+send-mail	/usr/local/supermailer/bin/sendmail-compat
+mailq		/usr/local/supermailer/bin/mailq-compat
+newaliases	/usr/local/supermailer/bin/newaliases-compat
+hoststat	/usr/local/supermailer/bin/hoststat-compat
+purgestat	/usr/local/supermailer/bin/purgestat-compat</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp85558352"></a>27.4.5. 最后</h3></div></div></div><p>一旦做完您想要配置的每件事，您应该杀掉
+	  <span class="application">sendmail</span> 进程并且启动属于您的新软件的进程，
+	  或者简单的重启。 重启也将给您提供了确认您的系统已经进行了正确的配置的机会。
+	  在引导的时候自动的运行您新的 MTA。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="sendmail.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mail-trouble.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.3. <span class="application">sendmail</span> 配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.5. 疑难解答</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

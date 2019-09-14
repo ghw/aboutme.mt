@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.5. 启动服务</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-appconfig.html" title="12.4. 应用程序配置" /><link rel="next" href="configtuning-cron.html" title="12.6. 配置 cron" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.5. 启动服务</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-appconfig.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-cron.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-starting-services"></a>12.5. 启动服务</h2></div><div><span class="authorgroup">Contributed by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Tom</span> <span class="surname">Rhodes</span></span>. </span></div></div></div><a id="idp75571920" class="indexterm"></a><p>许多用户会选择使用 Ports Collection 来在 FreeBSD 上安装第三方软件。
+      很多情况下这可能需要进行一些配置以便让这些软件能够在系统初始化的过程中启动。 服务，
+      例如 <span class="package">mail/postfix</span> 或
+      <span class="package">www/apache13</span>
+      就是这些需要在系统初始化时启动的软件包中的两个典型代表。
+      这一节解释了启动第三方软件所需要的步骤。</p><p>FreeBSD 包含的大多数服务，例如 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a>，
+      就是通过系统启动脚本启动的。 这些脚本也许会有些不同，
+      这取决于 FreeBSD 版本。 但是不管怎样，
+      需要考虑的一个重要方面是他们的启动配置文件要能被基本启动脚本识别捕获。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75574736"></a>12.5.1. 扩展应用程序配置</h3></div></div></div><p>现在 FreeBSD 提供了 <code class="filename">rc.d</code>，
+	这使得对应用软件的启动进行配置变得更加方便，
+	并提供了更多的其他功能。 例如， 使用在
+	<a class="link" href="configtuning-rcd.html" title="12.7. 在 FreeBSD 中使用 rc">rc.d</a> 一节中所介绍的关键字，
+	应用程序就可以设置在某些其他服务，
+	例如 <acronym class="acronym">DNS</acronym> 之后启动； 除此之外，
+	还可以通过 <code class="filename">rc.conf</code> 来指定一些额外的启动参数，
+	而不再需要将它们硬编码到启动脚本中。 基本的启动脚本如下所示：</p><pre class="programlisting">#!/bin/sh
+#
+# PROVIDE: utility
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name=utility
+rcvar=utility_enable
+
+command="/usr/local/sbin/utility"
+
+load_rc_config $name
+
+#
+# DO NOT CHANGE THESE DEFAULT VALUES HERE
+# SET THEM IN THE /etc/rc.conf FILE
+#
+utility_enable=${utility_enable-"NO"}
+pidfile=${utility_pidfile-"/var/run/utility.pid"}
+
+run_rc_command "$1"</pre><p>这个脚本将保证
+	<span class="application">utility</span> 能够在
+	<code class="literal">DAEMON</code> 服务之后启动。 它同时也提供了设置和跟踪
+	<acronym class="acronym">PID</acronym>， 也就是进程
+	<acronym class="acronym">ID</acronym> 文件的方法。</p><p>可以在 <code class="filename">/etc/rc.conf</code> 中加入：</p><pre class="programlisting">utility_enable="YES"</pre><p>这个方法也使得命令行参数、包含 <code class="filename">/etc/rc.subr</code>
+	中所提供的功能， 兼容 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=rcorder&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">rcorder</span>(8)</span></a> 工具并提供更简单的通过
+	<code class="filename">rc.conf</code> 文件来配置的方法。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp75587280"></a>12.5.2. 用服务来启动服务</h3></div></div></div><p>其他服务， 例如 <acronym class="acronym">POP</acronym>3
+	服务器， <acronym class="acronym">IMAP</acronym>， 等等，
+	也可以通过 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=inetd&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">inetd</span>(8)</span></a> 来启动。 这一过程包括从
+	Ports Collection 安装相应的应用程序，
+	并把配置加入到 <code class="filename">/etc/inetd.conf</code> 文件，
+	或去掉当前配置中的某些注释。
+	如何使用和配置 <span class="application">inetd</span> 在
+	<a class="link" href="network-inetd.html" title="28.2.  inetd “超级服务器”">inetd</a> 一节中进行了更为深入的阐述。</p><p>一些情况下， 通过
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a> 来启动系统服务也是一种可行的选择。
+	这种方法有很多好处， 因为 <code class="command">cron</code> 会以
+	<code class="filename">crontab</code> 的文件属主身份执行那些进程。
+	这使得普通用户也能够执行他们的应用。</p><p><code class="command">cron</code> 工具提供了一个独有的功能， 以
+	<code class="literal">@reboot</code> 来指定时间。
+	这样的设置将在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=cron&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">cron</span>(8)</span></a> 启动时运行，
+	通常这也是系统初始化的时候。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-appconfig.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-cron.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.4. 应用程序配置 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.6. 配置 <code class="command">cron</code></td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

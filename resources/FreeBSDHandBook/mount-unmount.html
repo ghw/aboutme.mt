@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>4.6. 文件系统的挂接和卸下</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="basics.html" title="Chapter 4. UNIX 基础" /><link rel="prev" href="disk-organization.html" title="4.5. 磁盘组织" /><link rel="next" href="basics-processes.html" title="4.7. 进程" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.6. 文件系统的挂接和卸下</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="disk-organization.html">Prev</a> </td><th width="60%" align="center">Chapter 4. UNIX 基础</th><td width="20%" align="right"> <a accesskey="n" href="basics-processes.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mount-unmount"></a>4.6. 文件系统的挂接和卸下</h2></div></div></div><p>
+      这种文件系统就像一棵树那样用<code class="filename">/</code>确立根部，
+      是比较理想的文件系统。
+      而<code class="filename">/dev</code>、 <code class="filename">/usr</code>
+      和其他目录就是根目录的分枝，
+      另外这些目录可以再分枝，例如<code class="filename">/usr/local</code>。
+      </p><a id="idp70169168" class="indexterm"></a><p>应该考虑给某些目录一些空间从而分散文件系统。
+      <code class="filename">/var</code>
+      之下包含目录 <code class="filename">log/</code>，目录<code class="filename">spool/</code>，
+      和不同类型的临时文件，很可能把它塞满。
+      把什么都塞进根文件系统不是一个好主意，
+      好的做法是应该把 <code class="filename">/var</code> 从
+      <code class="filename">/</code>分离出去。</p><p>另一个要考虑的是，给物理设备或虚拟磁盘这些自带空间的文件系统确定目录结构树。
+    例如 <a class="link" href="network-nfs.html" title="28.3. 网络文件系统（NFS）">网络文件系统</a> 或光驱的挂接。
+      </p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-fstab"></a>4.6.1. <code class="filename">fstab</code> 文件</h3></div></div></div><a id="idp70174032" class="indexterm"></a><p>在 <a class="link" href="boot.html" title="Chapter 13. The FreeBSD 引导过程">引导过程</a> 期间，
+	自动挂上<code class="filename">/etc/fstab</code>所列出的文件系统。
+	(除非他们注明为<code class="option">noauto</code> 选项)。
+	</p><p> <code class="filename">/etc/fstab</code> 文件包含的各行的列表格式如下:
+	</p><pre class="programlisting"><em class="replaceable"><code>device</code></em>       <em class="replaceable"><code>/mount-point</code></em> <em class="replaceable"><code>fstype</code></em>     <em class="replaceable"><code>options</code></em>      <em class="replaceable"><code>dumpfreq</code></em>     <em class="replaceable"><code>passno</code></em></pre><div class="variablelist"><dl class="variablelist"><dt><span class="term"><code class="literal">device</code></span></dt><dd><p>设备名称(设备必须存在)， 说明在
+	      <a class="xref" href="disks-naming.html" title="18.2. 设备命名">Section 18.2, “设备命名”</a>.</p></dd><dt><span class="term"><code class="literal">mount-point</code></span></dt><dd><p>目录 (目录必须存在)，
+	      用在那个挂接上的文件系统上。</p></dd><dt><span class="term"><code class="literal">fstype</code></span></dt><dd><p>文件系统类型，请通过<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a>查阅。
+		 默认的FreeBSD文件系统类型是<code class="literal">ufs</code>。
+	      </p></dd><dt><span class="term"><code class="literal">options</code></span></dt><dd><p>
+          设为可读写文件系统的<code class="option">rw</code>选项，
+          或设为只读文件系统的<code class="option">ro</code>选项，
+          或其他一些选项，可随意选一个。
+	      一个常用的选项 <code class="option">noauto</code> 用在不需在引导过程期间挂接的文件系统。
+	      其他的选项在 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 手册里列出。</p></dd><dt><span class="term"><code class="literal">dumpfreq</code></span></dt><dd><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dump&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dump</span>(8)</span></a>
+	     使用这项去决定那个文件系统必须移贮。
+	     假如缺少这项，默认的数值为0。</p></dd><dt><span class="term"><code class="literal">passno</code></span></dt><dd><p>这一项决定文件系统的检查顺序，
+           文件系统想跳过检查应将<code class="literal">passno</code>设为0。
+           根文件系统(那个是在每方面开始之前必须检查的)
+           应该将它的 <code class="literal">passno</code> 设为1，
+           其他文件系统的 <code class="literal">passno</code>
+           必须把数值设到大于1。假如多个文件系统的<code class="literal">passno</code>的值相同，
+           那么 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fsck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fsck</span>(8)</span></a> 在允许的情况下将尝试并行地去检查文件系统。
+           </p></dd></dl></div><p>请参阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fstab&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">fstab</span>(5)</span></a> 联机手册，
+	以获得关于 <code class="filename">/etc/fstab</code> 文件格式，
+	以及其中所包含的选项的进一步信息。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-mount"></a>4.6.2.  <code class="command">mount</code> 命令</h3></div></div></div><a id="idp70203728" class="indexterm"></a><p>这个 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 命令是挂接文件系统的基本运用。
+	</p><p>使用最多的基本格式:</p><div class="informalexample"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mount device mountpoint</code></strong></pre></div><p>它的选项非常多，而<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 手册同样提及， 但常用的都在这里:</p><div class="variablelist"><div class="variablelist-title">挂接的各种选项</div><dl class="variablelist"><dt><span class="term"><code class="option">-a</code></span></dt><dd><p>挂接<code class="filename">/etc/fstab</code>里所有列出的文件系统。
+	      除非标记为 <span class="quote">“<span class="quote">noauto</span>”</span> 或作了排除在外的
+	      <code class="option">-t</code> 类型标记，或者在这之前已挂上。
+	      </p></dd><dt><span class="term"><code class="option">-d</code></span></dt><dd><p>除了实际上系统调用以外，可以完成任何事情，这个选项是和
+	    <code class="option">-v</code>参数一起连在一块使用，可以决定<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a>所做的事情。
+     </p></dd><dt><span class="term"><code class="option">-f</code></span></dt><dd><p>强制去挂接一个未知的文件系统(会有危险)，
+	    或当把一个文件系统挂接状态由可读写降为只读时，强制撤消可写通道。
+	      </p></dd><dt><span class="term"><code class="option">-r</code></span></dt><dd><p>以只读方式挂接文件系统。
+	      这和在指定了 <code class="option">-o</code> 选项配合
+	      <code class="option">ro</code> 参数的效果是一样的。</p></dd><dt><span class="term"><code class="option">-t</code>
+	    <em class="replaceable"><code>fstype</code></em></span></dt><dd><p>根据给出的文件系统类型挂接文件系统，
+	       假如给于<code class="option">-a</code>选项，仅挂接这个类型的文件系统。
+	      </p><p><span class="quote">“<span class="quote">ufs</span>”</span> 是默认的文件系统类型。
+	      </p></dd><dt><span class="term"><code class="option">-u</code></span></dt><dd><p>在文件系统上修改挂接选项。</p></dd><dt><span class="term"><code class="option">-v</code></span></dt><dd><p>版本模式。</p></dd><dt><span class="term"><code class="option">-w</code></span></dt><dd><p>以可读写方式挂接文件系统。</p></dd></dl></div><p>The <code class="option">-o</code> 选项采用一个逗号分开以下多个选项:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">noexec</span></dt><dd><p>不允许文件系统上的二进制程序执行。这也是一个有用的安全选项。
+	      </p></dd><dt><span class="term">nosuid</span></dt><dd><p>不允许文件系统上的 setuid 或 setgid 标记生效。这也是一个有用的安全选项。
+	      </p></dd></dl></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-umount"></a>4.6.3.  <code class="command">umount</code> 命令</h3></div></div></div><a id="idp70241616" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=umount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">umount</span>(8)</span></a> 命令同样采用一个参数、一个挂接点、一个设备名。
+      或采用<code class="option">-a</code>选项，又或采用<code class="option">-A</code>选项。
+	</p><p>所有格式都可采用 <code class="option">-f</code> 去强行卸下，
+        或采用<code class="option">-v</code> 用那适当的版本。 但警告，采用
+        <code class="option">-f</code>并不是一个好主意，
+        强行卸下文件系统可能损坏计算机或破坏文件系统上的数据。
+        </p><p><code class="option">-a</code> 和 <code class="option">-A</code> 会卸下所有已挂接的文件系，
+	可能通过<code class="option">-t</code>后面列出的文件系统进行修改，
+	但无论如何，<code class="option">-A</code>都不会尝试去卸下根文件系统。
+	</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="disk-organization.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="basics.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="basics-processes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.5. 磁盘组织 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 4.7. 进程</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

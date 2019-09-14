@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>27.6. 高级主题</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mail.html" title="Chapter 27. 电子邮件" /><link rel="prev" href="mail-trouble.html" title="27.5. 疑难解答" /><link rel="next" href="SMTP-UUCP.html" title="27.7. SMTP 与 UUCP" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.6. 高级主题</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mail-trouble.html">Prev</a> </td><th width="60%" align="center">Chapter 27. 电子邮件</th><td width="20%" align="right"> <a accesskey="n" href="SMTP-UUCP.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mail-advanced"></a>27.6. 高级主题</h2></div></div></div><p>下面这节将介绍邮件配置和为整个域安装邮件。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mail-config"></a>27.6.1. 基本配置</h3></div></div></div><a id="idp85653072" class="indexterm"></a><p>在邮箱外，只要您设置 <code class="filename">/etc/resolv.conf</code>
+	    或者运行您自己的名字服务器，您就可以发送邮件到外部的主机。
+	    如果您想要您的邮件发送给某个特定的 MTA(例如，
+	    <span class="application">sendmail</span>) 在您的 FreeBSD
+	    主机上，有两个方法：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>运行您自己的域名服务器和您自己的域。例如，
+		  <code class="systemitem">FreeBSD.org</code></p></li><li class="listitem"><p>获得直接分发给您主机的邮件。您可以直接使用您当前的
+		DNS 名称。例如，<code class="systemitem">example.FreeBSD.org</code>。</p></li></ul></div><a id="idp85658192" class="indexterm"></a><p>不管您选择上面那种方法，为了直接在您的主机上发送邮件，
+	    必须有一个静态的 IP 地址(不是象 PPP 拨号一样的动态地址)。
+	    如果您在防火墙后面，它必须让 SMTP 协议通过。
+	    如果您想要在您的主机上直接的收取邮件，
+	    您必须确定两件事：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a id="idp85659600" class="indexterm"></a><p>确定在您 DNS 中的 MX 记录(最小编号的)指向您的 IP 地址。</p></li><li class="listitem"><p>确定在您 DNS 中的 MX 记录没有禁止您的主机。</p></li></ul></div><p>上面的每条记录都允许您在您的主机直接接收邮件。</p><p>试试这个：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>hostname</code></strong>
+example.FreeBSD.org
+<code class="prompt">#</code> <strong class="userinput"><code>host example.FreeBSD.org</code></strong>
+example.FreeBSD.org has address 204.216.27.XX</pre><p>如果您看到这些， 则直接发往
+        <code class="email">&lt;yourlogin@example.FreeBSD.org&gt;</code>
+        应该已经可以正常工作了 (假设 <span class="application">sendmail</span>
+        已经在 <code class="systemitem">example.FreeBSD.org</code> 上正确启动了)。</p><p>如果您看到这些：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>host example.FreeBSD.org</code></strong>
+example.FreeBSD.org has address 204.216.27.XX
+example.FreeBSD.org mail is handled (pri=10) by hub.FreeBSD.org</pre><p>所有发送到主机 (<code class="systemitem">example.FreeBSD.org</code>) 的邮件在相同的用户名下将会被
+	<code class="systemitem">hub</code> 终止的收集，而不是直接发送到您的主机。</p><p>上面的信息是通过您的 DNS 服务器来处理的。支持邮件路由信息的 DNS
+	记录是 <span class="emphasis"><em>邮件</em></span> <span class="emphasis"><em>交换</em></span> 记录。如果
+	MX 记录不存在，邮件将通过它自己的 IP 地址被直接的发送到主机。</p><p><code class="systemitem">freefall.FreeBSD.org</code>的MX记录如下所示:</p><pre class="programlisting">freefall		MX	30	mail.crl.net
+freefall		MX	40	agora.rdrop.com
+freefall		MX	10	freefall.FreeBSD.org
+freefall		MX	20	who.cdrom.com</pre><p>正如您说看到的，<code class="systemitem">freefall</code> 有很多 MX 记录。
+	最小编号的 MX 记录是直接接收邮件的主机。如果因为一些原因它不可用，其它
+	(有时会访问<span class="quote">“<span class="quote">backup MXes</span>”</span>)接收信息将会暂时接替并做临时的排列。</p><p>为了有效的使用交换式 MX 站点，应当从您的机器上分离一些
+	Internet 连接。您的 ISP 或者其它友好的站点可以没有任何问题的为您提供这个服务。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="mail-domain"></a>27.6.2. Mail for Your Domain</h3></div></div></div><p>为了设置一个<span class="quote">“<span class="quote">邮件主机</span>”</span>(又称邮件服务器)
+	您必须要把许多邮件发送到与它相连的几个工作站中。
+	基本上，您想要<span class="quote">“<span class="quote">要求</span>”</span>在您域的每个主机的所有邮件
+	(在这个例子里是 <code class="systemitem">*.FreeBSD.org</code>)
+	转向到您的邮件服务器，从而使您的用户可以在主邮件服务器里接收他们的邮件。</p><a id="idp85720528" class="indexterm"></a><p>要使工作最简单，带有同样
+	<span class="emphasis"><em>用户名</em></span> 的帐户应该同时存在于两台机器上。使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=adduser&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">adduser</span>(8)</span></a> 来这样做。</p><p>您将使用的邮件主机必须为每个工作站指定一个邮件交换。您可以在
+	DNS 中这样配置：</p><pre class="programlisting">example.FreeBSD.org	A	204.216.27.XX		; Workstation
+			MX	10 hub.FreeBSD.org	; Mailhost</pre><p>无论 A 记录指向哪，这将为工作站重新定位到邮件主机。邮件将被发送到 MX
+	主机。</p><p>您不能自己这样做除非您运行着一个 DNS 服务器。
+	如果不是这样，或者不能运行您自己的 DNS 服务器，告诉您的 ISP
+	或者给您提供 DNS 服务的人。</p><p>如果您正在使用虚拟邮件主机，下面的信息将会对您有用。
+	在这个例子里，我们假定您有一个客户并且他有自己的域，
+	这个例子中是 <code class="systemitem">customer1.org</code>，您要把
+	<code class="systemitem">customer1.org</code>
+	所有的邮件发送到您的邮件主机 <code class="systemitem">mail.myhost.com</code>。
+	您的 DNS 记录应该是这样：</p><pre class="programlisting">customer1.org		MX	10	mail.myhost.com</pre><p>您 <span class="emphasis"><em>不</em></span> 需要有个 A 记录，
+	如果您只为域 <code class="systemitem">customer1.org</code>
+	处理邮件。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">必须清楚 <code class="systemitem">customer1.org</code>
+	  将不能工作，除非存在一个 A 记录。</p></div><p>最后一件您必须要做的事是告诉
+	<span class="application">sendmail</span> 接受邮件的是什么域和(或)主机名。
+	这里有好几种方法。下面方法可以任选一种：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>添加您的主机到
+	    <code class="filename">/etc/mail/local-host-names</code> 文件中，如果您使用的是
+	    <code class="literal">FEATURE(use_cw_file)</code>。如果您使用
+	    <span class="application">sendmail</span> 8.10 或者更高版本，文件是
+	    <code class="filename">/etc/sendmail.cw</code>。</p></li><li class="listitem"><p>添加一行 <code class="literal">Cwyour.host.com</code> 到您的
+	    <code class="filename">/etc/sendmail.cf</code> 或
+	    <code class="filename">/etc/mail/sendmail.cf</code> 文件，如果您使用
+	    <span class="application">sendmail</span> 8.10 或者更高版本。</p></li></ul></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mail-trouble.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mail.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="SMTP-UUCP.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.5. 疑难解答 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 27.7. SMTP 与 UUCP</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

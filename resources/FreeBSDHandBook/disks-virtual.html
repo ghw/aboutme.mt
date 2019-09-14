@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>18.13. 网络、内存和 和以及映像文件为介质的虚拟文件系统</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="disks.html" title="Chapter 18. 存储" /><link rel="prev" href="backup-basics.html" title="18.12. 备份程序" /><link rel="next" href="snapshots.html" title="18.14. 文件系统快照" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.13. 网络、内存和 和以及映像文件为介质的虚拟文件系统</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="backup-basics.html">Prev</a> </td><th width="60%" align="center">Chapter 18. 存储</th><td width="20%" align="right"> <a accesskey="n" href="snapshots.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="disks-virtual"></a>18.13. 网络、内存和 和以及映像文件为介质的虚拟文件系统</h2></div><div><span class="authorgroup">Reorganized and enhanced by <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp80401872" class="indexterm"></a><a id="idp80402384" class="indexterm"></a><p>除了插在您计算机上的物理磁盘：
+      软盘、 CD、 硬盘驱动器， 等等之外， FreeBSD
+      还能识别一些其他的磁盘形式 - <em class="firstterm">虚拟磁盘</em>。</p><a id="idp80404304" class="indexterm"></a><a id="idp80404816" class="indexterm"></a><a id="idp80405456" class="indexterm"></a><p>这还包括， 如 <a class="link" href="network-nfs.html" title="28.3. 网络文件系统（NFS）">网络文件系统 (Network File System)</a> 和 Coda一类的网络文件系统、
+	内存以及映像文件为介质的虚拟文件系统。</p><p>随运行的 FreeBSD 版本不同，
+      用来创建和使用以映像文件介质文件系统和内存文件系统的工具也不尽相同。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">系统会使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">devfs</span>(5)</span></a> 来创建设备节点， 这对用户来说是透明的。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-mdconfig"></a>18.13.1. 以映像文件为介质的文件系统</h3></div></div></div><a id="idp80410448" class="indexterm"></a><p>在 FreeBSD 系统中， 可以用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a>
+	程序来配置和启用内存磁盘， <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a>。 要使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a>， 就需要在内核配置文件中添加 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 模块来支持它：</p><pre class="programlisting">device md</pre><p> <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 命令支持三种类型的虚拟文件系统：
+	使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=malloc&amp;sektion=9"><span class="citerefentry"><span class="refentrytitle">malloc</span>(9)</span></a>，来分配内存文件系统，内存文件系统作为文件或作为
+	备用的交换分区。一种使用方式是在文件中来挂载一个软盘和
+	 CD 镜像。</p><p>将一个暨存的映像文件作为文件系统挂载：</p><div class="example"><a id="idp80418000"></a><div class="example-title">Example 18.3. 使用 <code class="command">mdconfig</code> 挂载已经存在的映像文件</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mdconfig -a -t vnode -f diskimage -u 0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>mount /dev/md0 /mnt</code></strong></pre></div></div><br class="example-break" /><p>使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 来创建新的映像文件:</p><div class="example"><a id="idp80430288"></a><div class="example-title">Example 18.4. 使用 <code class="command">mdconfig</code> 将映像文件作为文件系统挂载</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/zero of=newimage bs=1k count=5k</code></strong>
+5120+0 records in
+5120+0 records out
+<code class="prompt">#</code> <strong class="userinput"><code>mdconfig -a -t vnode -f newimage -u 0</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>bsdlabel -w md0 auto</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>newfs md0a</code></strong>
+/dev/md0a: 5.0MB (10224 sectors) block size 16384, fragment size 2048
+        using 4 cylinder groups of 1.25MB, 80 blks, 192 inodes.
+super-block backups (for fsck -b #) at:
+ 160, 2720, 5280, 7840
+<code class="prompt">#</code> <strong class="userinput"><code>mount /dev/md0a /mnt</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df /mnt</code></strong>
+Filesystem 1K-blocks Used Avail Capacity  Mounted on
+/dev/md0a       4710    4  4330     0%    /mnt</pre></div></div><br class="example-break" /><p>如果没有通过 <code class="option">-u</code> 选项指定一个标识号
+	 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 将使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 为它自动选择一个未用的设备标识号。
+	分配给它的标识名将被输出到标准输出设备， 其形式是与
+	<code class="filename">md4</code> 类似。 如果希望了解更多相关信息， 请参见联机手册
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a>。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 功能很强大，
+	但在将映像文件作为文件系统挂载时， 仍需使用许多行的命令。 为此
+	FreeBSD 也提供了一个名为 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdmfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdmfs</span>(8)</span></a> 的工具， 该程序使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 来配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 设备， 并用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a> 在其上创建 UFS 文件系统， 然后用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mount&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mount</span>(8)</span></a> 来完成挂载操作。 例如，
+	如果想创建和挂接像上面那样的文件系统映像，
+	只需简单地执行下面的步骤：</p><div class="example"><a id="idp80444752"></a><div class="example-title">Example 18.5. 使用 <code class="command">mdmfs</code> 命令配置和挂载一个映像文件为文件系统</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>dd if=/dev/zero of=newimage bs=1k count=5k</code></strong>
+5120+0 records in
+5120+0 records out
+<code class="prompt">#</code> <strong class="userinput"><code>mdmfs -F newimage -s 5m md0 /mnt</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df /mnt</code></strong>
+Filesystem 1K-blocks Used Avail Capacity  Mounted on
+/dev/md0        4718    4  4338     0%    /mnt</pre></div></div><br class="example-break" /><p>如果你使用没有加标识号的 <code class="option">md</code> 选项，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdmfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdmfs</span>(8)</span></a> 将使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 的自动标示号特性来自动为其
+	选择一个未使用的设备。更详细的
+	 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdmfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdmfs</span>(8)</span></a>，请参考联机手册。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="disks-md-freebsd5"></a>18.13.2. 以内存为介质的文件系统</h3></div></div></div><a id="idp80452560" class="indexterm"></a><p>一般来说， 在建立以内存为介质的文件系统时， 应使用 <span class="quote">“<span class="quote">交换区作为介质
+	(swap backing)</span>”</span>。 使用交换区作为介质，
+	并不意味着内存盘将被无条件地换出到交换区，
+	它只是表示将根据需要从可换出的内存池中分配内存。
+	此外， 也可以使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=malloc&amp;sektion=9"><span class="citerefentry"><span class="refentrytitle">malloc</span>(9)</span></a> 创建以内存作为介质的文件系统。
+	不过在内存不足时， 这种方式可能引致系统崩溃。</p><div class="example"><a id="idp80459472"></a><div class="example-title">Example 18.6. 用 <code class="command">mdconfig</code>
+	  创建新的内存盘设备</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mdconfig -a -t swap -s 5m -u 1</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>newfs -U md1</code></strong>
+/dev/md1: 5.0MB (10240 sectors) block size 16384, fragment size 2048
+        using 4 cylinder groups of 1.27MB, 81 blks, 192 inodes.
+        with soft updates
+super-block backups (for fsck -b #) at:
+ 160, 2752, 5344, 7936
+<code class="prompt">#</code> <strong class="userinput"><code>mount /dev/md1 /mnt</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df /mnt</code></strong>
+Filesystem 1K-blocks Used Avail Capacity  Mounted on
+/dev/md1        4718    4  4338     0%    /mnt</pre></div></div><br class="example-break" /><div class="example"><a id="idp80463952"></a><div class="example-title">Example 18.7. 使用 <code class="command">mdmfs</code> 来新建内存介质文件系统</div><div class="example-contents"><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mdmfs -s 5m md2 /mnt</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>df /mnt</code></strong>
+Filesystem 1K-blocks Used Avail Capacity  Mounted on
+/dev/md2        4846    2  4458     0%    /mnt</pre></div></div><br class="example-break" /></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp80471248"></a>18.13.3. 从系统中移除内存盘设备</h3></div></div></div><a id="idp80471888" class="indexterm"></a><p>当不再使用内存盘设备时， 应将其资源释放回系统。
+	第一步操作是卸下文件系统， 然后使用
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mdconfig&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">mdconfig</span>(8)</span></a> 把虚拟磁盘从系统中分离， 以释放资源。</p><p>例如， 要分离并释放所有
+	<code class="filename">/dev/md4</code> 使用的资源， 应使用命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>mdconfig -d -u 4</code></strong></pre><p><code class="command">mdconfig -l</code> 命令可以列出关于配置
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=md&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">md</span>(4)</span></a> 设备的信息。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="backup-basics.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="disks.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="snapshots.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.12. 备份程序 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 18.14. 文件系统快照</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

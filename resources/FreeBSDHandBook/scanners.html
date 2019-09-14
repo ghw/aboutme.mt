@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>8.6. 图象扫描仪</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="multimedia.html" title="Chapter 8. 多媒体" /><link rel="prev" href="tvcard.html" title="8.5. 安装电视卡" /><link rel="next" href="kernelconfig.html" title="Chapter 9. 配置FreeBSD的内核" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.6. 图象扫描仪</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="tvcard.html">Prev</a> </td><th width="60%" align="center">Chapter 8. 多媒体</th><td width="20%" align="right"> <a accesskey="n" href="kernelconfig.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="scanners"></a>8.6. 图象扫描仪</h2></div><div><span class="authorgroup">撰写人 <span xmlns="http://www.w3.org/1999/xhtml" class="author"><span class="firstname">Marc</span> <span class="surname">Fonvieille</span></span>. </span></div></div></div><a id="idp72685392" class="indexterm"></a><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72686160"></a>8.6.1. 介绍</h3></div></div></div><p>在 FreeBSD 中， 访问扫描仪的能力，
+	是通过 <span class="application">SANE</span> (Scanner Access Now
+	Easy) <acronym class="acronym">API</acronym> 提供的。
+	<span class="application">SANE</span> 也会使用一些
+	FreeBSD 设备驱动来访问扫描仪硬件。</p><p>FreeBSD 支持 SCSI 和 USB 扫描仪。
+	在做任何配置之前请确保您的扫描仪被 <span class="application">SANE</span>
+	支持。 <span class="application">SANE</span> 有一个 <a class="link" href="http://www.sane-project.org/sane-supported-devices.html" target="_top">
+	支持的设备</a> 列表，
+	可以为您提供有关扫描仪的支持情况和状态的信息。
+	在 FreeBSD 8.X 之前版本的系统中，
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uscanner&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">uscanner</span>(4)</span></a> 手册页也提供了系统支持的 USB 扫描仪列表。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72699472"></a>8.6.2. 内核配置</h3></div></div></div><p>上面提到 SCSI 和 USB 接口都是支持的。
+	取决于您的扫描仪接口，
+	需要不同的设备驱动程序。</p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="scanners-kernel-usb"></a>8.6.2.1. USB 接口</h4></div></div></div><p>默认的 <code class="filename">GENERIC</code>
+	  内核包含了支持 USB 扫描仪需要的设备驱动。
+	  如果您决定使用一个定制的内核，
+	  确保下面在您的内核配置文件中存在下面这些行：</p><pre class="programlisting">device usb
+device uhci
+device ohci
+device ehci</pre><p>在 FreeBSD 8.X 之前的版本中， 还需要下面这行配置：</p><pre class="programlisting">device uscanner</pre><p>在这些 FreeBSD 版本中， 是通过设备驱动程序 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uscanner&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">uscanner</span>(4)</span></a>
+	  来提供对 USB 扫描仪的支持的。 从
+	  FreeBSD 8.0 开始， 这些支持则直接由
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=libusb&amp;sektion=3"><span class="citerefentry"><span class="refentrytitle">libusb</span>(3)</span></a> 函数库提供。</p><p>使用正确的内核重新引导系统之后， 插入 USB 扫描仪。
+	  系统消息缓冲区 (使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=dmesg&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">dmesg</span>(8)</span></a> 查看)
+	  中会出现下面的信息， 表示检测到了扫描仪：</p><pre class="screen">ugen0.2: &lt;EPSON&gt; at usbus0</pre><p>或者， 对于 FreeBSD 7.X 系统而言：</p><pre class="screen">uscanner0: EPSON EPSON Scanner, rev 1.10/3.02, addr 2</pre><p>随 FreeBSD 版本不同， 这些信息表示扫描仪设备位于设备节点
+	  <code class="filename">/dev/ugen0.2</code> 或
+	  <code class="filename">/dev/uscanner0</code>。 在这个例子中， 我们使用的是
+	  <span class="trademark">EPSON
+  Perfection</span>® 1650 USB 扫描仪。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72709456"></a>8.6.2.2. SCSI 接口</h4></div></div></div><p>如果您的扫描仪是 SCSI 接口的，
+	  重要的是要知道您使用哪种 SCSI 控制器。
+	  取决于所使用的 SCSI 芯片，
+	  您需要调整内核配置文件。
+	  <code class="filename">GENERIC</code> 的内核支持最常用的
+	  SCSI 控制器。 请阅读
+	  <code class="filename">NOTES</code> 文件并在您的内核配置文件中添加正确的行。
+	  除了 SCSI 适配器驱动之外，
+	  您还需要在内核配置文件中增加下述配置：</p><pre class="programlisting">device scbus
+device pass</pre><p>在正确地联编并安装了内核之后， 就应该可以在系统启动时，
+	  从系统消息缓冲中看到这些设备：</p><pre class="screen">pass2 at aic0 bus 0 target 2 lun 0
+pass2: &lt;AGFA SNAPSCAN 600 1.10&gt; Fixed Scanner SCSI-2 device
+pass2: 3.300MB/s transfers</pre><p>如果您的扫描仪没有在系统启动的时候加电，
+	  很可能还需要强制手动检测一下，用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=camcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">camcontrol</span>(8)</span></a>
+	  命令执行一次 SCSI 总线扫描：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>camcontrol rescan all</code></strong>
+Re-scan of bus 0 was successful
+Re-scan of bus 1 was successful
+Re-scan of bus 2 was successful
+Re-scan of bus 3 was successful</pre><p>然后扫描仪就会出现在 SCSI 设备列表里：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>camcontrol devlist</code></strong>
+&lt;IBM DDRS-34560 S97B&gt;              at scbus0 target 5 lun 0 (pass0,da0)
+&lt;IBM DDRS-34560 S97B&gt;              at scbus0 target 6 lun 0 (pass1,da1)
+&lt;AGFA SNAPSCAN 600 1.10&gt;           at scbus1 target 2 lun 0 (pass3)
+&lt;PHILIPS CDD3610 CD-R/RW 1.00&gt;     at scbus2 target 0 lun 0 (pass2,cd0)</pre><p>有关 SCSI 设备的更多细节， 可查看
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scsi&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">scsi</span>(4)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=camcontrol&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">camcontrol</span>(8)</span></a> 手册页。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72718544"></a>8.6.3. SANE 配置</h3></div></div></div><p><span class="application">SANE</span> 系统分为两部分：
+	后端 (<span class="package">graphics/sane-backends</span>)
+	和前端 (<span class="package">graphics/sane-frontends</span>)。
+	后端部分提供到扫描仪自身的访问。
+	<span class="application">SANE</span> 的<a class="link" href="http://www.sane-project.org/sane-supported-devices.html" target="_top">
+	支持设备</a>列表详细说明了哪一个后端可以支持您的图象扫描仪。
+	如果您想使用您的设备，就必须为您的扫描仪选定正确的后端。
+	前端部分提供图形化的扫描界面
+	(<span class="application">xscanimage</span>)。</p><p>要做的第一步就是安装 <span class="package">graphics/sane-backends</span> port 或者
+	package。然后，使用 <code class="command">sane-find-scanner</code>
+	命令来检查 <span class="application">SANE</span>
+	系统做的扫描仪检测：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sane-find-scanner -q</code></strong>
+found SCSI scanner "AGFA SNAPSCAN 600 1.10" at /dev/pass3</pre><p>输出显示了扫描仪的接口类型和扫描仪连接到系统上的设备节点。
+	生产厂家和产品型号可能没有显示，不过不重要。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">一些 USB 扫描仪需要您加载固件，后端的手册页中有这方面的解释。
+	  您也应该阅读 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sane-find-scanner&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">sane-find-scanner</span>(1)</span></a> 和 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sane&amp;sektion=7"><span class="citerefentry"><span class="refentrytitle">sane</span>(7)</span></a>
+	  手册页。</p></div><p>现在我们需要检查扫描仪是否可以被扫描前端识别。
+	默认情况下，
+	<span class="application">SANE</span> 后端自带一个叫做
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scanimage&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scanimage</span>(1)</span></a> 的命令行工具。
+	这个命令允许您列出设备以及从命令行执行图片扫描。
+	<code class="option">-L</code> 选项用来列出扫描仪设备：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>scanimage -L</code></strong>
+device `snapscan:/dev/pass3' is a AGFA SNAPSCAN 600 flatbed scanner</pre><p>或者， 如果使用的是 <a class="xref" href="scanners.html#scanners-kernel-usb" title="8.6.2.1. USB 接口">Section 8.6.2.1, “USB 接口”</a> 中的 USB 扫描仪：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>scanimage -L</code></strong>
+device 'epson2:libusb:/dev/usb:/dev/ugen0.2' is a Epson GT-8200 flatbed scanner</pre><p>上述输出来自于 FreeBSD 8.X 系统。
+	<code class="literal">'epson2:libusb:/dev/usb:/dev/ugen0.2'</code>
+	给出了扫描仪所使用的后台名字 (<code class="literal">epson2</code>)
+	和设备节点 (<code class="literal">/dev/ugen0.2</code>)。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">如果没有输出任何信息， 或提示没有识别到扫描仪，
+	则说明 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scanimage&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scanimage</span>(1)</span></a> 无法识别它。
+	如果发生这种情况， 您就需要修改扫描仪支持后端的配置文件，
+	并定义所使用的扫描设备。 <code class="filename">/usr/local/etc/sane.d/</code>
+	目录中包含了所有的后端配置文件。
+	这类识别问题经常会在某些 USB
+	扫描仪上发生。</p><p xmlns="http://www.w3.org/1999/xhtml">
+	linkend="scanners-kernel-usb"&gt; 中所使用的 USB 扫描仪，
+	<code class="command">sane-find-scanner</code> 会给出下面的信息：</p><p xmlns="http://www.w3.org/1999/xhtml">例如， 对于在 <a class="xref" href="scanners.html#scanners-kernel-usb" title="8.6.2.1. USB 接口">Section 8.6.2.1, “USB 接口”</a>， 在 FreeBSD 8.X 中，
+	扫描仪已经被很好地识别并能够正常工作了； 而对于更早版本的 FreeBSD
+	而言 (使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=uscanner&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">uscanner</span>(4)</span></a> 驱动程序)
+	<code class="command">sane-find-scanner</code> 则会给出这样的信息：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>sane-find-scanner -q</code></strong>
+found USB scanner (UNKNOWN vendor and product) at device /dev/uscanner0</pre><p xmlns="http://www.w3.org/1999/xhtml">扫描仪被正确的探测到了，它使用 USB
+	接口，连接在
+	<code class="filename">/dev/uscanner0</code> 设备节点上。
+	我们现在可以检查看看扫描仪是否被正确的识别：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>scanimage -L</code></strong>
+
+No scanners were identified. If you were expecting something different,
+check that the scanner is plugged in, turned on and detected by the
+sane-find-scanner tool (if appropriate). Please read the documentation
+which came with this software (README, FAQ, manpages).</pre><p xmlns="http://www.w3.org/1999/xhtml">由于扫描仪没有识别成功， 我们就需要编辑
+	<code class="filename">/usr/local/etc/sane.d/epson2.conf</code>
+	文件。 所用的扫描仪型号是 <span class="trademark">EPSON
+  Perfection</span>® 1650，
+	这样我们知道扫描仪应使用 <code class="literal">epson</code>
+	后端。确保阅读后端配置文件中的帮助注释。
+	改动非常简单：注释掉导致您的扫描仪使用错误接口的所有行
+	(在我们这种情况下，我们将注释掉从
+	<code class="literal">scsi</code> 开始的所有行，因为我们的扫描仪使用 USB
+	接口)，然后在文件的结尾添加指定的接口和所用的设备节点。
+	这种情况下， 添加下面这行：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="programlisting">usb /dev/uscanner0</pre><p xmlns="http://www.w3.org/1999/xhtml">请确保阅读后端配置文件提供的注释以及后端手册页了解更多细节，
+	并使用正确的语法。我们现在可以检验扫描仪是否被识别到了：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>scanimage -L</code></strong>
+device `epson:/dev/uscanner0' is a Epson GT-8200 flatbed scanner</pre><p xmlns="http://www.w3.org/1999/xhtml">我们的 USB 扫描仪被识别到了。 此时如果商标和型号与扫描仪的实际情况不符，
+	并不会带来太大的麻烦。 您需要关注的是
+	<code class="literal">`epson:/dev/uscanner0'</code> 字段，
+	这个给了我们正确地后端名称和正确的设备节点。</p></div><p>一旦 <code class="command">scanimage -L</code> 命令可以看到扫描仪，
+	配置就完成了。设备现在准备好等待扫描了。</p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=scanimage&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">scanimage</span>(1)</span></a> 允许我们从命令行执行图片扫描，
+	相比之下使用图形用户界面来执行图片扫描会更好。
+	<span class="application">SANE</span> 提供了一个简单但实用的图形界面：
+	<span class="application">xscanimage</span>
+	(<span class="package">graphics/sane-frontends</span>)。</p><p><span class="application">Xsane</span> (<span class="package">graphics/xsane</span>)是另一个流行的图形扫描前端。
+	这个前端提供了一些高级特性，
+	比如多样的扫描模式(photocopy，fax，等。)，
+	色彩校正，批量扫描，等等。这两个程序都可以作为
+	<span class="application">GIMP</span>
+	的插件使用。</p></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp72767696"></a>8.6.4. 授权其他用户访问扫描仪</h3></div></div></div><p>前面所有的操作都是用
+	<code class="systemitem">root</code> 权限来完成的。
+	然而您可能需要让其他的用户也可以访问扫描仪。
+	用户需要有扫描仪所用的设备节点的读和写权限。
+	比如，我们的 USB 扫描仪使用设备节点
+	<code class="filename">/dev/ugen0.2</code>
+	实际上只是到实际设备节点
+	<code class="filename">/dev/usb/0.2.0</code> 的符号连接
+	(可以通过查看 <code class="filename">/dev</code>
+	目录的内容来确认这一点)。 设备节点本身和这个符号连接分别属于
+	<code class="systemitem">wheel</code> 和
+	<code class="systemitem">operator</code> 组。 将用户
+	<code class="systemitem"><em class="replaceable"><code>joe</code></em></code> 添加到
+	这些组中， 就可以允许他使用扫描仪了， 不过，
+	出于显而易见的安全方面的原因， 在将用户加到特定的用户组， 特别是
+	<code class="systemitem">wheel</code> 组时， 无疑需三思而后行。
+	更好的解决方法是创建一个专门用于访问 USB 设备的组，
+	并让这个组的成员能够访问 USB 设备。</p><p>这里作为示例， 我们将会使用名为
+	<code class="systemitem"><em class="replaceable"><code>usb</code></em></code> 的组。
+	第一步是借助
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pw</span>(8)</span></a> 命令来创建它：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw groupadd usb</code></strong></pre><p>接下来， 令 <code class="filename">/dev/ugen0.2</code>
+	符号连接和 <code class="filename">/dev/usb/0.2.0</code> 设备节点能够以 <code class="systemitem">usb</code> 组的身份来访问，
+	具体而言是配置正确的写权限 (<code class="literal">0660</code> 或
+	<code class="literal">0664</code>)， 因为默认情况下只有属主 (<code class="systemitem">root</code>)
+	才能写这些设备。 这些配置是通过在
+	<code class="filename">/etc/devfs.rules</code> 文件中添加如下的设置来实现的：</p><pre class="programlisting">[system=5]
+add path ugen0.2 mode 0660 group usb
+add path usb/0.2.0 mode 0666 group usb</pre><p>FreeBSD 7.X 用户需要将上面的配置改为使用与之对应的
+	<code class="filename">/dev/uscanner0</code>：</p><pre class="programlisting">[system=5]
+add path uscanner0 mode 660 group usb</pre><p>随后您还需要在
+	<code class="filename">/etc/rc.conf</code>
+	中添加下面的内容并重新启动：</p><pre class="programlisting">devfs_system_ruleset="system"</pre><p>关于这些配置的进一步细节请参考联机手册
+	<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=devfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">devfs</span>(8)</span></a>。</p><p>现在， 只需将用户添加到
+	<code class="systemitem"><em class="replaceable"><code>usb</code></em></code> 组，
+	就可以使用扫描仪了：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw groupmod usb -m joe</code></strong></pre><p>更多详情， 请参见联机手册 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pw&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">pw</span>(8)</span></a>。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="tvcard.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="multimedia.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="kernelconfig.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">8.5. 安装电视卡 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 9. 配置FreeBSD的内核</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

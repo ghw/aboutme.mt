@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>12.12. 调整磁盘</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="config-tuning.html" title="Chapter 12. 设置和调整" /><link rel="prev" href="configtuning-sysctl.html" title="12.11. 用 sysctl 进行调整" /><link rel="next" href="configtuning-kernel-limits.html" title="12.13. 调整内核限制" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.12. 调整磁盘</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="configtuning-sysctl.html">Prev</a> </td><th width="60%" align="center">Chapter 12. 设置和调整</th><td width="20%" align="right"> <a accesskey="n" href="configtuning-kernel-limits.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="configtuning-disk"></a>12.12. 调整磁盘</h2></div></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76087632"></a>12.12.1. Sysctl 变量</h3></div></div></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76088272"></a>12.12.1.1. <code class="varname">vfs.vmiodirenable</code></h4></div></div></div><a id="idp76089040" class="indexterm"></a><p><code class="varname">vfs.vmiodirenable</code> sysctl
+	  变量可以设置成0(关)或者1(开)；默认是1。
+	  这个变量控制目录是否被系统缓存。大多数目录是小的，
+	  在系统中只使用单个片断(典型的是1K)并且在缓存中使用的更小
+	  (典型的是512字节)。当这个变量设置为关闭 (<code class="literal">0</code>) 时，
+	  缓存器仅仅缓存固定数量的目录，即使您有很大的内存。
+	  而将其开启 (设置为1) 时， 则允许缓存器用 VM
+	  页面缓存来缓存这些目录，让所有可用内存来缓存目录。
+	  不利的是最小的用来缓存目录的核心内存是大于 512
+	  字节的物理页面大小(通常是 4k)。
+	  我们建议如果您在运行任何操作大量文件的程序时保持这个选项打开的默认值。
+	  这些服务包括 web 缓存，大容量邮件系统和新闻系统。
+	  尽管可能会浪费一些内存，但打开这个选项通常不会降低性能。
+	  但还是应该检验一下。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76091088"></a>12.12.1.2. <code class="varname">vfs.write_behind</code></h4></div></div></div><a id="idp76096080" class="indexterm"></a><p><code class="varname">vfs.write_behind</code> sysctl
+	  变量默认是 <code class="literal">1</code> (打开)。
+	  它告诉文件系统簇被收集满的时候把内容写进介质，
+	  典型的是在写入大的连续的文件时。
+	  主要的想法是， 如果可能对 I/O 性能会产生负面影响时，
+ 	  应尽量避免让缓冲缓存被未同步缓冲区充满。
+	  然而它可能降低处理速度并且在某些情况下您可能想要关闭它。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76098128"></a>12.12.1.3. <code class="varname">vfs.hirunningspace</code></h4></div></div></div><a id="idp76098896" class="indexterm"></a><p><code class="varname">vfs.hirunningspace</code> sysctl
+	  变量决定了在任何给定情况下，
+	  有多少写 I/O 被排进队列以给系统的磁盘控制器。
+	  默认值一般是足够的，但是对有很多磁盘的机器来说您可能需要把它设置成
+	  4M 或 5M。注意这个设置成很高的值(超过缓存器的写极限)会导致坏的性能。
+	  不要盲目的把它设置太高！高的数值会导致同时发生的读操作的迟延。</p><p>sysctl 中还有许多与 buffer cache 和 VM页面 cache
+	  有关的值， 一般不推荐修改它们。
+	  虚拟内存系统已经能够很好地进行自动调整了。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76100944"></a>12.12.1.4. <code class="varname">vm.swap_idle_enabled</code></h4></div></div></div><a id="idp76101712" class="indexterm"></a><p><code class="varname">vm.swap_idle_enabled</code> sysctl
+	  变量在有很多用户进入、离开系统和有很多空闲进程的大的多用户系统中很有用。
+	  这些系统注重在空闲的内存中间产生连续压力的处理。通过
+	  <code class="varname">vm.swap_idle_threshold1</code> 和
+	  <code class="varname">vm.swap_idle_threshold2</code> 打开这个特性并且调整交换滞后
+	  (在空闲时)允许您降低内存页中空闲进程的优先权，从而比正常的出页
+	  (pageout)算法更快。这给出页守护进程带来了帮助。
+	  除非您需要否则不要把这个选项打开，因为您所权衡的是更快地进入内存，
+	  因而它会吃掉更多的交换和磁盘带宽。在小的系统上它会有决定性的效果，
+	  但是在大的系统上它已经做了合适的页面调度这个选项允许 VM
+	  系统容易的让全部的进程进出内存。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76108368"></a>12.12.1.5. <code class="varname">hw.ata.wc</code></h4></div></div></div><a id="idp76109136" class="indexterm"></a><p>FreeBSD 4.3 中默认将 IDE 的写缓存关掉了。 这会降低到 IDE
+	  磁盘用于写入操作的带宽， 但我们认为这有助于避免硬盘厂商所引入的，
+	  可能引致严重的数据不一致问题。 这类问题实际上是由于 IDE
+	  硬盘就写操作完成这件事的不诚实导致的。 当启用了 IDE 写入缓存时，
+	  IDE 硬盘驱动器不但不会按顺序将数据写到盘上， 而且当磁盘承受重载时，
+	  它甚至会自作主张地对推迟某些块的实际写操作。 这样一来，
+	  在系统发生崩溃或掉电时， 就会导致严重的文件系统损坏。
+	  基于这些考虑， 我们将 FreeBSD 的默认配置改成了更为安全的禁用 IDE
+	  写入缓存。 然而不幸的是， 这样做导致了性能的大幅降低，
+	  因此在后来的发行版中这个配置又改为默认启用了。
+	  您可以通过观察 <code class="varname">hw.ata.wc</code> sysctl 变量，
+	  来确认您的系统中所采用的默认值。 如果 IDE 写缓存被禁用，
+	  您可以通过将内核变量设置为 1 来启用它。 这一操作必须在启动时通过
+	  boot loader 来完成。 在内核启动之后尝试这么做是没有任何作用的。</p><p>要了解更多的信息，请查阅 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ata&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">ata</span>(4)</span></a>。</p></div><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76112080"></a>12.12.1.6. <code class="literal">SCSI_DELAY</code>
+	(<code class="varname">kern.cam.scsi_delay</code>)</h4></div></div></div><a id="idp76113360" class="indexterm"></a><a id="idp76114256" class="indexterm"></a><p><code class="literal">SCSI_DELAY</code> 内核配置会缩短系统启动时间。
+	  默认值在系统启动过程中有 <code class="literal">15</code> 秒的迟延时间，
+	  这是一个足够多且可靠的值。把它减少到 <code class="literal">5</code>
+	  通常也能工作(特别是现代的驱动器)。
+	  您可以在系统引导时调整引导加载器变量
+	  <code class="varname">kern.cam.scsi_delay</code> 来改变它。
+	  需要注意的是， 此处使用的单位是
+	  <span class="emphasis"><em>毫秒</em></span> 而 <span class="emphasis"><em>不</em></span>
+	  是 <span class="emphasis"><em>秒</em></span> 。</p></div></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="soft-updates"></a>12.12.2. Soft Updates</h3></div></div></div><a id="idp76127824" class="indexterm"></a><a id="idp76128336" class="indexterm"></a><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tunefs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tunefs</span>(8)</span></a> 程序能够用来很好的调整文件系统。
+	这个程序有很多不同的选项，但是现在只介绍 Soft Updates
+	的打开和关闭，这样做：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>tunefs -n enable /filesystem</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>tunefs -n disable /filesystem</code></strong></pre><p>在文件系统被挂载之后不能用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=tunefs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">tunefs</span>(8)</span></a> 来修改。打开
+	Soft Updates 的最佳时机是在单用户模式下任何分区被挂载前。</p><p>
+	Soft Updates 极大地改善了元数据修改的性能，
+	主要是文件创建和删除，通过内存缓存。我们建议您在所有的文件系统上使用
+	Soft Updates。应该知道 Soft Updates 的两点：首先， Soft Updates
+	保证了崩溃后的文件系统完整性，但是很可能有几秒钟 (甚至一分钟！)
+	之前的数据没有写到物理磁盘。如果您的系统崩溃了您可能会丢失很多工作。
+	第二，SoftUpdates 推迟文件系统块的释放时间。如果在文件系统
+	(例如根文件系统)快满了的情况下对系统进行大规模的升级比如
+	<code class="command">make installworld</code>，
+	可能会引起磁盘空间不足从而造成升级失败。
+      </p><div class="sect3"><div xmlns="" class="titlepage"><div><div><h4 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp76133584"></a>12.12.2.1. Soft Updates 的详细资料</h4></div></div></div><a id="idp76134224" class="indexterm"></a><p>
+	  有两种传统的方法来把文件系统的元数据 (meta-data) 写入磁盘。
+	  (Meta-data更新是更新类似 inodes 或者目录这些没有内容的数据)</p><p>
+	  从前，默认方法是同步更新这些元数据(meta-data)。
+	  如果一个目录改变了，系统在真正写到磁盘之前一直等待。
+	  文件数据缓存(文件内容)在这之后以非同步形式写入。
+	  这么做有利的一点是操作安全。如果更新时发生错误，元数据(meta-data)
+	  一直处于完整状态。文件要不就被完整的创建要不根本就不创建。
+	  如果崩溃时找不到文件的数据块，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fsck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fsck</span>(8)</span></a>
+	  可以找到并且依靠把文件大小设置为 0 来修复文件系统。
+	  另外，这么做既清楚又简单。缺点是元数据(meta-data)更新很慢。例如
+	  <code class="command">rm -r</code> 命令，依次触及目录下的所有文件，
+	  但是每个目录的改变(删除一个文件)都要同步写入磁盘。
+	  这包含它自己更新目录，inode 表和可能对文件分散的块的更新。
+	  同样问题出现大的文件操作上(比如 <code class="command">tar -x</code>)。</p><p>
+	  第二种方法是非同步元数据更新。这是 Linux/ext2fs 和 *BSD ufs 的
+	  <code class="command">mount -o async</code> 默认的方法。所有元数据更新也是通过缓存。
+	  也就是它们会混合在文件内容数据更新中。
+	  这个方法的优点是不需要等待每个元数据更新都写到磁盘上，
+	  所以所有引起元数据更新大的操作比同步方式更快。同样，
+	  这个方法也是清楚且简单的，所以代码中的漏洞风险很小。
+	  缺点是不能保证文件系统的状态一致性。如果更新大量元数据时失败
+	  (例如掉电或者按了重启按钮)，文件系统会处在不可预知的状态。
+	  系统再启动时没有机会检查文件系统的状态；inode
+	  表更新的时候可能文件的数据块已经写入磁盘了但是相关联的目录没有，却不能用
+	  <code class="command">fsck</code>  命令来清理(因为磁盘上没有所需要的信息)。
+	  如果文件系统修复后损坏了，唯一的选择是使用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=newfs&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">newfs</span>(8)</span></a> 并且从备份中恢复它。
+	</p><p>
+	  这个问题通常的解决办法是使用 <span class="emphasis"><em>dirty region logging</em></span>
+	  或者 <span class="emphasis"><em>journaling</em></span>
+	  尽管它不是一贯的被使用并且有时候应用到其他的事务纪录中更好。
+	  这种方法元数据更新依然同步写入，但是只写到磁盘的一个小区域。
+	  过后他们将会被移动到正确的位置。因为纪录区很小，
+	  磁盘上接近的区域磁头不需要移动很长的距离，所以这些比写同步快一些。
+	  另外这个方法的复杂性有限，所以出现错误的机会也很少。缺点是元数据要写两次
+	  (一次写到纪录区域，一次写到正确的区域)。正常情况下，
+	  悲观的性能可能会发生。从另一方面来讲，
+	  崩溃的时候所有未发生的元数据操作可以很快的在系统启动之后从记录中恢复过来。
+	</p><p>Kirk McKusick，伯克利 FFS 的开发者，用 Soft Updates
+	  解决了这个问题：元数据更新保存在内存中并且按照排列的顺序写入到磁盘
+	  (<span class="quote">“<span class="quote">有序的元数据更新</span>”</span>)。这样的结果是，在繁重的元数据操作中，
+	  如果先前的更新还在内存中没有被写进磁盘，后来的更新就会捕捉到。
+	  所以所有的目录操作在写进磁盘的时候首先在内存中执行
+	  (数据块按照它们的位置来排列，所以它们不会在元数据前被写入)。
+	  如果系统崩溃了这将导致一个固定的 <span class="quote">“<span class="quote">日志回朔</span>”</span>：
+	  所有不知如何写入磁盘的操作都像没有发生过一样。文件系统的一致性保持在
+	  30 到 60 秒之前。它保证了所有正在使用的资源被标记例如块和 inodes。崩溃之后，
+	  唯一的资源分配错误是一个实际是<span class="quote">“<span class="quote">空闲</span>”</span>的资源的资源被标记为<span class="quote">“<span class="quote">使用</span>”</span>。
+	  <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fsck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fsck</span>(8)</span></a> 可以认出这种情况并且释放不再使用的资源。它对于忽略崩溃后用
+	  <code class="command">mount -f</code> 强制挂上的文件系统的错误状态是安全的。
+	  为了释放可能没有使用的资源，<a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=fsck&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">fsck</span>(8)</span></a> 需要在过后的时间运行。一个主意是用
+	  <span class="emphasis"><em>后台 fsck</em></span>：系统启动的时候只有一个文件系统的
+	  <span class="emphasis"><em>快照</em></span> 被记录下来。<code class="command">fsck</code>
+	  可以在过后运行。所有文件系统可以在<span class="quote">“<span class="quote">有错误</span>”</span>的时候被挂接，
+	  所以系统可以在多用户模式下启动。接着，后台 <code class="command">fsck</code>
+	  可以在所有文件系统需要的时候启动来释放可能没有使用的资源。
+	  (尽管这样，不用 Soft Updates 的文件系统依然需要通常的
+	  <code class="command">fsck</code>。)
+	</p><p>
+	  它的优点是元数据操作几乎跟非同步一样快
+	  (也就是比需要两次元数据写操作的 <span class="emphasis"><em>logging</em></span>
+	  更快)。缺点是代码的复杂性(意味着对于丢失用户敏感数据有更多的风险)
+	  和高的内存使用量。另外它有些特点需要知道。崩溃之后，
+	  文件系统状态会<span class="quote">“<span class="quote">落后</span>”</span>一些。同步的方法用
+	  <code class="command">fsck</code> 后在一些地方可能产生一些零字节的文件，
+	  这些文件在用 Soft Updates 文件系统之后不会存在，
+	  因为元数据和文件内容根本没有写进磁盘(可能发生在运行
+	  <code class="command">rm</code> 之后)。这可能在文件系统上安装大量数据时候引发问题，
+	  没有足够的剩余空间来两次存储所有文件。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="configtuning-sysctl.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="config-tuning.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="configtuning-kernel-limits.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.11. 用 sysctl 进行调整 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 12.13. 调整内核限制</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

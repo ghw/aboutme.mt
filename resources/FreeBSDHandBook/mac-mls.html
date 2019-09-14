@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.12. MAC 多级 (Multi-Level) 安全模块</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-partition.html" title="16.11. MAC partition (分区) 模块" /><link rel="next" href="mac-biba.html" title="16.13. MAC Biba 模块" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.12. MAC 多级 (Multi-Level) 安全模块</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-partition.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-biba.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-mls"></a>16.12. MAC 多级 (Multi-Level) 安全模块</h2></div></div></div><a id="idp78910928" class="indexterm"></a><p>模块名： <code class="filename">mac_mls.ko</code></p><p>对应的内核配置：
+      <code class="literal">options MAC_MLS</code></p><p>引导选项： <code class="literal">mac_mls_load="YES"</code></p><p><a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_mls&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_mls</span>(4)</span></a> 策略，
+      通过严格控制信息流向来控制系统中主体和客体的访问。</p><p>在 <acronym class="acronym">MLS</acronym> 环境中，
+      <span class="quote">“<span class="quote">许可 (clearance)</span>”</span> 级别会在每一个主体或客体标签上进行设置，
+      连同对应的区间。 由于这些透明度或敏感度可以有六千多个层次，
+      因此为每一个主体或客体进行配置将是一件让任何系统管理员都感到头疼的任务。
+      所幸的是， 这个策略中已经包含了三个
+      <span class="quote">“<span class="quote">立即可用的</span>”</span> 标签。</p><p>这些标签是 <code class="literal">mls/low</code>、
+      <code class="literal">mls/equal</code> 以及 <code class="literal">mls/high</code>。
+      由于这些标签已经在联机手册中进行了介绍， 这里只给出简要的说明：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">mls/low</code> 标签包含了最低配置，
+	  从而允许其他客体支配它。 任何标记为 <code class="literal">mls/low</code>
+	  的客体将是地透明度的， 从而不允许访问更高级别的信息。
+	  此外， 这个标签也阻止拥有较高透明度的客体向其写入或传递信息。</p></li><li class="listitem"><p><code class="literal">mls/equal</code> 标签应放到不希望使用这一策略的客体上。</p></li><li class="listitem"><p><code class="literal">mls/high</code> 标签是允许的最高级别透明度。
+	  指定了这个标签的客体将支配系统中的其他客体； 但是，
+	  它们将不允许向较低级别的客体泄露信息。</p></li></ul></div><p><acronym class="acronym">MLS</acronym> 提供了：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>提供了一些非层次分类的层次安全模型；</p></li><li class="listitem"><p>固定规则： 不允许向上读， 不允许向下写
+	  (主体可以读取同级或较低级别的客体， 但不能读取高级别的。
+	  类似地， 主体可以向同级或较高级写， 而不能向下写)；</p></li><li class="listitem"><p>保密 (防止不适当的数据透露)；</p></li><li class="listitem"><p>系统设计的基础要点， 是在多个敏感级别之间并行地处理数据
+	  (而不泄露秘密的和机密的信息)。</p></li></ul></div><p>下列 <code class="command">sysctl</code> 可以用来配置特殊服务和接口：</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><code class="literal">security.mac.mls.enabled</code> 用来启用/禁用
+	  <acronym class="acronym">MLS</acronym> 策略。</p></li><li class="listitem"><p><code class="literal">security.mac.mls.ptys_equal</code>
+	  将所有的 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=pty&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">pty</span>(4)</span></a> 设备标记为 <code class="literal">mls/equal</code>。</p></li><li class="listitem"><p><code class="literal">security.mac.mls.revocation_enabled</code>
+	  可以用来在标签转为较低 grade 时撤销客体访问权。</p></li><li class="listitem"><p><code class="literal">security.mac.mls.max_compartments</code>
+	  可以用来设置客体的最大区间层次； 基本上，
+	  这也就是系统中所允许的最大区间数。</p></li></ul></div><p>要管理 <acronym class="acronym">MLS</acronym> 标签， 可以使用
+      <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setfmac&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">setfmac</span>(8)</span></a> 命令。 要在客体上指定标签，
+      需要使用下面的命令：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfmac mls/5 test</code></strong></pre><p>下述命令用于取得文件
+      <code class="filename">test</code> 上的 <acronym class="acronym">MLS</acronym> 标签：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>getfmac test</code></strong></pre><p>以上是对于 <acronym class="acronym">MLS</acronym> 策略提供功能的概要。
+      另一种做法是在 <code class="filename">/etc</code>
+      中建立一个主策略文件， 并在其中指定 <acronym class="acronym">MLS</acronym> 策略信息，
+      作为 <code class="command">setfmac</code> 命令的输入。 这种方法，
+      将在其他策略之后进行介绍。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp78943696"></a>16.12.1. 规划托管敏感性</h3></div></div></div><p>通过使用多级安全策略模块，
+	管理员可以规划如何控制敏感信息的流向。 默认情况下，
+	由于其默认的禁止向上读以及向下写的性质，
+	系统会默认将所有客体置于较低的状态。 这样，
+	所有的客体都可以访问，
+	而管理员则可以在配置阶段慢慢地进行提高信息的敏感度这样的修改。</p><p>除了前面介绍的三种基本标签选项之外，
+	管理员还可以根据需要将用户和用户组进行分组，
+	以阻止它们之间的信息流。 一些人们比较熟悉的信息限界词汇， 如
+	<code class="literal">机密</code>、 <code class="literal">秘密</code>，
+	以及 <code class="literal">绝密</code> 可以方便您理解这一概念。
+	管理员也可以简单地根据项目级别建不同的分组。
+	无论采用何种分类方法， 在实施限制性的策略之前，
+	都必须首先想好如何进行规划。</p><p>这个安全策略模块最典型的用例是电子商务的 web 服务器，
+	其上的文件服务保存公司的重要信息以及金融机构的情况。
+	对于只有两三个用户的个人工作站而言， 则可能不甚适用。</p></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-partition.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-biba.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.11. MAC partition (分区) 模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.13. MAC Biba 模块</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>

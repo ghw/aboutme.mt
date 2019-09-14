@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><title>16.15. MAC Jail 中的 Nagios</title><link rel="stylesheet" type="text/css" href="docbook.css" /><link rev="made" href="doc@FreeBSD.org" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="FreeBSD 使用手册" /><link rel="up" href="mac.html" title="Chapter 16. 强制访问控制" /><link rel="prev" href="mac-lomac.html" title="16.14. MAC LOMAC 模块" /><link rel="next" href="mac-userlocked.html" title="16.16. User Lock Down" /><link rel="copyright" href="legalnotice.html" title="版权声明" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.15. MAC Jail 中的 Nagios</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mac-lomac.html">Prev</a> </td><th width="60%" align="center">Chapter 16. 强制访问控制</th><td width="20%" align="right"> <a accesskey="n" href="mac-userlocked.html">Next</a></td></tr></table><hr /></div><div class="sect1"><div xmlns="" class="titlepage"><div><div><h2 xmlns="http://www.w3.org/1999/xhtml" class="title" style="clear: both"><a id="mac-implementing"></a>16.15. MAC Jail 中的 Nagios</h2></div></div></div><a id="idp79017296" class="indexterm"></a><p>下面给出了通过多种 <acronym class="acronym">MAC</acronym> 模块，
+      并正确地配置策略来实现安全环境的例子。 这只是一个测试，
+      因此不应被看作四海一家的解决之道。 仅仅实现一个策略，
+      而忽略它不能解决任何问题， 并可能在生产环境中产生灾难性的后果。</p><p>在开始这些操作之前， 必须在每一个文件系统上设置
+      <code class="literal">multilabel</code> 选项，
+      这些操作在这一章开始的部分进行了介绍。 不完成这些操作，
+      将导致错误的结果。 首先， 请确认已经安装了
+      <span class="package">net-mngt/nagios-plugins</span>、
+      <span class="package">net-mngt/nagios</span>， 和
+      <span class="package">www/apache13</span> 这些 ports，
+      并对其进行了配置， 且运转正常。</p><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79020752"></a>16.15.1. 创建一个 insecure (不安全) 用户 Class</h3></div></div></div><p>首先是在 <code class="filename">/etc/login.conf</code>
+	文件中加入一个新的用户 class：</p><pre class="programlisting">insecure:\
+:copyright=/etc/COPYRIGHT:\
+:welcome=/etc/motd:\
+:setenv=MAIL=/var/mail/$,BLOCKSIZE=K:\
+:path=~/bin:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+:manpath=/usr/share/man /usr/local/man:\
+:nologin=/usr/sbin/nologin:\
+:cputime=1h30m:\
+:datasize=8M:\
+:vmemoryuse=100M:\
+:stacksize=2M:\
+:memorylocked=4M:\
+:memoryuse=8M:\
+:filesize=8M:\
+:coredumpsize=8M:\
+:openfiles=24:\
+:maxproc=32:\
+:priority=0:\
+:requirehome:\
+:passwordtime=91d:\
+:umask=022:\
+:ignoretime@:\
+:label=biba/10(10-10):</pre><p>并在 default 用户 class 中加入：</p><pre class="programlisting">:label=biba/high:</pre><p>一旦完成上述操作， 就需要运行下面的命令来重建数据库：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cap_mkdb /etc/login.conf</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79024848"></a>16.15.2. 引导配置</h3></div></div></div><p>现在暂时还不要重新启动， 我们还需要在
+	<code class="filename">/boot/loader.conf</code> 中增加下面几行，
+	以便让模块随系统初始化一同加载：</p><pre class="programlisting">mac_biba_load="YES"
+mac_seeotheruids_load="YES"</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79026768"></a>16.15.3. 配置用户</h3></div></div></div><p>使用下面的命令将 <code class="systemitem">root</code> 设为属于默认的 class：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw usermod root -L default</code></strong></pre><p>所有非 <code class="systemitem">root</code> 或系统的用户，
+	现在需要一个登录 class。 登录 class 是必须的，
+	否则这些用户将被禁止使用类似 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=vi&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">vi</span>(1)</span></a> 这样的命令。
+	下面的 <code class="command">sh</code> 脚本应能完成这个工作：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>for x in `awk -F: '($3 &gt;= 1001) &amp;&amp; ($3 != 65534) { print $1 }' \</code></strong>
+	<strong class="userinput"><code>/etc/passwd`; do pw usermod $x -L default; done;</code></strong></pre><p>将 <code class="systemitem">nagios</code> 和
+	<code class="systemitem">www</code> 这两个用户归入不安全 class：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw usermod nagios -L insecure</code></strong></pre><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>pw usermod www -L insecure</code></strong></pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79035984"></a>16.15.4. 创建上下文文件</h3></div></div></div><p>接下来需要创建一个上下文文件； 您可以把下面的实例放到
+	<code class="filename">/etc/policy.contexts</code> 中。</p><pre class="programlisting"># This is the default BIBA policy for this system.
+
+# System:
+/var/run                        biba/equal
+/var/run/*                      biba/equal
+
+/dev                            biba/equal
+/dev/*                          biba/equal
+
+/var				biba/equal
+/var/spool                      biba/equal
+/var/spool/*                    biba/equal
+
+/var/log                        biba/equal
+/var/log/*                      biba/equal
+
+/tmp				biba/equal
+/tmp/*				biba/equal
+/var/tmp			biba/equal
+/var/tmp/*			biba/equal
+
+/var/spool/mqueue		biba/equal
+/var/spool/clientmqueue		biba/equal
+
+# For Nagios:
+/usr/local/etc/nagios
+/usr/local/etc/nagios/*         biba/10
+
+/var/spool/nagios               biba/10
+/var/spool/nagios/*             biba/10
+
+# For apache
+/usr/local/etc/apache           biba/10
+/usr/local/etc/apache/*         biba/10</pre><p>这个策略通过在信息流上设置限制来强化安全。
+	在这个配置中， 包括 <code class="systemitem">root</code> 和其他用户在内的用户，
+	都不允许访问 <span class="application">Nagios</span>。 作为
+	<span class="application">Nagios</span> 一部分的配置文件和进程，
+	都是完全独立的， 也称为 jailed。</p><p>接下来可以用下面的命令将其读入系统：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setfsmac -ef /etc/policy.contexts /</code></strong>
+<code class="prompt">#</code> <strong class="userinput"><code>setfsmac -ef /etc/policy.contexts /</code></strong></pre><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml">随环境不同前述的文件系统布局可能会有所不同；
+	  不过无论如何， 都只能在一个文件系统上运行它。</p></div><p>在 <code class="filename">/etc/mac.conf</code> 文件中的 main
+	小节需要进行下面的修改：</p><pre class="programlisting">default_labels file ?biba
+default_labels ifnet ?biba
+default_labels process ?biba
+default_labels socket ?biba</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79056080"></a>16.15.5. 启用网络</h3></div></div></div><p>在
+	<code class="filename">/boot/loader.conf</code> 中增加下列内容：</p><pre class="programlisting">security.mac.biba.trust_all_interfaces=1</pre><p>将下述内容加入 <code class="filename">rc.conf</code> 中的网络接口配置。
+	如果主 Internet 配置是通过 <acronym class="acronym">DHCP</acronym> 完成的，
+	则需要在每次系统启动之后手工执行类似的配置：</p><pre class="programlisting">maclabel biba/equal</pre></div><div class="sect2"><div xmlns="" class="titlepage"><div><div><h3 xmlns="http://www.w3.org/1999/xhtml" class="title"><a id="idp79059536"></a>16.15.6. 测试配置</h3></div></div></div><a id="idp79060176" class="indexterm"></a><p>首先要确认 web 服务以及
+	<span class="application">Nagios</span> 不会随系统的初始化和重启过程而自动启动。
+	在此之前， 请在此确认
+	<code class="systemitem">root</code> 用户不能访问 <span class="application">Nagios</span>
+	配置目录中的任何文件 如果 <code class="systemitem">root</code> 能够在 <code class="filename">/var/spool/nagios</code>
+	中运行 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=ls&amp;sektion=1"><span class="citerefentry"><span class="refentrytitle">ls</span>(1)</span></a>， 则表示配置有误。 如果配置正确的话，
+	您会收到一条 <span class="quote">“<span class="quote">permission denied</span>”</span> 错误信息。</p><p>如果一切正常， <span class="application">Nagios</span>、
+	<span class="application">Apache</span>， 以及
+	<span class="application">Sendmail</span> 就可以按照适应安全策略的方式启动了。
+	下面的命令将完成此工作：</p><pre class="screen"><code class="prompt">#</code> <strong class="userinput"><code>cd /etc/mail &amp;&amp; make stop &amp;&amp; \
+setpmac biba/equal make start &amp;&amp; setpmac biba/10\(10-10\) apachectl start &amp;&amp; \
+setpmac biba/10\(10-10\) /usr/local/etc/rc.d/nagios.sh forcestart</code></strong></pre><p>再次检查是否一切正常。 如果不是的话， 请检查日志文件和错误信息。
+	此外， 还可以用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=sysctl&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">sysctl</span>(8)</span></a> 来临时禁用 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=mac_biba&amp;sektion=4"><span class="citerefentry"><span class="refentrytitle">mac_biba</span>(4)</span></a>
+	安全策略模块的强制措施， 并象之前那样进行配置和启动服务。</p><div xmlns="" class="note"><h3 class="admontitle">Note: </h3><p xmlns="http://www.w3.org/1999/xhtml"><code class="systemitem">root</code> 用户可以放心大胆地修改安全强制措施，
+	  并编辑配置文件。 下面的命令可以对安全策略进行降级， 并启动一个新的
+	  shell：</p><pre xmlns="http://www.w3.org/1999/xhtml" class="screen"><code class="prompt">#</code> <strong class="userinput"><code>setpmac biba/10 csh</code></strong></pre><p xmlns="http://www.w3.org/1999/xhtml">要阻止这种情况发生，
+	  就需要配置 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=login.conf&amp;sektion=5"><span class="citerefentry"><span class="refentrytitle">login.conf</span>(5)</span></a> 中许可的命令范围了。 如果 <a class="citerefentry" href="http://www.FreeBSD.org/cgi/man.cgi?query=setpmac&amp;sektion=8"><span class="citerefentry"><span class="refentrytitle">setpmac</span>(8)</span></a>
+	  尝试执行超越许可范围的命令， 则会返回一个错误， 而不是执行命令。
+	  在这个例子中， 可以把 root 设为
+	  <code class="literal">biba/high(high-high)</code>。</p></div></div></div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mac-lomac.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="mac.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="mac-userlocked.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.14. MAC LOMAC 模块 </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> 16.16. User Lock Down</td></tr></table></div><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>本文档和其它文档可从这里下载：
+    <a href="ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/">ftp://ftp.FreeBSD.org/pub/FreeBSD/doc/</a>.</small></p><p xmlns="http://www.w3.org/TR/xhtml1/transitional" align="center"><small>如果对于FreeBSD有问题，请先阅读
+    <a href="http://www.FreeBSD.org/docs.html">文档</a>，如不能解决再联系
+    &lt;<a href="mailto:questions@FreeBSD.org">questions@FreeBSD.org</a>&gt;.<br></br>
+    关于本文档的问题请发信联系
+    &lt;<a href="mailto:doc@FreeBSD.org">doc@FreeBSD.org</a>&gt;.</small></p></body></html>
