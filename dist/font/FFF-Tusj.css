@@ -1,0 +1,14 @@
+@font-face {
+    font-family: "FFF-Tusj";
+    src: url("FFF-Tusj.eot"); /* IE9 */
+    src: url("FFF-Tusj.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+    
+    url("FFF-Tusj.woff") format("woff"), /* chrome, firefox */
+    url("FFF-Tusj.ttf") format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    
+    url("FFF-Tusj.svg#FFF-Tusj") format("svg"); /* iOS 4.1- */
+    font-style: normal;
+    font-weight: normal;
+}
+
+
