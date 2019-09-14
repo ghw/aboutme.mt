@@ -100,7 +100,7 @@ gulp.task('font', function() {
     // Fredericka-the-Great
     gulp.src('src/fonts/Fredericka-the-Great.ttf')
         .pipe(fontmin({
-            text: 'BiKai Timeline Skills Hobbies Connect Projects'
+            text: '1234590Haowu Ge Timeline Skills Hobbies Connect Projects'
         }))
         .pipe(gulp.dest('src/static/font'));
 });
